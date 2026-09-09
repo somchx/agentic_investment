@@ -1,0 +1,995 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Investment Reason Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Public+Sans:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --bg: #0c0e12;
+    --bg-elevated: #101319;
+    --panel: #171a21;
+    --panel-2: #1d2129;
+    --panel-border: #262b35;
+    --text: #e9eaed;
+    --text-dim: #9aa2b1;
+    --text-faint: #656d7c;
+    --accent: #6d8bff;
+    --accent-strong: #3f5fd6;
+    --accent-wash: rgba(109,139,255,0.12);
+    --green: #3ecf8e;
+    --green-wash: rgba(62,207,142,0.12);
+    --yellow: #e8b93f;
+    --yellow-wash: rgba(232,185,63,0.12);
+    --red: #ef5a5a;
+    --red-wash: rgba(239,90,90,0.12);
+    --gray: #7c828f;
+    --gray-wash: rgba(124,130,143,0.12);
+    --radius: 12px;
+    --sidebar-w: 248px;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    font-family: "Public Sans", "Noto Sans Thai", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  h1, h2, h3, .heading { font-family: "Manrope", "Noto Sans Thai", "Public Sans", "Noto Sans Thai", sans-serif; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace; }
+  ::selection { background: var(--accent-wash); }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  /* ---------- App shell ---------- */
+  #shell { display: flex; min-height: 100vh; }
+
+  #topbar {
+    display: none;
+    position: sticky; top: 0; z-index: 20;
+    align-items: center; gap: 12px;
+    padding: 12px 16px;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--panel-border);
+  }
+  #topbar .brand { font-family: "Manrope", "Noto Sans Thai", sans-serif; font-weight: 800; font-size: 15px; letter-spacing: -0.01em; }
+  #hamburger {
+    background: none; border: 1px solid var(--panel-border); border-radius: 8px;
+    width: 34px; height: 34px; color: var(--text); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; flex: none;
+  }
+  #hamburger span { display: block; width: 16px; height: 2px; background: var(--text); position: relative; }
+  #hamburger span::before, #hamburger span::after {
+    content: ""; position: absolute; left: 0; width: 16px; height: 2px; background: var(--text);
+  }
+  #hamburger span::before { top: -5px; } #hamburger span::after { top: 5px; }
+
+  #scrim {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 25;
+  }
+  #scrim.show { display: block; }
+
+  #sidebar {
+    width: var(--sidebar-w); flex-shrink: 0;
+    background: var(--bg-elevated);
+    border-right: 1px solid var(--panel-border);
+    display: flex; flex-direction: column;
+    height: 100vh; position: sticky; top: 0;
+  }
+  .sidebar-header { padding: 20px 18px 14px; }
+  .brand-full { font-family: "Manrope", "Noto Sans Thai", sans-serif; font-weight: 800; font-size: 17px; letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px; }
+  .brand-full .dot3 { width: 9px; height: 9px; border-radius: 3px; background: linear-gradient(135deg, var(--accent), var(--green)); flex: none; }
+  .brand-sub { font-size: 12px; color: var(--text-faint); margin-top: 4px; }
+
+  .lang-switch {
+    display: flex; gap: 4px; margin-top: 12px;
+    background: var(--panel); border: 1px solid var(--panel-border);
+    border-radius: 8px; padding: 3px;
+  }
+  .lang-btn {
+    flex: 1; background: none; border: none; color: var(--text-faint);
+    font-size: 12px; font-weight: 700; padding: 5px 0; border-radius: 6px;
+    cursor: pointer; font-family: "Public Sans", "Noto Sans Thai", sans-serif;
+  }
+  .lang-btn.active { background: var(--accent-wash); color: var(--accent); }
+
+  .search-wrap { padding: 0 14px 12px; }
+  #ticker-search {
+    width: 100%; background: var(--panel); border: 1px solid var(--panel-border);
+    color: var(--text); border-radius: 8px; padding: 8px 10px; font-size: 13px;
+    font-family: "Public Sans", "Noto Sans Thai", sans-serif;
+  }
+  #ticker-search:focus { outline: none; border-color: var(--accent); }
+
+  .nav-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--text-faint); padding: 4px 18px 8px; font-weight: 600;
+  }
+  #ticker-list { overflow-y: auto; flex: 1; padding-bottom: 12px; }
+  .ticker-btn {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; text-align: left; background: none; border: none;
+    color: var(--text-dim); padding: 9px 18px; font-size: 13.5px;
+    font-family: "JetBrains Mono", monospace; font-weight: 500;
+    cursor: pointer; border-left: 2px solid transparent;
+  }
+  .ticker-btn:hover { background: var(--panel); color: var(--text); }
+  .ticker-btn.active { background: var(--panel); border-left-color: var(--accent); color: var(--accent); font-weight: 700; }
+
+  .sidebar-footer {
+    padding: 12px 14px 16px; border-top: 1px solid var(--panel-border);
+  }
+  .nav-toggle {
+    width: 100%; display: flex; align-items: center; gap: 8px;
+    background: none; border: none; color: var(--text-dim); font-size: 13px;
+    padding: 8px 4px; cursor: pointer; border-radius: 6px; font-family: "Public Sans", "Noto Sans Thai", sans-serif;
+    text-decoration: none; box-sizing: border-box;
+  }
+  .nav-toggle:hover { background: var(--panel); color: var(--text); }
+  .nav-toggle.active { color: var(--accent); }
+
+  #main { flex: 1; min-width: 0; overflow-x: hidden; }
+  #main-inner { padding: 36px 44px 80px; max-width: 920px; }
+
+  #placeholder { color: var(--text-faint); margin-top: 80px; text-align: center; font-size: 14px; }
+  #placeholder .big { font-size: 15px; color: var(--text-dim); margin-bottom: 6px; }
+
+  /* ---------- Company header + stats ---------- */
+  .company-header { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .company-header h2 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.01em; }
+  .company-header .ticker-tag {
+    color: var(--text-faint); font-size: 13px; font-family: "JetBrains Mono", monospace;
+    background: var(--panel); padding: 2px 8px; border-radius: 5px;
+  }
+  .subtitle { color: var(--text-faint); margin: 6px 0 20px; font-size: 13.5px; }
+
+  .stat-strip { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
+  .stat-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--panel); border: 1px solid var(--panel-border);
+    border-radius: 999px; padding: 7px 14px 7px 10px; font-size: 13px;
+  }
+  .stat-chip .n { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 14px; }
+  .stat-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .stat-dot.g { background: var(--green); } .stat-dot.y { background: var(--yellow); }
+  .stat-dot.r { background: var(--red); } .stat-dot.n { background: var(--gray); }
+
+  /* ---------- Reason cards ---------- */
+  .reason-card {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    transition: border-color 0.15s ease;
+  }
+  .reason-card:hover { border-color: #333947; }
+  .reason-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .reason-icon { font-size: 17px; flex: none; }
+  .reason-desc { flex: 1; font-size: 15px; font-weight: 500; min-width: 180px; }
+  .reason-value { font-family: "JetBrains Mono", monospace; color: var(--text-dim); font-size: 13.5px; }
+  .reason-status {
+    font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 4px 10px; border-radius: 999px; font-family: "Manrope", "Noto Sans Thai", sans-serif;
+  }
+  .status-Supported { background: var(--green-wash); color: var(--green); }
+  .status-Weakened { background: var(--yellow-wash); color: var(--yellow); }
+  .status-Broken { background: var(--red-wash); color: var(--red); }
+  .status-Not_enough_data { background: var(--gray-wash); color: var(--gray); }
+
+  .reason-explanation { color: var(--text-dim); font-size: 13px; margin-top: 10px; line-height: 1.55; }
+  .reason-changed { margin-top: 8px; font-size: 12.5px; color: var(--accent); }
+  .evidence-toggle { margin-top: 10px; font-size: 12.5px; color: var(--accent); cursor: pointer; user-select: none; display: inline-block; }
+  .evidence-list { display: none; margin-top: 8px; font-size: 12px; color: var(--text-dim); padding-left: 16px; font-family: "JetBrains Mono", monospace; }
+  .evidence-list.open { display: block; }
+  .evidence-list li { margin-bottom: 5px; word-break: break-all; line-height: 1.5; }
+  .conflict-item { color: var(--red); }
+
+  .section-title {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--text-faint); margin: 34px 0 12px; font-weight: 700; font-family: "Manrope", "Noto Sans Thai", sans-serif;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title::after { content: ""; flex: 1; height: 1px; background: var(--panel-border); }
+
+  .action-panel {
+    background: var(--panel); border: 1px solid var(--panel-border);
+    border-radius: var(--radius); padding: 18px 20px;
+  }
+
+  button {
+    font-family: "Public Sans", "Noto Sans Thai", sans-serif;
+  }
+  #ask-agent-btn, #personalize-btn, #np-save-btn {
+    background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+    color: white; border: none; border-radius: 8px;
+    padding: 10px 18px; font-size: 13.5px; cursor: pointer; font-weight: 700;
+  }
+  #ask-agent-btn:disabled, #personalize-btn:disabled { opacity: 0.5; cursor: default; }
+  #ask-agent-cost { color: var(--text-faint); font-size: 12px; margin-left: 10px; }
+  #agent-result { margin-top: 16px; }
+  .agent-reason-line { padding: 12px 0; border-top: 1px solid var(--panel-border); font-size: 13.5px; }
+  .agent-reason-line:first-child { border-top: none; padding-top: 4px; }
+  .agent-reason-line b { text-transform: capitalize; font-family: "Manrope", "Noto Sans Thai", sans-serif; }
+  .review-yes { color: var(--red); font-weight: 800; }
+  .review-no { color: var(--green); font-weight: 800; }
+  #agent-error { color: var(--red); font-size: 13px; margin-top: 10px; }
+  .trace-line { font-size: 12px; color: var(--text-faint); font-family: "JetBrains Mono", monospace; line-height: 1.6; }
+  .spinner { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: -2px; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #profile-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  select, input[type=text], input[type=number] {
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--panel-border);
+    border-radius: 7px; padding: 8px 10px; font-size: 13.5px; font-family: "Public Sans", "Noto Sans Thai", sans-serif;
+  }
+  select:focus, input:focus { outline: none; border-color: var(--accent); }
+  .btn-secondary {
+    background: none; color: var(--accent); border: 1px solid var(--accent);
+    border-radius: 7px; padding: 7px 13px; font-size: 13px; cursor: pointer; font-weight: 600;
+  }
+  #new-profile-form {
+    display: none; margin-top: 14px; background: var(--panel-2); border: 1px solid var(--panel-border);
+    border-radius: 9px; padding: 16px; gap: 12px; flex-wrap: wrap; align-items: flex-end;
+  }
+  #new-profile-form.open { display: flex; }
+  #new-profile-form label { display: flex; flex-direction: column; gap: 5px; font-size: 11.5px; color: var(--text-faint); font-weight: 600; }
+  .tier-Monitor { color: var(--gray); } .tier-Watch { color: var(--yellow); }
+  .tier-Review_Soon { color: #f0904a; } .tier-Review_Now { color: var(--red); }
+  #profile-error { color: var(--red); font-size: 13px; margin-top: 8px; }
+
+  /* ---------- History panel ---------- */
+  #history-toggle-row { display: flex; align-items: center; justify-content: space-between; margin-top: 34px; }
+  #history-panel { display: none; margin-top: 14px; }
+  #history-panel.open { display: block; }
+  .history-scope { display: flex; gap: 8px; margin-bottom: 12px; }
+  .scope-btn {
+    background: var(--panel); border: 1px solid var(--panel-border); color: var(--text-dim);
+    border-radius: 999px; padding: 5px 13px; font-size: 12.5px; cursor: pointer;
+  }
+  .scope-btn.active { background: var(--accent-wash); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+  .history-table-wrap { overflow-x: auto; border: 1px solid var(--panel-border); border-radius: var(--radius); }
+  table.history { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 640px; }
+  table.history th {
+    text-align: left; padding: 10px 14px; color: var(--text-faint); font-weight: 700;
+    text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.04em;
+    background: var(--panel-2); border-bottom: 1px solid var(--panel-border); position: sticky; top: 0;
+  }
+  table.history td { padding: 9px 14px; border-bottom: 1px solid var(--panel-border); color: var(--text-dim); white-space: nowrap; }
+  table.history tr:last-child td { border-bottom: none; }
+  table.history .tk { font-family: "JetBrains Mono", monospace; color: var(--text); font-weight: 600; }
+  table.history .rk { font-family: "JetBrains Mono", monospace; }
+  .hist-status { font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 999px; text-transform: uppercase; }
+  #history-empty { color: var(--text-faint); font-size: 13px; padding: 20px; text-align: center; }
+
+  /* ---------- Manual ---------- */
+  .manual-step { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--panel-border); }
+  .manual-step:first-of-type { border-top: none; margin-top: 20px; padding-top: 0; }
+  .manual-step-head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .manual-num {
+    font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700;
+    color: var(--accent); background: var(--accent-wash);
+    border-radius: 6px; padding: 3px 9px; flex: none; line-height: 1.4;
+  }
+  .manual-step h3 { margin: 0; font-size: 16.5px; font-weight: 700; }
+  .manual-step p { color: var(--text-dim); font-size: 14px; line-height: 1.65; max-width: 68ch; margin: 0; }
+  .manual-step p b { color: var(--text); font-weight: 700; }
+
+  .cost-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 700;
+    padding: 2px 9px; border-radius: 999px; vertical-align: middle;
+  }
+  .cost-pill.free { color: var(--green); background: var(--green-wash); }
+  .cost-pill.paid { color: var(--yellow); background: var(--yellow-wash); }
+
+  .callout {
+    margin-top: 28px; border-radius: var(--radius); padding: 14px 18px;
+    font-size: 13.5px; border: 1px solid; line-height: 1.6;
+  }
+  .callout.warn { background: var(--red-wash); border-color: var(--red); color: var(--text-dim); }
+  .callout.info { background: var(--accent-wash); border-color: var(--accent); color: var(--text-dim); }
+  .callout b { display: block; margin-bottom: 4px; color: var(--text); font-family: "Manrope", "Noto Sans Thai", sans-serif; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 860px) {
+    #main-inner { padding: 24px 20px 64px; }
+    .company-header h2 { font-size: 22px; }
+  }
+
+  @media (max-width: 720px) {
+    #topbar { display: flex; }
+    #sidebar {
+      position: fixed; left: 0; top: 0; z-index: 30;
+      transform: translateX(-100%); transition: transform 0.22s ease;
+      box-shadow: 8px 0 24px rgba(0,0,0,0.4);
+    }
+    #sidebar.open { transform: translateX(0); }
+    #main-inner { padding: 20px 16px 56px; }
+    .reason-top { gap: 8px; }
+    .reason-desc { min-width: 100%; order: 1; }
+    .reason-icon { order: 0; }
+    .reason-value { order: 2; }
+    .reason-status { order: 3; }
+    #profile-row { flex-direction: column; align-items: stretch; }
+    #profile-row select, #profile-row button { width: 100%; }
+    #new-profile-form { flex-direction: column; align-items: stretch; }
+    #new-profile-form label { width: 100%; }
+    table.history { min-width: 560px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <button id="hamburger" onclick="toggleSidebar()" aria-label="Toggle menu"><span></span></button>
+  <span class="brand" data-i18n="app_title">Investment Reason Tracker</span>
+</div>
+<div id="scrim" onclick="toggleSidebar()"></div>
+
+<div id="shell">
+  <div id="sidebar">
+    <div class="sidebar-header">
+      <div class="brand-full"><span class="dot3"></span><span data-i18n="brand_full">Reason Tracker</span></div>
+      <div class="brand-sub" data-i18n="brand_sub">Evidence-grounded, point-in-time</div>
+      <div class="lang-switch">
+        <button class="lang-btn" id="lang-btn-en" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" id="lang-btn-th" onclick="setLang('th')">ไทย</button>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <input type="text" id="ticker-search" data-i18n-placeholder="search_placeholder" placeholder="Filter companies..." oninput="filterTickers()">
+    </div>
+    <div class="nav-label" data-i18n="nav_companies">Companies</div>
+    <div id="ticker-list">
+      {% for t in tickers %}
+        <button class="ticker-btn" data-ticker="{{ t }}" onclick="selectTicker('{{ t }}')">{{ t }}</button>
+      {% endfor %}
+    </div>
+    <div class="sidebar-footer">
+      <button class="nav-toggle" id="history-nav-toggle" onclick="toggleHistoryFromSidebar()">
+        <span>&#8635;</span> <span data-i18n="nav_recent">Recent activity</span>
+      </button>
+      <button class="nav-toggle" id="manual-nav-toggle" onclick="toggleManualFromSidebar()">
+        <span>&#128214;</span> <span data-i18n="nav_manual">Manual</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="main">
+    <div id="main-inner">
+      <div id="placeholder">
+        <div class="big" data-i18n="ph_title">Select a company to see its investment reasons.</div>
+        <div data-i18n-html="ph_sub">Or open <b style="color:var(--text-dim)">Recent activity</b> in the sidebar to see the run history.</div>
+      </div>
+      <div id="content" style="display:none;">
+        <div class="company-header">
+          <h2 id="company-name"></h2>
+          <span class="ticker-tag" id="company-ticker"></span>
+        </div>
+        <div class="subtitle" data-i18n="subtitle_reasons">My reasons for investing &mdash; computed live from SEC XBRL, point-in-time</div>
+
+        <div class="stat-strip" id="stat-strip"></div>
+        <div id="reasons"></div>
+
+        <div class="section-title" data-i18n="section_ask_agent">Ask the AI Agent</div>
+        <div class="action-panel" id="agent-section">
+          <button id="ask-agent-btn" onclick="askAgent()" data-i18n="btn_ask_agent">Ask AI Agent to review</button>
+          <span id="ask-agent-cost" data-i18n="ask_agent_cost">calls the real LLM via the tool-using agent (~$0.03)</span>
+          <div id="agent-result"></div>
+          <div id="agent-error"></div>
+        </div>
+
+        <div class="section-title" data-i18n="section_personalize">Personalize for an Investor</div>
+        <div class="action-panel" id="personalize-section">
+          <div id="profile-row">
+            <select id="profile-select"></select>
+            <button id="personalize-btn" onclick="personalize()" data-i18n="btn_personalize">Personalize</button>
+            <button class="btn-secondary" onclick="toggleNewProfile()" data-i18n="btn_new_profile">+ New profile</button>
+          </div>
+          <div id="new-profile-form">
+            <label><span data-i18n="np_name_label">Name</span> <input type="text" id="np-name" data-i18n-placeholder="np_name_placeholder" placeholder="e.g. My Portfolio"></label>
+            <label><span data-i18n="np_risk_label">Risk tolerance</span>
+              <select id="np-risk"><option value="low" data-i18n="risk_low">low</option><option value="medium" data-i18n="risk_medium">medium</option><option value="high" data-i18n="risk_high">high</option></select>
+            </label>
+            <label><span data-i18n="np_horizon_label">Horizon</span>
+              <select id="np-horizon"><option value="<1y">&lt;1y</option><option value="1-5y">1-5y</option><option value=">5y">&gt;5y</option></select>
+            </label>
+            <label><span data-i18n="np_position_label">Position size %</span> <input type="number" id="np-position" min="0" max="100" step="0.1" value="10"></label>
+            <label><span data-i18n="np_objective_label">Objective</span>
+              <select id="np-objective"><option value="growth" data-i18n="obj_growth">growth</option><option value="income" data-i18n="obj_income">income</option><option value="preservation" data-i18n="obj_preservation">preservation</option></select>
+            </label>
+            <button id="np-save-btn" onclick="saveProfile()" data-i18n="btn_save">Save</button>
+          </div>
+          <div id="profile-error"></div>
+          <div id="personalize-result"></div>
+        </div>
+
+        <div id="history-toggle-row">
+          <div class="section-title" style="margin:0; flex:1;" data-i18n="history_this_company">Recent activity for this company</div>
+        </div>
+        <div id="history-panel" class="open">
+          <div id="history-content"></div>
+        </div>
+      </div>
+
+      <div id="global-history" style="display:none;">
+        <div class="company-header"><h2 data-i18n="global_history_title">Recent activity</h2></div>
+        <div class="subtitle" data-i18n="global_history_sub">Every agent run and personalization call, persisted to the local database</div>
+        <div class="history-scope">
+          <button class="scope-btn active" data-scope="all" onclick="setHistoryScope('all')" data-i18n="scope_all">All companies</button>
+        </div>
+        <div id="global-history-content"></div>
+      </div>
+
+      <div id="manual-view" style="display:none;">
+        <div class="company-header"><h2 data-i18n="manual_title">How to use this</h2></div>
+        <div class="subtitle" data-i18n="manual_sub">A four-step guide to browsing reason status, running the AI agent, and personalizing priorities.</div>
+
+        <div class="manual-step">
+          <div class="manual-step-head"><span class="manual-num">1</span><h3><span data-i18n="step1_title">Pick a company</span> <span class="cost-pill free" data-i18n="cost_free">free</span></h3></div>
+          <p data-i18n-html="step1_body">The sidebar lists every company the tracker knows about &mdash; use the filter box to jump to one quickly. Selecting one loads its three investment reasons (revenue growth, operating margin, debt growth) computed straight from SEC XBRL data, no LLM involved. This is the <b>Objective Evidence Layer</b>: deterministic and identical no matter who's looking. The stat chips at the top summarize how many reasons are Supported / Weakened / Broken at a glance; click <b>show evidence</b> on any card to see the exact filed facts (accession number, filing date) behind the number.</p>
+        </div>
+
+        <div class="manual-step">
+          <div class="manual-step-head"><span class="manual-num">2</span><h3><span data-i18n="step2_title">Ask the AI Agent to investigate</span> <span class="cost-pill paid">~$0.03&ndash;0.08</span></h3></div>
+          <p data-i18n-html="step2_body"><b>Ask AI Agent to review</b> hands the same three reasons to a real tool-calling agent. It re-checks each one itself, and for anything uncertain or severe it goes further on its own &mdash; pulling a second independent source (the company's own earnings release) or reading the actual 10-Q/10-K narrative to explain <i>why</i> a number moved, not just that it did. The tool calls it actually made are listed above its findings.</p>
+        </div>
+
+        <div class="manual-step">
+          <div class="manual-step-head"><span class="manual-num">3</span><h3><span data-i18n="step3_title">Create an investor profile</span> <span class="cost-pill free" data-i18n="cost_free">free</span></h3></div>
+          <p data-i18n-html="step3_body">Click <b>+ New profile</b> under "Personalize for an Investor" to describe a specific investor: risk tolerance, investment horizon, how large this holding is as a share of their portfolio, and their objective. Saving it is instant &mdash; just stored, no LLM involved yet.</p>
+        </div>
+
+        <div class="manual-step">
+          <div class="manual-step-head"><span class="manual-num">4</span><h3><span data-i18n="step4_title">Personalize</span> <span class="cost-pill paid">~$0.02&ndash;0.05</span></h3></div>
+          <p data-i18n-html="step4_body">Pick a profile and click <b>Personalize</b>. The evidence status feeds into two independent priority judgments for that investor &mdash; a free rule-based tier and an LLM-derived tier, shown side by side as <span class="mono">Monitor / Watch / Review Soon / Review Now</span>. The evidence status itself is <b>never allowed to change</b> based on who's asking, only how urgently it should matter to them &mdash; checked automatically on every call.</p>
+        </div>
+
+        <div class="manual-step">
+          <div class="manual-step-head"><span class="manual-num">&#8635;</span><h3 data-i18n="step5_title">Recent activity</h3></div>
+          <p data-i18n-html="step5_body">Every agent run and personalize call above gets saved. <b>Recent activity</b> in the sidebar shows the full history across every company; the same panel appears scoped to just the current company at the bottom of its page.</p>
+        </div>
+
+        <div class="callout warn">
+          <b data-i18n="callout_warn_title">Point-in-time only from filings</b>
+          <span data-i18n="callout_warn_body">Every status shown is derived only from SEC data that was actually filed as of the analysis date &mdash; never from information that wasn't publicly available yet. Live web search (used only by the agent, only for background context) never decides a status, for the same reason.</span>
+        </div>
+
+        <div class="callout info" style="margin-top:12px;">
+          <b data-i18n="callout_info_title">Not built yet</b>
+          <span data-i18n="callout_info_body">Defining a custom reason beyond the built-in 3 (a reason's metric has to match a real SEC XBRL tag name), and a combined portfolio-level view across holdings.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentTicker = null;
+let showingGlobalHistory = false;
+let showingManual = false;
+
+/* ---------- i18n ---------- */
+const I18N = {
+  en: {
+    app_title: "Investment Reason Tracker",
+    brand_full: "Reason Tracker",
+    brand_sub: "Evidence-grounded, point-in-time",
+    search_placeholder: "Filter companies...",
+    nav_companies: "Companies",
+    nav_recent: "Recent activity",
+    nav_manual: "Manual",
+    ph_title: "Select a company to see its investment reasons.",
+    ph_sub: 'Or open <b style="color:var(--text-dim)">Recent activity</b> in the sidebar to see the run history.',
+    subtitle_reasons: "My reasons for investing — computed live from SEC XBRL, point-in-time",
+    section_ask_agent: "Ask the AI Agent",
+    btn_ask_agent: "Ask AI Agent to review",
+    ask_agent_cost: "calls the real LLM via the tool-using agent (~$0.03)",
+    section_personalize: "Personalize for an Investor",
+    btn_personalize: "Personalize",
+    btn_new_profile: "+ New profile",
+    np_name_label: "Name",
+    np_name_placeholder: "e.g. My Portfolio",
+    np_risk_label: "Risk tolerance",
+    risk_low: "low", risk_medium: "medium", risk_high: "high",
+    np_horizon_label: "Horizon",
+    np_position_label: "Position size %",
+    np_objective_label: "Objective",
+    obj_growth: "growth", obj_income: "income", obj_preservation: "preservation",
+    btn_save: "Save",
+    history_this_company: "Recent activity for this company",
+    global_history_title: "Recent activity",
+    global_history_sub: "Every agent run and personalization call, persisted to the local database",
+    scope_all: "All companies",
+    manual_title: "How to use this",
+    manual_sub: "A four-step guide to browsing reason status, running the AI agent, and personalizing priorities.",
+    cost_free: "free",
+    step1_title: "Pick a company",
+    step1_body: 'The sidebar lists every company the tracker knows about — use the filter box to jump to one quickly. Selecting one loads its three investment reasons (revenue growth, operating margin, debt growth) computed straight from SEC XBRL data, no LLM involved. This is the <b>Objective Evidence Layer</b>: deterministic and identical no matter who’s looking. The stat chips at the top summarize how many reasons are Supported / Weakened / Broken at a glance; click <b>show evidence</b> on any card to see the exact filed facts (accession number, filing date) behind the number.',
+    step2_title: "Ask the AI Agent to investigate",
+    step2_body: '<b>Ask AI Agent to review</b> hands the same three reasons to a real tool-calling agent. It re-checks each one itself, and for anything uncertain or severe it goes further on its own — pulling a second independent source (the company’s own earnings release) or reading the actual 10-Q/10-K narrative to explain <i>why</i> a number moved, not just that it did. The tool calls it actually made are listed above its findings.',
+    step3_title: "Create an investor profile",
+    step3_body: 'Click <b>+ New profile</b> under "Personalize for an Investor" to describe a specific investor: risk tolerance, investment horizon, how large this holding is as a share of their portfolio, and their objective. Saving it is instant — just stored, no LLM involved yet.',
+    step4_title: "Personalize",
+    step4_body: 'Pick a profile and click <b>Personalize</b>. The evidence status feeds into two independent priority judgments for that investor — a free rule-based tier and an LLM-derived tier, shown side by side as <span class="mono">Monitor / Watch / Review Soon / Review Now</span>. The evidence status itself is <b>never allowed to change</b> based on who’s asking, only how urgently it should matter to them — checked automatically on every call.',
+    step5_title: "Recent activity",
+    step5_body: 'Every agent run and personalize call above gets saved. <b>Recent activity</b> in the sidebar shows the full history across every company; the same panel appears scoped to just the current company at the bottom of its page.',
+    callout_warn_title: "Point-in-time only from filings",
+    callout_warn_body: "Every status shown is derived only from SEC data that was actually filed as of the analysis date — never from information that wasn't publicly available yet. Live web search (used only by the agent, only for background context) never decides a status, for the same reason.",
+    callout_info_title: "Not built yet",
+    callout_info_body: "Defining a custom reason beyond the built-in 3 (a reason's metric has to match a real SEC XBRL tag name), and a combined portfolio-level view across holdings.",
+    loading: "Loading...",
+    personalizing: "Personalizing...",
+    thinking: "Thinking...",
+    name_required: "Name is required.",
+    no_profile_selected: "No profile selected -- create one first.",
+    escalated_prefix: "Agent escalated to human review: ",
+    request_failed: "Request failed: ",
+    th_ticker: "Ticker", th_reason: "Reason", th_status: "Status", th_conf: "Conf.",
+    th_profile: "Profile", th_tier: "Tier (rule/llm)", th_when: "When",
+    agent_only: "(agent only)",
+    hist_empty_ticker: 'No runs for this company yet -- try "Ask AI Agent" or "Personalize" above.',
+    hist_empty_global: "No runs yet across any company.",
+    confidence_label: "confidence",
+    human_review_label: "Human review:",
+    yes: "YES", no: "no",
+    usage_label: "usage:", input_tokens: "input", output_tokens: "output tokens",
+    tool_calls_label: "Tool calls:",
+    no_tool_calls: "No extra tool calls -- all reasons looked clear.",
+    priority_for: "priority for", rule_based_label: "rule-based:",
+    changed_since: "Changed since last review:", as_of_label: "as of",
+    show_evidence: "show evidence", conflict_label: "CONFLICT:",
+    status_Supported: "Supported", status_Weakened: "Weakened",
+    status_Broken: "Broken", "status_Not enough data": "Not enough data",
+    reason_revenue_growth: "revenue growth", reason_operating_margin: "operating margin",
+    reason_debt_growth: "debt growth",
+    desc_R1: "Revenue growth must exceed 10% YoY",
+    desc_R2: "Operating margin must stay at or above 20%",
+    desc_R3: "Long-term debt must not grow more than 15% YoY",
+  },
+  th: {
+    app_title: "ตัวติดตามเหตุผลการลงทุน",
+    brand_full: "ตัวติดตามเหตุผล",
+    brand_sub: "อ้างอิงหลักฐานจริง ตามช่วงเวลาที่ถูกต้อง",
+    search_placeholder: "ค้นหาบริษัท...",
+    nav_companies: "บริษัท",
+    nav_recent: "กิจกรรมล่าสุด",
+    nav_manual: "คู่มือการใช้งาน",
+    ph_title: "เลือกบริษัทเพื่อดูเหตุผลการลงทุน",
+    ph_sub: 'หรือเปิด <b style="color:var(--text-dim)">กิจกรรมล่าสุด</b> ในแถบด้านข้างเพื่อดูประวัติการรัน',
+    subtitle_reasons: "เหตุผลการลงทุนของฉัน — คำนวณสดจาก SEC XBRL แบบ point-in-time",
+    section_ask_agent: "ถาม AI Agent",
+    btn_ask_agent: "ให้ AI Agent ตรวจสอบ",
+    ask_agent_cost: "เรียกใช้ LLM จริงผ่าน Agent ที่ใช้เครื่องมือได้ (~$0.03)",
+    section_personalize: "ปรับให้เหมาะกับนักลงทุน",
+    btn_personalize: "ปรับให้เหมาะสม",
+    btn_new_profile: "+ สร้างโปรไฟล์ใหม่",
+    np_name_label: "ชื่อ",
+    np_name_placeholder: "เช่น พอร์ตของฉัน",
+    np_risk_label: "ระดับความเสี่ยงที่รับได้",
+    risk_low: "ต่ำ", risk_medium: "ปานกลาง", risk_high: "สูง",
+    np_horizon_label: "ระยะเวลาการลงทุน",
+    np_position_label: "สัดส่วนการถือครอง %",
+    np_objective_label: "เป้าหมายการลงทุน",
+    obj_growth: "เติบโต", obj_income: "รายได้", obj_preservation: "รักษามูลค่า",
+    btn_save: "บันทึก",
+    history_this_company: "กิจกรรมล่าสุดของบริษัทนี้",
+    global_history_title: "กิจกรรมล่าสุด",
+    global_history_sub: "ทุกการรัน Agent และการปรับให้เหมาะสม ถูกบันทึกไว้ในฐานข้อมูล",
+    scope_all: "ทุกบริษัท",
+    manual_title: "วิธีใช้งานระบบนี้",
+    manual_sub: "คู่มือ 4 ขั้นตอน: ดูสถานะเหตุผล รัน AI Agent และปรับลำดับความสำคัญให้เหมาะกับนักลงทุน",
+    cost_free: "ฟรี",
+    step1_title: "เลือกบริษัท",
+    step1_body: 'แถบด้านข้างแสดงรายชื่อบริษัททั้งหมดที่ระบบรู้จัก — ใช้ช่องค้นหาเพื่อไปยังบริษัทที่ต้องการได้เร็วขึ้น เมื่อเลือกบริษัทแล้ว จะโหลดเหตุผลการลงทุน 3 ข้อ (การเติบโตของรายได้ อัตรากำไรจากการดำเนินงาน การเติบโตของหนี้) ที่คำนวณจากข้อมูล SEC XBRL โดยตรง ไม่มี LLM เกี่ยวข้อง นี่คือ <b>Objective Evidence Layer</b>: เป็นข้อเท็จจริงตายตัวและเหมือนกันไม่ว่าใครจะดู ตัวเลขสรุปด้านบนแสดงจำนวนเหตุผลที่ Supported / Weakened / Broken ให้เห็นภาพรวมทันที คลิก <b>show evidence</b> บนการ์ดใดก็ได้เพื่อดูข้อมูลที่ยื่นจริง (accession number, วันที่ยื่น) ที่อยู่เบื้องหลังตัวเลขนั้น',
+    step2_title: "ให้ AI Agent เข้าไปตรวจสอบ",
+    step2_body: '<b>ปุ่ม "ให้ AI Agent ตรวจสอบ"</b> จะส่งเหตุผลทั้ง 3 ข้อให้ Agent ที่ใช้เครื่องมือได้จริง มันจะตรวจสอบแต่ละข้อด้วยตัวเอง และถ้าพบอะไรที่ไม่แน่ใจหรือรุนแรง จะไปสืบเพิ่มเอง — ดึงแหล่งข้อมูลที่สองที่เป็นอิสระ (earnings release ของบริษัทเอง) หรืออ่านเนื้อหาจริงใน 10-Q/10-K เพื่ออธิบายว่า <i>ทำไม</i> ตัวเลขถึงเปลี่ยน ไม่ใช่แค่บอกว่าเปลี่ยน รายการเครื่องมือที่มันเรียกจริงจะแสดงไว้เหนือผลลัพธ์',
+    step3_title: "สร้างโปรไฟล์นักลงทุน",
+    step3_body: 'คลิก <b>"+ สร้างโปรไฟล์ใหม่"</b> ใต้หัวข้อ "ปรับให้เหมาะกับนักลงทุน" เพื่อกรอกข้อมูลนักลงทุน: ระดับความเสี่ยงที่รับได้ ระยะเวลาการลงทุน สัดส่วนการถือหุ้นตัวนี้ในพอร์ต และเป้าหมายการลงทุน การบันทึกทำได้ทันที — แค่เก็บข้อมูลไว้ ยังไม่มี LLM เกี่ยวข้อง',
+    step4_title: "ปรับให้เหมาะสม",
+    step4_body: 'เลือกโปรไฟล์แล้วกด <b>ปรับให้เหมาะสม</b> สถานะหลักฐานจะถูกนำไปประเมินความสำคัญ 2 แบบอิสระต่อกันสำหรับนักลงทุนคนนั้น — แบบ rule-based ที่ฟรี และแบบที่มาจาก LLM แสดงคู่กันเป็น <span class="mono">Monitor / Watch / Review Soon / Review Now</span> สถานะหลักฐานเองจะ <b>ไม่มีวันเปลี่ยน</b> ตามว่าใครถาม เปลี่ยนแค่ความเร่งด่วนที่ควรให้ความสำคัญเท่านั้น — มีการตรวจสอบอัตโนมัติทุกครั้งที่เรียกใช้',
+    step5_title: "กิจกรรมล่าสุด",
+    step5_body: 'ทุกการรัน Agent และการปรับให้เหมาะสมด้านบนจะถูกบันทึกไว้ <b>กิจกรรมล่าสุด</b> ในแถบด้านข้างแสดงประวัติทั้งหมดของทุกบริษัท และมีแผงเดียวกันแสดงเฉพาะบริษัทที่กำลังดูอยู่ที่ด้านล่างของหน้านั้นด้วย',
+    callout_warn_title: "ใช้ข้อมูล ณ เวลาที่ยื่นจริงเท่านั้น",
+    callout_warn_body: "ทุกสถานะที่แสดงมาจากข้อมูล SEC ที่ยื่นจริง ณ วันที่วิเคราะห์เท่านั้น — ไม่เคยใช้ข้อมูลที่ยังไม่เปิดเผยต่อสาธารณะ การค้นเว็บแบบ live (ที่ Agent ใช้แค่เพื่อบริบทประกอบเท่านั้น) จะไม่มีวันถูกใช้ตัดสินสถานะ ด้วยเหตุผลเดียวกัน",
+    callout_info_title: "สิ่งที่ยังทำไม่ได้",
+    callout_info_body: "การกำหนดเหตุผลเองนอกเหนือจาก 3 ข้อที่มีอยู่ (metric ของเหตุผลต้องตรงกับชื่อ tag จริงใน SEC XBRL) และมุมมองระดับพอร์ตรวมทุกบริษัทที่ถือ",
+    loading: "กำลังโหลด...",
+    personalizing: "กำลังปรับให้เหมาะสม...",
+    thinking: "กำลังคิด...",
+    name_required: "กรุณากรอกชื่อ",
+    no_profile_selected: "ยังไม่ได้เลือกโปรไฟล์ — สร้างโปรไฟล์ก่อน",
+    escalated_prefix: "Agent ส่งต่อให้มนุษย์ตรวจสอบ: ",
+    request_failed: "คำขอล้มเหลว: ",
+    th_ticker: "หุ้น", th_reason: "เหตุผล", th_status: "สถานะ", th_conf: "ความมั่นใจ",
+    th_profile: "โปรไฟล์", th_tier: "ระดับ (rule/llm)", th_when: "เวลา",
+    agent_only: "(Agent เท่านั้น)",
+    hist_empty_ticker: 'ยังไม่มีประวัติของบริษัทนี้ — ลองกด "ให้ AI Agent ตรวจสอบ" หรือ "ปรับให้เหมาะสม" ด้านบนก่อน',
+    hist_empty_global: "ยังไม่มีประวัติการรันเลยสักบริษัทเดียว",
+    confidence_label: "ความมั่นใจ",
+    human_review_label: "ต้องให้คนตรวจสอบ:",
+    yes: "ใช่", no: "ไม่",
+    usage_label: "การใช้งาน:", input_tokens: "โทเคนขาเข้า", output_tokens: "โทเคนขาออก",
+    tool_calls_label: "เครื่องมือที่เรียกใช้:",
+    no_tool_calls: "ไม่มีการเรียกเครื่องมือเพิ่มเติม — ทุกเหตุผลดูชัดเจนอยู่แล้ว",
+    priority_for: "ความสำคัญสำหรับ", rule_based_label: "แบบ rule-based:",
+    changed_since: "เปลี่ยนแปลงตั้งแต่รอบก่อน:", as_of_label: "ณ วันที่",
+    show_evidence: "ดูหลักฐาน", conflict_label: "ขัดแย้ง:",
+    status_Supported: "เป็นจริง", status_Weakened: "อ่อนแอลง",
+    status_Broken: "ผิดเงื่อนไข", "status_Not enough data": "ข้อมูลไม่พอ",
+    reason_revenue_growth: "การเติบโตของรายได้", reason_operating_margin: "อัตรากำไรจากการดำเนินงาน",
+    reason_debt_growth: "การเติบโตของหนี้",
+    desc_R1: "รายได้ต้องเติบโตมากกว่า 10% เทียบปีก่อนหน้า (YoY)",
+    desc_R2: "อัตรากำไรจากการดำเนินงานต้องอยู่ที่ 20% หรือสูงกว่า",
+    desc_R3: "หนี้ระยะยาวต้องไม่เติบโตเกิน 15% เทียบปีก่อนหน้า (YoY)",
+  },
+};
+let currentLang = localStorage.getItem('reason_tracker_lang') || 'en';
+
+function t(key) {
+  return (I18N[currentLang] && I18N[currentLang][key]) ?? (I18N.en[key] ?? key);
+}
+
+function applyStaticI18n() {
+  document.documentElement.lang = currentLang;
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
+  document.getElementById('lang-btn-en').classList.toggle('active', currentLang === 'en');
+  document.getElementById('lang-btn-th').classList.toggle('active', currentLang === 'th');
+}
+
+// Cache of the last real API results so switching language re-renders
+// without re-fetching -- agent/personalize calls cost real money, a
+// language switch must never trigger them again.
+let lastReportData = null, lastAgentResult = null, lastPersonalizeResult = null;
+let lastHistoryTicker = null, lastGlobalHistoryLoaded = false;
+
+function setLang(lang) {
+  if (lang === currentLang) return;
+  currentLang = lang;
+  localStorage.setItem('reason_tracker_lang', lang);
+  applyStaticI18n();
+  if (lastReportData) renderReport(lastReportData);
+  if (lastAgentResult) renderAgentResult(lastAgentResult);
+  if (lastPersonalizeResult) renderPersonalizeResult(lastPersonalizeResult);
+  if (lastHistoryTicker) loadHistory(lastHistoryTicker);
+  if (lastGlobalHistoryLoaded) loadGlobalHistory();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('scrim').classList.toggle('show');
+}
+
+function filterTickers() {
+  const q = document.getElementById('ticker-search').value.trim().toUpperCase();
+  document.querySelectorAll('.ticker-btn').forEach(b => {
+    b.style.display = b.dataset.ticker.includes(q) ? '' : 'none';
+  });
+}
+
+function statusClass(status) { return 'status-' + status.replace(/ /g, '_'); }
+function histStatusStyle(status) {
+  const map = {
+    Supported: 'background:var(--green-wash); color:var(--green);',
+    Weakened: 'background:var(--yellow-wash); color:var(--yellow);',
+    Broken: 'background:var(--red-wash); color:var(--red);',
+    'Not enough data': 'background:var(--gray-wash); color:var(--gray);',
+  };
+  return map[status] || 'background:var(--gray-wash); color:var(--gray);';
+}
+
+async function loadProfiles(selectName) {
+  const res = await fetch('/api/profiles');
+  const profiles = await res.json();
+  const sel = document.getElementById('profile-select');
+  sel.innerHTML = profiles.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
+  if (selectName) sel.value = selectName;
+}
+
+function toggleNewProfile() {
+  document.getElementById('new-profile-form').classList.toggle('open');
+}
+
+async function saveProfile() {
+  const body = {
+    name: document.getElementById('np-name').value.trim(),
+    risk_tolerance: document.getElementById('np-risk').value,
+    investment_horizon: document.getElementById('np-horizon').value,
+    position_size_pct: parseFloat(document.getElementById('np-position').value),
+    objective: document.getElementById('np-objective').value,
+  };
+  const errorEl = document.getElementById('profile-error');
+  errorEl.textContent = '';
+  if (!body.name) { errorEl.textContent = t('name_required'); return; }
+
+  const res = await fetch('/api/profiles', {
+    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (data.error) { errorEl.textContent = data.error; return; }
+  await loadProfiles(body.name);
+  document.getElementById('new-profile-form').classList.remove('open');
+  document.getElementById('np-name').value = '';
+}
+
+async function personalize() {
+  if (!currentTicker) return;
+  const profileName = document.getElementById('profile-select').value;
+  if (!profileName) { document.getElementById('profile-error').textContent = t('no_profile_selected'); return; }
+
+  const btn = document.getElementById('personalize-btn');
+  const resultEl = document.getElementById('personalize-result');
+  const errorEl = document.getElementById('profile-error');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner"></span>${t('personalizing')}`;
+  resultEl.innerHTML = '';
+  errorEl.textContent = '';
+
+  try {
+    const res = await fetch(`/api/personalize/${currentTicker}?profile=${encodeURIComponent(profileName)}`);
+    const data = await res.json();
+    if (data.error) {
+      errorEl.textContent = data.error;
+    } else if (data.escalated) {
+      errorEl.textContent = t('escalated_prefix') + data.escalation_reason;
+    } else {
+      lastPersonalizeResult = data;
+      renderPersonalizeResult(data);
+      lastHistoryTicker = currentTicker;
+      loadHistory(currentTicker);
+    }
+  } catch (e) {
+    errorEl.textContent = t('request_failed') + e;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = t('btn_personalize');
+  }
+}
+
+function reasonLabel(reasonKey) {
+  return t('reason_' + reasonKey) !== 'reason_' + reasonKey ? t('reason_' + reasonKey) : reasonKey.replace(/_/g, ' ');
+}
+function statusLabel(status) {
+  const key = 'status_' + status;
+  return I18N[currentLang][key] !== undefined ? I18N[currentLang][key] : status;
+}
+
+function renderPersonalizeResult(data) {
+  const el = document.getElementById('personalize-result');
+  el.innerHTML = data.reasons.map(r => `
+    <div class="agent-reason-line">
+      <b>${reasonLabel(r.reason_key)}</b>: ${statusLabel(r.status)} &mdash;
+      ${t('priority_for')} <i>${data.profile}</i>:
+      <span class="tier-${r.llm_tier.replace(/ /g, '_')}">${r.llm_tier}</span>
+      <span style="color:var(--text-faint); font-size:12px;">(${t('rule_based_label')} ${r.rule_based_tier})</span>
+      <div class="reason-explanation">${r.llm_rationale}</div>
+    </div>
+  `).join('');
+}
+
+function renderStatStrip(reasons) {
+  const counts = { Supported: 0, Weakened: 0, Broken: 0, 'Not enough data': 0 };
+  reasons.forEach(r => { if (counts[r.status] !== undefined) counts[r.status]++; });
+  const dotClass = { Supported: 'g', Weakened: 'y', Broken: 'r', 'Not enough data': 'n' };
+  const el = document.getElementById('stat-strip');
+  el.innerHTML = Object.entries(counts).filter(([, n]) => n > 0).map(([status, n]) => `
+    <div class="stat-chip"><span class="stat-dot ${dotClass[status]}"></span><span class="n">${n}</span> ${statusLabel(status)}</div>
+  `).join('');
+}
+
+async function selectTicker(ticker) {
+  currentTicker = ticker;
+  showingGlobalHistory = false;
+  showingManual = false;
+  lastReportData = null; lastAgentResult = null; lastPersonalizeResult = null;
+  document.getElementById('history-nav-toggle').classList.remove('active');
+  document.getElementById('manual-nav-toggle').classList.remove('active');
+  document.getElementById('global-history').style.display = 'none';
+  document.getElementById('manual-view').style.display = 'none';
+  document.getElementById('content').style.display = 'block';
+  document.querySelectorAll('.ticker-btn').forEach(b => b.classList.toggle('active', b.dataset.ticker === ticker));
+  document.getElementById('placeholder').style.display = 'none';
+  document.getElementById('agent-result').innerHTML = '';
+  document.getElementById('agent-error').innerHTML = '';
+  document.getElementById('personalize-result').innerHTML = '';
+  document.getElementById('profile-error').textContent = '';
+  document.getElementById('reasons').innerHTML = `<div class="subtitle">${t('loading')}</div>`;
+  if (window.innerWidth <= 720) toggleSidebar();
+  if (!document.getElementById('profile-select').options.length) await loadProfiles();
+
+  const res = await fetch(`/api/report/${ticker}`);
+  const data = await res.json();
+  if (data.error) {
+    document.getElementById('reasons').innerHTML = `<div id="agent-error">${data.error}</div>`;
+    return;
+  }
+  lastReportData = data;
+  renderReport(data);
+  lastHistoryTicker = ticker;
+  loadHistory(ticker);
+}
+
+function renderReport(data) {
+  document.getElementById('company-name').textContent = data.company;
+  document.getElementById('company-ticker').textContent = data.ticker;
+  renderStatStrip(data.reasons);
+
+  const el = document.getElementById('reasons');
+  el.innerHTML = '';
+  data.reasons.forEach((r, i) => {
+    const value = r.computed_value !== null ? (r.computed_value * 100).toFixed(1) + '%' : '';
+    const description = t('desc_' + r.key) !== 'desc_' + r.key ? t('desc_' + r.key) : r.description;
+    const changedHtml = r.changed
+      ? `<div class="reason-changed">${t('changed_since')} ${statusLabel(r.previous_status)} &rarr; ${statusLabel(r.status)} (${t('as_of_label')} ${r.previous_as_of} &rarr; ${r.as_of})</div>`
+      : '';
+    const evidenceId = `evidence-${i}`;
+    const allEvidence = (r.evidence || []).map(e => `<li>${e}</li>`).join('');
+    const conflictEvidence = (r.conflicting_evidence || []).map(e => `<li class="conflict-item">${t('conflict_label')} ${e}</li>`).join('');
+    const hasEvidence = (r.evidence && r.evidence.length) || (r.conflicting_evidence && r.conflicting_evidence.length);
+
+    const card = document.createElement('div');
+    card.className = 'reason-card';
+    card.innerHTML = `
+      <div class="reason-top">
+        <span class="reason-icon">${r.icon}</span>
+        <span class="reason-desc">${description}</span>
+        <span class="reason-value">${value}</span>
+        <span class="reason-status ${statusClass(r.status)}">${statusLabel(r.status)}</span>
+      </div>
+      <div class="reason-explanation">${r.explanation}</div>
+      ${changedHtml}
+      ${hasEvidence ? `<div class="evidence-toggle" onclick="toggleEvidence('${evidenceId}')">${t('show_evidence')} &darr;</div>
+      <ul class="evidence-list" id="${evidenceId}">${allEvidence}${conflictEvidence}</ul>` : ''}
+    `;
+    el.appendChild(card);
+  });
+}
+
+function toggleEvidence(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+async function askAgent() {
+  if (!currentTicker) return;
+  const btn = document.getElementById('ask-agent-btn');
+  const resultEl = document.getElementById('agent-result');
+  const errorEl = document.getElementById('agent-error');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner"></span>${t('thinking')}`;
+  resultEl.innerHTML = '';
+  errorEl.innerHTML = '';
+
+  try {
+    const res = await fetch(`/api/ask-agent/${currentTicker}`);
+    const data = await res.json();
+    if (data.error) {
+      errorEl.textContent = data.error;
+    } else {
+      lastAgentResult = data;
+      renderAgentResult(data);
+    }
+  } catch (e) {
+    errorEl.textContent = t('request_failed') + e;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = t('btn_ask_agent');
+  }
+}
+
+function renderAgentResult(data) {
+  const el = document.getElementById('agent-result');
+  const traceHtml = data.trace.length
+    ? `<div class="trace-line">${t('tool_calls_label')} ${data.trace.join(' &middot; ')}</div>`
+    : `<div class="trace-line">${t('no_tool_calls')}</div>`;
+
+  const reasonsHtml = data.reasons.map(r => `
+    <div class="agent-reason-line">
+      <b>${reasonLabel(r.reason_key)}</b>: ${statusLabel(r.status)}
+      ${r.confidence ? `<span style="color:var(--text-faint); font-size:12px;">(${t('confidence_label')}: ${r.confidence})</span>` : ''} &mdash;
+      ${t('human_review_label')} <span class="${r.human_review_recommended ? 'review-yes' : 'review-no'}">${r.human_review_recommended ? t('yes') : t('no')}</span>
+      <div class="reason-explanation">${r.rationale}</div>
+    </div>
+  `).join('');
+
+  el.innerHTML = traceHtml + reasonsHtml +
+    `<div class="reason-explanation" style="margin-top:10px;">${t('usage_label')} ${data.usage.input_tokens} ${t('input_tokens')} / ${data.usage.output_tokens} ${t('output_tokens')}</div>`;
+}
+
+/* ---------- History ---------- */
+function renderHistoryTable(rows, targetEl, emptyMsg) {
+  if (!rows.length) {
+    targetEl.innerHTML = `<div id="history-empty">${emptyMsg}</div>`;
+    return;
+  }
+  const body = rows.map(r => `
+    <tr>
+      <td class="tk">${r.ticker}</td>
+      <td class="rk">${r.reason_key ? reasonLabel(r.reason_key) : '-'}</td>
+      <td><span class="hist-status" style="${histStatusStyle(r.status)}">${r.status ? statusLabel(r.status) : (r.escalated ? 'escalated' : '-')}</span></td>
+      <td>${r.confidence || '-'}</td>
+      <td>${r.profile_name || `<span style="color:var(--text-faint);">${t('agent_only')}</span>`}</td>
+      <td>${r.rule_based_tier ? `${r.rule_based_tier} / ${r.llm_tier}` : '-'}</td>
+      <td class="mono" style="font-size:11px;">${(r.created_at || '').replace('T', ' ').slice(0, 19)}</td>
+    </tr>
+  `).join('');
+  targetEl.innerHTML = `
+    <div class="history-table-wrap">
+      <table class="history">
+        <thead><tr><th>${t('th_ticker')}</th><th>${t('th_reason')}</th><th>${t('th_status')}</th><th>${t('th_conf')}</th><th>${t('th_profile')}</th><th>${t('th_tier')}</th><th>${t('th_when')}</th></tr></thead>
+        <tbody>${body}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+async function loadHistory(ticker) {
+  const res = await fetch(`/api/runs?ticker=${ticker}&limit=20`);
+  const rows = await res.json();
+  renderHistoryTable(rows, document.getElementById('history-content'), t('hist_empty_ticker'));
+}
+
+async function loadGlobalHistory() {
+  lastGlobalHistoryLoaded = true;
+  const res = await fetch('/api/runs?limit=50');
+  const rows = await res.json();
+  renderHistoryTable(rows, document.getElementById('global-history-content'), t('hist_empty_global'));
+}
+
+function toggleHistoryFromSidebar() {
+  showingGlobalHistory = !showingGlobalHistory;
+  showingManual = false;
+  document.getElementById('history-nav-toggle').classList.toggle('active', showingGlobalHistory);
+  document.getElementById('manual-nav-toggle').classList.remove('active');
+  document.getElementById('manual-view').style.display = 'none';
+  if (showingGlobalHistory) {
+    document.getElementById('placeholder').style.display = 'none';
+    document.getElementById('content').style.display = 'none';
+    document.getElementById('global-history').style.display = 'block';
+    document.querySelectorAll('.ticker-btn').forEach(b => b.classList.remove('active'));
+    loadGlobalHistory();
+  } else {
+    document.getElementById('global-history').style.display = 'none';
+    showDefaultView();
+  }
+  if (window.innerWidth <= 720) toggleSidebar();
+}
+
+function toggleManualFromSidebar() {
+  showingManual = !showingManual;
+  showingGlobalHistory = false;
+  document.getElementById('manual-nav-toggle').classList.toggle('active', showingManual);
+  document.getElementById('history-nav-toggle').classList.remove('active');
+  document.getElementById('global-history').style.display = 'none';
+  if (showingManual) {
+    document.getElementById('placeholder').style.display = 'none';
+    document.getElementById('content').style.display = 'none';
+    document.getElementById('manual-view').style.display = 'block';
+    document.querySelectorAll('.ticker-btn').forEach(b => b.classList.remove('active'));
+  } else {
+    document.getElementById('manual-view').style.display = 'none';
+    showDefaultView();
+  }
+  if (window.innerWidth <= 720) toggleSidebar();
+}
+
+function showDefaultView() {
+  if (currentTicker) {
+    document.getElementById('content').style.display = 'block';
+  } else {
+    document.getElementById('placeholder').style.display = 'block';
+  }
+}
+
+applyStaticI18n();
+</script>
+
+</body>
+</html>

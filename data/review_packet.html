@@ -1,0 +1,510 @@
+<title>Filing Verification Sample</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #EEF1EF;
+  --surface: #FFFFFF;
+  --surface-2: #F5F7F5;
+  --ink: #1B2430;
+  --ink-soft: #55606B;
+  --ink-faint: #8891998C;
+  --border: #DCE1DD;
+  --accent: #2F6F62;
+  --accent-soft: #E4EEEA;
+  --mono-bg: #F3F6F3;
+  --status-supported: #2F8F5B;
+  --status-supported-bg: #E4F3EA;
+  --status-weakened: #A5761E;
+  --status-weakened-bg: #F6EDDC;
+  --status-broken: #B23A2E;
+  --status-broken-bg: #F7E4E1;
+  --status-missing: #5D6773;
+  --status-missing-bg: #E7E9EB;
+  --status-structural: #524CA3;
+  --status-structural-bg: #E9E7F5;
+  --shadow: 0 1px 2px rgba(27,36,48,0.04), 0 4px 14px rgba(27,36,48,0.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161A;
+    --surface: #181E24;
+    --surface-2: #1E252B;
+    --ink: #E7EAEA;
+    --ink-soft: #A6ADB4;
+    --ink-faint: #6B747C;
+    --border: #2A323A;
+    --accent: #5CB09C;
+    --accent-soft: #1E2E2A;
+    --mono-bg: #14191E;
+    --status-supported: #4CAF7D;
+    --status-supported-bg: #1B2E24;
+    --status-weakened: #D6A544;
+    --status-weakened-bg: #332A18;
+    --status-broken: #E0756B;
+    --status-broken-bg: #33201E;
+    --status-missing: #99A2AB;
+    --status-missing-bg: #23282D;
+    --status-structural: #9C98DE;
+    --status-structural-bg: #24213A;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 4px 14px rgba(0,0,0,0.35);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161A;
+  --surface: #181E24;
+  --surface-2: #1E252B;
+  --ink: #E7EAEA;
+  --ink-soft: #A6ADB4;
+  --ink-faint: #6B747C;
+  --border: #2A323A;
+  --accent: #5CB09C;
+  --accent-soft: #1E2E2A;
+  --mono-bg: #14191E;
+  --status-supported: #4CAF7D;
+  --status-supported-bg: #1B2E24;
+  --status-weakened: #D6A544;
+  --status-weakened-bg: #332A18;
+  --status-broken: #E0756B;
+  --status-broken-bg: #33201E;
+  --status-missing: #99A2AB;
+  --status-missing-bg: #23282D;
+  --status-structural: #9C98DE;
+  --status-structural-bg: #24213A;
+  --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 4px 14px rgba(0,0,0,0.35);
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "IBM Plex Sans", -apple-system, sans-serif;
+  margin: 0;
+  line-height: 1.55;
+}
+.wrap { display: flex; max-width: 1180px; margin: 0 auto; }
+
+nav {
+  width: 240px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 32px 18px 32px 28px;
+  border-right: 1px solid var(--border);
+}
+nav .progress {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: 18px;
+  font-variant-numeric: tabular-nums;
+}
+nav .progress-bar {
+  height: 4px;
+  background: var(--surface-2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+nav .progress-fill {
+  height: 100%;
+  background: var(--accent);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+nav a {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-size: 13.5px;
+  padding: 6px 0;
+  border-bottom: 1px solid transparent;
+}
+nav a:hover { color: var(--ink); }
+nav a span.count {
+  font-family: "IBM Plex Mono", monospace;
+  color: var(--ink-faint);
+  font-size: 12px;
+}
+
+main { flex: 1; min-width: 0; padding: 48px 40px 80px; }
+
+header.masthead { margin-bottom: 40px; max-width: 640px; }
+header.masthead .eyebrow {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+header.masthead h1 {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: 34px;
+  font-weight: 600;
+  margin: 0 0 14px;
+  text-wrap: balance;
+}
+header.masthead p {
+  color: var(--ink-soft);
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+header.masthead .method {
+  margin-top: 20px;
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 13.5px;
+  color: var(--ink-soft);
+}
+header.masthead .method b { color: var(--ink); }
+
+section.category { margin-bottom: 44px; scroll-margin-top: 24px; }
+section.category h2 {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: 21px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+section.category h2 .n {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink-faint);
+}
+section.category .cat-desc {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  margin: 0 0 18px;
+  max-width: 62ch;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--stripe, var(--accent));
+  border-radius: 10px;
+  padding: 20px 22px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+}
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.card h3 {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0 0 2px;
+}
+.card .claim {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  margin: 0 0 10px;
+}
+.pill {
+  display: inline-block;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+  background: var(--pill-bg, var(--accent-soft));
+  color: var(--pill-fg, var(--accent));
+}
+.stats {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  font-size: 13.5px;
+  margin: 12px 0;
+  font-variant-numeric: tabular-nums;
+}
+.stats .stat b {
+  display: block;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 14px;
+  color: var(--ink);
+}
+.stats .stat span { color: var(--ink-faint); font-size: 12px; }
+
+blockquote {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  background: var(--mono-bg);
+  border-left: 3px solid var(--border);
+  margin: 12px 0;
+  padding: 10px 14px;
+  border-radius: 0 6px 6px 0;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+.note-text {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  margin: 10px 0;
+}
+.note-text b { color: var(--ink); }
+
+.card-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+  flex-wrap: wrap;
+}
+.filing-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.filing-link:hover { text-decoration: underline; }
+
+.review {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.review label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.review input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.review input[type="text"] {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 13px;
+  padding: 5px 9px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--ink);
+  width: 220px;
+}
+.review input[type="text"]:focus, .review input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.card.is-reviewed { opacity: 0.62; }
+
+@media (max-width: 860px) {
+  .wrap { flex-direction: column; }
+  nav { position: static; height: auto; width: auto; border-right: none; border-bottom: 1px solid var(--border); }
+  main { padding: 32px 20px 60px; }
+}
+</style>
+
+<div class="wrap">
+  <nav>
+    <div class="progress">
+      <span id="progress-label">0 / 0 reviewed</span>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+    <div id="nav-links"></div>
+  </nav>
+  <main>
+    <header class="masthead">
+      <div class="eyebrow">Financial Reason-Tracking Prototype &middot; Verification Sample</div>
+      <h1>Filing Verification Sample</h1>
+      <p>30 cases pulled from the pipeline's own extraction, stratified across every status
+      and failure mode it produces. Each case links to the actual SEC filing &mdash;
+      open it and check the claim yourself.</p>
+      <div class="method"><b>What this is:</b> every quoted excerpt and value below came from
+      an AI-assisted pass (Claude reading primary filing text and citing itself) &mdash;
+      not independent human labeling. Checking the box only records that <i>you</i> looked
+      at the filing and agree; it's stored in this browser only.</div>
+    </header>
+    <div id="categories"></div>
+  </main>
+</div>
+
+<script id="review-data" type="application/json">[{"ticker": "AAPL", "company": "Apple Inc.", "reason_key": "revenue_growth", "as_of_used": null, "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000320193-26-000020", "primary_document": "aapl-20260627.htm", "xbrl_pipeline_value": 109417000000.0, "agrees_with_xbrl": true, "quoted_text": "e 28, 2025 June 27, 2026 June 28, 2025 Net sales: Products $ 78,678 $ 66,613 $ 272,629 $ 233,287 Services 30,739 27,423 91,728 80,408 Total net sales 109,417 94,036 364,357 313,695 Cost of sales: Products 47,153 43,620 163,810 147,097 Services 7,494 6,698 21,765 19,738 Total cost of sales 54,647 50,", "live_status": "Supported", "live_computed_value": 0.1635650176528138, "review_category": "Supported", "filing_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/0000320193-26-000020-index.htm"}, {"ticker": "AAPL", "company": "Apple Inc.", "reason_key": "revenue_growth", "as_of_used": "2026-05-01", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000320193-26-000013", "primary_document": "aapl-20260328.htm", "xbrl_pipeline_value": 111184000000.0, "agrees_with_xbrl": true, "quoted_text": "29, 2025 March 28, 2026 March 29, 2025 Net sales: Products $ 80,208 $ 68,714 $ 193,951 $ 166,674 Services 30,976 26,645 60,989 52,985 Total net sales 111,184 95,359 254,940 219,659 Cost of sales: Products 49,179 44,030 116,657 103,477 Services 7,224 6,462 14,271 13,040 Total cost of sales 56,403 50,", "live_status": "Supported", "live_computed_value": 0.16595182415922985, "review_category": "Supported", "filing_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/0000320193-26-000013-index.htm"}, {"ticker": "AMZN", "company": "AMAZON COM INC", "reason_key": "revenue_growth", "as_of_used": null, "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001018724-26-000026", "primary_document": "amzn-20260630.htm", "xbrl_pipeline_value": 200606000000.0, "agrees_with_xbrl": true, "quoted_text": "2025 2026 2025 2026 Net product sales $ 68,246 $ 77,602 $ 132,216 $ 148,906 Net service sales 99,456 123,004 191,153 233,219 Total net sales 167,702 200,606 323,369 382,125 Operating expenses: Cost of sales 80,809 95,778 157,785 183,241 Fulfillment 25,976 29,633 50,569 56,922 Technology and infrast", "live_status": "Supported", "live_computed_value": 0.19620517346245125, "review_category": "Supported", "filing_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/0001018724-26-000026-index.htm"}, {"ticker": "AMZN", "company": "AMAZON COM INC", "reason_key": "revenue_growth", "as_of_used": "2026-04-30", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001018724-26-000014", "primary_document": "amzn-20260331.htm", "xbrl_pipeline_value": 181519000000.0, "agrees_with_xbrl": true, "quoted_text": "data) (unaudited) Three Months Ended March 31, 2025 2026 Net product sales $ 63,970 $ 71,304 Net service sales 91,697 110,215 Total net sales 155,667 181,519 Operating expenses: Cost of sales 76,976 87,463 Fulfillment 24,593 27,289 Technology and infrastructure 22,994 29,567 Sales and marketing 9,76", "live_status": "Supported", "live_computed_value": 0.16607244952366268, "review_category": "Supported", "filing_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/0001018724-26-000014-index.htm"}, {"ticker": "COST", "company": "COSTCO WHOLESALE CORP /NEW", "reason_key": "debt_growth", "as_of_used": null, "metric": "LongTermDebt", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000909832-26-000051", "primary_document": "cost-20260510.htm", "xbrl_pipeline_value": 5670000000.0, "agrees_with_xbrl": true, "quoted_text": "3,157 2,854 Other current liabilities 8,439 6,589 Total current liabilities 42,125 37,108 OTHER LIABILITIES Long-term debt, excluding current portion 5,670 5,713 Long-term operating lease liabilities 2,466 2,460 Other long-term liabilities 2,660 2,654 TOTAL LIABILITIES 52,921 47,935 COMMITMENTS AND", "live_status": "Supported", "live_computed_value": -0.008221094979884555, "review_category": "Supported", "filing_url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000051/0000909832-26-000051-index.htm"}, {"ticker": "COST", "company": "COSTCO WHOLESALE CORP /NEW", "reason_key": "debt_growth", "as_of_used": "2026-03-11", "metric": "LongTermDebt", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000909832-26-000029", "primary_document": "cost-20260215.htm", "xbrl_pipeline_value": 5688000000.0, "agrees_with_xbrl": true, "quoted_text": "3,126 2,854 Other current liabilities 8,522 6,589 Total current liabilities 40,763 37,108 OTHER LIABILITIES Long-term debt, excluding current portion 5,688 5,713 Long-term operating lease liabilities 2,477 2,460 Other long-term liabilities 2,624 2,654 TOTAL LIABILITIES 51,552 47,935 COMMITMENTS AND", "live_status": "Supported", "live_computed_value": -0.011642050390964378, "review_category": "Supported", "filing_url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000029/0000909832-26-000029-index.htm"}, {"ticker": "GOOGL", "company": "Alphabet Inc.", "reason_key": "revenue_growth", "as_of_used": null, "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001652044-26-000071", "primary_document": "goog-20260630.htm", "xbrl_pipeline_value": 119796000000.0, "agrees_with_xbrl": true, "quoted_text": "7 184,177 Google Cloud 13,624 24,768 25,884 44,796 Other Bets 373 382 823 793 Hedging gains (losses) ( 112 ) 106 148 ( 74 ) Total revenues $ 96,428 $ 119,796 $ 186,662 $ 229,692 13 Table of Contents Alphabet Inc. The following table presents revenues disaggregated by geography, based on the addresse", "live_status": "Supported", "live_computed_value": 0.2423362508814867, "review_category": "Supported", "filing_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/0001652044-26-000071-index.htm"}, {"ticker": "GOOGL", "company": "Alphabet Inc.", "reason_key": "revenue_growth", "as_of_used": "2026-04-30", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001652044-26-000048", "primary_document": "goog-20260331.htm", "xbrl_pipeline_value": 109896000000.0, "agrees_with_xbrl": true, "quoted_text": "12,384 Google Services total 77,264 89,637 Google Cloud 12,260 20,028 Other Bets 450 411 Hedging gains (losses) 260 ( 180 ) Total revenues $ 90,234 $ 109,896 The following table presents revenues disaggregated by geography, based on the addresses of our customers (in millions): Three Months Ended Ma", "live_status": "Supported", "live_computed_value": 0.21790012633818737, "review_category": "Supported", "filing_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/0001652044-26-000048-index.htm"}, {"ticker": "JNJ", "company": "Johnson & Johnson", "reason_key": "operating_margin", "as_of_used": "2014-10-30", "metric": "OperatingIncome", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000200406-14-000097", "primary_document": "a3q10q9-28x14.htm", "xbrl_pipeline_value": 7053000000.0, "agrees_with_xbrl": true, "quoted_text": "e Consumer (1) $ 407 467 (12.8 )% Pharmaceutical (2) 3,247 2,449 32.6 Medical Devices &amp; Diagnostics (3) 3,399 956 255.5 Segments operating profit 7,053 3,872 82.2 Less: Expense not allocated to segments (4) 243 205 Worldwide income before taxes $ 6,810 3,667 85.7 % Fiscal Nine Months Ended (Doll", "live_status": "Supported", "live_computed_value": 0.38192451399794225, "review_category": "Supported", "filing_url": "https://www.sec.gov/Archives/edgar/data/200406/000020040614000097/0000200406-14-000097-index.htm"}, {"ticker": "JNJ", "company": "Johnson & Johnson", "reason_key": "operating_margin", "as_of_used": "2014-08-01", "metric": "OperatingIncome", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000200406-14-000089", "primary_document": "a2q10q6-29x14.htm", "xbrl_pipeline_value": 5875000000.0, "agrees_with_xbrl": true, "quoted_text": "ge Consumer (1) $ 703 511 37.6 % Pharmaceutical (2) 3,469 2,992 15.9 Medical Devices &amp; Diagnostics (3) 1,703 1,517 12.3 Segments operating profit 5,875 5,020 17.0 Less: Expense not allocated to segments (4) 249 227 Worldwide income before taxes $ 5,626 4,793 17.4 % Fiscal Six Months Ended (Dolla", "live_status": "Supported", "live_computed_value": 0.3013593229033085, "review_category": "Supported", "filing_url": "https://www.sec.gov/Archives/edgar/data/200406/000020040614000089/0000200406-14-000089-index.htm"}, {"ticker": "KO", "company": "COCA COLA CO", "reason_key": "revenue_growth", "as_of_used": null, "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001628280-26-028802", "primary_document": "ko-20260403.htm", "xbrl_pipeline_value": 12472000000.0, "agrees_with_xbrl": true, "quoted_text": "IARIES CONSOLIDATED STATEMENTS OF INCOME (In millions except per share data) Three Months Ended April 3, 2026 March 28, 2025 Net Operating Revenues $ 12,472 $ 11,129 Cost of goods sold 4,620 4,163 Gross Profit 7,852 6,966 Selling, general and administrative expenses 3,472 3,234 Other operating charg", "live_status": "Supported", "live_computed_value": 0.12067571210351334, "review_category": "Supported", "filing_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026028802/0001628280-26-028802-index.htm"}, {"ticker": "KO", "company": "COCA COLA CO", "reason_key": "operating_margin", "as_of_used": null, "metric": "OperatingIncome", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001628280-26-028802", "primary_document": "ko-20260403.htm", "xbrl_pipeline_value": 4359000000.0, "agrees_with_xbrl": true, "quoted_text": "g charges &#8212; &#8212; 4 &#8212; &#8212; 4 17 &#8212; 21 Operating income (loss) $ 1,259 $ 1,038 $ 1,606 $ 536 $ 191 $ 4,630 $ ( 271 ) $ &#8212; $ 4,359 Interest income 222 Interest expense 375 Equity income (loss) &#8212; net 384 Other income (loss) &#8212; net 21 Income before income taxes $ 4,", "live_status": "Supported", "live_computed_value": 0.3495028864656831, "review_category": "Supported", "filing_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026028802/0001628280-26-028802-index.htm"}, {"ticker": "META", "company": "Meta Platforms, Inc.", "reason_key": "revenue_growth", "as_of_used": null, "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001628280-26-050705", "primary_document": "meta-20260630.htm", "xbrl_pipeline_value": 60801000000.0, "agrees_with_xbrl": true, "quoted_text": "6,563 $ 114,387 $ 87,955 Other revenue 1,007 583 1,891 1,093 Family of Apps 60,370 47,146 116,278 89,048 Reality Labs 431 370 833 782 Total revenue $ 60,801 $ 47,516 $ 117,111 $ 89,830 Revenue disaggregated by geography, based on the addresses of our customers, consists of the following (in millions", "live_status": "Supported", "live_computed_value": 0.2795900328310464, "review_category": "Supported", "filing_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/0001628280-26-050705-index.htm"}, {"ticker": "META", "company": "Meta Platforms, Inc.", "reason_key": "revenue_growth", "as_of_used": "2026-04-30", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001628280-26-028526", "primary_document": "meta-20260331.htm", "xbrl_pipeline_value": 56311000000.0, "agrees_with_xbrl": true, "quoted_text": "onths Ended March 31, 2026 2025 Advertising $ 55,024 $ 41,392 Other revenue 885 510 Family of Apps 55,909 41,902 Reality Labs 402 412 Total revenue $ 56,311 $ 42,314 Revenue disaggregated by geography, based on the addresses of our customers, consists of the following (in millions): Three Months End", "live_status": "Supported", "live_computed_value": 0.33078886420570025, "review_category": "Supported", "filing_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/0001628280-26-028526-index.htm"}, {"ticker": "MSFT", "company": "MICROSOFT CORPORATION", "reason_key": "revenue_growth", "as_of_used": null, "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001193125-26-191507", "primary_document": "msft-20260331.htm", "xbrl_pipeline_value": 82886000000.0, "agrees_with_xbrl": true, "quoted_text": "nded March 31, 2026 2025 2026 2025 Revenue: Product $ 15,089 $ 15,319 $ 47,462 $ 46,810 Service and other 67,797 54,747 194,370 158,473 Total revenue 82,886 70,066 241,832 205,283 Cost of revenue: Product 2,733 3,037 9,160 10,187 Service and other 24,095 18,882 67,689 53,630 Total cost of revenue 26", "live_status": "Supported", "live_computed_value": 0.1829703422487369, "review_category": "Supported", "filing_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/0001193125-26-191507-index.htm"}, {"ticker": "AAPL", "company": "Apple Inc.", "reason_key": "revenue_growth", "as_of_used": "2025-08-01", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000320193-25-000073", "primary_document": "aapl-20250628.htm", "xbrl_pipeline_value": 94036000000.0, "agrees_with_xbrl": true, "quoted_text": "e 29, 2024 June 28, 2025 June 29, 2024 Net sales: Products $ 66,613 $ 61,564 $ 233,287 $ 224,908 Services 27,423 24,213 80,408 71,197 Total net sales 94,036 85,777 313,695 296,105 Cost of sales: Products 43,620 39,803 147,097 140,667 Services 6,698 6,296 19,738 18,634 Total cost of sales 50,318 46,0", "live_status": "Weakened", "live_computed_value": 0.09628455180293086, "review_category": "Weakened", "filing_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/0000320193-25-000073-index.htm"}, {"ticker": "AAPL", "company": "Apple Inc.", "reason_key": "revenue_growth", "as_of_used": "2025-05-02", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000320193-25-000057", "primary_document": "aapl-20250329.htm", "xbrl_pipeline_value": 95359000000.0, "agrees_with_xbrl": true, "quoted_text": "30, 2024 March 29, 2025 March 30, 2024 Net sales: Products $ 68,714 $ 66,886 $ 166,674 $ 163,344 Services 26,645 23,867 52,985 46,984 Total net sales 95,359 90,753 219,659 210,328 Cost of sales: Products 44,030 42,424 103,477 100,864 Services 6,462 6,058 13,040 12,338 Total cost of sales 50,492 48,4", "live_status": "Weakened", "live_computed_value": 0.050753143146783024, "review_category": "Weakened", "filing_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000057/0000320193-25-000057-index.htm"}, {"ticker": "AMZN", "company": "AMAZON COM INC", "reason_key": "revenue_growth", "as_of_used": "2025-05-02", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001018724-25-000036", "primary_document": "amzn-20250331.htm", "xbrl_pipeline_value": 155667000000.0, "agrees_with_xbrl": true, "quoted_text": "data) (unaudited) Three Months Ended March 31, 2024 2025 Net product sales $ 60,915 $ 63,970 Net service sales 82,398 91,697 Total net sales 143,313 155,667 Operating expenses: Cost of sales 72,633 76,976 Fulfillment 22,317 24,593 Technology and infrastructure 20,424 22,994 Sales and marketing 9,66", "live_status": "Weakened", "live_computed_value": 0.08620292646166083, "review_category": "Weakened", "filing_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000036/0001018724-25-000036-index.htm"}, {"ticker": "AMZN", "company": "AMAZON COM INC", "reason_key": "operating_margin", "as_of_used": null, "metric": "OperatingIncome", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001018724-26-000026", "primary_document": "amzn-20260630.htm", "xbrl_pipeline_value": 27461000000.0, "agrees_with_xbrl": true, "quoted_text": "788 5,593 5,375 Other operating expense (income), net 199 90 507 537 Total operating expenses 148,531 173,145 285,793 330,812 Operating income 19,171 27,461 37,576 51,313 Interest income 1,085 1,295 2,151 2,430 Interest expense ( 516 ) ( 1,314 ) ( 1,057 ) ( 2,114 ) Other income (expense), net 1,117", "live_status": "Weakened", "live_computed_value": 0.1368902226254449, "review_category": "Weakened", "filing_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/0001018724-26-000026-index.htm"}, {"ticker": "JNJ", "company": "Johnson & Johnson", "reason_key": "debt_growth", "as_of_used": "2025-02-13", "metric": "LongTermDebt", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-K", "accession_number": "0000200406-25-000038", "primary_document": "jnj-20241229.htm", "xbrl_pipeline_value": 30651000000.0, "agrees_with_xbrl": true, "quoted_text": "employee related obligations 4,126 3,993 Accrued taxes on income (Note 8) 3,772 2,993 Total current liabilities 50,321 46,282 Long-term debt (Note 7) 30,651 25,881 Deferred taxes on income (Note 8) 2,448 3,193 Employee related obligations (Notes 9 and 10) 7,255 7,149 Long-term taxes payable (Note 1)", "live_status": "Weakened", "live_computed_value": 0.18430508867508982, "review_category": "Weakened", "filing_url": "https://www.sec.gov/Archives/edgar/data/200406/000020040625000038/0000200406-25-000038-index.htm"}, {"ticker": "JNJ", "company": "Johnson & Johnson", "reason_key": "debt_growth", "as_of_used": "2024-10-23", "metric": "LongTermDebt", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000200406-24-000096", "primary_document": "jnj-20240929.htm", "xbrl_pipeline_value": 31289000000.0, "agrees_with_xbrl": true, "quoted_text": "employee related obligations 3,620 3,993 Accrued taxes on income (Note 5) 4,834 2,993 Total current liabilities 51,759 46,282 Long-term debt (Note 4) 31,289 25,881 Deferred taxes on income (Note 5) 2,952 3,193 Employee related obligations (Note 6) 6,852 7,149 Long-term taxes payable (Note 5) 354 2,8", "live_status": "Weakened", "live_computed_value": 0.20106713753790642, "review_category": "Weakened", "filing_url": "https://www.sec.gov/Archives/edgar/data/200406/000020040624000096/0000200406-24-000096-index.htm"}, {"ticker": "KO", "company": "COCA COLA CO", "reason_key": "revenue_growth", "as_of_used": "2025-10-23", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001628280-25-046054", "primary_document": "ko-20250926.htm", "xbrl_pipeline_value": 12455000000.0, "agrees_with_xbrl": true, "quoted_text": "share data) Three Months Ended Nine Months Ended September 26, 2025 September 27, 2024 September 26, 2025 September 27, 2024 Net Operating Revenues $ 12,455 $ 11,854 $ 36,119 $ 35,517 Cost of goods sold 4,797 4,664 13,674 13,711 Gross Profit 7,658 7,190 22,445 21,806 Selling, general and administrat", "live_status": "Weakened", "live_computed_value": 0.050700185591361566, "review_category": "Weakened", "filing_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/0001628280-25-046054-index.htm"}, {"ticker": "KO", "company": "COCA COLA CO", "reason_key": "revenue_growth", "as_of_used": "2023-10-24", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000021344-23-000060", "primary_document": "ko-20230929.htm", "xbrl_pipeline_value": 11953000000.0, "agrees_with_xbrl": true, "quoted_text": "share data) Three Months Ended Nine Months Ended September 29, 2023 September 30, 2022 September 29, 2023 September 30, 2022 Net Operating Revenues $ 11,953 $ 11,063 $ 34,905 $ 32,879 Cost of goods sold 4,657 4,566 13,886 13,487 Gross Profit 7,296 6,497 21,019 19,392 Selling, general and administrat", "live_status": "Weakened", "live_computed_value": 0.08044834131790654, "review_category": "Weakened", "filing_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134423000060/0000021344-23-000060-index.htm"}, {"ticker": "NFLX", "company": "NETFLIX INC", "reason_key": "debt_growth", "as_of_used": "2025-07-18", "metric": "LongTermDebt", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001065280-25-000323", "primary_document": "nflx-20250630.htm", "xbrl_pipeline_value": 14453206000.0, "agrees_with_xbrl": true, "quoted_text": "3 Short-term debt &#8212; 1,784,453 Total current liabilities 8,942,335 10,755,400 Non-current content liabilities 1,606,404 1,780,806 Long-term debt 14,453,206 13,798,351 Other non-current liabilities 3,145,820 2,552,250 Total liabilities 28,147,765 28,886,807 Commitments and contingencies (Note 8)", "live_status": "Weakened", "live_computed_value": 0.1866319803639139, "review_category": "Weakened", "filing_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/0001065280-25-000323-index.htm"}, {"ticker": "ORCL", "company": "Oracle Corporation", "reason_key": "revenue_growth", "as_of_used": "2025-03-11", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000950170-25-037143", "primary_document": "orcl-20250228.htm", "xbrl_pipeline_value": 14130000000.0, "agrees_with_xbrl": true, "quoted_text": "31 $ 29,149 Cloud license and on-premise license 1,129 1,256 3,194 3,243 Hardware 703 754 2,086 2,224 Services 1,291 1,307 3,885 4,058 Total revenues 14,130 13,280 41,496 38,674 Operating expenses: Cloud services and license support (1) 2,882 2,452 8,226 6,905 Hardware (1) 197 217 530 649 Services (", "live_status": "Weakened", "live_computed_value": 0.06400602409638555, "review_category": "Weakened", "filing_url": "https://www.sec.gov/Archives/edgar/data/1341439/000095017025037143/0000950170-25-037143-index.htm"}, {"ticker": "ORCL", "company": "Oracle Corporation", "reason_key": "revenue_growth", "as_of_used": "2024-12-10", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000950170-24-134973", "primary_document": "orcl-20241130.htm", "xbrl_pipeline_value": 14059000000.0, "agrees_with_xbrl": true, "quoted_text": "24 $ 19,186 Cloud license and on-premise license 1,195 1,178 2,065 1,987 Hardware 728 756 1,383 1,470 Services 1,330 1,368 2,594 2,751 Total revenues 14,059 12,941 27,366 25,394 Operating expenses: Cloud services and license support (1) 2,746 2,274 5,344 4,452 Hardware (1) 172 213 333 432 Services (", "live_status": "Weakened", "live_computed_value": 0.08639208716482498, "review_category": "Weakened", "filing_url": "https://www.sec.gov/Archives/edgar/data/1341439/000095017024134973/0000950170-24-134973-index.htm"}, {"ticker": "PEP", "company": "PepsiCo, Inc.", "reason_key": "revenue_growth", "as_of_used": "2026-04-16", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000077476-26-000017", "primary_document": "pep-20260321.htm", "xbrl_pipeline_value": 19443000000.0, "agrees_with_xbrl": true, "quoted_text": "tatement of Income PepsiCo, Inc. and Subsidiaries (in millions, except per share amounts, unaudited) 12 Weeks Ended 3/21/2026 3/22/2025 Net Revenue $ 19,443 $ 17,919 Cost of sales 8,712 7,926 Gross profit 10,731 9,993 Selling, general and administrative expenses 7,518 7,410 Operating Profit 3,213 2,", "live_status": "Weakened", "live_computed_value": 0.08504938891679223, "review_category": "Weakened", "filing_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000017/0000077476-26-000017-index.htm"}, {"ticker": "PEP", "company": "PepsiCo, Inc.", "reason_key": "operating_margin", "as_of_used": null, "metric": "OperatingIncome", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000077476-26-000035", "primary_document": "pep-20260613.htm", "xbrl_pipeline_value": 4023000000.0, "agrees_with_xbrl": true, "quoted_text": "nd administrative expenses 9,088 8,773 16,606 16,183 Impairment of intangible assets (see Notes 1 and 4) &#8212; 1,860 &#8212; 1,860 Operating Profit 4,023 1,789 7,236 4,372 Other pension and retiree medical benefits income 59 42 117 65 Net interest expense and other ( 230 ) ( 260 ) ( 531 ) ( 524 )", "live_status": "Weakened", "live_computed_value": 0.16637029072412224, "review_category": "Weakened", "filing_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000035/0000077476-26-000035-index.htm"}, {"ticker": "PG", "company": "PROCTER & GAMBLE CO", "reason_key": "revenue_growth", "as_of_used": null, "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000080424-26-000060", "primary_document": "pg-20260331.htm", "xbrl_pipeline_value": 21235000000.0, "agrees_with_xbrl": true, "quoted_text": "Health Care Fabric &amp; Home Care Baby, Feminine &amp; Family Care Corporate Total Company Net sales $ 3,866 $ 1,608 $ 3,073 $ 7,403 $ 5,058 $ 225 $ 21,235 Cost of products sold ( 1,575 ) ( 642 ) ( 1,277 ) ( 4,068 ) ( 2,753 ) ( 406 ) ( 10,722 ) Selling, general and administrative expense ( 1,530 )", "live_status": "Weakened", "live_computed_value": 0.07377629449838188, "review_category": "Weakened", "filing_url": "https://www.sec.gov/Archives/edgar/data/80424/000008042426000060/0000080424-26-000060-index.htm"}, {"ticker": "TSLA", "company": "Tesla, Inc.", "reason_key": "revenue_growth", "as_of_used": "2024-10-24", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001628280-24-043486", "primary_document": "tsla-20240930.htm", "xbrl_pipeline_value": 25182000000.0, "agrees_with_xbrl": true, "quoted_text": "revenues 20,016 19,625 57,272 60,856 Energy generation and storage 2,376 1,559 7,025 4,597 Services and other 2,790 2,166 7,686 6,153 Total revenues 25,182 23,350 71,983 71,606 Cost of revenues Automotive sales 15,743 15,656 45,602 47,919 Automotive leasing 247 301 761 972 Total automotive cost of", "live_status": "Weakened", "live_computed_value": 0.07845824411134904, "review_category": "Weakened", "filing_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828024043486/0001628280-24-043486-index.htm"}, {"ticker": "AAPL", "company": "Apple Inc.", "reason_key": "revenue_growth", "as_of_used": "2025-01-31", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000320193-25-000008", "primary_document": "aapl-20241228.htm", "xbrl_pipeline_value": 124300000000.0, "agrees_with_xbrl": true, "quoted_text": "er-share amounts) Three Months Ended December 28, 2024 December 30, 2023 Net sales: Products $ 97,960 $ 96,458 Services 26,340 23,117 Total net sales 124,300 119,575 Cost of sales: Products 59,447 58,440 Services 6,578 6,280 Total cost of sales 66,025 64,720 Gross margin 58,275 54,855 Operating expe", "live_status": "Broken", "live_computed_value": 0.03951494877691825, "review_category": "Broken", "filing_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000008/0000320193-25-000008-index.htm"}, {"ticker": "AAPL", "company": "Apple Inc.", "reason_key": "revenue_growth", "as_of_used": "2024-08-02", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000320193-24-000081", "primary_document": "aapl-20240629.htm", "xbrl_pipeline_value": 85777000000.0, "agrees_with_xbrl": true, "quoted_text": "uly 1, 2023 June 29, 2024 July 1, 2023 Net sales: Products $ 61,564 $ 60,584 $ 224,908 $ 230,901 Services 24,213 21,213 71,197 62,886 Total net sales 85,777 81,797 296,105 293,787 Cost of sales: Products 39,803 39,136 140,667 146,696 Services 6,296 6,248 18,634 18,370 Total cost of sales 46,099 45,3", "live_status": "Broken", "live_computed_value": 0.04865704121178038, "review_category": "Broken", "filing_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019324000081/0000320193-24-000081-index.htm"}, {"ticker": "AMZN", "company": "AMAZON COM INC", "reason_key": "operating_margin", "as_of_used": "2025-10-31", "metric": "OperatingIncome", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001018724-25-000123", "primary_document": "amzn-20250930.htm", "xbrl_pipeline_value": 17422000000.0, "agrees_with_xbrl": true, "quoted_text": ",496 8,468 Other operating expense (income), net 262 2,875 587 3,382 Total operating expenses 141,466 162,747 402,777 448,540 Operating income 17,411 17,422 47,390 54,998 Interest income 1,256 1,100 3,429 3,251 Interest expense ( 603 ) ( 538 ) ( 1,836 ) ( 1,595 ) Other income (expense), net ( 27 ) 1", "live_status": "Broken", "live_computed_value": 0.09669810011711227, "review_category": "Broken", "filing_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/0001018724-25-000123-index.htm"}, {"ticker": "AMZN", "company": "AMAZON COM INC", "reason_key": "operating_margin", "as_of_used": "2024-08-02", "metric": "OperatingIncome", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001018724-24-000130", "primary_document": "amzn-20240630.htm", "xbrl_pipeline_value": 14672000000.0, "agrees_with_xbrl": true, "quoted_text": ",041 6,245 5,783 Other operating expense (income), net 146 97 369 325 Total operating expenses 126,702 133,305 249,286 261,311 Operating income 7,681 14,672 12,455 29,979 Interest income 661 1,180 1,272 2,173 Interest expense ( 840 ) ( 589 ) ( 1,663 ) ( 1,233 ) Other income (expense), net 61 ( 18 )", "live_status": "Broken", "live_computed_value": 0.09915054366556965, "review_category": "Broken", "filing_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872424000130/0001018724-24-000130-index.htm"}, {"ticker": "COST", "company": "COSTCO WHOLESALE CORP /NEW", "reason_key": "operating_margin", "as_of_used": null, "metric": "OperatingIncome", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000909832-26-000051", "primary_document": "cost-20260510.htm", "xbrl_pipeline_value": 2815000000.0, "agrees_with_xbrl": true, "quoted_text": "079 OPERATING EXPENSES Merchandise costs 61,519 54,996 180,748 164,849 Selling, general and administrative 6,193 5,679 18,799 17,188 Operating income 2,815 2,530 7,884 7,042 OTHER INCOME (EXPENSE) Interest expense ( 32 ) ( 35 ) ( 100 ) ( 108 ) Interest income and other, net 155 85 458 374 INCOME BEF", "live_status": "Broken", "live_computed_value": 0.03991379188112354, "review_category": "Broken", "filing_url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000051/0000909832-26-000051-index.htm"}, {"ticker": "COST", "company": "COSTCO WHOLESALE CORP /NEW", "reason_key": "operating_margin", "as_of_used": "2026-03-11", "metric": "OperatingIncome", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000909832-26-000029", "primary_document": "cost-20260215.htm", "xbrl_pipeline_value": 2606000000.0, "agrees_with_xbrl": true, "quoted_text": "nue 69,597 63,723 136,904 125,874 OPERATING EXPENSES Merchandise costs 60,719 55,744 119,229 109,853 Selling, general and administrative 6,272 5,663 12,606 11,509 Operating income 2,606 2,316 5,069 4,512 OTHER INCOME (EXPENSE) Interest expense ( 33 ) ( 36 ) ( 68 ) ( 73 ) Interest income and other, n", "live_status": "Broken", "live_computed_value": 0.0374441427073006, "review_category": "Broken", "filing_url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000029/0000909832-26-000029-index.htm"}, {"ticker": "GOOGL", "company": "Alphabet Inc.", "reason_key": "debt_growth", "as_of_used": null, "metric": "LongTermDebt", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001652044-26-000071", "primary_document": "goog-20260630.htm", "xbrl_pipeline_value": 98165000000.0, "agrees_with_xbrl": true, "quoted_text": "lities 55,557 73,014 Accrued revenue share 10,864 10,599 Deferred revenue 6,578 7,154 Total current liabilities 102,745 126,111 Long-term debt 46,547 98,165 Income taxes payable, non-current 9,531 11,306 Deferred income taxes 919 22,819 Operating lease liabilities 12,744 14,591 Other long-term liabi", "live_status": "Broken", "live_computed_value": 3.1583005040877707, "review_category": "Broken", "filing_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/0001652044-26-000071-index.htm"}, {"ticker": "GOOGL", "company": "Alphabet Inc.", "reason_key": "debt_growth", "as_of_used": "2026-04-30", "metric": "LongTermDebt", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001652044-26-000048", "primary_document": "goog-20260331.htm", "xbrl_pipeline_value": 77501000000.0, "agrees_with_xbrl": true, "quoted_text": "lities 55,557 63,019 Accrued revenue share 10,864 10,208 Deferred revenue 6,578 7,162 Total current liabilities 102,745 111,188 Long-term debt 46,547 77,501 Income taxes payable, non-current 9,531 12,457 Operating lease liabilities 12,744 12,983 Other long-term liabilities 8,449 11,044 Total liabili", "live_status": "Broken", "live_computed_value": 6.119327576704023, "review_category": "Broken", "filing_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/0001652044-26-000048-index.htm"}, {"ticker": "JNJ", "company": "Johnson & Johnson", "reason_key": "debt_growth", "as_of_used": "2026-02-11", "metric": "LongTermDebt", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-K", "accession_number": "0000200406-26-000016", "primary_document": "jnj-20251228.htm", "xbrl_pipeline_value": 39438000000.0, "agrees_with_xbrl": true, "quoted_text": "employee related obligations 4,534 4,126 Accrued taxes on income (Note 8) 1,388 3,772 Total current liabilities 54,126 50,321 Long-term debt (Note 7) 39,438 30,651 Deferred taxes on income (Note 8) 6,791 2,448 Employee related obligations (Notes 9 and 10) 6,957 7,255 Long-term taxes payable (Note 1)", "live_status": "Broken", "live_computed_value": 0.2866790643045904, "review_category": "Broken", "filing_url": "https://www.sec.gov/Archives/edgar/data/200406/000020040626000016/0000200406-26-000016-index.htm"}, {"ticker": "JNJ", "company": "Johnson & Johnson", "reason_key": "debt_growth", "as_of_used": "2025-10-22", "metric": "LongTermDebt", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000200406-25-000209", "primary_document": "jnj-20250928.htm", "xbrl_pipeline_value": 39408000000.0, "agrees_with_xbrl": true, "quoted_text": "employee related obligations 3,972 4,126 Accrued taxes on income (Note 5) 1,928 3,772 Total current liabilities 50,869 50,321 Long-term debt (Note 4) 39,408 30,651 Deferred taxes on income (Note 5) 5,988 2,448 Employee related obligations (Note 6) 6,930 7,255 Long-term taxes payable (Note 5) 418 390", "live_status": "Broken", "live_computed_value": 0.259484163763623, "review_category": "Broken", "filing_url": "https://www.sec.gov/Archives/edgar/data/200406/000020040625000209/0000200406-25-000209-index.htm"}, {"ticker": "KO", "company": "COCA COLA CO", "reason_key": "revenue_growth", "as_of_used": "2025-07-24", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000021344-25-000061", "primary_document": "ko-20250627.htm", "xbrl_pipeline_value": 12535000000.0, "agrees_with_xbrl": true, "quoted_text": "millions except per share data) Three Months Ended Six Months Ended June 27, 2025 June 28, 2024 June 27, 2025 June 28, 2024 Net Operating Revenues $ 12,535 $ 12,363 $ 23,664 $ 23,663 Cost of goods sold 4,714 4,812 8,877 9,047 Gross Profit 7,821 7,551 14,787 14,616 Selling, general and administrativ", "live_status": "Broken", "live_computed_value": 0.013912480789452399, "review_category": "Broken", "filing_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134425000061/0000021344-25-000061-index.htm"}, {"ticker": "KO", "company": "COCA COLA CO", "reason_key": "revenue_growth", "as_of_used": "2025-05-01", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000021344-25-000029", "primary_document": "ko-20250328.htm", "xbrl_pipeline_value": 11129000000.0, "agrees_with_xbrl": true, "quoted_text": "ARIES CONSOLIDATED STATEMENTS OF INCOME (In millions except per share data) Three Months Ended March 28, 2025 March 29, 2024 Net Operating Revenues $ 11,129 $ 11,300 Cost of goods sold 4,163 4,235 Gross Profit 6,966 7,065 Selling, general and administrative expenses 3,234 3,351 Other operating charg", "live_status": "Broken", "live_computed_value": -0.015132743362831859, "review_category": "Broken", "filing_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134425000029/0000021344-25-000029-index.htm"}, {"ticker": "META", "company": "Meta Platforms, Inc.", "reason_key": "debt_growth", "as_of_used": null, "metric": "LongTermDebt", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001628280-26-050705", "primary_document": "meta-20260630.htm", "xbrl_pipeline_value": 83664000000.0, "agrees_with_xbrl": true, "quoted_text": "other current liabilities 38,065 30,729 Total current liabilities 56,379 41,836 Operating lease liabilities, non-current 26,229 22,940 Long-term debt 83,664 58,744 Long-term income taxes 18,326 21,005 Other liabilities 4,137 4,253 Total liabilities 188,735 148,778 Commitments and contingencies Stock", "live_status": "Broken", "live_computed_value": 1.9017758046614872, "review_category": "Broken", "filing_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/0001628280-26-050705-index.htm"}, {"ticker": "META", "company": "Meta Platforms, Inc.", "reason_key": "debt_growth", "as_of_used": "2026-04-30", "metric": "LongTermDebt", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0001628280-26-028526", "primary_document": "meta-20260331.htm", "xbrl_pipeline_value": 58748000000.0, "agrees_with_xbrl": true, "quoted_text": "other current liabilities 31,013 30,729 Total current liabilities 46,753 41,836 Operating lease liabilities, non-current 25,607 22,940 Long-term debt 58,748 58,744 Long-term income taxes 16,849 21,005 Other liabilities 3,612 4,253 Total liabilities 151,569 148,778 Commitments and contingencies Stock", "live_status": "Broken", "live_computed_value": 1.0378091505081688, "review_category": "Broken", "filing_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/0001628280-26-028526-index.htm"}, {"ticker": "PEP", "company": "PepsiCo, Inc.", "reason_key": "revenue_growth", "as_of_used": "2025-04-24", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000077476-25-000019", "primary_document": "pep-20250322.htm", "xbrl_pipeline_value": 17919000000.0, "agrees_with_xbrl": true, "quoted_text": "tatement of Income PepsiCo, Inc. and Subsidiaries (in millions, except per share amounts, unaudited) 12 Weeks Ended 3/22/2025 3/23/2024 Net Revenue $ 17,919 $ 18,250 Cost of sales 7,926 8,248 Gross profit 9,993 10,002 Selling, general and administrative expenses 7,410 7,285 Operating Profit 2,583 2,", "live_status": "Broken", "live_computed_value": -0.018136986301369864, "review_category": "Broken", "filing_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747625000019/0000077476-25-000019-index.htm"}, {"ticker": "JNJ", "company": "Johnson & Johnson", "reason_key": "operating_margin", "category": "Missing", "verified": false, "as_of_used": null, "note": "live pipeline itself has no OperatingIncome evidence for JNJ (status=Not enough data) -- nothing to cross-check against the filing", "live_status": "Not enough data", "review_category": "Missing / Not enough data"}, {"ticker": "ORCL", "company": "Oracle Corporation", "reason_key": "debt_growth", "category": "Missing", "verified": false, "as_of_used": null, "note": "live pipeline itself has no LongTermDebt evidence for ORCL (status=Not enough data) -- nothing to cross-check against the filing", "live_status": "Not enough data", "review_category": "Missing / Not enough data"}, {"ticker": "AAPL", "company": "Apple Inc.", "reason_key": "debt_growth", "as_of_used": "2025-10-31", "metric": "LongTermDebt", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-K", "accession_number": "0000320193-25-000079", "primary_document": "aapl-20250927.htm", "xbrl_pipeline_value": 78328000000.0, "agrees_with_xbrl": false, "note": "XBRL-derived figure not found printed anywhere near the relevant section of the primary filing text -- worth a manual look", "live_status": "Supported", "live_computed_value": -0.08655393586005831, "review_category": "Needs human eyes (automated citation search failed)", "filing_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079-index.htm"}, {"ticker": "AAPL", "company": "Apple Inc.", "reason_key": "debt_growth", "as_of_used": "2024-11-01", "metric": "LongTermDebt", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-K", "accession_number": "0000320193-24-000123", "primary_document": "aapl-20240928.htm", "xbrl_pipeline_value": 85750000000.0, "agrees_with_xbrl": false, "note": "XBRL-derived figure not found printed anywhere near the relevant section of the primary filing text -- worth a manual look", "live_status": "Supported", "live_computed_value": -0.10003043628845205, "review_category": "Needs human eyes (automated citation search failed)", "filing_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019324000123/0000320193-24-000123-index.htm"}, {"ticker": "COST", "company": "COSTCO WHOLESALE CORP /NEW", "reason_key": "revenue_growth", "as_of_used": null, "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000909832-26-000051", "primary_document": "cost-20260510.htm", "xbrl_pipeline_value": 70527000000.0, "agrees_with_xbrl": false, "note": "XBRL-derived figure not found printed anywhere near the relevant section of the primary filing text -- worth a manual look", "live_status": "Supported", "live_computed_value": 0.11584526540621787, "diagnosis": "Keyword matched a 'Financial Highlights' summary table earlier in the document showing a different (adjacent, not current) quarter's figures before the real income statement -- a document-structure issue, not a wrong number in the filing.", "review_category": "Needs human eyes (automated citation search failed)", "filing_url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000051/0000909832-26-000051-index.htm"}, {"ticker": "COST", "company": "COSTCO WHOLESALE CORP /NEW", "reason_key": "revenue_growth", "as_of_used": "2026-03-11", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000909832-26-000029", "primary_document": "cost-20260215.htm", "xbrl_pipeline_value": 69597000000.0, "agrees_with_xbrl": false, "note": "XBRL-derived figure not found printed anywhere near the relevant section of the primary filing text -- worth a manual look", "live_status": "Weakened", "live_computed_value": 0.092180217503884, "review_category": "Needs human eyes (automated citation search failed)", "filing_url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000029/0000909832-26-000029-index.htm"}, {"ticker": "GOOGL", "company": "Alphabet Inc.", "reason_key": "debt_growth", "as_of_used": "2024-01-31", "metric": "LongTermDebt", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-K", "accession_number": "0001652044-24-000022", "primary_document": "goog-20231231.htm", "xbrl_pipeline_value": 14862000000.0, "agrees_with_xbrl": false, "note": "XBRL-derived figure not found printed anywhere near the relevant section of the primary filing text -- worth a manual look", "live_status": "Supported", "live_computed_value": -0.02938871473354232, "review_category": "Needs human eyes (automated citation search failed)", "filing_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204424000022/0001652044-24-000022-index.htm"}, {"ticker": "JNJ", "company": "Johnson & Johnson", "reason_key": "revenue_growth", "as_of_used": null, "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000200406-26-000153", "primary_document": "jnj-20260628.htm", "xbrl_pipeline_value": 25310000000.0, "agrees_with_xbrl": false, "note": "XBRL-derived figure not found printed anywhere near the relevant section of the primary filing text -- worth a manual look", "live_status": "Weakened", "live_computed_value": 0.06599839952828201, "diagnosis": "Keyword matched inline-XBRL tag metadata (e.g. 'RevenueFromContractWithCustomerExcludingAssessedTax us-gaap:...') left in the text after HTML-tag stripping -- the cleaning regex doesn't fully remove <ix:...> inline XBRL elements for this filer's document structure.", "review_category": "Needs human eyes (automated citation search failed)", "filing_url": "https://www.sec.gov/Archives/edgar/data/200406/000020040626000153/0000200406-26-000153-index.htm"}, {"ticker": "JNJ", "company": "Johnson & Johnson", "reason_key": "revenue_growth", "as_of_used": "2026-04-22", "metric": "Revenue", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-Q", "accession_number": "0000200406-26-000087", "primary_document": "jnj-20260329.htm", "xbrl_pipeline_value": 24062000000.0, "agrees_with_xbrl": false, "note": "XBRL-derived figure not found printed anywhere near the relevant section of the primary filing text -- worth a manual look", "live_status": "Weakened", "live_computed_value": 0.09907276298360207, "review_category": "Needs human eyes (automated citation search failed)", "filing_url": "https://www.sec.gov/Archives/edgar/data/200406/000020040626000087/0000200406-26-000087-index.htm"}, {"ticker": "KO", "company": "COCA COLA CO", "reason_key": "debt_growth", "as_of_used": "2024-02-20", "metric": "LongTermDebt", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-K", "accession_number": "0000021344-24-000009", "primary_document": "ko-20231231.htm", "xbrl_pipeline_value": 35547000000.0, "agrees_with_xbrl": false, "note": "XBRL-derived figure not found printed anywhere near the relevant section of the primary filing text -- worth a manual look", "live_status": "Supported", "live_computed_value": -0.022816614894026446, "review_category": "Needs human eyes (automated citation search failed)", "filing_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134424000009/0000021344-24-000009-index.htm"}, {"ticker": "KO", "company": "COCA COLA CO", "reason_key": "debt_growth", "as_of_used": "2023-02-21", "metric": "LongTermDebt", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-K", "accession_number": "0000021344-23-000011", "primary_document": "ko-20221231.htm", "xbrl_pipeline_value": 36377000000.0, "agrees_with_xbrl": false, "note": "XBRL-derived figure not found printed anywhere near the relevant section of the primary filing text -- worth a manual look", "live_status": "Supported", "live_computed_value": -0.04562388498268444, "review_category": "Needs human eyes (automated citation search failed)", "filing_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134423000011/0000021344-23-000011-index.htm"}, {"ticker": "META", "company": "Meta Platforms, Inc.", "reason_key": "debt_growth", "as_of_used": "2026-01-29", "metric": "LongTermDebt", "category": "Primary-filing-verified", "verified": true, "filing_form": "10-K", "accession_number": "0001628280-26-003942", "primary_document": "meta-20251231.htm", "xbrl_pipeline_value": 58744000000.0, "agrees_with_xbrl": false, "note": "XBRL-derived figure not found printed anywhere near the relevant section of the primary filing text -- worth a manual look", "live_status": "Broken", "live_computed_value": 1.0378824672170957, "review_category": "Needs human eyes (automated citation search failed)", "filing_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/0001628280-26-003942-index.htm"}, {"category": "Restatement", "ticker": "MSFT", "description": "Revenue for the quarter ending 2016-09-30 was originally reported as $20,453M (10-Q filed 2016-10-20, accn 0001193125-16-742796), then restated to $21,928M (+7.2%) in filings from 2017-10-26 onward (accn 0001564590-17-020171) -- Microsoft's early adoption of the ASC 606 revenue recognition standard. Verified via XBRL: the same SalesRevenueNet tag reports two different values for the identical period at different filed dates. See 'Fixed: a spurious conflict...' and the earlier ASC 606 section in README.md.", "evidence_type": "XBRL cross-filing comparison (not primary-text-quoted)", "review_category": "Restatement"}, {"category": "Tag/definition conflict (not a restatement)", "ticker": "MSFT", "description": "Same 10-K (accn 0001193125-26-323660) reports both LongTermDebtNoncurrent ($31.1B, excludes debt due within a year) and LongTermDebt ($40.3B, includes it) for the identical quarter-end -- two different accounting concepts, not two versions of the same number. See 'Fixed: a spurious conflict from merging two different accounting concepts' in README.md.", "evidence_type": "XBRL, same-filing dual-tag comparison", "review_category": "Tag/definition conflict (not a restatement)"}, {"category": "Real anomaly (financing event, not a data problem)", "ticker": "GOOGL", "description": "Long-term debt grew from ~$10.9B (Q1 2025) to ~$98.2B (Q2 2026, +315.8%). Confirmed via the actual 10-Q primary filing text (not just XBRL): 'Long-Term Debt During 2026, we issued $20.0 billion of US dollar-denominated fixed-rate senior unsecured notes and $31.8 billion of foreign currency-denominated fixed-rate senior unsecured notes for general corporate purposes.' Independently re-confirmed by investigate.py's real LLM run: is_data_artifact=False.", "evidence_type": "Primary filing text, directly quoted", "review_category": "Real anomaly (financing event, not a data problem)"}, {"category": "Data artifact (filer's own XBRL tagging error)", "ticker": "ORCL", "description": "Oracle's own FY2020 10-K (accn not re-verified in this pass; see gold set section in README.md) tags a Revenue datapoint with quarter-length start/end dates (2018-03-01 to 2018-05-31, 91 days -- passes this project's single-quarter filter) but a value of $39.4B -- Oracle's actual full-year FY2018 revenue, not a quarter's. The filer's own tagging is internally inconsistent, not a bug in this project's extraction code.", "evidence_type": "XBRL internal inconsistency (start/end length vs. value magnitude)", "review_category": "Data artifact (filer's own XBRL tagging error)"}]</script>
+<script>
+const data = JSON.parse(document.getElementById('review-data').textContent);
+
+const CATEGORY_META = {
+  "Supported":      { stripe: "var(--status-supported)",  pillBg: "var(--status-supported-bg)",  pillFg: "var(--status-supported)",
+                       desc: "Reason currently passes its threshold." },
+  "Weakened":       { stripe: "var(--status-weakened)",   pillBg: "var(--status-weakened-bg)",   pillFg: "var(--status-weakened)",
+                       desc: "Missed the threshold but within the 50%-of-threshold buffer." },
+  "Broken":         { stripe: "var(--status-broken)",      pillBg: "var(--status-broken-bg)",     pillFg: "var(--status-broken)",
+                       desc: "Missed the threshold by more than the buffer allows." },
+  "Missing / Not enough data": { stripe: "var(--status-missing)", pillBg: "var(--status-missing-bg)", pillFg: "var(--status-missing)",
+                       desc: "No usable evidence for this metric -- confirms the pipeline abstains rather than guessing." },
+  "Needs human eyes (automated citation search failed)": { stripe: "var(--status-broken)", pillBg: "var(--status-broken-bg)", pillFg: "var(--status-broken)",
+                       desc: "The automated check couldn't confirm its own number in the primary filing text -- these need a human look most." },
+  "Restatement":    { stripe: "var(--status-structural)", pillBg: "var(--status-structural-bg)", pillFg: "var(--status-structural)",
+                       desc: "The same period's figure was reported differently across filings over time." },
+  "Tag/definition conflict (not a restatement)": { stripe: "var(--status-structural)", pillBg: "var(--status-structural-bg)", pillFg: "var(--status-structural)",
+                       desc: "Two different accounting concepts, not two versions of the same number." },
+  "Real anomaly (financing event, not a data problem)": { stripe: "var(--status-structural)", pillBg: "var(--status-structural-bg)", pillFg: "var(--status-structural)",
+                       desc: "A large, real change in the underlying business, confirmed by reading the filing." },
+  "Data artifact (filer's own XBRL tagging error)": { stripe: "var(--status-structural)", pillBg: "var(--status-structural-bg)", pillFg: "var(--status-structural)",
+                       desc: "The filer's own XBRL tagging is internally inconsistent." },
+};
+
+const REASON_LABEL = {
+  revenue_growth: "Revenue growth must exceed 10% YoY",
+  operating_margin: "Operating margin must stay at or above 20%",
+  debt_growth: "Long-term debt must not grow more than 15% YoY",
+};
+
+function caseId(r, i) {
+  return (r.ticker || "case") + "-" + (r.reason_key || i) + "-" + i;
+}
+
+function fmtNum(n) {
+  return Math.round(n).toLocaleString("en-US");
+}
+
+const byCategory = {};
+data.forEach((r, i) => {
+  const cat = r.review_category;
+  (byCategory[cat] = byCategory[cat] || []).push({ ...r, _id: caseId(r, i) });
+});
+
+const navEl = document.getElementById('nav-links');
+const catsEl = document.getElementById('categories');
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+Object.entries(byCategory).forEach(([cat, entries]) => {
+  const meta = CATEGORY_META[cat] || {};
+  const id = slug(cat);
+
+  const a = document.createElement('a');
+  a.href = '#' + id;
+  a.innerHTML = `<span>${cat}</span><span class="count">${entries.length}</span>`;
+  navEl.appendChild(a);
+
+  const section = document.createElement('section');
+  section.className = 'category';
+  section.id = id;
+  section.innerHTML = `<h2>${cat} <span class="n">${entries.length}</span></h2>
+    <p class="cat-desc">${meta.desc || ''}</p>`;
+
+  entries.forEach(r => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.setProperty('--stripe', meta.stripe || 'var(--accent)');
+    card.dataset.id = r._id;
+
+    const title = r.reason_key ? `${r.ticker} &mdash; ${REASON_LABEL[r.reason_key] || r.reason_key}` : r.ticker;
+    const claim = r.description ? `<p class="claim">${r.description}</p>` : '';
+
+    let stats = '';
+    if (r.xbrl_pipeline_value != null || r.live_status) {
+      stats = '<div class="stats">';
+      if (r.live_status) stats += `<div class="stat"><span>Pipeline status</span><b>${r.live_status}</b></div>`;
+      if (r.xbrl_pipeline_value != null) stats += `<div class="stat"><span>Pipeline value</span><b>$${fmtNum(r.xbrl_pipeline_value)}</b></div>`;
+      if (r.live_computed_value != null) stats += `<div class="stat"><span>Computed</span><b>${(r.live_computed_value*100).toFixed(1)}%</b></div>`;
+      stats += '</div>';
+    }
+
+    const quote = r.quoted_text ? `<blockquote>&ldquo;${r.quoted_text}&rdquo;</blockquote>` : '';
+    const note = r.note ? `<p class="note-text"><b>Note:</b> ${r.note}</p>` : '';
+    const diagnosis = r.diagnosis ? `<p class="note-text"><b>Why the automated check failed:</b> ${r.diagnosis}</p>` : '';
+
+    const filingLabel = r.filing_form && r.accession_number ? `${r.filing_form} &middot; ${r.accession_number}` : 'View filing';
+    const link = r.filing_url ? `<a class="filing-link" href="${r.filing_url}" target="_blank" rel="noopener">Open filing &rarr; <span style="color:var(--ink-faint); font-weight:400; font-family:'IBM Plex Mono',monospace; font-size:12px;">${filingLabel}</span></a>` : '<span></span>';
+
+    card.innerHTML = `
+      <div class="card-top">
+        <div><h3>${title}</h3>${claim}</div>
+        <span class="pill" style="--pill-bg:${meta.pillBg}; --pill-fg:${meta.pillFg};">${cat.split('(')[0].trim()}</span>
+      </div>
+      ${stats}
+      ${quote}
+      ${note}
+      ${diagnosis}
+      <div class="card-foot">
+        ${link}
+        <div class="review">
+          <label><input type="checkbox" class="reviewed-box"> Reviewed</label>
+          <input type="text" class="notes-input" placeholder="Notes (saved locally)">
+        </div>
+      </div>
+    `;
+    section.appendChild(card);
+  });
+
+  catsEl.appendChild(section);
+});
+
+// Per-viewer local persistence only -- never assumed to be the record.
+function storageKey(id, field) { return 'review:' + id + ':' + field; }
+
+function loadState() {
+  document.querySelectorAll('.card').forEach(card => {
+    const id = card.dataset.id;
+    let checked = false, notes = '';
+    try {
+      checked = localStorage.getItem(storageKey(id, 'reviewed')) === '1';
+      notes = localStorage.getItem(storageKey(id, 'notes')) || '';
+    } catch (e) { /* private mode / blocked storage -- just render unreviewed */ }
+    const box = card.querySelector('.reviewed-box');
+    const input = card.querySelector('.notes-input');
+    box.checked = checked;
+    input.value = notes;
+    card.classList.toggle('is-reviewed', checked);
+  });
+  updateProgress();
+}
+
+function updateProgress() {
+  const boxes = document.querySelectorAll('.reviewed-box');
+  const done = document.querySelectorAll('.reviewed-box:checked').length;
+  document.getElementById('progress-label').textContent = `${done} / ${boxes.length} reviewed`;
+  document.getElementById('progress-fill').style.width = boxes.length ? (100 * done / boxes.length) + '%' : '0%';
+}
+
+document.addEventListener('change', e => {
+  if (e.target.classList.contains('reviewed-box')) {
+    const card = e.target.closest('.card');
+    card.classList.toggle('is-reviewed', e.target.checked);
+    try { localStorage.setItem(storageKey(card.dataset.id, 'reviewed'), e.target.checked ? '1' : '0'); } catch (err) {}
+    updateProgress();
+  }
+});
+document.addEventListener('input', e => {
+  if (e.target.classList.contains('notes-input')) {
+    const card = e.target.closest('.card');
+    try { localStorage.setItem(storageKey(card.dataset.id, 'notes'), e.target.value); } catch (err) {}
+  }
+});
+
+loadState();
+</script>
