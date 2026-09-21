@@ -1171,6 +1171,151 @@ was rendered by a live server process and a real personalize call was made
 through it end-to-end (MSFT, real tiers came back) before shutting the test
 server down.
 
+## The two "not built yet" items, actually built: custom reasons and a portfolio view
+
+Both of these turned out to not need the risky part of what "not built yet"
+had implied.
+
+**Custom reasons (`xbrl_extract.list_available_tags`, `tools.get_reason_def`,
+`db.save_reason`/`delete_reason`).** The original concern was free-text metric
+names silently producing "no facts found." Solved by never taking free text:
+`get_company_facts(ticker)` already returns every XBRL tag the company has
+actually reported, so `list_available_tags()` turns that into a picker-ready
+list (tag name, human label, and whether it's a quarterly-flow or
+balance-sheet-instant concept) -- a custom reason can only ever reference a
+tag proven to exist for that company. `xbrl_extract.py`'s extraction
+functions were refactored (not rewritten) into shared `_extract_quarterly_
+from_tags` / `_extract_instant_from_tags` helpers, so the existing curated
+multi-tag lookup (`extract_quarterly_facts`, handles tag migration like
+Apple's Revenue rename) and the new single-raw-tag lookup (`extract_
+quarterly_facts_for_tag`, for a user's exact pick) share one computation
+path -- confirmed byte-for-byte identical output on the old path before
+building the new one. `tools._evaluate_reason` now resolves a reason from
+`REASON_DEFS` first, then a per-ticker `db.list_reasons()` lookup
+(`get_reason_def`), so `check_reason_status` and `calculate_metric` handle
+custom reasons with zero special-casing beyond that lookup.
+
+**Real, free tests** (all SEC data, no LLM calls): built-in reasons verified
+byte-identical to pre-refactor output; a custom yoy_growth reason (AAPL cash
+growth via `CashAndCashEquivalentsAtCarryingValue`) and a custom margin_level
+reason (AAPL R&D intensity, two quarterly tags) both evaluated correctly
+against real filings; a full round-trip through the actual `/api/reasons`
+POST/DELETE routes and the web form (pick a tag, save, see it appear in the
+main reasons list with real computed status, delete it, list updates) --
+caught one real bug this way: `saveCustomReason()`'s confirmation message was
+being wiped immediately by a full `selectTicker()` re-entry it triggered
+right after showing it; fixed by extracting a lighter `refreshReasonsList()`
+that updates just the reasons list without resetting open forms or messages.
+
+**Portfolio view (`db.add_holding`/`remove_holding`/`list_holdings`,
+`GET /api/portfolio/summary`, the "My Portfolio" sidebar view).** Reuses
+`get_company_report()` (already free, already tested) per held ticker and
+rolls up counts -- no new evidence logic, just a `holdings` table and a loop.
+**Real test**: added AAPL/MSFT/GOOGL as holdings through the actual UI
+(dropdown + button), got back correct per-company worst-status badges and
+portfolio-wide totals (11 reasons across 3 companies, matching 5+3+3), and
+clicking a row correctly navigates to that company's full detail view.
+
+Both features are fully bilingual (EN/TH) through the same i18n system as
+the rest of the app, and neither touches the LLM at all -- defining a
+reason, evaluating it, and building the portfolio summary are all free,
+same as the rest of the Objective Evidence Layer.
+
+## Multi-user accounts, a mechanical screener, and purchase-time reason snapshots (`db.py`, `webapp.py`)
+
+The simple holdings-based portfolio view above (add/remove a ticker) is
+superseded by a purchase-record model built around the project's actual
+research question: not "what do I hold" but "is the reason I bought still
+true." Requested flow: register, log in, define a personal condition,
+screen every company against it, record what was actually bought (with the
+reason that justified it), then track whether that reason still holds.
+
+**Accounts.** `users` table + `werkzeug.security` password hashing (ships
+with Flask, no new dependency) + Flask signed-cookie sessions
+(`app.secret_key`, a `login_required` decorator). `reasons` and
+`investor_profiles` gained a nullable `user_id` column (`NULL` = the
+existing built-in/shared rows everyone already had; a real id = private to
+that user), with a `UNIQUE(user_id, name)` constraint on profiles so two
+users can each have their own "Conservative" profile. Every route that
+lists, saves, or deletes a reason/profile now scopes its query by
+`current_user_id()` -- verified with two real accounts (Alice/Bob): neither
+can see or delete the other's custom reasons or profiles.
+
+**Screening, not recommending (`GET /api/screen`).** The user explicitly
+wants the system to say which stocks qualify, which sounds like it
+conflicts with this project's own claim that it does not recommend what to
+buy. Resolved by keeping it mechanical: `/api/screen?reason_key=...` loops
+every company in `KNOWN_CIKS` and calls the exact same
+`check_reason_status()` used everywhere else in the app -- same free XBRL
+lookup, same Supported/Weakened/Broken rule, zero LLM involvement. The
+"recommendation" is a transparent filter on the user's own stated
+criteria, not an opinion.
+
+**Purchases with a frozen reason snapshot (`purchases` table,
+`POST /api/purchases`).** Recording a purchase (ticker, quantity, price,
+date, optional `reason_key`) calls `check_reason_status()` once at that
+moment and stores the full result as `reason_snapshot_json` -- what the
+reason's status *was*, frozen, independent of what it drifts to later or
+whether the reason itself gets edited afterward. This is the same
+point-in-time principle the rest of the project applies to SEC filings,
+now applied to the user's own investment record.
+
+**Tracking (`GET /api/portfolio/summary`).** For each purchase, a fresh
+`check_reason_status()` call is compared against the frozen snapshot's
+status to produce `still_true` (True/False/None) -- the actual answer to
+"does the reason I bought this for still hold." No new evidence logic,
+just comparing two calls to a function that already existed.
+
+**A display-ID bug caught before it shipped.** Built-in reasons expose a
+cosmetic `R1`/`R2`/`R3` `key` in report responses (from how
+`portfolio_report.py` originally built `Reason` objects for display), which
+is *not* the real `reason_key` string (`revenue_growth`, etc.) the
+screener/purchase APIs require. Recording a purchase against "R2" would
+have silently failed to link to the actual reason. Fixed with a
+`BUILTIN_KEY_MAP` in the frontend so the purchase-reason and
+screener-reason dropdowns always submit the real key.
+
+**Real, free tests.** Backend verified directly via `db.py` calls and
+Flask's `test_client()` (registration, duplicate-email rejection,
+cross-user isolation, purchase snapshot + both a matching and a
+deliberately-mismatched `still_true` case) before touching the browser.
+Then a full Playwright run against the real running app: auth gate blocks
+access until login/register, a fresh account sees an empty portfolio,
+selecting a company shows a purchase form whose reason dropdown carries
+correct real keys (not `R1`/`R2`/`R3` -- confirms the bug above is fixed),
+recording a purchase against "operating margin >= 20%" produces the
+expected confirmation and shows up in My Portfolio with a "Still true"
+badge, the screener returns real Supported/Weakened/Broken results with
+real percentages across all 15 companies (e.g. NVDA 65.6%, TSLA 1.4%),
+logout returns to the auth gate and re-login restores the session, and
+switching EN/TH on the new Screener and Portfolio views re-labels
+correctly while triggering zero calls to any paid endpoint.
+
+Zero LLM API cost for any part of this feature set -- flagged to the user
+up front per their standing rule, and confirmed free before building.
+
+## Fixed: every LLM call was running at the API default temperature (1.0), never actually set (`llm_client.py`, `agent.py`)
+
+Audited every `POST /v1/messages` call site in the codebase (`llm_client.call_claude`, and
+`agent.py`'s two inline `requests.post` calls in `run_with_llm`/`_chat_loop`) and found none of
+them ever set `temperature` -- every call ran at Anthropic's API default (1.0, full sampling
+randomness), silently, since the very first version. This matters because every call this
+project makes is a **fact-grounded classification or extraction task** (evidence status,
+priority tier, an answer that must be traceable to a specific tool result) -- never creative
+generation. The applicable guidance (Deterministic vs. Stochastic Generation: tasks needing
+"ข้อมูลข้อเท็จจริง... ควรลด Randomness") is unambiguous for this task shape. Set
+`temperature=0` as the default in `call_claude` and explicitly in both of `agent.py`'s inline
+calls.
+
+**Known consequence, recorded rather than hidden**: every prior experiment in this README
+(`baseline1.py`/`baseline2.py`, the full 45-case experiment, the run-to-run consistency
+experiment, the sensitivity analysis) ran at the old default (temperature=1.0, unset). Those
+results and any future re-run at temperature=0 are **not directly comparable** -- a drop in
+observed variability after this change reflects the temperature change itself, not a change in
+the underlying Rule Engine or Evidence Assessor logic (neither was touched). If reproducing the
+consistency experiment specifically to measure run-to-run stability going forward, note which
+temperature the run used.
+
 ## Not yet done
 
 Cleaned up 2026-08-26: several items below were previously listed as open
