@@ -3,6 +3,7 @@
 Shared Postgres cache and a UTC-day request budget survive Render restarts.
 Only validated data is cached. Failed responses still consume request budget.
 """
+import logging
 import math
 import os
 import time
@@ -14,6 +15,7 @@ from sqlalchemy.dialects.postgresql import insert
 from app.db.session import SessionLocal
 from app.db.models import MarketDataCache, MarketDataUsage
 
+logger = logging.getLogger(__name__)
 _lock = RLock()
 _retry_at = 0.0
 CACHE_TTL = 86400
@@ -101,6 +103,8 @@ def _series(ticker, period):
             response.raise_for_status()
             payload = response.json()
             if isinstance(payload, dict) and ('Information' in payload or 'Note' in payload):
+                message = str(payload.get('Information', payload.get('Note', '')))
+                logger.warning('Alpha Vantage provider message: %s', message.replace(api_key, '[REDACTED]')[:600])
                 _retry_at = time.time() + 86400
                 raise AlphaUnavailable('Provider allowance or subscription does not permit this request.')
             rows = _parse(payload, ticker, period)
@@ -108,7 +112,8 @@ def _series(ticker, period):
             # Never return/log the request URL: it contains the API key.
             _retry_at = max(_retry_at, time.time() + 60)
             raise AlphaUnavailable('Could not retrieve historical prices from Alpha Vantage.') from None
-        except AlphaUnavailable:
+        except AlphaUnavailable as exc:
+            logger.warning("Alpha Vantage data rejected: %s", exc)
             _retry_at = max(_retry_at, time.time() + 60)
             raise
         _save(key, rows)

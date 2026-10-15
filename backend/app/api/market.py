@@ -20,7 +20,7 @@ def quote(ticker: str, user_id: int = Depends(current_user_id)):
     try:
         return get_quote(ticker)
     except MarketDataUnavailableError as e:
-        raise HTTPException(status_code=503, detail="Price provider temporarily unavailable. Please try again later.",
+        raise HTTPException(status_code=503, detail=str(e) if provider_config()["provider"] == "Alpha Vantage" else "Price provider temporarily unavailable. Please try again later.",
                             headers={"Retry-After": str(retry_after_seconds())}) from e
 
 
@@ -47,5 +47,5 @@ def history(ticker: str, range: str = "3mo", user_id: int = Depends(current_user
     try:
         return get_history(ticker, range)
     except MarketDataUnavailableError as e:
-        raise HTTPException(status_code=503, detail="Price provider temporarily unavailable. Please try again later.",
+        raise HTTPException(status_code=503, detail=str(e) if provider_config()["provider"] == "Alpha Vantage" else "Price provider temporarily unavailable. Please try again later.",
                             headers={"Retry-After": str(retry_after_seconds())}) from e

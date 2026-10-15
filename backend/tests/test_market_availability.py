@@ -15,6 +15,9 @@ import requests
 
 class MarketAvailabilityTests(unittest.TestCase):
     def setUp(self):
+        provider_env = patch.dict(os.environ, {"MARKET_DATA_PROVIDER": "yahoo"})
+        provider_env.start()
+        self.addCleanup(provider_env.stop)
         data._quote_cache.clear()
         data._history_cache.clear()
         data._provider_retry_at = 0

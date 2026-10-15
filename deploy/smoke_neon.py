@@ -26,7 +26,7 @@ def call(method, path, **kwargs):
 try:
     with engine.connect() as conn:
         check('Neon client TLS', conn.connection.driver_connection.info.ssl_in_use)
-        check('Alembic at head', conn.execute(text('select version_num from alembic_version')).scalar() == 'c3f5a7b9d2e4')
+        check('Alembic at head', conn.execute(text('select version_num from alembic_version')).scalar() == 'd4e6f8a0b2c4')
         check('No default admin seeded', conn.execute(text("select count(*) from users where email='admin@example.com'")).scalar() == 0)
     page = call('GET', '/')
     check('Built frontend HTTP 200', page.status_code == 200 and '<html' in page.text)
