@@ -1,46 +1,33 @@
-/** ReasonCheck brand mark + wordmark -- dependency-free, theme-adaptive
- * inline SVG, same technique as the reference design system: an open ring
- * in `currentColor` (legible on dark & light) with an accent-colored motif
- * that pops in both themes. Here the motif is a check-mark trend line
- * (evidence re-confirmed) instead of a heartbeat pulse -- distinct content
- * for this project's own subject, same construction. */
+import { useId } from "react"
 
-const ACCENT = "#2a7fff"
-
+/** Connected market data and an ascending trend, on a neutral slate tile. */
 export function LogoMark({ size = 28, className = "" }: { size?: number; className?: string }) {
+  const gradientId = useId()
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" fill="none" className={className} role="img" aria-label="ReasonCheck">
-      {/* open ring (gap on the right where the check-line exits) */}
-      <path
-        d="M53.75 42.14 A24 24 0 1 1 53.75 21.86"
-        stroke="currentColor"
-        strokeWidth="5"
-        strokeLinecap="round"
-        fill="none"
-        opacity="0.88"
-      />
-      {/* evidence check-line: dip then rise, ending in a confirming tick */}
-      <polyline
-        points="10,26 22,26 27,36 34,16 41,30 46,30 54,20"
-        stroke={ACCENT}
-        strokeWidth="4.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-      <circle cx="54" cy="20" r="4.2" fill={ACCENT} />
+      <defs>
+        <linearGradient id={gradientId} x1="4" y1="60" x2="58" y2="4" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#1e293b" />
+          <stop offset="0.52" stopColor="#334155" />
+          <stop offset="1" stopColor="#475569" />
+        </linearGradient>
+      </defs>
+      <rect x="2" y="2" width="60" height="60" rx="17" fill={`url(#${gradientId})`} />
+      <rect x="2.5" y="2.5" width="59" height="59" rx="16.5" stroke="white" strokeOpacity="0.18" />
+      <path d="M17 48V40M29 48V35M41 48V28" stroke="white" strokeOpacity="0.28" strokeWidth="5" strokeLinecap="round" />
+      <path d="M16 34L28 25L37 30L49 17M41 17H49V25" stroke="white" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="16" cy="34" r="3.5" fill="#93c5fd" />
+      <circle cx="28" cy="25" r="3" fill="#93c5fd" />
+      <circle cx="37" cy="30" r="3" fill="#93c5fd" />
     </svg>
   )
 }
 
-/** Two-tone "ReasonCheck" wordmark -- "Reason" in the foreground color,
- * "Check" in the brand accent blue, matching the reference system's
- * wordmark treatment exactly. */
 export function Wordmark({ className = "" }: { className?: string }) {
   return (
     <span className={className}>
       <span className="text-[var(--text-primary)]">Reason</span>
-      <span style={{ color: ACCENT }}>Check</span>
+      <span className="text-primary">Check</span>
     </span>
   )
 }

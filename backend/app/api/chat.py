@@ -3,7 +3,8 @@ from pydantic import BaseModel
 
 import db
 from agent import answer_portfolio_question
-from app.api.reports import _build_portfolio_context
+from app.api.language import ui_language
+from app.api.reports import _build_investor_profile_context, _build_portfolio_context
 from app.rate_limit import limiter
 from app.security import current_user_id
 
@@ -62,7 +63,11 @@ def send_message(request: Request, body: SendMessageBody, user_id: int = Depends
 
     try:
         context = _build_portfolio_context(user_id)
-        result = answer_portfolio_question(context, question, history=history)
+        profile_context = _build_investor_profile_context(user_id)
+        result = answer_portfolio_question(
+            context, question, history=history, investor_profile_context=profile_context,
+            language=ui_language(request),
+        )
     except Exception as e:  # noqa: BLE001 -- surface the real error to the frontend
         raise HTTPException(status_code=500, detail=str(e))
 

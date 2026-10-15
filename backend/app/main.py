@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
-from app.api import auth, chat, companies, notifications, portfolio, positions, profiles, reasons, reports, screener
+from app.api import auth, chat, companies, investor_profile, market, notifications, portfolio, positions, profiles, reasons, reports, screener
 from app.config import CORS_ORIGINS
 from app.rate_limit import limiter
 
@@ -29,8 +29,10 @@ app.include_router(screener.router)
 app.include_router(positions.router)
 app.include_router(portfolio.router)
 app.include_router(profiles.router)
+app.include_router(investor_profile.router)
 app.include_router(notifications.router)
 app.include_router(chat.router)
+app.include_router(market.router)
 
 # Continuous Monitoring: a free, deterministic background pass (never the
 # paid LLM) that re-checks every held position on a schedule and creates a

@@ -13,10 +13,11 @@ from app.config import JWT_ALGORITHM, JWT_EXPIRE_MINUTES, JWT_SECRET_KEY
 _bearer = HTTPBearer(auto_error=False)
 
 
-def create_access_token(user_id: int, email: str) -> str:
+def create_access_token(user_id: int, email: str, token_version: int = 0) -> str:
     payload = {
         "sub": str(user_id),
         "email": email,
+        "ver": token_version,
         "exp": datetime.now(timezone.utc) + timedelta(minutes=JWT_EXPIRE_MINUTES),
     }
     return jwt.encode(payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
@@ -27,6 +28,11 @@ def current_user_id(creds: HTTPAuthorizationCredentials | None = Depends(_bearer
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="not logged in")
     try:
         payload = jwt.decode(creds.credentials, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
-    except jwt.PyJWTError:
+        user_id = int(payload["sub"])
+    except (jwt.PyJWTError, KeyError, ValueError, TypeError):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid or expired token")
-    return int(payload["sub"])
+    import db
+    user = db.get_user_by_id(user_id)
+    if not user or payload.get("ver", 0) != user["token_version"]:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid or expired token")
+    return user_id

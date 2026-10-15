@@ -200,8 +200,78 @@ def _find_balance_sheet_date_before(text: str, value_start: int) -> str | None:
     return _parse_date_in_window(preceding[header_idx:])
 
 
+
+def _parse_amazon_quarter(html: str, metric: str, filing: EarningsReleaseFiling) -> ReleaseFigure:
+    """Select the current-year column within Three Months, never the YTD group.
+
+    Amazon tables use prior/current order. Preserve colspan coordinates rather
+    than treating the first number after a row label as the current figure.
+    Unrecognized/ambiguous tables fail closed; no flattened-text fallback.
+    """
+    from bs4 import BeautifulSoup
+    soup = BeautifulSoup(html, "html.parser")
+    label = {"Revenue": "Total net sales", "OperatingIncome": "Operating income"}[metric]
+    answers = set()
+    for table in soup.find_all("table"):
+        if not all(label in table.get_text(" ", strip=True) for label in ["Net product sales", "Net service sales", "Total net sales"]):
+            continue
+        rows = []
+        for tr in table.find_all("tr"):
+            if tr.find_parent("table") is not table:
+                continue
+            cells, pos = [], 0
+            for cell in tr.find_all(["td", "th"], recursive=False):
+                width = int(cell.get("colspan", 1))
+                if int(cell.get("rowspan", 1)) != 1:
+                    return ReleaseFigure(metric, None, None, filing)
+                cells.append((pos, pos + width, cell.get_text(" ", strip=True)))
+                pos += width
+            rows.append(cells)
+        for i, row in enumerate(rows):
+            groups = [(a,b,t) for a,b,t in row if "Three Months Ended" in t]
+            for lo, hi, header in groups:
+                if len(groups) == 1 and not any("Months Ended" in t and "Three Months Ended" not in t or "Year Ended" in t for _,_,t in row):
+                    lo, hi = 0, 10000  # Single-quarter table: all year columns belong to this header.
+                md = re.search(r"([A-Za-z]+)\s+(\d{1,2}),?", header)
+                if not md or md[1] not in MONTHS:
+                    continue
+                years = [(a,b,int(t)) for rr in rows[i+1:i+4] for a,b,t in rr
+                         if lo <= a < hi and re.fullmatch(r"20\d{2}", t)]
+                if len(years) != 2 or len({y for _,_,y in years}) != 2:
+                    continue
+                col, endcol, year = max(years, key=lambda x:x[2])
+                try:
+                    period = date(year, MONTHS[md[1]], int(md[2])).isoformat()
+                except ValueError:
+                    continue
+                # Unit must be explicit in the table or its immediate heading.
+                prefix = _clean_text(str(table))
+                unit = re.search(r"\(\s*in\s+(millions|thousands)\b", prefix, re.I)
+                if not unit:
+                    previous = table.find_previous(string=re.compile(r"in millions|in thousands", re.I))
+                    unit = re.search(r"in\s+(millions|thousands)\b", str(previous or ''), re.I)
+                if not unit:
+                    continue
+                scale = 1_000_000 if unit[1].lower() == 'millions' else 1_000
+                for rr in rows[i+1:]:
+                    if not any(t.casefold() == label.casefold() for _,_,t in rr):
+                        continue
+                    values = [t for a,b,t in rr if col <= a < endcol
+                              and re.fullmatch(r"\(?-?\d[\d,]*(?:\.\d+)?\)?",t)]
+                    if len(values) == 1:
+                        raw = values[0]
+                        number = float(raw.strip('()').replace(',',''))
+                        if raw.startswith('('):number = -number
+                        answers.add((period,number*scale))
+    if len(answers) != 1:
+        return ReleaseFigure(metric, None, None, filing)
+    period,value = answers.pop()
+    return ReleaseFigure(metric,period,value,filing)
+
 def get_release_figure(cik: str, filing: EarningsReleaseFiling, metric: str) -> ReleaseFigure:
     html = get_document_text(cik, filing.accession_number, filing.exhibit_filename)
+    if str(cik).lstrip("0") == "1018724" and metric in {"Revenue", "OperatingIncome"}:
+        return _parse_amazon_quarter(html, metric, filing)
     text = _clean_text(html)
 
     value_match = _find_value_match(text, metric)

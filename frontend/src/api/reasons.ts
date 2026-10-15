@@ -21,3 +21,10 @@ export async function fetchXbrlTags(ticker: string): Promise<XbrlTag[]> {
   const { data } = await apiClient.get<XbrlTag[]>(`/xbrl-tags/${encodeURIComponent(ticker)}`)
   return data
 }
+
+// Union of every tag any pilot company reports -- the picker for a reason
+// meant to apply to every company, not just one.
+export async function fetchAllXbrlTags(): Promise<XbrlTag[]> {
+  const { data } = await apiClient.get<XbrlTag[]>("/xbrl-tags")
+  return data
+}

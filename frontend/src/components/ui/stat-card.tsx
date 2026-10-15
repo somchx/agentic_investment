@@ -3,7 +3,7 @@ import type { ReactNode } from "react"
 export function StatCard({
   label,
   value,
-  accent = "#58a6ff",
+  accent = "var(--brand)",
   suffix,
 }: {
   label: ReactNode

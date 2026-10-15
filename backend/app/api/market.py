@@ -1,0 +1,41 @@
+from fastapi import APIRouter, Depends, HTTPException
+
+from app.security import current_user_id
+from market_data import HISTORY_RANGES, MarketDataUnavailableError, get_history, get_quote, get_quotes
+from sec_client import KNOWN_CIKS, is_supported_ticker
+
+router = APIRouter(prefix="/api/market", tags=["market"])
+
+
+@router.get("/quote/{ticker}")
+def quote(ticker: str, user_id: int = Depends(current_user_id)):
+    ticker = ticker.upper()
+    if not is_supported_ticker(ticker):
+        raise HTTPException(status_code=400, detail=f"Unsupported ticker: '{ticker}' is not one of {sorted(KNOWN_CIKS)}")
+    try:
+        return get_quote(ticker)
+    except MarketDataUnavailableError as e:
+        raise HTTPException(status_code=503, detail=f"Market data unavailable: {e}")
+
+
+@router.get("/quotes")
+def quotes(tickers: str, user_id: int = Depends(current_user_id)):
+    """Batch quote lookup -- `tickers` is a comma-separated list, e.g.
+    ?tickers=AAPL,MSFT,NVDA. Best-effort: tickers Yahoo has no data for are
+    simply omitted from the response rather than failing the whole batch.
+    """
+    requested = [t.strip().upper() for t in tickers.split(",") if t.strip()]
+    return get_quotes(requested)
+
+
+@router.get("/history/{ticker}")
+def history(ticker: str, range: str = "3mo", user_id: int = Depends(current_user_id)):
+    ticker = ticker.upper()
+    if not is_supported_ticker(ticker):
+        raise HTTPException(status_code=400, detail=f"Unsupported ticker: '{ticker}' is not one of {sorted(KNOWN_CIKS)}")
+    if range not in HISTORY_RANGES:
+        raise HTTPException(status_code=400, detail=f"range must be one of {sorted(HISTORY_RANGES)}")
+    try:
+        return get_history(ticker, range)
+    except MarketDataUnavailableError as e:
+        raise HTTPException(status_code=503, detail=f"Market data unavailable: {e}")

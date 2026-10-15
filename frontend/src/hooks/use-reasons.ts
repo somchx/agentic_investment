@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { createReason, deleteReason, fetchReasons, fetchXbrlTags } from "@/api/reasons"
+import { createReason, deleteReason, fetchAllXbrlTags, fetchReasons, fetchXbrlTags } from "@/api/reasons"
 import { queryKeys } from "@/hooks/query-keys"
 import type { CreateReasonPayload } from "@/types"
 
@@ -18,17 +18,28 @@ export function useXbrlTags(ticker: string) {
   })
 }
 
+export function useAllXbrlTags() {
+  return useQuery({
+    queryKey: queryKeys.xbrlTags("__all__"),
+    queryFn: fetchAllXbrlTags,
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
 export function useCreateReason() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (payload: CreateReasonPayload) => createReason(payload),
     // The response is a preview evaluation, not a Reason row -- it has no
     // `ticker` field. Use the mutation's own input (`variables`) instead,
-    // which always has the ticker the reason was created for.
+    // which always has the ticker the reason was created for (or none, for
+    // a global reason that applies to every company).
     onSuccess: (_result, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.reasons(variables.ticker) })
       queryClient.invalidateQueries({ queryKey: queryKeys.reasons() })
-      queryClient.invalidateQueries({ queryKey: queryKeys.report(variables.ticker) })
+      if (variables.ticker) {
+        queryClient.invalidateQueries({ queryKey: queryKeys.reasons(variables.ticker) })
+        queryClient.invalidateQueries({ queryKey: queryKeys.report(variables.ticker) })
+      }
     },
   })
 }
