@@ -52,8 +52,9 @@ export function CompanyDetailHeader({ ticker, reasonsAnchorId = "reason-checks" 
   const { t } = useTranslation()
   const [range, setRange] = useState<HistoryRange>("3mo")
   const [copied, setCopied] = useState(false)
-  const { data: quote } = useQuote(ticker)
-  const { data: history } = useHistory(ticker, range)
+  const { data: fetchedQuote, isError: quoteError } = useQuote(ticker)
+  const { data: history, isError: historyError, isLoading: historyLoading } = useHistory(ticker, range)
+  const quote = quoteError ? undefined : fetchedQuote
   const { data: positions } = usePositions(ticker)
   const { data: report, refetch: recheckReasons, isFetching: checkingReasons } = useReport(ticker)
   const { isFavorite, toggleFavorite } = useFavoriteTickers()
@@ -138,7 +139,7 @@ export function CompanyDetailHeader({ ticker, reasonsAnchorId = "reason-checks" 
               )}
             </>
           ) : (
-            <div className="text-sm text-[var(--text-muted)]">{t("company_detail_price_loading")}</div>
+            <div className="text-sm text-[var(--text-muted)]">{t(quoteError ? "market_price_unavailable" : "company_detail_price_loading")}</div>
           )}
         </div>
 
@@ -178,7 +179,15 @@ export function CompanyDetailHeader({ ticker, reasonsAnchorId = "reason-checks" 
         {t("company_detail_still_good_position")}
       </button>
 
-      <PriceChart data={history ?? []} height={180} />
+      {historyError ? (
+        <div role="status" className="flex h-[180px] items-center justify-center text-center text-sm text-[var(--text-muted)]">
+          {t("market_history_unavailable")}
+        </div>
+      ) : historyLoading ? (
+        <div role="status" className="flex h-[180px] items-center justify-center text-sm text-[var(--text-muted)]">
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("company_detail_price_loading")}
+        </div>
+      ) : <PriceChart data={history ?? []} height={180} />}
 
       <div className="grid grid-cols-3 gap-3 border-t border-[var(--border-primary)] pt-3">
         <StatTile label={t("company_detail_volume")} value={formatVolume(quote?.volume)} />

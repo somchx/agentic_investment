@@ -22,6 +22,10 @@ previous close otherwise (Yahoo's own `regularMarketPrice` reports
 whichever is current).
 """
 
+from functools import wraps
+from threading import RLock
+from email.utils import parsedate_to_datetime
+import math
 import logging
 import time
 
@@ -44,11 +48,61 @@ class MarketDataUnavailableError(Exception):
     silently omit it from a P&L calculation."""
 
 
+# One shared gate across quotes and history: a rejected request must not cause
+# all 15 symbols and concurrent browser requests to immediately retry Yahoo.
+_provider_lock = RLock()
+_provider_retry_at = 0.0
+
+
+def _serialized(fn):
+    @wraps(fn)
+    def wrapped(*args, **kwargs):
+        with _provider_lock:
+            return fn(*args, **kwargs)
+    return wrapped
+
+
+def retry_after_seconds() -> int:
+    return max(1, math.ceil(_provider_retry_at - time.time()))
+
+
+def _fetch_chart(ticker: str, params: dict) -> dict:
+    global _provider_retry_at
+    if time.time() < _provider_retry_at:
+        raise MarketDataUnavailableError("Price provider is temporarily unavailable; retry later.")
+    try:
+        resp = requests.get(
+            f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}",
+            headers={"User-Agent": USER_AGENT}, params=params, timeout=(3, 5),
+        )
+        if resp.status_code == 429:
+            delay = 300.0
+            raw = resp.headers.get("Retry-After", "")
+            try:
+                delay = max(delay, float(raw))
+            except ValueError:
+                try:
+                    delay = max(delay, parsedate_to_datetime(raw).timestamp() - time.time())
+                except (ValueError, TypeError, OverflowError):
+                    pass
+            _provider_retry_at = time.time() + delay
+        resp.raise_for_status()
+        payload = resp.json()
+        if not isinstance(payload, dict) or not (payload.get("chart") or {}).get("result"):
+            raise ValueError("No chart data")
+        return payload
+    except (requests.RequestException, ValueError) as exc:
+        _provider_retry_at = max(_provider_retry_at, time.time() + 30)
+        logger.warning("Market provider unavailable (%s); backing off", type(exc).__name__)
+        raise MarketDataUnavailableError("Price provider is temporarily unavailable; retry later.") from exc
+
+
 def _is_fresh(ticker: str) -> bool:
     cached = _quote_cache.get(ticker)
     return cached is not None and (time.time() - cached[0]) < QUOTE_CACHE_TTL_SECONDS
 
 
+@_serialized
 def get_quote(ticker: str) -> dict:
     """Current price snapshot for `ticker`. Cached for
     QUOTE_CACHE_TTL_SECONDS so a page polling every few seconds doesn't
@@ -58,23 +112,7 @@ def get_quote(ticker: str) -> dict:
     if _is_fresh(ticker):
         return _quote_cache[ticker][1]
 
-    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
-    try:
-        resp = requests.get(
-            url, headers={"User-Agent": USER_AGENT}, params={"interval": "1d", "range": "1d"}, timeout=10,
-        )
-        resp.raise_for_status()
-        payload = resp.json()
-    except requests.RequestException as e:
-        cached = _quote_cache.get(ticker)
-        if cached is not None:
-            age = time.time() - cached[0]
-            logger.warning(
-                "Market data fetch failed for %s (%s) -- serving cached quote %.0fs old instead of raising",
-                ticker, e, age,
-            )
-            return cached[1]
-        raise MarketDataUnavailableError(f"Could not fetch quote for {ticker}: {e}") from e
+    payload = _fetch_chart(ticker, {"interval": "1d", "range": "1d"})
 
     chart = payload.get("chart") or {}
     result = chart.get("result")
@@ -140,6 +178,7 @@ HISTORY_CACHE_TTL_SECONDS = 5 * 60
 _history_cache: dict[tuple[str, str], tuple[float, list[dict]]] = {}
 
 
+@_serialized
 def get_history(ticker: str, range_: str = "3mo") -> list[dict]:
     """Daily (or coarser) closing-price series for `ticker` over `range_`,
     for charting -- e.g. [{"date": "2026-01-02", "close": 184.3}, ...].
@@ -153,19 +192,7 @@ def get_history(ticker: str, range_: str = "3mo") -> list[dict]:
     if cached and (time.time() - cached[0]) < HISTORY_CACHE_TTL_SECONDS:
         return cached[1]
 
-    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
-    try:
-        resp = requests.get(
-            url, headers={"User-Agent": USER_AGENT},
-            params={"interval": _RANGE_INTERVAL[range_], "range": range_}, timeout=10,
-        )
-        resp.raise_for_status()
-        payload = resp.json()
-    except requests.RequestException as e:
-        if cached is not None:
-            logger.warning("History fetch failed for %s/%s (%s) -- serving cached series instead", ticker, range_, e)
-            return cached[1]
-        raise MarketDataUnavailableError(f"Could not fetch history for {ticker}: {e}") from e
+    payload = _fetch_chart(ticker, {"interval": _RANGE_INTERVAL[range_], "range": range_})
 
     chart = payload.get("chart") or {}
     result = chart.get("result")

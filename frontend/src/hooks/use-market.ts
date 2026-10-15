@@ -15,7 +15,10 @@ export function useQuote(ticker: string) {
     queryKey: queryKeys.quote(ticker),
     queryFn: () => fetchQuote(ticker),
     enabled: Boolean(ticker),
-    refetchInterval: QUOTE_REFETCH_INTERVAL_MS,
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchInterval: (query) => query.state.error || !query.state.data || Object.keys(query.state.data).length === 0
+      ? 5 * 60_000 : QUOTE_REFETCH_INTERVAL_MS,
     staleTime: QUOTE_REFETCH_INTERVAL_MS,
   })
 }
@@ -25,7 +28,10 @@ export function useQuotes(tickers: string[]) {
     queryKey: queryKeys.quotes(tickers),
     queryFn: () => fetchQuotes(tickers),
     enabled: tickers.length > 0,
-    refetchInterval: QUOTE_REFETCH_INTERVAL_MS,
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchInterval: (query) => query.state.error || !query.state.data || Object.keys(query.state.data).length === 0
+      ? 5 * 60_000 : QUOTE_REFETCH_INTERVAL_MS,
     staleTime: QUOTE_REFETCH_INTERVAL_MS,
   })
 }
@@ -38,5 +44,7 @@ export function useHistory(ticker: string, range: HistoryRange = "3mo") {
     queryFn: () => fetchHistory(ticker, range),
     enabled: Boolean(ticker),
     staleTime: 5 * 60_000,
+    retry: false,
+    refetchOnWindowFocus: false,
   })
 }

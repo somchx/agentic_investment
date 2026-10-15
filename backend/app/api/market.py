@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.security import current_user_id
-from market_data import HISTORY_RANGES, MarketDataUnavailableError, get_history, get_quote, get_quotes
+from market_data import HISTORY_RANGES, MarketDataUnavailableError, get_history, get_quote, get_quotes, retry_after_seconds
 from sec_client import KNOWN_CIKS, is_supported_ticker
 
 router = APIRouter(prefix="/api/market", tags=["market"])
@@ -15,7 +15,8 @@ def quote(ticker: str, user_id: int = Depends(current_user_id)):
     try:
         return get_quote(ticker)
     except MarketDataUnavailableError as e:
-        raise HTTPException(status_code=503, detail=f"Market data unavailable: {e}")
+        raise HTTPException(status_code=503, detail="Price provider temporarily unavailable. Please try again later.",
+                            headers={"Retry-After": str(retry_after_seconds())}) from e
 
 
 @router.get("/quotes")
@@ -25,6 +26,9 @@ def quotes(tickers: str, user_id: int = Depends(current_user_id)):
     simply omitted from the response rather than failing the whole batch.
     """
     requested = [t.strip().upper() for t in tickers.split(",") if t.strip()]
+    requested = list(dict.fromkeys(requested))
+    if any(not is_supported_ticker(t) for t in requested):
+        raise HTTPException(status_code=400, detail="Unsupported ticker")
     return get_quotes(requested)
 
 
@@ -38,4 +42,5 @@ def history(ticker: str, range: str = "3mo", user_id: int = Depends(current_user
     try:
         return get_history(ticker, range)
     except MarketDataUnavailableError as e:
-        raise HTTPException(status_code=503, detail=f"Market data unavailable: {e}")
+        raise HTTPException(status_code=503, detail="Price provider temporarily unavailable. Please try again later.",
+                            headers={"Retry-After": str(retry_after_seconds())}) from e
