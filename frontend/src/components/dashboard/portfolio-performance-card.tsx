@@ -2,7 +2,7 @@ import { useMemo, useState } from "react"
 import { ArrowUpRight } from "lucide-react"
 import { PriceChart } from "@/components/market/price-chart"
 import { usePortfolioSummary } from "@/hooks/use-positions"
-import { useQuotes } from "@/hooks/use-market"
+import { useQuotes, useMarketConfig } from "@/hooks/use-market"
 import { usePortfolioHistory } from "@/hooks/use-portfolio-history"
 import { useTranslation } from "@/i18n/context"
 import { purchaseTotals } from "@/lib/portfolio-totals"
@@ -26,7 +26,8 @@ export function PortfolioPerformanceCard({ showPortfolioLink = true, onViewPortf
   onViewPortfolio?: () => void
 }) {
   const { t } = useTranslation()
-  const [range, setRange] = useState<HistoryRange>("1y")
+  const { data: marketConfig } = useMarketConfig()
+  const [range, setRange] = useState<HistoryRange>("1mo")
   const { data: summary } = usePortfolioSummary()
 
   const quantityByTicker = useMemo(() => {
@@ -80,7 +81,7 @@ export function PortfolioPerformanceCard({ showPortfolioLink = true, onViewPortf
         <h2 className="text-base font-bold text-[var(--text-primary)]">{t("portfolio_perf_title")}</h2>
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex gap-1 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-hover)] p-0.5">
-            {RANGES.map((r) => (
+            {RANGES.filter(r => !marketConfig || marketConfig.ranges.includes(r.value)).map((r) => (
               <button
                 key={r.value}
                 type="button"

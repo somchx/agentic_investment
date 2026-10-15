@@ -1,10 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.security import current_user_id
-from market_data import HISTORY_RANGES, MarketDataUnavailableError, get_history, get_quote, get_quotes, retry_after_seconds
+from market_data import HISTORY_RANGES, MarketDataUnavailableError, get_history, get_quote, get_quotes, retry_after_seconds, provider_config
 from sec_client import KNOWN_CIKS, is_supported_ticker
 
 router = APIRouter(prefix="/api/market", tags=["market"])
+
+
+@router.get("/config")
+def config(user_id: int = Depends(current_user_id)):
+    return provider_config()
 
 
 @router.get("/quote/{ticker}")
@@ -37,8 +42,8 @@ def history(ticker: str, range: str = "3mo", user_id: int = Depends(current_user
     ticker = ticker.upper()
     if not is_supported_ticker(ticker):
         raise HTTPException(status_code=400, detail=f"Unsupported ticker: '{ticker}' is not one of {sorted(KNOWN_CIKS)}")
-    if range not in HISTORY_RANGES:
-        raise HTTPException(status_code=400, detail=f"range must be one of {sorted(HISTORY_RANGES)}")
+    if range not in provider_config()["ranges"]:
+        raise HTTPException(status_code=400, detail=f"range must be one of {provider_config()['ranges']}")
     try:
         return get_history(ticker, range)
     except MarketDataUnavailableError as e:

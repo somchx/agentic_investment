@@ -3,7 +3,8 @@ section 5 already anticipated as a Phase 1 (Optional) component ("ราคา�
 Volume -- ใช้ประกอบถ้าจำเป็น"). Distinct from sec_client.py's SEC EDGAR
 data in both source and purpose:
 
-- Source: Yahoo Finance's public chart endpoint -- free, no API key, no
+- Source: Alpha Vantage when configured (daily closing prices, shared 24h cache).
+  The optional legacy source is Yahoo Finance's public chart endpoint -- free, no API key, no
   signup, consistent with this project's existing preference for free
   data sources (SEC EDGAR is also free/no-key). Unofficial but widely
   used; if it ever breaks, a paid provider (Alpha Vantage, Finnhub,
@@ -25,6 +26,7 @@ whichever is current).
 from functools import wraps
 from threading import RLock
 from email.utils import parsedate_to_datetime
+import os
 import math
 import logging
 import time
@@ -62,7 +64,30 @@ def _serialized(fn):
     return wrapped
 
 
+def provider_name():
+    return os.environ.get("MARKET_DATA_PROVIDER", "alpha_vantage" if os.environ.get("ALPHA_VANTAGE_API_KEY") else "yahoo")
+
+
+def provider_config():
+    alpha = provider_name() == "alpha_vantage"
+    return {"provider": "Alpha Vantage" if alpha else "Yahoo Finance",
+            "price_type": "daily_close" if alpha else "market_price",
+            "ranges": sorted(HISTORY_RANGES - {"1d"} if alpha else HISTORY_RANGES),
+            "configured": bool(os.environ.get("ALPHA_VANTAGE_API_KEY")) if alpha else True}
+
+
+def _alpha_call(method, *args):
+    import alpha_market
+    try:
+        return getattr(alpha_market, method)(*args)
+    except alpha_market.AlphaUnavailable as exc:
+        raise MarketDataUnavailableError(str(exc)) from None
+
+
 def retry_after_seconds() -> int:
+    if provider_name() == "alpha_vantage":
+        import alpha_market
+        return alpha_market.retry_after_seconds()
     return max(1, math.ceil(_provider_retry_at - time.time()))
 
 
@@ -109,6 +134,8 @@ def get_quote(ticker: str) -> dict:
     hammer the upstream API on every request.
     """
     ticker = ticker.upper()
+    if provider_name() == "alpha_vantage":
+        return _alpha_call("get_quote", ticker)
     if _is_fresh(ticker):
         return _quote_cache[ticker][1]
 
@@ -186,6 +213,9 @@ def get_history(ticker: str, range_: str = "3mo") -> list[dict]:
     ticker = ticker.upper()
     if range_ not in HISTORY_RANGES:
         raise ValueError(f"range must be one of {sorted(HISTORY_RANGES)}, got {range_!r}")
+
+    if provider_name() == "alpha_vantage":
+        return _alpha_call("get_history", ticker, range_)
 
     cache_key = (ticker, range_)
     cached = _history_cache.get(cache_key)

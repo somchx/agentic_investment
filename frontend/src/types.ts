@@ -436,6 +436,9 @@ export type PortfolioCompanySummary =
 // short server-side cache TTL (~30s), polled from the frontend at a
 // similar cadence rather than streamed.
 export interface Quote {
+  source?: string
+  price_type?: string
+  as_of?: string
   ticker: string
   price: number
   previous_close: number | null

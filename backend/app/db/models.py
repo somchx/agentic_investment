@@ -382,3 +382,16 @@ class HiddenReason(Base):
     __tablename__ = 'hidden_reasons'
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), primary_key=True)
     reason_key = Column(String, primary_key=True)
+
+
+class MarketDataCache(Base):
+    __tablename__ = 'market_data_cache'
+    key = Column(String, primary_key=True)
+    payload = Column(JSONB, nullable=False)
+    fetched_at = Column(Float, nullable=False)
+
+
+class MarketDataUsage(Base):
+    __tablename__ = 'market_data_usage'
+    day = Column(String(10), primary_key=True)
+    requests = Column(Integer, nullable=False)

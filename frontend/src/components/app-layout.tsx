@@ -1,3 +1,4 @@
+import { useMarketConfig } from "@/hooks/use-market"
 import { Suspense, useEffect, useState } from "react"
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom"
 import {
@@ -284,6 +285,7 @@ export function AppLayout() {
         </aside>
 
         <main className="min-w-0 flex-1 overflow-auto px-3 sm:px-5">
+          <MarketSourceNotice />
           <Suspense fallback={<div className="flex justify-center py-16"><Loader2 className="h-5 w-5 animate-spin text-[var(--text-muted)]" /></div>}>
             <Outlet />
           </Suspense>
@@ -291,4 +293,11 @@ export function AppLayout() {
       </div>
     </div>
   )
+}
+
+function MarketSourceNotice() {
+  const { data } = useMarketConfig()
+  const { t } = useTranslation()
+  if (data?.price_type !== "daily_close") return null
+  return <p className="mb-3 rounded-lg bg-[var(--bg-card)] px-3 py-2 text-xs text-[var(--text-muted)]" role="status">{t("market_daily_notice")}</p>
 }

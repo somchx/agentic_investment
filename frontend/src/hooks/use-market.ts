@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { fetchHistory, fetchQuote, fetchQuotes } from "@/api/market"
+import { apiClient } from "@/api/client"
 import { queryKeys } from "@/hooks/query-keys"
 import type { HistoryRange } from "@/types"
 
@@ -46,5 +47,13 @@ export function useHistory(ticker: string, range: HistoryRange = "3mo") {
     staleTime: 5 * 60_000,
     retry: false,
     refetchOnWindowFocus: false,
+  })
+}
+
+export function useMarketConfig() {
+  return useQuery({
+    queryKey: ["market-config"],
+    queryFn: async () => (await apiClient.get<{provider: string; price_type: string; ranges: HistoryRange[]; configured: boolean}>("/market/config")).data,
+    staleTime: 60_000,
   })
 }

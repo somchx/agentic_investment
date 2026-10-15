@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Loader2, Share2, Star } from "lucide-react"
 import { PriceChart } from "@/components/market/price-chart"
 import { RiskMeter, riskLevelFor } from "@/components/dashboard/risk-meter"
-import { useHistory, useQuote } from "@/hooks/use-market"
+import { useHistory, useQuote, useMarketConfig } from "@/hooks/use-market"
 import { usePositions } from "@/hooks/use-positions"
 import { useReport } from "@/hooks/use-report"
 import { useFavoriteTickers } from "@/hooks/use-favorite-tickers"
@@ -50,6 +50,7 @@ function formatVolume(v: number | null | undefined): string {
 // available, not approximated or invented to fill the layout.
 export function CompanyDetailHeader({ ticker, reasonsAnchorId = "reason-checks" }: { ticker: string; reasonsAnchorId?: string }) {
   const { t } = useTranslation()
+  const { data: marketConfig } = useMarketConfig()
   const [range, setRange] = useState<HistoryRange>("3mo")
   const [copied, setCopied] = useState(false)
   const { data: fetchedQuote, isError: quoteError } = useQuote(ticker)
@@ -125,6 +126,7 @@ export function CompanyDetailHeader({ ticker, reasonsAnchorId = "reason-checks" 
               <div className="font-mono-num text-3xl font-extrabold text-[var(--text-primary)]">
                 ${quote.price.toFixed(2)}
               </div>
+              {quote.price_type === "daily_close" && <p className="mt-1 text-xs text-[var(--text-muted)]">{t("market_daily_close")} · {quote.as_of} · {quote.source}</p>}
               {quote.change !== null && quote.change_pct !== null && (
                 <div
                   className={cn(
@@ -144,7 +146,7 @@ export function CompanyDetailHeader({ ticker, reasonsAnchorId = "reason-checks" 
         </div>
 
         <div className="flex gap-1 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-hover)] p-0.5">
-          {RANGES.map((r) => (
+          {RANGES.filter(r => !marketConfig || marketConfig.ranges.includes(r.value)).map((r) => (
             <button
               key={r.value}
               type="button"
