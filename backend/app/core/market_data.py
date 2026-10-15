@@ -134,6 +134,9 @@ def get_quote(ticker: str) -> dict:
     hammer the upstream API on every request.
     """
     ticker = ticker.upper()
+    from sec_client import is_supported_ticker
+    if not is_supported_ticker(ticker):
+        raise MarketDataUnavailableError("Demo supports AAPL, MSFT and AMZN only")
     if provider_name() == "alpha_vantage":
         return _alpha_call("get_quote", ticker)
     if _is_fresh(ticker):
@@ -211,6 +214,9 @@ def get_history(ticker: str, range_: str = "3mo") -> list[dict]:
     for charting -- e.g. [{"date": "2026-01-02", "close": 184.3}, ...].
     Display only, same as get_quote (see module docstring)."""
     ticker = ticker.upper()
+    from sec_client import is_supported_ticker
+    if not is_supported_ticker(ticker):
+        raise MarketDataUnavailableError("Demo supports AAPL, MSFT and AMZN only")
     if range_ not in HISTORY_RANGES:
         raise ValueError(f"range must be one of {sorted(HISTORY_RANGES)}, got {range_!r}")
 

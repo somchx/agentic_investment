@@ -64,7 +64,7 @@ def get_data_freshness(ticker_or_cik: str) -> dict:
     any filing published since then (Code Audit Session 3, item 4).
     `cached_at`/`age_seconds` are None if there is no cache file at all yet
     (first-ever request for this ticker)."""
-    cik = KNOWN_CIKS.get(ticker_or_cik.upper(), ticker_or_cik).zfill(10)
+    cik = ALL_KNOWN_CIKS.get(ticker_or_cik.upper(), ticker_or_cik).zfill(10)
     path = _cache_path(cik)
     if not os.path.exists(path):
         return {"cached_at": None, "age_seconds": None, "is_stale": None}
@@ -79,7 +79,7 @@ def get_data_freshness(ticker_or_cik: str) -> dict:
 # The Phase 1 pilot company set (PROPOSAL.md 3.1 target: 10-15 companies).
 # CIKs pulled from SEC's own ticker->CIK mapping (company_tickers.json), not
 # hand-typed, to avoid pointing at a stale or wrong entity.
-KNOWN_CIKS = {
+ALL_KNOWN_CIKS = {
     "AAPL": "0000320193",
     "MSFT": "0000789019",
     "NVDA": "0001045810",
@@ -97,6 +97,9 @@ KNOWN_CIKS = {
     "COST": "0000909832",
 }
 
+
+# Public demo cohort; retain the catalog to read historical holdings safely.
+KNOWN_CIKS = {ticker: ALL_KNOWN_CIKS[ticker] for ticker in ("AAPL", "MSFT", "AMZN")}
 
 def is_supported_ticker(ticker: str) -> bool:
     """Whether `ticker` is one of this project's Phase 1 pilot companies
@@ -153,7 +156,7 @@ def get_submissions(ticker_or_cik: str, force_refresh: bool = False) -> dict:
     Used to locate 8-K earnings-release exhibits, which are not part of the
     XBRL company-facts payload.
     """
-    cik = KNOWN_CIKS.get(ticker_or_cik.upper(), ticker_or_cik).zfill(10)
+    cik = ALL_KNOWN_CIKS.get(ticker_or_cik.upper(), ticker_or_cik).zfill(10)
     path = os.path.join(CACHE_DIR, f"submissions_CIK{cik}.json")
 
     if os.path.exists(path) and not force_refresh:
@@ -217,7 +220,7 @@ def get_company_facts(ticker_or_cik: str, force_refresh: bool = False) -> dict:
     being stuck on whatever was cached the first time anyone ever asked for
     this ticker.
     """
-    cik = KNOWN_CIKS.get(ticker_or_cik.upper(), ticker_or_cik).zfill(10)
+    cik = ALL_KNOWN_CIKS.get(ticker_or_cik.upper(), ticker_or_cik).zfill(10)
     path = _cache_path(cik)
 
     if not force_refresh and _is_cache_fresh(path):

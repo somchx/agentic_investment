@@ -49,7 +49,7 @@ class MarketAvailabilityTests(unittest.TestCase):
         with patch('requests.get', side_effect=AssertionError('unexpected network')):
             r = self.client.get('/api/companies')
         self.assertEqual(r.status_code, 200)
-        self.assertEqual(len(r.json()), 15)
+        self.assertEqual({c["ticker"] for c in r.json()}, {"AAPL", "MSFT", "AMZN"})
         self.assertTrue(all(c['name'] != c['ticker'] for c in r.json()))
 
     def test_429_blocks_all_symbols_and_history_until_retry_after(self):
@@ -85,6 +85,19 @@ class MarketAvailabilityTests(unittest.TestCase):
             data._quote_cache['AAPL'] = (900, {'price': 1})
             with patch.object(data.requests, 'get', return_value=self.limited()):
                 with self.assertRaises(data.MarketDataUnavailableError): data.get_quote('AAPL')
+
+    def test_outside_demo_never_reaches_either_provider(self):
+        for provider in ("yahoo", "alpha_vantage"):
+            with patch.dict(os.environ, {"MARKET_DATA_PROVIDER": provider}), patch.object(data.requests, "get") as get, patch.object(data, "_alpha_call") as alpha:
+                for ticker in ("NVDA", "KO", "UNKNOWN"):
+                    with self.assertRaises(data.MarketDataUnavailableError): data.get_quote(ticker)
+                    with self.assertRaises(data.MarketDataUnavailableError): data.get_history(ticker)
+                    self.assertEqual(self.client.get(f"/api/market/history/{ticker}").status_code, 400)
+                get.assert_not_called()
+                alpha.assert_not_called()
+        with patch("app.api.market.get_quotes", return_value={}) as quotes:
+            self.assertEqual(self.client.get("/api/market/quotes?tickers=AAPL,KO").status_code, 200)
+            quotes.assert_called_once_with(["AAPL"])
 
     def test_invalid_symbols_and_ranges_never_call_provider(self):
         with patch.object(data.requests, 'get') as get:

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.security import current_user_id
 from market_data import HISTORY_RANGES, MarketDataUnavailableError, get_history, get_quote, get_quotes, retry_after_seconds, provider_config
-from sec_client import KNOWN_CIKS, is_supported_ticker
+from sec_client import ALL_KNOWN_CIKS, KNOWN_CIKS, is_supported_ticker
 
 router = APIRouter(prefix="/api/market", tags=["market"])
 
@@ -27,14 +27,15 @@ def quote(ticker: str, user_id: int = Depends(current_user_id)):
 @router.get("/quotes")
 def quotes(tickers: str, user_id: int = Depends(current_user_id)):
     """Batch quote lookup -- `tickers` is a comma-separated list, e.g.
-    ?tickers=AAPL,MSFT,NVDA. Best-effort: tickers Yahoo has no data for are
+    ?tickers=AAPL,MSFT,AMZN. Best-effort: tickers Yahoo has no data for are
     simply omitted from the response rather than failing the whole batch.
     """
     requested = [t.strip().upper() for t in tickers.split(",") if t.strip()]
     requested = list(dict.fromkeys(requested))
-    if any(not is_supported_ticker(t) for t in requested):
+    if any(t not in ALL_KNOWN_CIKS for t in requested):
         raise HTTPException(status_code=400, detail="Unsupported ticker")
-    return get_quotes(requested)
+    # Legacy holdings outside the demo stay stored, but consume no provider quota.
+    return get_quotes([t for t in requested if is_supported_ticker(t)])
 
 
 @router.get("/history/{ticker}")

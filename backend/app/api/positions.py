@@ -8,7 +8,7 @@ from agent import run_bull_bear_debate, run_thesis_attack
 from app.api.language import ui_language
 from app.rate_limit import limiter
 from app.security import current_user_id
-from sec_client import SecDataUnavailableError, UnsupportedTickerError
+from sec_client import SecDataUnavailableError, UnsupportedTickerError, is_supported_ticker
 from revalidation import build_reason_revalidation
 from tools import evaluate_frozen_reason
 
@@ -91,6 +91,8 @@ def _freeze_reason(ticker: str, reason_key: str, purchase_date: str, user_id: in
 @router.post("")
 def record_position(body: PositionIn, user_id: int = Depends(current_user_id)):
     ticker = body.ticker.upper()
+    if not is_supported_ticker(ticker):
+        raise HTTPException(status_code=400, detail="Demo supports AAPL, MSFT and AMZN only")
     keys = list(dict.fromkeys([*body.reason_keys, *([body.reason_key] if body.reason_key else [])]))
     # Tracking whether the reasons for buying still hold is the point of the
     # system, so a purchase must carry at least one.
