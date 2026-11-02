@@ -3,7 +3,7 @@ import type { ReactNode } from "react"
 export function Panel({
   title,
   description,
-  color = "#58a6ff",
+  color = "var(--brand)",
   action,
   children,
   className,

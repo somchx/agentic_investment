@@ -14,9 +14,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Primary CTA: the reference design system's signature orange
-        // gradient + glow shadow, reserved for the one main action on a
-        // form/panel (submit, send, confirm) -- not a general-purpose color.
+        // Violet gradient for primary investment and agent actions.
         default: "btn-glow-gradient rounded-full text-white shadow-glow hover:shadow-glow-lg active:scale-[0.98]",
         destructive: "rounded-md bg-destructive text-destructive-foreground hover:opacity-90",
         outline: "rounded-md border border-input bg-transparent hover:bg-accent hover:text-accent-foreground",

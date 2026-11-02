@@ -24,6 +24,7 @@ class Fact:
     accession_number: str
     filed: str  # ISO date the filing was published — the point-in-time cutoff
     cik: str = ""
+    derivation: dict | None = None
 
     @property
     def source_url(self) -> str:
@@ -41,6 +42,7 @@ class Fact:
         return (
             f"{self.metric} {self.period_end} = {self.value:,.0f} {self.unit} "
             f"(filed {self.filed}, {self.form}, accn {self.accession_number})"
+            + (f" [derived FY - 9M; operands: {self.derivation['operands']}; basis review pending]" if self.derivation else "")
         )
 
 

@@ -4,10 +4,16 @@
 
 @layer base {
   :root {
-    /* Dark, GitHub-dashboard-inspired theme (default). Tokens are HSL
-       triplets consumed by Tailwind's hsl(var(--x)) wrapper (see
-       tailwind.config.js) so existing bg-card / border-border / etc.
-       classes keep working unchanged. */
+    --brand-gradient: linear-gradient(to right, var(--brand), var(--brand-secondary));
+    --brand-secondary-hsl: 265 100% 77%;
+    --chart-1: #58a6ff;
+    --chart-2: #3fb950;
+    --chart-3: #bc8cff;
+    --chart-4: #64b5bc;
+    --chart-5: #d29922;
+    --chart-6: #f85149;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, ui-sans-serif, system-ui, sans-serif;
+    /* Original neutral surfaces; purple gradients are reserved for buttons. */
     --background: 220 20% 6%;
     --foreground: 210 22% 92%;
 
@@ -61,16 +67,26 @@
     --text-faint: #7d8590;
     --text-dimmed: #6e7681;
     --text-ghost: #484f58;
-    --accent-orange: #f0883e;
-    --accent-blue: #58a6ff;
+    --brand: #58a6ff;
     --accent-green: #3fb950;
     --accent-red: #f85149;
-    --accent-purple: #bc8cff;
+    --brand-secondary: #bc8cff;
     --accent-yellow: #d29922;
     --badge-bg: #21262d;
   }
 
+  :root:lang(th) {
+    --font-sans: "Kanit", -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, ui-sans-serif, system-ui, sans-serif;
+  }
+
   [data-theme="light"] {
+    --brand-secondary-hsl: 261 69% 59%;
+    --chart-1: #0969da;
+    --chart-2: #1a7f37;
+    --chart-3: #8250df;
+    --chart-4: #25877f;
+    --chart-5: #9a6700;
+    --chart-6: #cf222e;
     --background: 0 0% 100%;
     --foreground: 216 16% 14%;
 
@@ -119,11 +135,10 @@
     --text-faint: #656d76;
     --text-dimmed: #6e7781;
     --text-ghost: #8c959f;
-    --accent-orange: #d97706;
-    --accent-blue: #0969da;
+    --brand: #0969da;
     --accent-green: #1a7f37;
     --accent-red: #cf222e;
-    --accent-purple: #8250df;
+    --brand-secondary: #8250df;
     --accent-yellow: #9a6700;
     --badge-bg: #eaeef2;
   }
@@ -132,6 +147,12 @@
 @layer base {
   * {
     @apply border-border;
+  }
+  /* Match pplus-inv-v1's rem scale: the expanded sidebar is 15rem = 210px,
+     the collapsed rail is 4.5rem = 63px, and spacing/icons scale together.
+     A body font-size alone does not affect rem-based Tailwind utilities. */
+  html {
+    font-size: 14px;
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
@@ -147,24 +168,21 @@
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, ui-monospace, monospace;
 }
 
-/* Primary CTA treatment, matching the reference design system's gradient
-   + glow buttons -- used by Button's "default" variant only, not sprinkled
-   as a raw utility, so its blast radius stays limited to actual primary
-   actions (submit, send, confirm). */
+/* Match the original AI Assistant button gradient. */
+.brand-gradient,
 .btn-glow-gradient {
-  background-image: linear-gradient(135deg, #fbbf24, #f97316 55%, #ea580c);
+  background-image: var(--brand-gradient);
+  color: #fff;
 }
 .btn-glow-gradient:hover {
-  box-shadow: 0 6px 20px -6px rgba(249, 115, 22, 0.55);
+  box-shadow: 0 6px 24px -8px rgb(124 58 237 / 0.55);
+  filter: brightness(1.08);
 }
-.btn-glow-gradient:active {
-  transform: scale(0.98);
-}
-
-/* Focus glow on inputs, matching the reference system. */
+.btn-glow-gradient:active { transform: translateY(1px); }
 input:focus-visible, textarea:focus-visible, select:focus-visible {
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.18);
+  box-shadow: 0 0 0 3px hsl(var(--ring) / 0.14);
 }
+::selection { background: hsl(var(--primary) / 0.25); }
 
 /* Thin scrollbars, matching the reference design system. */
 * {

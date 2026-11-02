@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Check, Copy, Pencil, RotateCcw } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { MarkdownMessage } from "@/components/agent/markdown-message"
 import { useTranslation } from "@/i18n/context"
 import type { ChatTurn, ToolCall } from "@/types"
 
@@ -54,7 +55,7 @@ export function ChatMessage({
   if (isUser) {
     return (
       <div className="flex w-full flex-col items-end gap-1">
-        <div className="max-w-[85%] whitespace-pre-wrap break-words rounded-3xl bg-[var(--accent-blue)]/15 px-4 py-2.5 text-sm leading-relaxed text-[var(--text-primary)] sm:max-w-[70%]">
+        <div className="max-w-[85%] whitespace-pre-wrap break-words rounded-3xl bg-primary/15 px-4 py-2.5 text-sm leading-relaxed text-[var(--text-primary)] sm:max-w-[70%]">
           {message.content}
         </div>
         <div className="flex items-center gap-1">
@@ -74,13 +75,11 @@ export function ChatMessage({
     )
   }
 
-  // Assistant messages render as plain text (no bubble/border), matching
-  // the reference chat UI -- only the user's own turns get a bubble.
+  // Assistant messages render without a bubble, matching the reference chat
+  // UI -- only the user's own turns get one. Their Markdown is rendered.
   return (
     <div className="flex w-full flex-col gap-1.5">
-      <div className="whitespace-pre-wrap break-words text-sm leading-relaxed text-[var(--text-primary)]">
-        {message.content}
-      </div>
+      <MarkdownMessage content={message.content} />
 
       <div className="flex items-center gap-1">
         <CopyButton text={message.content} />

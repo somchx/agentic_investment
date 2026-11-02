@@ -8,6 +8,7 @@ keeps every reported version so restatements are visible as evidence rather
 than silently overwritten.
 """
 
+from decimal import Decimal
 from datetime import date
 
 from models import Fact
@@ -44,6 +45,20 @@ def _is_single_quarter(period_start: str, period_end: str) -> bool:
     return 80 <= days <= 100
 
 
+def _tag_source(facts_json: dict, tag_data: dict) -> dict | None:
+    """One filing example, not a claim about the facts used by a saved rule."""
+    entries = [e for rows in tag_data.get("units", {}).values() for e in rows
+               if e.get("form") in ("10-K", "10-Q") and e.get("accn") and e.get("filed")]
+    if not entries or not facts_json.get("cik"):
+        return None
+    entry = max(entries, key=lambda e: (e["filed"], e.get("end", "")))
+    cik = str(int(facts_json["cik"]))
+    accn = entry["accn"]
+    return {"company": facts_json.get("entityName", cik), "form": entry["form"],
+            "filed": entry["filed"], "period_end": entry.get("end"),
+            "url": f"https://www.sec.gov/Archives/edgar/data/{cik}/{accn.replace('-', '')}/{accn}-index.html"}
+
+
 def list_available_tags(facts_json: dict) -> list[dict]:
     """Every us-gaap tag this specific company has actually reported, for
     the custom-reason picker (webapp.py's /api/xbrl-tags/<ticker>) -- the
@@ -59,6 +74,15 @@ def list_available_tags(facts_json: dict) -> list[dict]:
     us_gaap = facts_json.get("facts", {}).get("us-gaap", {})
     out = []
     for tag, tag_data in us_gaap.items():
+        label = tag_data.get("label") or tag
+        # SEC's own taxonomy marks a tag's official label with "(Deprecated
+        # <date>)" once a newer tag replaces it -- still present in old
+        # filings (so still valid to pick), but not the tag anyone should
+        # reach for going forward, and there are hundreds of them cluttering
+        # the picker. Skip them rather than surface a tag SEC itself has
+        # marked as superseded.
+        if "(deprecated" in label.lower():
+            continue
         has_quarterly = False
         has_instant = False
         for entries in tag_data.get("units", {}).values():
@@ -73,7 +97,9 @@ def list_available_tags(facts_json: dict) -> list[dict]:
         if has_quarterly or has_instant:
             out.append({
                 "tag": tag,
-                "label": tag_data.get("label") or tag,
+                "label": label,
+                "description": tag_data.get("description"),
+                "source": _tag_source(facts_json, tag_data),
                 "quarterly": has_quarterly,
                 "instant": has_instant,
             })
@@ -100,6 +126,49 @@ def extract_quarterly_facts_for_tag(facts_json: dict, cik: str, tag: str) -> lis
     """
     return _extract_quarterly_from_tags(facts_json, cik, tag, [tag])
 
+
+
+def _derive_msft_q4(entries: list[dict], cik: str, metric: str, tag: str, unit: str, direct: list[Fact]) -> list[Fact]:
+    """Derive original MSFT Q4 from same-tag USD FY and 9M disclosures.
+
+    Restrict to MSFT Revenue/OperatingIncome, original fiscal-year filings,
+    matching start dates and unambiguous operands. This is calculation
+    provenance, not independent approval of accounting-basis equivalence.
+    Comparative/restated FY operands require separate review and are skipped.
+    """
+    if str(cik).lstrip('0') != '789019' or unit != 'USD' or metric not in {'Revenue','OperatingIncome'}:
+        return []
+    out = []
+    for fy in entries:
+        end = fy.get('end','')
+        if not end.endswith('-06-30') or fy.get('start') != str(int(end[:4])-1)+'-07-01':
+            continue
+        year = int(end[:4])
+        if fy.get('fy') != year or fy.get('fp') != 'FY' or fy.get('form') != '10-K':
+            continue
+        if any(f.period_end == end and f.accession_number == fy.get('accn') for f in direct):
+            continue
+        candidates = [e for e in entries if e.get('start') == fy['start']
+                      and e.get('end') == f'{year}-03-31' and e.get('form') == '10-Q'
+                      and e.get('fy') == year and e.get('fp') == 'Q3'
+                      and e.get('filed') and e['filed'] <= fy.get('filed','')]
+        # Conflicting nine-month values are not resolved by guessing latest.
+        if not candidates or len({e['val'] for e in candidates}) != 1:
+            continue
+        nine = max(candidates, key=lambda e:e['filed'])
+        fy_versions = [e['val'] for e in entries if e.get('start') == fy['start'] and e.get('end') == end
+                       and e.get('filed','') <= fy['filed'] and e.get('form') in {'10-K','10-K/A'}]
+        if len(set(fy_versions)) != 1:
+            continue
+        trace = {'method':'FY_MINUS_9M','concept':tag,'basis_review':'REQUIRES_INDEPENDENT_REVIEW',
+                 'operands':[{'value':e['val'],'unit':unit,'start':e['start'],'end':e['end'],
+                              'filed':e['filed'],'accession_number':e['accn']} for e in [fy,nine]]}
+        out.append(Fact(metric=metric,period_start=f'{year}-04-01',period_end=end,
+                        value=float(Decimal(str(fy['val']))-Decimal(str(nine['val']))),unit=unit,
+                        fiscal_year=year,fiscal_period='Q4',form='10-K',
+                        accession_number=fy['accn'],filed=max(fy['filed'],nine['filed']),cik=cik,
+                        derivation=trace))
+    return out
 
 def _extract_quarterly_from_tags(facts_json: dict, cik: str, metric_label: str, tags: list[str]) -> list[Fact]:
     us_gaap = facts_json.get("facts", {}).get("us-gaap", {})
@@ -151,6 +220,9 @@ def _extract_quarterly_from_tags(facts_json: dict, cik: str, metric_label: str, 
                         cik=cik,
                     )
                 )
+        for unit, entries in tag_data.get("units", {}).items():
+            derived = _derive_msft_q4(entries, cik, metric_label, tag, unit, tag_facts)
+            tag_facts.extend(f for f in derived if (f.accession_number, f.period_end) not in covered_accn_periods)
         facts.extend(tag_facts)
         covered_accn_periods.update((f.accession_number, f.period_end) for f in tag_facts)
 

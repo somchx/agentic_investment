@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
-import { builtinReasonDescriptions, translations, type TranslationKey } from "@/i18n/translations"
+import { builtinReasonDescriptions, translations, xbrlTagLabelsTh, type TranslationKey } from "@/i18n/translations"
 
 export type Lang = "en" | "th"
 
@@ -13,6 +13,13 @@ interface LanguageContextValue {
   // dictionary key) -- falls back to `fallback` (the raw description,
   // e.g. a custom reason's own free text) when reasonKey isn't a built-in.
   tReason: (reasonKey: string | null | undefined, fallback: string) => string
+  // For an XBRL tag's display label (a metric picker option). Preference
+  // order: the small hand-reviewed dictionary (xbrlTagLabelsTh) first,
+  // then `apiLabelTh` (the backend's cached Claude translation -- see
+  // translate_xbrl_tags.py -- covers virtually every tag), then
+  // `fallbackLabel` (the raw SEC-reported English label) for the rare tag
+  // with neither.
+  tXbrlTag: (tag: string, fallbackLabel: string, apiLabelTh?: string | null) => string
 }
 
 const LanguageContext = createContext<LanguageContextValue | null>(null)
@@ -34,6 +41,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(() => readStoredLang())
 
   useEffect(() => {
+    document.documentElement.lang = lang
     try {
       window.localStorage.setItem(STORAGE_KEY, lang)
     } catch {
@@ -68,7 +76,15 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [lang],
   )
 
-  const value = useMemo(() => ({ lang, setLang, t, tReason }), [lang, setLang, t, tReason])
+  const tXbrlTag = useCallback(
+    (tag: string, fallbackLabel: string, apiLabelTh?: string | null) => {
+      if (lang !== "th") return fallbackLabel
+      return xbrlTagLabelsTh[tag] ?? apiLabelTh ?? fallbackLabel
+    },
+    [lang],
+  )
+
+  const value = useMemo(() => ({ lang, setLang, t, tReason, tXbrlTag }), [lang, setLang, t, tReason, tXbrlTag])
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>
 }

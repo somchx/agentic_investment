@@ -11,17 +11,13 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: [
-          "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Inter", "ui-sans-serif", "system-ui", "sans-serif",
-        ],
-        heading: [
-          "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Inter", "ui-sans-serif", "system-ui", "sans-serif",
-        ],
+        sans: ["var(--font-sans)"],
+        heading: ["var(--font-sans)"],
         mono: ["SFMono-Regular", "Consolas", "Liberation Mono", "Menlo", "ui-monospace", "monospace"],
       },
       boxShadow: {
-        glow: "0 8px 28px -6px rgba(249, 115, 22, 0.45)",
-        "glow-lg": "0 20px 60px -12px rgba(249, 115, 22, 0.35)",
+        glow: "0 8px 28px -6px rgba(124, 58, 237, 0.30)",
+        "glow-lg": "0 20px 60px -12px rgba(124, 58, 237, 0.35)",
       },
       keyframes: {
         "gradient-pan": {
@@ -33,6 +29,7 @@ export default {
         "gradient-pan": "gradient-pan 6s ease infinite",
       },
       colors: {
+        "brand-secondary": "hsl(var(--brand-secondary-hsl))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

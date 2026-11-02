@@ -24,12 +24,19 @@ def _pick_primary_and_conflicts(versions: list[Fact]) -> tuple[Fact | None, list
     if not versions:
         return None, []
     primary = versions[-1]  # most recently filed = most authoritative
-    conflicts = [
-        v
-        for v in versions[:-1]
-        if v.value != 0
-        and abs(v.value - primary.value) / abs(primary.value) > RESTATEMENT_TOLERANCE
-    ]
+
+    def _conflicts_with_primary(v: Fact) -> bool:
+        if v.value == 0 and primary.value == 0:
+            return False  # both zero -- not a conflict, and avoids 0/0
+        if primary.value == 0:
+            # Went from a nonzero earlier value to zero (or vice versa) --
+            # a real, material discrepancy, but the usual relative-difference
+            # formula divides by primary.value and would crash here
+            # (reproduced: ZeroDivisionError, found via external code audit).
+            return v.value != 0
+        return abs(v.value - primary.value) / abs(primary.value) > RESTATEMENT_TOLERANCE
+
+    conflicts = [v for v in versions[:-1] if _conflicts_with_primary(v)]
     return primary, conflicts
 
 

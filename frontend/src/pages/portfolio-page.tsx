@@ -1,125 +1,105 @@
+import { useState } from "react"
 import { Sparkles, Trash2 } from "lucide-react"
-import { Link } from "react-router-dom"
-import { Panel } from "@/components/ui/panel"
-import { Badge } from "@/components/ui/badge"
+import { Link, useSearchParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { usePortfolioSummary, useDeletePosition } from "@/hooks/use-positions"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { RecordPurchaseDialog } from "@/components/portfolio/record-purchase-dialog"
+import { HoldingsTable, type HeldCompany } from "@/components/portfolio/holdings-table"
+import { HoldingDetail, useDeletePositionConfirm } from "@/components/portfolio/holding-detail"
+import { PortfolioPerformanceCard } from "@/components/dashboard/portfolio-performance-card"
+import { PortfolioAllocationCard } from "@/components/dashboard/portfolio-allocation-card"
+import { TickerAvatar } from "@/components/market/ticker-avatar"
+import { usePortfolioSummary } from "@/hooks/use-positions"
 import { useTranslation } from "@/i18n/context"
 
 export function PortfolioPage() {
-  const { t, tReason } = useTranslation()
+  const { t } = useTranslation()
   const { data, isLoading, isError } = usePortfolioSummary()
-  const deletePosition = useDeletePosition()
+  const deleteConfirm = useDeletePositionConfirm()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [recordOpen, setRecordOpen] = useState(false)
 
-  const statusLabel = (status: string) => t("status_" + status.toLowerCase().replace(/ /g, "_"))
+  // ?ticker= drives the modal, so a notification link opens that holding directly.
+  const selectedTicker = searchParams.get("ticker")?.toUpperCase() ?? null
+  const selected = data?.find((c): c is HeldCompany => c.ticker === selectedTicker && c.error == null)
+
+  function openTicker(ticker: string) {
+    setSearchParams((prev) => { const next = new URLSearchParams(prev); next.set("ticker", ticker); return next })
+  }
+  function closeModal() {
+    setSearchParams((prev) => { const next = new URLSearchParams(prev); next.delete("ticker"); return next })
+  }
+  const askDelete = deleteConfirm.askDelete
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl font-extrabold">{t("portfolio_title")}</h1>
-          <p className="max-w-2xl text-sm text-muted-foreground">
-            {t("portfolio_intro")}
-          </p>
+          <h1 className="text-2xl font-extrabold text-[var(--text-primary)]">{t("portfolio_title")}</h1>
+          <p className="max-w-2xl text-sm text-[var(--text-muted)]">{t("portfolio_intro")}</p>
         </div>
         <Link
           to="/agent"
-          className="inline-flex flex-none items-center gap-1.5 rounded-md border border-[var(--border-primary)] bg-[var(--bg-card)] px-3 py-1.5 text-xs font-medium text-[var(--text-faint)] transition-colors hover:border-[var(--accent-purple)]/50 hover:text-[var(--text-primary)]"
+          className="inline-flex flex-none items-center gap-1.5 rounded-full brand-gradient px-4 py-2.5 text-sm font-semibold text-white shadow-glow transition-opacity hover:opacity-90"
         >
-          <Sparkles className="h-3.5 w-3.5 text-[var(--accent-purple)]" />
+          <Sparkles className="h-4 w-4" />
           {t("portfolio_ask_agent")}
         </Link>
       </div>
 
-      {isLoading && <p className="text-sm text-muted-foreground">{t("portfolio_loading")}</p>}
+      {isLoading && <p className="text-sm text-[var(--text-muted)]">{t("portfolio_loading")}</p>}
       {isError && <p className="text-sm text-destructive">{t("portfolio_error")}</p>}
-      {data && data.length === 0 && (
-        <p className="text-sm text-muted-foreground">
-          {t("portfolio_empty")}
-        </p>
-      )}
+      {data && data.length === 0 && <p className="text-sm text-[var(--text-muted)]">{t("portfolio_empty")}</p>}
 
-      <div className="flex flex-col gap-6">
-        {data?.map((company) => (
-          <Panel
-            key={company.ticker}
-            color="var(--accent-blue)"
-            title={
-              <span className="inline-flex items-center gap-2 normal-case tracking-normal text-sm font-bold text-[var(--text-primary)]">
-                {company.company_name}
-                <span className="font-mono-num text-xs font-medium text-muted-foreground">
-                  {company.ticker}
-                </span>
-              </span>
-            }
-          >
-            <div className="flex flex-col gap-3">
-              {company.positions.map((p) => (
-                <div
-                  key={p.id}
-                  className="flex flex-col gap-3 rounded-md border border-border p-3 sm:flex-row sm:items-center sm:justify-between"
-                >
-                  <div className="flex flex-col gap-1">
-                    <div className="font-mono-num text-sm">
-                      {t("portfolio_position_summary", {
-                        quantity: p.quantity,
-                        price: p.purchase_price,
-                        date: p.purchase_date,
-                      })}
-                    </div>
-                    {p.reason_snapshot ? (
-                      <>
-                        <div className="text-xs text-muted-foreground">
-                          {t("portfolio_bought_for", {
-                            description: tReason(p.reason_key, p.reason_snapshot.description),
-                            status: statusLabel(p.reason_snapshot.status_at_purchase),
-                          })}
-                        </div>
-                        {p.current_computed_value !== undefined && (
-                          <div className="font-mono-num text-xs text-muted-foreground">
-                            {t("portfolio_value_at_purchase")}{" "}
-                            <span className="text-foreground">
-                              {p.reason_snapshot.computed_value_at_purchase ?? "—"}
-                            </span>
-                            {"  →  "}
-                            {t("portfolio_value_now")}{" "}
-                            <span
-                              className={
-                                p.still_true === false ? "text-status-broken" : "text-status-supported"
-                              }
-                            >
-                              {p.current_computed_value ?? "—"}
-                            </span>
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <div className="text-xs text-muted-foreground">{t("portfolio_no_reason")}</div>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {p.still_true === null ? (
-                      <Badge variant="unknown">{t("portfolio_status_unknown")}</Badge>
-                    ) : p.still_true ? (
-                      <Badge variant="supported">{t("portfolio_status_still_true")}</Badge>
-                    ) : (
-                      <Badge variant="broken">{t("portfolio_status_broken")}</Badge>
-                    )}
+      {data && data.length > 0 && (
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[2fr_1fr]">
+          <PortfolioPerformanceCard showPortfolioLink={false} />
+          <PortfolioAllocationCard />
+        </div>
+      )}
+      {/* Shown even when empty, so the first purchase can be recorded from here. */}
+      {data && <HoldingsTable companies={data} onSelect={openTicker} onRecordPurchase={() => setRecordOpen(true)} />}
+
+      <RecordPurchaseDialog open={recordOpen} onOpenChange={setRecordOpen} onRecorded={openTicker} />
+
+      <Dialog open={!!selected} onOpenChange={(open) => !open && closeModal()}>
+        {/* Pinned header, scrolling body -- same pattern as the dashboard's company modal. */}
+        <DialogContent
+          className="flex max-h-[85vh] max-w-4xl flex-col gap-0 overflow-hidden p-0"
+          // Keep focus off the header delete button on open.
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
+          {selected && (
+            <>
+              <DialogHeader className="shrink-0 border-b border-[var(--border-primary)] px-6 py-4 pr-12">
+                <div className="flex items-center justify-between gap-3">
+                  <DialogTitle className="flex min-w-0 items-center gap-3">
+                    <TickerAvatar ticker={selected.ticker} />
+                    <span className="truncate">{selected.company_name}</span>
+                    <span className="font-mono-num text-sm font-medium text-muted-foreground">{selected.ticker}</span>
+                  </DialogTitle>
+                  {/* One purchase: delete sits in the header. Several: each purchase row keeps its own. */}
+                  {selected.positions.length === 1 && (
                     <Button
                       variant="ghost"
                       size="icon"
                       aria-label={t("portfolio_delete_position_aria")}
-                      onClick={() => deletePosition.mutate(p.id)}
+                      onClick={() => askDelete(selected, selected.positions[0])}
                     >
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
-                  </div>
+                  )}
                 </div>
-              ))}
-            </div>
-          </Panel>
-        ))}
-      </div>
+              </DialogHeader>
+              <div className="min-h-0 flex-1 overflow-y-auto p-6">
+                <HoldingDetail company={selected} onDelete={(p) => askDelete(selected, p)} />
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {deleteConfirm.dialog}
     </div>
   )
 }
