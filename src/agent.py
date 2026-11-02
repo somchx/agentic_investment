@@ -28,12 +28,15 @@ Anthropic Messages API's tool-use feature, not a custom framework.
 """
 
 import json
+import logging
 import os
+from datetime import datetime, timezone
 
 import requests
 from dotenv import load_dotenv
 
 from investigation_state import InvestigationState, assess_sufficiency
+from sec_client import KNOWN_CIKS, SecDataUnavailableError, UnsupportedTickerError, is_supported_ticker
 from tools import (
     FINALIZE_REPORT_TOOL,
     REASON_DEFS,
@@ -47,8 +50,47 @@ from tools import (
 
 load_dotenv()
 
+logger = logging.getLogger(__name__)
+
 ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages"
 ANTHROPIC_MODEL = "claude-sonnet-4-5-20250929"
+
+# Every one of these tools accepts an `as_of` kwarg -- see tools.py.
+POINT_IN_TIME_TOOLS = {
+    "check_reason_status", "calculate_metric", "get_secondary_evidence", "get_filing_context",
+}
+
+
+def _dispatch_tool(dispatch: dict, name: str, call_input: dict) -> dict:
+    """Shared classification for a single tool-call failure (Code Audit
+    Session 4 follow-up, item 3) -- used by both the main loop and the
+    finalize-rejection branch below, which each need to execute tool calls
+    and can't just share a for-loop since one also has to attach the
+    finalize_report tool_result.
+
+    - SecDataUnavailableError (SEC itself unreachable, nothing cached) is
+      NOT a fact about the company -- it must not be read as "no evidence"
+      or folded into a completed report, so it re-raises and aborts the
+      whole investigation.
+    - UnsupportedTickerError is defense-in-depth (the ticker should already
+      have been rejected before any LLM call was made -- see run_with_llm's
+      top).
+    - Anything else unexpected is logged with full detail server-side
+      (never sent to the LLM) and surfaced as a generic TOOL_UNAVAILABLE.
+    """
+    try:
+        return dispatch[name](**call_input)
+    except SecDataUnavailableError:
+        raise
+    except UnsupportedTickerError as e:
+        logger.warning("Unsupported ticker mid-investigation in %s(%s): %s", name, call_input, e)
+        return {"error_code": "INVALID_TICKER", "error": "This ticker is not supported by this system."}
+    except Exception as e:  # noqa: BLE001 -- any other tool failure must reach the gate, not crash past it
+        logger.error("Unexpected tool failure in %s(%s): %s", name, call_input, e, exc_info=True)
+        return {
+            "error_code": "TOOL_UNAVAILABLE",
+            "error": "An unexpected error occurred while gathering evidence for this tool call.",
+        }
 
 UNCERTAIN_STATUSES = {"Weakened", "Broken", "Not enough data"}
 
@@ -147,11 +189,24 @@ def print_report(report: dict) -> None:
     print()
 
 
-def run_with_llm(ticker: str, verbose: bool = False) -> dict:
+def run_with_llm(ticker: str, analysis_date: str | None = None, verbose: bool = False) -> dict:
     """The real target: Claude chooses which tool to call, in a loop, using
     TOOL_SPECS, via a direct call to the Messages API (see module docstring
     for why this bypasses the `anthropic` SDK).
+
+    `analysis_date` is the ONE point-in-time date for this entire
+    investigation (Code Audit Session 4 follow-up, item 2) -- defaults to
+    today (a live investigation) but, once fixed here, is force-injected
+    into every point-in-time tool call below regardless of whatever `as_of`
+    (if anything) the LLM itself tries to pass.
     """
+    # Cheapest possible rejection: an unsupported ticker never needs to
+    # reach the LLM at all (Code Audit Session 4 follow-up, item 1).
+    if not is_supported_ticker(ticker):
+        raise UnsupportedTickerError(
+            f"'{ticker}' is not one of this system's supported tickers: {sorted(KNOWN_CIKS)}"
+        )
+
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
         raise RuntimeError(
@@ -171,6 +226,24 @@ def run_with_llm(ticker: str, verbose: bool = False) -> dict:
         "content-type": "application/json",
     }
 
+    today = datetime.now(timezone.utc).date().isoformat()
+    is_historical = analysis_date is not None and analysis_date < today
+    if analysis_date is None:
+        analysis_date = today
+
+    historical_notice = ""
+    if is_historical:
+        historical_notice = (
+            f"\n\nThis is a POINT-IN-TIME investigation as of {analysis_date} -- not today. "
+            "All tool results are already restricted to filings at or before this date, and "
+            "web_search has been disabled for this investigation because it cannot verify a "
+            "source's publish date and could leak information not knowable as of that date. "
+            "Be aware, however, that this cannot fully rule out look-ahead bias: your own "
+            "training may include general knowledge of this company's events after "
+            f"{analysis_date}. Do not let anything you know about events after {analysis_date} "
+            "influence your conclusions -- rely only on the evidence the tools return."
+        )
+
     messages = [{
         "role": "user",
         "content": (
@@ -181,21 +254,29 @@ def run_with_llm(ticker: str, verbose: bool = False) -> dict:
             "explanation before concluding -- a threshold breach alone doesn't tell "
             "you whether it's a real event, a restatement, or a data/tag mismatch, "
             "and the rationale you write should reflect what you actually found, not "
-            "just the number. A web_search tool is also available, but it is "
-            "STRICTLY for qualitative context to enrich the rationale text (e.g. is "
-            "there a known reason a metric moved) -- it returns today's information, "
-            "not what was knowable as of the analysis date, so it must NEVER be used "
-            "to decide a reason's Supported/Weakened/Broken status. That status must "
-            "come only from check_reason_status / calculate_metric's point-in-time SEC "
-            "data. Once you're done, call finalize_report exactly once with a "
+            "just the number."
+            + ("" if is_historical else (
+                " A web_search tool is also available, but it is STRICTLY for "
+                "qualitative context to enrich the rationale text (e.g. is there a "
+                "known reason a metric moved) -- it returns today's information, not "
+                "what was knowable as of the analysis date, so it must NEVER be used "
+                "to decide a reason's Supported/Weakened/Broken status. That status "
+                "must come only from check_reason_status / calculate_metric's "
+                "point-in-time SEC data."
+            ))
+            + " Once you're done, call finalize_report exactly once with a "
             "structured entry for every reason you checked -- that call is your final "
             "answer, not a free-text summary."
+            + historical_notice
         ),
     }]
     trace = []
     total_input_tokens = 0
     total_output_tokens = 0
-    all_tools = TOOL_SPECS + [WEB_SEARCH_TOOL, FINALIZE_REPORT_TOOL]
+    all_tools = list(TOOL_SPECS)
+    if not is_historical:
+        all_tools.append(WEB_SEARCH_TOOL)
+    all_tools.append(FINALIZE_REPORT_TOOL)
     state = InvestigationState(ticker=ticker)
     # How many times assess_sufficiency has rejected a finalize_report call.
     # Capped rather than unbounded so a reason the agent genuinely can't
@@ -244,27 +325,72 @@ def run_with_llm(ticker: str, verbose: bool = False) -> dict:
             if problems and rejection_count < MAX_REJECTIONS:
                 rejection_count += 1
                 trace.append(f"finalize_report rejected by assess_sufficiency: {problems}")
-                messages.append({
-                    "role": "user",
+                # Every tool_use in the assistant turn we just appended --
+                # finalize_report included -- needs a matching tool_result in
+                # the next message, or the next Messages API call is a flat
+                # 400 ("tool_use ids were found without tool_result blocks"),
+                # which crashes the loop before the model gets a chance to
+                # fix its answer. A plain-text nudge alone (the original
+                # approach) omits finalize_report's own tool_result and hits
+                # this once a real rejection happens against the live API --
+                # previously only exercised via mocks, which don't enforce
+                # this. Any other tool calls made in the same turn as
+                # finalize_report are executed normally so their ids get a
+                # real result too.
+                other_calls = [c for c in tool_uses if c is not finalize_call]
+                rejection_results = []
+                for call in other_calls:
+                    call_input = dict(call["input"])
+                    if call["name"] in POINT_IN_TIME_TOOLS:
+                        call_input["as_of"] = analysis_date
+                    trace.append(f"LLM called {call['name']}({call_input})")
+                    if verbose:
+                        print(trace[-1])
+                    result = _dispatch_tool(dispatch, call["name"], call_input)
+                    state.record(call["name"], call_input, result)
+                    rejection_results.append({
+                        "type": "tool_result", "tool_use_id": call["id"], "content": json.dumps(result),
+                    })
+                rejection_results.append({
+                    "type": "tool_result",
+                    "tool_use_id": finalize_call["id"],
                     "content": (
-                        "Your finalize_report call was rejected -- the evidence gathered "
+                        "This finalize_report call was rejected -- the evidence gathered "
                         "so far doesn't support finalizing these reasons yet:\n"
                         + "\n".join(f"- {p}" for p in problems)
                         + "\nInvestigate further (call the relevant tool(s)) and then call "
                         "finalize_report again."
                     ),
+                    "is_error": True,
                 })
+                messages.append({"role": "user", "content": rejection_results})
                 continue
             if problems:
+                # Rejection budget exhausted and gaps are still unresolved --
+                # this must escalate, not come back as a clean report (Code
+                # Audit Session 3, item 1).
                 trace.append(
-                    f"finalize_report accepted despite unresolved gaps (assessor gave up "
-                    f"after {MAX_REJECTIONS} rejections): {problems}"
+                    f"finalize_report rejected {MAX_REJECTIONS} time(s) and gaps remained "
+                    f"unresolved -- escalating instead of accepting: {problems}"
                 )
+                return {
+                    "ticker": ticker,
+                    "trace": trace,
+                    "reasons": [],
+                    "assessor_gaps": problems,
+                    "escalated": True,
+                    "escalation_reason": (
+                        "Evidence Assessor rejected finalize_report the maximum number of "
+                        f"times and evidence gaps remained unresolved: {problems}"
+                    ),
+                    "unresolved_proposal": finalize_call["input"]["reasons"],
+                    "usage": {"input_tokens": total_input_tokens, "output_tokens": total_output_tokens},
+                }
             return {
                 "ticker": ticker,
                 "trace": trace,
                 "reasons": finalize_call["input"]["reasons"],
-                "assessor_gaps": problems,
+                "assessor_gaps": [],
                 "escalated": False,
                 "usage": {"input_tokens": total_input_tokens, "output_tokens": total_output_tokens},
             }
@@ -280,11 +406,14 @@ def run_with_llm(ticker: str, verbose: bool = False) -> dict:
 
         tool_results = []
         for call in tool_uses:
-            trace.append(f"LLM called {call['name']}({call['input']})")
+            call_input = dict(call["input"])
+            if call["name"] in POINT_IN_TIME_TOOLS:
+                call_input["as_of"] = analysis_date
+            trace.append(f"LLM called {call['name']}({call_input})")
             if verbose:
                 print(trace[-1])
-            result = dispatch[call["name"]](**call["input"])
-            state.record(call["name"], call["input"], result)
+            result = _dispatch_tool(dispatch, call["name"], call_input)
+            state.record(call["name"], call_input, result)
             tool_results.append({
                 "type": "tool_result",
                 "tool_use_id": call["id"],

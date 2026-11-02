@@ -56,16 +56,32 @@ def _clean_text(html: str) -> str:
     return text
 
 
-def latest_10q_accession(ticker: str) -> str:
-    """Most recent 10-Q/10-K accession number for a company -- the filing
-    whose narrative reflects the reason being investigated right now.
+def latest_10q_accession(ticker: str, as_of: str | None = None) -> str:
+    """Most recent 10-Q/10-K accession number for a company as of a given
+    date -- the filing whose narrative reflects what was actually knowable
+    at that point, not whatever has since been filed.
+
+    Without `as_of` this returns the single latest 10-Q/10-K (original
+    behavior, relied on by run_with_llm's live investigation path). With
+    `as_of`, filings filed after that date are skipped -- otherwise a
+    point-in-time investigation (e.g. re-running against a purchase date)
+    could read narrative text describing events that hadn't happened yet
+    at the time being evaluated, the same look-ahead-bias risk the XBRL
+    `as_of` plumbing exists to prevent elsewhere.
+
+    `recent["form"]`/`filingDate` from the submissions API are already
+    ordered newest-first, so the first match at-or-before `as_of` is the
+    correct "most recent as of that date" filing.
     """
     subs = get_submissions(ticker)
     recent = subs["filings"]["recent"]
-    for form, accn in zip(recent["form"], recent["accessionNumber"]):
-        if form in ("10-Q", "10-K"):
-            return accn
-    raise RuntimeError(f"no 10-Q/10-K found for {ticker}")
+    for form, accn, filed in zip(recent["form"], recent["accessionNumber"], recent["filingDate"]):
+        if form not in ("10-Q", "10-K"):
+            continue
+        if as_of is not None and filed > as_of:
+            continue
+        return accn
+    raise RuntimeError(f"no 10-Q/10-K found for {ticker}" + (f" as of {as_of}" if as_of else ""))
 
 
 def get_filing_narrative(cik: str, accession_number: str, metric: str, context_chars: int = 800) -> list[str]:

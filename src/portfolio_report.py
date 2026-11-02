@@ -13,7 +13,12 @@ import sys
 from models import Reason
 from reason_engine import evaluate_margin_level, evaluate_yoy_growth
 from sec_client import get_company_facts
-from xbrl_extract import extract_instant_facts, extract_quarterly_facts
+from xbrl_extract import (
+    extract_instant_facts,
+    extract_instant_facts_for_tag,
+    extract_quarterly_facts,
+    extract_quarterly_facts_for_tag,
+)
 
 DEFAULT_TICKERS = ["AAPL", "MSFT", "NVDA", "GOOGL", "AMZN"]
 
@@ -25,7 +30,7 @@ STATUS_ICON = {
 }
 
 
-def build_company_reasons(ticker: str):
+def build_company_reasons(ticker: str, user_id: int | None = None, include_custom: bool = True):
     facts_json = get_company_facts(ticker)
     cik = str(facts_json.get("cik")).zfill(10)
     company_name = facts_json.get("entityName", ticker)
@@ -52,6 +57,28 @@ def build_company_reasons(ticker: str):
             debt_facts, None,
         ),
     ]
+
+    if include_custom and user_id is not None:
+        import db
+        for row in db.list_reasons(ticker=ticker, user_id=user_id):
+            if row["is_builtin"]:
+                continue
+            custom_reason = Reason(
+                row["reason_key"], company_name, row["metric"], row["comparison"], row["threshold"],
+                kind=row["kind"], denominator_metric=row["denominator_metric"] or "",
+                description=row["description"], instant=bool(row["instant"]), is_custom=True,
+            )
+            if custom_reason.instant:
+                facts = extract_instant_facts_for_tag(facts_json, cik, custom_reason.metric)
+                denom_facts = None
+            else:
+                facts = extract_quarterly_facts_for_tag(facts_json, cik, custom_reason.metric)
+                denom_facts = (
+                    extract_quarterly_facts_for_tag(facts_json, cik, custom_reason.denominator_metric)
+                    if custom_reason.kind == "margin_level" else None
+                )
+            reasons.append((custom_reason, facts, denom_facts))
+
     return company_name, reasons
 
 

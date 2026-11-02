@@ -24,6 +24,7 @@ class Fact:
     accession_number: str
     filed: str  # ISO date the filing was published — the point-in-time cutoff
     cik: str = ""
+    derivation: dict | None = None
 
     @property
     def source_url(self) -> str:
@@ -41,6 +42,7 @@ class Fact:
         return (
             f"{self.metric} {self.period_end} = {self.value:,.0f} {self.unit} "
             f"(filed {self.filed}, {self.form}, accn {self.accession_number})"
+            + (f" [derived FY - 9M; operands: {self.derivation['operands']}; basis review pending]" if self.derivation else "")
         )
 
 
@@ -61,6 +63,16 @@ class Reason:
     kind: str = "yoy_growth"
     denominator_metric: str = ""
     description: str = ""
+    # True for a balance-sheet/instant concept (e.g. LongTermDebt -- a
+    # snapshot with no duration), False for a duration/quarterly-flow
+    # concept (e.g. Revenue). Built-in reasons set this explicitly in
+    # tools.REASON_DEFS; custom reasons derive it from which shape the
+    # picked XBRL tag actually reports (xbrl_extract.list_available_tags).
+    instant: bool = False
+    # Raw XBRL tag name, set only for custom (DB-backed) reasons -- built-in
+    # reasons instead go through the curated METRIC_TAGS/INSTANT_METRIC_TAGS
+    # multi-tag lookup in xbrl_extract.py, keyed by `metric`.
+    is_custom: bool = False
 
 
 @dataclass

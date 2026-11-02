@@ -15,6 +15,21 @@ USER_AGENT = os.environ.get(
 )
 CACHE_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "cache")
 
+
+class UnsupportedTickerError(Exception):
+    """The ticker/CIK genuinely doesn't exist in SEC EDGAR (a 404 on the
+    company-facts endpoint itself, not a missing fact within an otherwise
+    real company) -- distinct from SecDataUnavailableError so a caller can
+    tell "this isn't a real company" apart from "SEC is temporarily down"."""
+
+
+class SecDataUnavailableError(Exception):
+    """SEC EDGAR itself is unreachable/erroring (network failure, timeout,
+    5xx) -- an infrastructure problem, not a fact about the company being
+    investigated. Callers must not let this be interpreted as evidence
+    ("Not enough data") or presented as part of a completed analysis."""
+
+
 # The Phase 1 pilot company set (PROPOSAL.md 3.1 target: 10-15 companies).
 # CIKs pulled from SEC's own ticker->CIK mapping (company_tickers.json), not
 # hand-typed, to avoid pointing at a stale or wrong entity.
@@ -37,21 +52,45 @@ KNOWN_CIKS = {
 }
 
 
+def is_supported_ticker(ticker: str) -> bool:
+    """Whether `ticker` is one of this project's Phase 1 pilot companies
+    (KNOWN_CIKS) -- the cheap, pre-LLM check callers should run before
+    starting an investigation, so an obviously-wrong ticker never costs a
+    Claude API call at all."""
+    return ticker.upper() in KNOWN_CIKS
+
+
 def _cache_path(cik: str) -> str:
     os.makedirs(CACHE_DIR, exist_ok=True)
     return os.path.join(CACHE_DIR, f"CIK{cik}.json")
 
 
+def _classify_request_exception(e: requests.RequestException, url: str) -> Exception:
+    """Shared classification for every SEC fetch, not just get_company_facts
+    -- get_submissions/get_filing_index_html/get_document_text (used by the
+    secondary-evidence and filing-context tools) would otherwise let a raw
+    RequestException escape unclassified (Code Audit Session 4 follow-up)."""
+    if isinstance(e, requests.HTTPError) and e.response is not None and e.response.status_code == 404:
+        return UnsupportedTickerError(f"SEC returned 404 for {url} -- not a real CIK/filing")
+    return SecDataUnavailableError(f"SEC EDGAR is unreachable: {e}")
+
+
 def _get_json(url: str) -> dict:
-    resp = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=30)
-    resp.raise_for_status()
+    try:
+        resp = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=30)
+        resp.raise_for_status()
+    except requests.RequestException as e:
+        raise _classify_request_exception(e, url) from e
     time.sleep(0.15)
     return resp.json()
 
 
 def _get_text(url: str) -> str:
-    resp = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=30)
-    resp.raise_for_status()
+    try:
+        resp = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=30)
+        resp.raise_for_status()
+    except requests.RequestException as e:
+        raise _classify_request_exception(e, url) from e
     time.sleep(0.15)
     return resp.text
 
@@ -129,9 +168,20 @@ def get_company_facts(ticker_or_cik: str, force_refresh: bool = False) -> dict:
             return json.load(f)
 
     url = f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json"
-    resp = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=30)
-    resp.raise_for_status()
-    data = resp.json()
+    try:
+        resp = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+    except requests.RequestException as e:
+        # Classify the failure so callers can tell "this CIK doesn't exist"
+        # (UnsupportedTickerError) apart from "SEC itself is down"
+        # (SecDataUnavailableError) instead of both surfacing as the same
+        # generic RequestException (Code Audit Session 4 follow-up).
+        if isinstance(e, requests.HTTPError) and e.response is not None and e.response.status_code == 404:
+            raise UnsupportedTickerError(
+                f"no SEC company-facts found for CIK{cik} (from {ticker_or_cik!r}) -- not a real CIK"
+            ) from e
+        raise SecDataUnavailableError(f"SEC EDGAR is unreachable: {e}") from e
 
     with open(path, "w") as f:
         json.dump(data, f)

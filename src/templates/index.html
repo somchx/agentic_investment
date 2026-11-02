@@ -46,6 +46,44 @@
     * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
   }
 
+  /* ---------- Auth gate ---------- */
+  #auth-gate {
+    display: none; position: fixed; inset: 0; z-index: 100;
+    background: var(--bg); align-items: center; justify-content: center; padding: 20px;
+  }
+  #auth-gate.show { display: flex; }
+  #auth-card {
+    width: 100%; max-width: 360px; background: var(--panel); border: 1px solid var(--panel-border);
+    border-radius: 14px; padding: 32px 28px;
+  }
+  .auth-sub { text-align: center; color: var(--text-faint); font-size: 13px; margin: 0 0 22px; }
+  .auth-tabs { display: flex; gap: 4px; background: var(--panel-2); border-radius: 9px; padding: 3px; margin-bottom: 20px; }
+  .auth-tab {
+    flex: 1; background: none; border: none; color: var(--text-faint); font-size: 13px; font-weight: 700;
+    padding: 8px 0; border-radius: 7px; cursor: pointer; font-family: "Public Sans", "Noto Sans Thai", sans-serif;
+  }
+  .auth-tab.active { background: var(--accent-wash); color: var(--accent); }
+  .auth-form { display: flex; flex-direction: column; gap: 14px; }
+  .auth-form label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--text-faint); font-weight: 600; }
+  .auth-form input {
+    background: var(--panel-2); border: 1px solid var(--panel-border); color: var(--text);
+    border-radius: 8px; padding: 10px 12px; font-size: 14px; font-family: "Public Sans", "Noto Sans Thai", sans-serif;
+  }
+  .auth-form input:focus { outline: none; border-color: var(--accent); }
+  .auth-hint { margin: -8px 0 0; font-size: 11px; color: var(--text-faint); }
+  .auth-submit {
+    background: linear-gradient(135deg, var(--accent-strong), var(--accent)); color: white; border: none;
+    border-radius: 8px; padding: 11px 0; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 4px;
+  }
+  #auth-error { color: var(--red); font-size: 13px; margin-top: 14px; text-align: center; }
+  .user-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--panel-border);
+  }
+  .user-email { font-size: 11.5px; color: var(--text-faint); font-family: "JetBrains Mono", monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .logout-btn { background: none; border: none; color: var(--text-faint); font-size: 11.5px; cursor: pointer; flex: none; text-decoration: underline; }
+  .logout-btn:hover { color: var(--red); }
+
   /* ---------- App shell ---------- */
   #shell { display: flex; min-height: 100vh; }
 
@@ -233,15 +271,32 @@
     background: none; color: var(--accent); border: 1px solid var(--accent);
     border-radius: 7px; padding: 7px 13px; font-size: 13px; cursor: pointer; font-weight: 600;
   }
-  #new-profile-form {
+  #new-profile-form, #custom-reason-form {
     display: none; margin-top: 14px; background: var(--panel-2); border: 1px solid var(--panel-border);
     border-radius: 9px; padding: 16px; gap: 12px; flex-wrap: wrap; align-items: flex-end;
   }
-  #new-profile-form.open { display: flex; }
-  #new-profile-form label { display: flex; flex-direction: column; gap: 5px; font-size: 11.5px; color: var(--text-faint); font-weight: 600; }
+  #new-profile-form.open, #custom-reason-form.open { display: flex; }
+  #new-profile-form label, #custom-reason-form label { display: flex; flex-direction: column; gap: 5px; font-size: 11.5px; color: var(--text-faint); font-weight: 600; }
+  #custom-reason-form select#cr-metric, #custom-reason-form select#cr-denominator { min-width: 220px; max-width: 320px; }
   .tier-Monitor { color: var(--gray); } .tier-Watch { color: var(--yellow); }
   .tier-Review_Soon { color: #f0904a; } .tier-Review_Now { color: var(--red); }
-  #profile-error { color: var(--red); font-size: 13px; margin-top: 8px; }
+  #profile-error, #custom-reason-error { color: var(--red); font-size: 13px; margin-top: 8px; }
+  .custom-reason-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 8px 0; border-bottom: 1px solid var(--panel-border); font-size: 13px;
+  }
+  .custom-reason-row:last-child { border-bottom: none; }
+  .custom-reason-row .del-btn { color: var(--red); background: none; border: none; cursor: pointer; font-size: 12px; flex: none; }
+  .portfolio-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    background: var(--panel); border: 1px solid var(--panel-border); border-radius: var(--radius);
+    padding: 14px 18px; margin-bottom: 10px; cursor: pointer;
+  }
+  .portfolio-row:hover { border-color: #333947; }
+  .portfolio-row .pr-left { display: flex; align-items: center; gap: 12px; }
+  .portfolio-row .pr-name { font-weight: 600; }
+  .portfolio-row .pr-ticker { color: var(--text-faint); font-family: "JetBrains Mono", monospace; font-size: 12px; }
+  .portfolio-add-row { display: flex; gap: 8px; margin-bottom: 20px; }
 
   /* ---------- History panel ---------- */
   #history-toggle-row { display: flex; align-items: center; justify-content: space-between; margin-top: 34px; }
@@ -318,13 +373,41 @@
     .reason-status { order: 3; }
     #profile-row { flex-direction: column; align-items: stretch; }
     #profile-row select, #profile-row button { width: 100%; }
-    #new-profile-form { flex-direction: column; align-items: stretch; }
-    #new-profile-form label { width: 100%; }
+    #new-profile-form, #custom-reason-form { flex-direction: column; align-items: stretch; }
+    #new-profile-form label, #custom-reason-form label { width: 100%; }
+    #custom-reason-form select#cr-metric, #custom-reason-form select#cr-denominator { max-width: 100%; }
     table.history { min-width: 560px; }
   }
 </style>
 </head>
 <body>
+
+<div id="auth-gate">
+  <div id="auth-card">
+    <div class="brand-full" style="justify-content:center; margin-bottom:4px;"><span class="dot3"></span><span data-i18n="app_title">Investment Reason Tracker</span></div>
+    <p class="auth-sub" data-i18n="auth_sub">Track whether the reason you bought still holds.</p>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="auth-tab-login" onclick="setAuthTab('login')" data-i18n="auth_login_tab">Log in</button>
+      <button class="auth-tab" id="auth-tab-register" onclick="setAuthTab('register')" data-i18n="auth_register_tab">Register</button>
+    </div>
+
+    <form id="auth-form-login" class="auth-form" onsubmit="return doLogin(event)">
+      <label><span data-i18n="auth_email_label">Email</span><input type="email" id="login-email" required></label>
+      <label><span data-i18n="auth_password_label">Password</span><input type="password" id="login-password" required></label>
+      <button type="submit" class="auth-submit" data-i18n="auth_login_btn">Log in</button>
+    </form>
+
+    <form id="auth-form-register" class="auth-form" style="display:none;" onsubmit="return doRegister(event)">
+      <label><span data-i18n="auth_email_label">Email</span><input type="email" id="register-email" required></label>
+      <label><span data-i18n="auth_password_label">Password</span><input type="password" id="register-password" required minlength="8"></label>
+      <p class="auth-hint" data-i18n="auth_password_hint">At least 8 characters.</p>
+      <button type="submit" class="auth-submit" data-i18n="auth_register_btn">Create account</button>
+    </form>
+
+    <div id="auth-error"></div>
+  </div>
+</div>
 
 <div id="topbar">
   <button id="hamburger" onclick="toggleSidebar()" aria-label="Toggle menu"><span></span></button>
@@ -341,6 +424,10 @@
         <button class="lang-btn" id="lang-btn-en" onclick="setLang('en')">EN</button>
         <button class="lang-btn" id="lang-btn-th" onclick="setLang('th')">ไทย</button>
       </div>
+      <div class="user-row">
+        <span class="user-email" id="user-email"></span>
+        <button class="logout-btn" onclick="doLogout()" data-i18n="auth_logout">Log out</button>
+      </div>
     </div>
     <div class="search-wrap">
       <input type="text" id="ticker-search" data-i18n-placeholder="search_placeholder" placeholder="Filter companies..." oninput="filterTickers()">
@@ -352,6 +439,12 @@
       {% endfor %}
     </div>
     <div class="sidebar-footer">
+      <button class="nav-toggle" id="screener-nav-toggle" onclick="toggleScreenerFromSidebar()">
+        <span>&#128269;</span> <span data-i18n="section_screener">Screener</span>
+      </button>
+      <button class="nav-toggle" id="portfolio-nav-toggle" onclick="togglePortfolioFromSidebar()">
+        <span>&#128188;</span> <span data-i18n="nav_portfolio">My Portfolio</span>
+      </button>
       <button class="nav-toggle" id="history-nav-toggle" onclick="toggleHistoryFromSidebar()">
         <span>&#8635;</span> <span data-i18n="nav_recent">Recent activity</span>
       </button>
@@ -376,6 +469,55 @@
 
         <div class="stat-strip" id="stat-strip"></div>
         <div id="reasons"></div>
+
+        <div class="section-title" data-i18n="section_custom_reasons">Define Your Own Reason</div>
+        <div class="action-panel" id="custom-reason-section">
+          <div id="custom-reasons-list"></div>
+          <button class="btn-secondary" onclick="toggleCustomReasonForm()" data-i18n="btn_new_custom_reason">+ Add custom reason</button>
+          <div id="custom-reason-form">
+            <label><span data-i18n="cr-metric-label">Metric</span>
+              <select id="cr-metric" onchange="onCrMetricChange()"></select>
+            </label>
+            <label><span data-i18n="cr-denom-label">Divide by (optional, for a margin)</span>
+              <select id="cr-denominator"><option value="" data-i18n="cr-none">-- none --</option></select>
+            </label>
+            <label><span data-i18n="np_risk_label2">Comparison</span>
+              <select id="cr-comparison"><option value=">">&gt;</option><option value=">=">&gt;=</option><option value="<">&lt;</option><option value="<=">&lt;=</option></select>
+            </label>
+            <label><span data-i18n="cr-threshold-label">Threshold %</span> <input type="number" id="cr-threshold" step="0.1" value="10"></label>
+            <label style="flex:1; min-width:220px;"><span data-i18n="cr-desc-label">Description</span>
+              <input type="text" id="cr-description" data-i18n-placeholder="cr-desc-placeholder" placeholder="e.g. R&D must stay under 10% of revenue">
+            </label>
+            <button id="cr-save-btn" onclick="saveCustomReason()" data-i18n="btn_save">Save</button>
+          </div>
+          <div id="custom-reason-error"></div>
+          <div id="custom-reason-preview"></div>
+        </div>
+
+        <div class="section-title" data-i18n="section_record_purchase">Record a Purchase</div>
+        <div class="action-panel" id="record-purchase-section">
+          <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end;">
+            <label style="display:flex; flex-direction:column; gap:5px; font-size:11.5px; color:var(--text-faint); font-weight:600;">
+              <span data-i18n="rp_quantity_label">Quantity</span>
+              <input type="number" id="rp-quantity" min="0" step="0.0001" value="1">
+            </label>
+            <label style="display:flex; flex-direction:column; gap:5px; font-size:11.5px; color:var(--text-faint); font-weight:600;">
+              <span data-i18n="rp_price_label">Price paid (per share)</span>
+              <input type="number" id="rp-price" min="0" step="0.01">
+            </label>
+            <label style="display:flex; flex-direction:column; gap:5px; font-size:11.5px; color:var(--text-faint); font-weight:600;">
+              <span data-i18n="rp_date_label">Purchase date</span>
+              <input type="date" id="rp-date">
+            </label>
+            <label style="display:flex; flex-direction:column; gap:5px; font-size:11.5px; color:var(--text-faint); font-weight:600; flex:1; min-width:220px;">
+              <span data-i18n="rp_reason_label">Because this reason was true (optional)</span>
+              <select id="rp-reason-select"><option value="" data-i18n="rp_reason_none">-- just buying it, no specific reason --</option></select>
+            </label>
+            <button onclick="savePurchase()" data-i18n="btn_record_purchase">Record purchase</button>
+          </div>
+          <div id="rp-error" style="color:var(--red); font-size:13px; margin-top:8px;"></div>
+          <div id="rp-result"></div>
+        </div>
 
         <div class="section-title" data-i18n="section_ask_agent">Ask the AI Agent</div>
         <div class="action-panel" id="agent-section">
@@ -427,6 +569,23 @@
         <div id="global-history-content"></div>
       </div>
 
+      <div id="screener-view" style="display:none;">
+        <div class="company-header"><h2 data-i18n="section_screener">Screener</h2></div>
+        <div class="subtitle" data-i18n="screener_sub">Which companies pass a condition, right now -- the same evidence check as the main dashboard, just run across every company. No AI judgment, just your own rule applied everywhere.</div>
+        <div class="portfolio-add-row">
+          <select id="screener-reason-select"></select>
+          <button class="btn-secondary" onclick="runScreen()" data-i18n="btn_run_screen">Run screen</button>
+        </div>
+        <div id="screener-results"></div>
+      </div>
+
+      <div id="portfolio-view" style="display:none;">
+        <div class="company-header"><h2 data-i18n="portfolio_title">My Portfolio</h2></div>
+        <div class="subtitle" data-i18n="portfolio_sub">Companies you hold, rolled up into one view -- every reason still computed live, free.</div>
+        <div class="stat-strip" id="portfolio-stat-strip"></div>
+        <div id="portfolio-companies"></div>
+      </div>
+
       <div id="manual-view" style="display:none;">
         <div class="company-header"><h2 data-i18n="manual_title">How to use this</h2></div>
         <div class="subtitle" data-i18n="manual_sub">A four-step guide to browsing reason status, running the AI agent, and personalizing priorities.</div>
@@ -472,8 +631,6 @@
 
 <script>
 let currentTicker = null;
-let showingGlobalHistory = false;
-let showingManual = false;
 
 /* ---------- i18n ---------- */
 const I18N = {
@@ -552,6 +709,63 @@ const I18N = {
     desc_R1: "Revenue growth must exceed 10% YoY",
     desc_R2: "Operating margin must stay at or above 20%",
     desc_R3: "Long-term debt must not grow more than 15% YoY",
+    nav_portfolio: "My Portfolio",
+    section_custom_reasons: "Define Your Own Reason",
+    btn_new_custom_reason: "+ Add custom reason",
+    "cr-metric-label": "Metric",
+    "cr-denom-label": "Divide by (optional, for a margin)",
+    "cr-none": "-- none --",
+    "np_risk_label2": "Comparison",
+    "cr-threshold-label": "Threshold %",
+    "cr-desc-label": "Description",
+    "cr-desc-placeholder": "e.g. R&D must stay under 10% of revenue",
+    cr_quarterly_hint: "quarterly figure",
+    cr_instant_hint: "balance-sheet snapshot",
+    cr_no_custom_reasons: "No custom reasons yet for this company.",
+    cr_delete: "Remove",
+    cr_saved_ok: "Saved — check the reasons list above for its computed status.",
+    cr_saved_warn: "Saved, but this tag returned \"Not enough data\" for the latest quarter — it may not be actively reported anymore. You can still keep or remove it below.",
+    cr_name_required: "Pick a metric first.",
+    portfolio_title: "My Portfolio",
+    portfolio_sub: "Companies you hold, rolled up into one view — every reason still computed live, free.",
+    btn_add_holding: "+ Add to portfolio",
+    portfolio_empty: "No holdings yet — pick a company above and add it.",
+    portfolio_remove: "Remove",
+    portfolio_reasons_count: "reasons",
+    portfolio_error_prefix: "Could not load: ",
+    auth_sub: "Track whether the reason you bought still holds.",
+    auth_login_tab: "Log in",
+    auth_register_tab: "Register",
+    auth_email_label: "Email",
+    auth_password_label: "Password",
+    auth_password_hint: "At least 8 characters.",
+    auth_login_btn: "Log in",
+    auth_register_btn: "Create account",
+    auth_logout: "Log out",
+    auth_login_failed: "Incorrect email or password.",
+    auth_register_failed_prefix: "Could not register: ",
+    section_screener: "Screener",
+    screener_sub: "Which companies pass a condition, right now — the same evidence check as the main dashboard, just run across every company. No AI judgment, just your own rule applied everywhere.",
+    screener_pick_label: "Condition to screen for",
+    btn_run_screen: "Run screen",
+    screener_empty: "Run a screen to see which companies currently pass.",
+    screener_skipped_prefix: "Skipped (no data for this condition): ",
+    section_record_purchase: "Record a Purchase",
+    rp_quantity_label: "Quantity",
+    rp_price_label: "Price paid (per share)",
+    rp_date_label: "Purchase date",
+    rp_reason_label: "Because this reason was true (optional)",
+    rp_reason_none: "-- just buying it, no specific reason --",
+    btn_record_purchase: "Record purchase",
+    rp_saved_ok: "Recorded — see it in My Portfolio, with its condition frozen at today's status.",
+    purchase_bought: "Bought",
+    purchase_shares_at: "shares at",
+    purchase_because: "because",
+    purchase_was: "was",
+    purchase_still_true: "Still true",
+    purchase_no_longer_true: "No longer true",
+    purchase_no_reason: "(no reason linked)",
+    purchase_delete: "Delete",
   },
   th: {
     app_title: "ตัวติดตามเหตุผลการลงทุน",
@@ -628,6 +842,63 @@ const I18N = {
     desc_R1: "รายได้ต้องเติบโตมากกว่า 10% เทียบปีก่อนหน้า (YoY)",
     desc_R2: "อัตรากำไรจากการดำเนินงานต้องอยู่ที่ 20% หรือสูงกว่า",
     desc_R3: "หนี้ระยะยาวต้องไม่เติบโตเกิน 15% เทียบปีก่อนหน้า (YoY)",
+    nav_portfolio: "พอร์ตของฉัน",
+    section_custom_reasons: "กำหนดเหตุผลของคุณเอง",
+    btn_new_custom_reason: "+ เพิ่มเหตุผลของฉันเอง",
+    "cr-metric-label": "Metric",
+    "cr-denom-label": "หารด้วย (ไม่บังคับ ใช้สำหรับคำนวณอัตราส่วน)",
+    "cr-none": "-- ไม่มี --",
+    "np_risk_label2": "เงื่อนไข",
+    "cr-threshold-label": "เกณฑ์ %",
+    "cr-desc-label": "คำอธิบาย",
+    "cr-desc-placeholder": "เช่น ค่าใช้จ่าย R&D ต้องไม่เกิน 10% ของรายได้",
+    cr_quarterly_hint: "ตัวเลขรายไตรมาส",
+    cr_instant_hint: "ตัวเลข ณ วันสิ้นงวด (งบดุล)",
+    cr_no_custom_reasons: "ยังไม่มีเหตุผลที่กำหนดเองสำหรับบริษัทนี้",
+    cr_delete: "ลบ",
+    cr_saved_ok: "บันทึกแล้ว — ดูสถานะที่คำนวณได้ในรายการเหตุผลด้านบน",
+    cr_saved_warn: "บันทึกแล้ว แต่ tag นี้ได้ \"ข้อมูลไม่พอ\" สำหรับไตรมาสล่าสุด — อาจไม่ถูกรายงานแล้วในปัจจุบัน ยังเก็บหรือลบทีหลังได้",
+    cr_name_required: "เลือก Metric ก่อน",
+    portfolio_title: "พอร์ตของฉัน",
+    portfolio_sub: "บริษัทที่คุณถืออยู่ รวมไว้ในที่เดียว — ทุกเหตุผลยังคำนวณสดและฟรีเหมือนเดิม",
+    btn_add_holding: "+ เพิ่มเข้าพอร์ต",
+    portfolio_empty: "ยังไม่มีหุ้นในพอร์ต — เลือกบริษัทด้านบนแล้วเพิ่มได้เลย",
+    portfolio_remove: "นำออก",
+    portfolio_reasons_count: "เหตุผล",
+    portfolio_error_prefix: "โหลดไม่สำเร็จ: ",
+    auth_sub: "ติดตามว่าเงื่อนไขที่คุณซื้อไว้ ยังเป็นจริงอยู่ไหม",
+    auth_login_tab: "เข้าสู่ระบบ",
+    auth_register_tab: "สมัครสมาชิก",
+    auth_email_label: "อีเมล",
+    auth_password_label: "รหัสผ่าน",
+    auth_password_hint: "อย่างน้อย 8 ตัวอักษร",
+    auth_login_btn: "เข้าสู่ระบบ",
+    auth_register_btn: "สร้างบัญชี",
+    auth_logout: "ออกจากระบบ",
+    auth_login_failed: "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+    auth_register_failed_prefix: "สมัครไม่สำเร็จ: ",
+    section_screener: "ตัวกรองหุ้น",
+    screener_sub: "ดูว่าบริษัทไหนผ่านเงื่อนไขที่ตั้งไว้บ้าง ณ ตอนนี้ — ใช้การตรวจสอบเดียวกับหน้าหลัก แค่รันกับทุกบริษัท ไม่มี AI ตัดสินใจ มีแต่กฎของคุณเองที่ใช้กับทุกที่",
+    screener_pick_label: "เงื่อนไขที่จะใช้กรอง",
+    btn_run_screen: "เริ่มกรอง",
+    screener_empty: "กดเริ่มกรองเพื่อดูว่าบริษัทไหนผ่านเงื่อนไขบ้าง",
+    screener_skipped_prefix: "ข้ามไป (ไม่มีข้อมูลสำหรับเงื่อนไขนี้): ",
+    section_record_purchase: "บันทึกการซื้อ",
+    rp_quantity_label: "จำนวนหุ้น",
+    rp_price_label: "ราคาที่ซื้อ (ต่อหุ้น)",
+    rp_date_label: "วันที่ซื้อ",
+    rp_reason_label: "เพราะเงื่อนไขนี้เป็นจริง (ไม่บังคับ)",
+    rp_reason_none: "-- แค่ซื้อเฉยๆ ไม่มีเงื่อนไขเฉพาะ --",
+    btn_record_purchase: "บันทึกการซื้อ",
+    rp_saved_ok: "บันทึกแล้ว — ดูได้ที่พอร์ตของฉัน พร้อมเงื่อนไขที่ปักหมุดไว้ ณ วันนี้",
+    purchase_bought: "ซื้อ",
+    purchase_shares_at: "หุ้น ราคา",
+    purchase_because: "เพราะ",
+    purchase_was: "ตอนนั้นคือ",
+    purchase_still_true: "ยังเป็นจริงอยู่",
+    purchase_no_longer_true: "ไม่เป็นจริงแล้ว",
+    purchase_no_reason: "(ไม่ได้ผูกกับเงื่อนไข)",
+    purchase_delete: "ลบ",
   },
 };
 let currentLang = localStorage.getItem('reason_tracker_lang') || 'en';
@@ -661,6 +932,8 @@ function setLang(lang) {
   if (lastPersonalizeResult) renderPersonalizeResult(lastPersonalizeResult);
   if (lastHistoryTicker) loadHistory(lastHistoryTicker);
   if (lastGlobalHistoryLoaded) loadGlobalHistory();
+  if (currentTicker) { loadCustomReasons(currentTicker); loadXbrlTags(currentTicker); }
+  if (currentSideView === 'portfolio-view') loadPortfolio();
 }
 
 function toggleSidebar() {
@@ -785,25 +1058,40 @@ function renderStatStrip(reasons) {
   `).join('');
 }
 
+async function refreshReasonsList(ticker) {
+  // Lighter-weight than selectTicker(): re-fetch and re-render just the
+  // reasons list + stat strip after a custom reason is added/removed,
+  // without wiping the save-confirmation message or resetting open forms
+  // the way a full selectTicker() re-entry would.
+  const res = await fetch(`/api/report/${ticker}`);
+  const data = await res.json();
+  if (data.error) return;
+  lastReportData = data;
+  renderReport(data);
+}
+
 async function selectTicker(ticker) {
   currentTicker = ticker;
-  showingGlobalHistory = false;
-  showingManual = false;
   lastReportData = null; lastAgentResult = null; lastPersonalizeResult = null;
-  document.getElementById('history-nav-toggle').classList.remove('active');
-  document.getElementById('manual-nav-toggle').classList.remove('active');
-  document.getElementById('global-history').style.display = 'none';
-  document.getElementById('manual-view').style.display = 'none';
+  hideAllViews();
+  currentSideView = null;
   document.getElementById('content').style.display = 'block';
   document.querySelectorAll('.ticker-btn').forEach(b => b.classList.toggle('active', b.dataset.ticker === ticker));
-  document.getElementById('placeholder').style.display = 'none';
   document.getElementById('agent-result').innerHTML = '';
   document.getElementById('agent-error').innerHTML = '';
   document.getElementById('personalize-result').innerHTML = '';
   document.getElementById('profile-error').textContent = '';
+  document.getElementById('custom-reason-error').textContent = '';
+  document.getElementById('custom-reason-preview').innerHTML = '';
+  document.getElementById('rp-error').textContent = '';
+  document.getElementById('rp-result').innerHTML = '';
+  document.getElementById('new-profile-form').classList.remove('open');
+  document.getElementById('custom-reason-form').classList.remove('open');
   document.getElementById('reasons').innerHTML = `<div class="subtitle">${t('loading')}</div>`;
   if (window.innerWidth <= 720) toggleSidebar();
   if (!document.getElementById('profile-select').options.length) await loadProfiles();
+  loadXbrlTags(ticker);
+  loadCustomReasons(ticker);
 
   const res = await fetch(`/api/report/${ticker}`);
   const data = await res.json();
@@ -817,10 +1105,50 @@ async function selectTicker(ticker) {
   loadHistory(ticker);
 }
 
+// get_company_report's "key" field is a display id (R1/R2/R3) for the 3
+// built-in reasons -- a leftover from how portfolio_report.py constructs
+// them, not the actual reason_key ("revenue_growth" etc.) the API needs
+// for /api/purchases, /api/screen, etc. Custom reasons don't have this
+// problem (their "key" already IS their real reason_key). Map both ways
+// so the purchase-reason picker always sends something the backend
+// actually understands.
+const BUILTIN_KEY_MAP = { R1: 'revenue_growth', R2: 'operating_margin', R3: 'debt_growth' };
+function reasonApiKey(displayKey) { return BUILTIN_KEY_MAP[displayKey] || displayKey; }
+
+function populatePurchaseReasonSelect(reasons) {
+  const sel = document.getElementById('rp-reason-select');
+  const noneOption = `<option value="" data-i18n="rp_reason_none">${t('rp_reason_none')}</option>`;
+  sel.innerHTML = noneOption + reasons.map(r =>
+    `<option value="${reasonApiKey(r.key)}">${r.description} (${statusLabel(r.status)})</option>`
+  ).join('');
+  const dateEl = document.getElementById('rp-date');
+  if (!dateEl.value) dateEl.value = new Date().toISOString().slice(0, 10);
+}
+
+async function savePurchase() {
+  const errorEl = document.getElementById('rp-error');
+  const resultEl = document.getElementById('rp-result');
+  errorEl.textContent = ''; resultEl.innerHTML = '';
+  const quantity = parseFloat(document.getElementById('rp-quantity').value);
+  const price = parseFloat(document.getElementById('rp-price').value);
+  const date = document.getElementById('rp-date').value;
+  const reasonKey = document.getElementById('rp-reason-select').value || null;
+  if (!quantity || !price || !date) { errorEl.textContent = t('cr_name_required'); return; }
+
+  const res = await fetch('/api/purchases', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ ticker: currentTicker, quantity, purchase_price: price, purchase_date: date, reason_key: reasonKey }),
+  });
+  const data = await res.json();
+  if (data.error) { errorEl.textContent = data.error; return; }
+  resultEl.innerHTML = `<div class="reason-explanation">${t('rp_saved_ok')}</div>`;
+}
+
 function renderReport(data) {
   document.getElementById('company-name').textContent = data.company;
   document.getElementById('company-ticker').textContent = data.ticker;
   renderStatStrip(data.reasons);
+  populatePurchaseReasonSelect(data.reasons);
 
   const el = document.getElementById('reasons');
   el.innerHTML = '';
@@ -903,6 +1231,216 @@ function renderAgentResult(data) {
     `<div class="reason-explanation" style="margin-top:10px;">${t('usage_label')} ${data.usage.input_tokens} ${t('input_tokens')} / ${data.usage.output_tokens} ${t('output_tokens')}</div>`;
 }
 
+/* ---------- Custom reasons ---------- */
+let xbrlTagsCache = {};  // ticker -> tag list, so switching profile/lang doesn't re-fetch
+
+function toggleCustomReasonForm() {
+  document.getElementById('custom-reason-form').classList.toggle('open');
+}
+
+async function loadXbrlTags(ticker) {
+  const metricSel = document.getElementById('cr-metric');
+  const denomSel = document.getElementById('cr-denominator');
+  metricSel.innerHTML = `<option>${t('loading')}</option>`;
+  let tags = xbrlTagsCache[ticker];
+  if (!tags) {
+    const res = await fetch(`/api/xbrl-tags/${ticker}`);
+    tags = await res.json();
+    if (Array.isArray(tags)) xbrlTagsCache[ticker] = tags;
+  }
+  if (!Array.isArray(tags)) { metricSel.innerHTML = ''; return; }
+  const optionsHtml = tags.map(tg => {
+    const shape = tg.quarterly ? t('cr_quarterly_hint') : t('cr_instant_hint');
+    return `<option value="${tg.tag}" data-quarterly="${tg.quarterly}" data-instant="${tg.instant}">${tg.tag} (${shape})</option>`;
+  }).join('');
+  metricSel.innerHTML = optionsHtml;
+  denomSel.innerHTML = `<option value="" data-i18n="cr-none">${t('cr-none')}</option>` + optionsHtml;
+}
+
+function onCrMetricChange() {
+  // Currently just a hook for future UI feedback (e.g. highlighting whether
+  // the picked tag is instant/quarterly) -- kept as a named function since
+  // the <select> already wires onchange to it.
+}
+
+function formatCondition(r) {
+  // The actual structured rule (metric/comparison/threshold), not the
+  // free-text description -- e.g. "CashAndCashEquivalentsAtCarryingValue
+  // > 5.0%" or "ResearchAndDevelopmentExpense / Revenues < 10.0%".
+  const left = r.denominator_metric ? `${r.metric} / ${r.denominator_metric}` : r.metric;
+  const pct = (r.threshold * 100).toFixed(1);
+  const shape = r.instant ? t('cr_instant_hint') : t('cr_quarterly_hint');
+  return `${left} ${r.comparison} ${pct}% <span style="color:var(--text-faint);">(${shape})</span>`;
+}
+
+async function loadCustomReasons(ticker) {
+  const res = await fetch(`/api/reasons/${ticker}`);
+  const rows = await res.json();
+  const el = document.getElementById('custom-reasons-list');
+  if (!Array.isArray(rows) || !rows.length) {
+    el.innerHTML = `<div style="color:var(--text-faint); font-size:13px;">${t('cr_no_custom_reasons')}</div>`;
+    return;
+  }
+  el.innerHTML = rows.map(r => `
+    <div class="custom-reason-row">
+      <div>
+        <div class="mono" style="font-size:12.5px; color:var(--text);">${formatCondition(r)}</div>
+        <div style="color:var(--text-dim); font-size:12.5px; margin-top:2px;">${r.description}</div>
+      </div>
+      <button class="del-btn" onclick="deleteCustomReason('${r.reason_key}', '${ticker}')">${t('cr_delete')}</button>
+    </div>
+  `).join('');
+}
+
+async function deleteCustomReason(reasonKey, ticker) {
+  await fetch(`/api/reasons/${encodeURIComponent(reasonKey)}`, { method: 'DELETE' });
+  loadCustomReasons(ticker);
+  if (currentTicker === ticker) refreshReasonsList(ticker);
+}
+
+async function saveCustomReason() {
+  const errorEl = document.getElementById('custom-reason-error');
+  const previewEl = document.getElementById('custom-reason-preview');
+  errorEl.textContent = ''; previewEl.innerHTML = '';
+
+  const metricSel = document.getElementById('cr-metric');
+  const chosen = metricSel.options[metricSel.selectedIndex];
+  if (!chosen || !chosen.value) { errorEl.textContent = t('cr_name_required'); return; }
+  const isQuarterly = chosen.dataset.quarterly === 'true';
+  const denomTag = document.getElementById('cr-denominator').value;
+  const description = document.getElementById('cr-description').value.trim();
+  if (!description) { errorEl.textContent = t('cr_name_required'); return; }
+
+  const body = {
+    reason_key: `${currentTicker.toLowerCase()}_custom_${Date.now()}`,
+    ticker: currentTicker,
+    metric: chosen.value,
+    comparison: document.getElementById('cr-comparison').value,
+    threshold: parseFloat(document.getElementById('cr-threshold').value) / 100,
+    kind: denomTag ? 'margin_level' : 'yoy_growth',
+    denominator_metric: denomTag || '',
+    instant: !isQuarterly,
+    description,
+  };
+
+  const btn = document.getElementById('cr-save-btn');
+  btn.disabled = true;
+  try {
+    const res = await fetch('/api/reasons', {
+      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (data.error) {
+      errorEl.textContent = data.error;
+      return;
+    }
+    const gotStatus = data.preview && data.preview.status;
+    previewEl.innerHTML = `<div class="reason-explanation">${gotStatus === 'Not enough data' ? t('cr_saved_warn') : t('cr_saved_ok')}</div>`;
+    document.getElementById('custom-reason-form').classList.remove('open');
+    document.getElementById('cr-description').value = '';
+    loadCustomReasons(currentTicker);
+    refreshReasonsList(currentTicker);
+  } catch (e) {
+    errorEl.textContent = t('request_failed') + e;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+/* ---------- Portfolio ---------- */
+function populatePortfolioAddSelect() {
+  // Kept as a no-op-safe helper name for initAppAfterAuth(); "adding to
+  // portfolio" now happens by recording a purchase on a company's own
+  // page, not a bare ticker picker here.
+}
+
+async function removePurchase(id) {
+  await fetch(`/api/purchases/${id}`, { method: 'DELETE' });
+  loadPortfolio();
+}
+
+function renderPurchaseLine(p) {
+  const stillTrueHtml = p.still_true === null
+    ? `<span style="color:var(--text-faint);">${t('purchase_no_reason')}</span>`
+    : p.still_true
+      ? `<span class="review-no">${t('purchase_still_true')}</span>`
+      : `<span class="review-yes">${t('purchase_no_longer_true')}</span>`;
+  const reasonHtml = p.reason_snapshot
+    ? ` ${t('purchase_because')} <i>${p.reason_snapshot.description}</i> (${t('purchase_was')} ${statusLabel(p.reason_snapshot.status_at_purchase)}) — ${stillTrueHtml}`
+    : ` ${stillTrueHtml}`;
+  return `
+    <div class="agent-reason-line">
+      <b>${t('purchase_bought')}</b> ${p.quantity} ${t('purchase_shares_at')} $${p.purchase_price} (${p.purchase_date})${reasonHtml}
+      <button class="del-btn" style="margin-left:8px;" onclick="removePurchase(${p.id})">${t('purchase_delete')}</button>
+    </div>
+  `;
+}
+
+async function loadPortfolio() {
+  const res = await fetch('/api/portfolio/summary');
+  const data = await res.json();
+
+  const dotClass = { Supported: 'g', Weakened: 'y', Broken: 'r', 'Not enough data': 'n' };
+  const statEl = document.getElementById('portfolio-stat-strip');
+  statEl.innerHTML = Object.entries(data.totals).filter(([, n]) => n > 0).map(([status, n]) => `
+    <div class="stat-chip"><span class="stat-dot ${dotClass[status]}"></span><span class="n">${n}</span> ${statusLabel(status)}</div>
+  `).join('');
+
+  const listEl = document.getElementById('portfolio-companies');
+  if (!data.companies.length) {
+    listEl.innerHTML = `<div style="color:var(--text-faint); font-size:13px;">${t('portfolio_empty')}</div>`;
+    return;
+  }
+  listEl.innerHTML = data.companies.map(c => {
+    if (c.error) {
+      return `<div class="portfolio-row"><span class="pr-ticker">${c.ticker}</span><span style="color:var(--red); font-size:12.5px;">${t('portfolio_error_prefix')}${c.error}</span></div>`;
+    }
+    const purchasesHtml = (c.purchases || []).map(renderPurchaseLine).join('');
+    return `
+      <div class="reason-card">
+        <div class="reason-top" style="cursor:pointer;" onclick="selectTicker('${c.ticker}')">
+          <span class="reason-status ${statusClass(c.worst_status)}">${statusLabel(c.worst_status)}</span>
+          <span class="reason-desc">${c.company}</span>
+          <span class="reason-value">${c.ticker}</span>
+        </div>
+        ${purchasesHtml}
+      </div>
+    `;
+  }).join('');
+}
+
+/* ---------- Screener ---------- */
+async function populateScreenerReasonSelect() {
+  const res = await fetch('/api/reasons');
+  const rows = await res.json();
+  const sel = document.getElementById('screener-reason-select');
+  sel.innerHTML = rows.map(r => `<option value="${r.reason_key}">${r.description}</option>`).join('');
+}
+
+async function runScreen() {
+  const reasonKey = document.getElementById('screener-reason-select').value;
+  if (!reasonKey) return;
+  const el = document.getElementById('screener-results');
+  el.innerHTML = `<div class="subtitle">${t('loading')}</div>`;
+  const res = await fetch(`/api/screen?reason_key=${encodeURIComponent(reasonKey)}`);
+  const data = await res.json();
+  if (data.error) { el.innerHTML = `<div id="agent-error">${data.error}</div>`; return; }
+  if (!data.matches.length) { el.innerHTML = `<div style="color:var(--text-faint); font-size:13px;">${t('screener_empty')}</div>`; return; }
+  const rowsHtml = data.matches.map(m => `
+    <div class="reason-card">
+      <div class="reason-top" style="cursor:pointer;" onclick="selectTicker('${m.ticker}')">
+        <span class="reason-status ${statusClass(m.status)}">${statusLabel(m.status)}</span>
+        <span class="reason-desc">${m.company}</span>
+        <span class="reason-value">${m.ticker} ${m.computed_value !== null ? '· ' + (m.computed_value * 100).toFixed(1) + '%' : ''}</span>
+      </div>
+    </div>
+  `).join('');
+  const skippedHtml = data.skipped.length
+    ? `<div style="color:var(--text-faint); font-size:12px; margin-top:10px;">${t('screener_skipped_prefix')}${data.skipped.map(s => s.ticker).join(', ')}</div>`
+    : '';
+  el.innerHTML = rowsHtml + skippedHtml;
+}
+
 /* ---------- History ---------- */
 function renderHistoryTable(rows, targetEl, emptyMsg) {
   if (!rows.length) {
@@ -943,52 +1481,126 @@ async function loadGlobalHistory() {
   renderHistoryTable(rows, document.getElementById('global-history-content'), t('hist_empty_global'));
 }
 
-function toggleHistoryFromSidebar() {
-  showingGlobalHistory = !showingGlobalHistory;
-  showingManual = false;
-  document.getElementById('history-nav-toggle').classList.toggle('active', showingGlobalHistory);
-  document.getElementById('manual-nav-toggle').classList.remove('active');
-  document.getElementById('manual-view').style.display = 'none';
-  if (showingGlobalHistory) {
-    document.getElementById('placeholder').style.display = 'none';
-    document.getElementById('content').style.display = 'none';
-    document.getElementById('global-history').style.display = 'block';
-    document.querySelectorAll('.ticker-btn').forEach(b => b.classList.remove('active'));
-    loadGlobalHistory();
-  } else {
-    document.getElementById('global-history').style.display = 'none';
-    showDefaultView();
-  }
-  if (window.innerWidth <= 720) toggleSidebar();
+// Exclusive top-level views: exactly one of these is visible at a time.
+// Each entry: view element id -> sidebar nav-toggle id (or null for the
+// default company-content view, which has no sidebar toggle of its own).
+const SIDE_VIEWS = {
+  'global-history': 'history-nav-toggle',
+  'manual-view': 'manual-nav-toggle',
+  'portfolio-view': 'portfolio-nav-toggle',
+  'screener-view': 'screener-nav-toggle',
+};
+
+function hideAllViews() {
+  document.getElementById('placeholder').style.display = 'none';
+  document.getElementById('content').style.display = 'none';
+  Object.keys(SIDE_VIEWS).forEach(id => { document.getElementById(id).style.display = 'none'; });
+  Object.values(SIDE_VIEWS).forEach(id => document.getElementById(id).classList.remove('active'));
 }
 
-function toggleManualFromSidebar() {
-  showingManual = !showingManual;
-  showingGlobalHistory = false;
-  document.getElementById('manual-nav-toggle').classList.toggle('active', showingManual);
-  document.getElementById('history-nav-toggle').classList.remove('active');
-  document.getElementById('global-history').style.display = 'none';
-  if (showingManual) {
-    document.getElementById('placeholder').style.display = 'none';
-    document.getElementById('content').style.display = 'none';
-    document.getElementById('manual-view').style.display = 'block';
-    document.querySelectorAll('.ticker-btn').forEach(b => b.classList.remove('active'));
-  } else {
-    document.getElementById('manual-view').style.display = 'none';
-    showDefaultView();
-  }
-  if (window.innerWidth <= 720) toggleSidebar();
-}
+let currentSideView = null;  // null = default (company content / placeholder), else a SIDE_VIEWS key
 
 function showDefaultView() {
+  hideAllViews();
+  currentSideView = null;
   if (currentTicker) {
     document.getElementById('content').style.display = 'block';
+    document.querySelectorAll('.ticker-btn').forEach(b => b.classList.toggle('active', b.dataset.ticker === currentTicker));
   } else {
     document.getElementById('placeholder').style.display = 'block';
   }
 }
 
+function toggleSideView(viewId, onShow) {
+  const turningOn = currentSideView !== viewId;
+  hideAllViews();
+  if (turningOn) {
+    currentSideView = viewId;
+    document.getElementById(viewId).style.display = 'block';
+    document.getElementById(SIDE_VIEWS[viewId]).classList.add('active');
+    document.querySelectorAll('.ticker-btn').forEach(b => b.classList.remove('active'));
+    if (onShow) onShow();
+  } else {
+    showDefaultView();
+  }
+  if (window.innerWidth <= 720) toggleSidebar();
+}
+
+function toggleHistoryFromSidebar() { toggleSideView('global-history', loadGlobalHistory); }
+function toggleManualFromSidebar() { toggleSideView('manual-view'); }
+function togglePortfolioFromSidebar() { toggleSideView('portfolio-view', loadPortfolio); }
+function toggleScreenerFromSidebar() { toggleSideView('screener-view'); }
+
+/* ---------- Auth ---------- */
+function setAuthTab(tab) {
+  document.getElementById('auth-tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('auth-tab-register').classList.toggle('active', tab === 'register');
+  document.getElementById('auth-form-login').style.display = tab === 'login' ? 'flex' : 'none';
+  document.getElementById('auth-form-register').style.display = tab === 'register' ? 'flex' : 'none';
+  document.getElementById('auth-error').textContent = '';
+}
+
+async function doLogin(evt) {
+  evt.preventDefault();
+  const errorEl = document.getElementById('auth-error');
+  errorEl.textContent = '';
+  const res = await fetch('/api/login', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      email: document.getElementById('login-email').value,
+      password: document.getElementById('login-password').value,
+    }),
+  });
+  const data = await res.json();
+  if (data.error) { errorEl.textContent = t('auth_login_failed'); return false; }
+  onAuthenticated(data.user);
+  return false;
+}
+
+async function doRegister(evt) {
+  evt.preventDefault();
+  const errorEl = document.getElementById('auth-error');
+  errorEl.textContent = '';
+  const res = await fetch('/api/register', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      email: document.getElementById('register-email').value,
+      password: document.getElementById('register-password').value,
+    }),
+  });
+  const data = await res.json();
+  if (data.error) { errorEl.textContent = t('auth_register_failed_prefix') + data.error; return false; }
+  onAuthenticated(data.user);
+  return false;
+}
+
+async function doLogout() {
+  await fetch('/api/logout', { method: 'POST' });
+  location.reload();
+}
+
+function onAuthenticated(user) {
+  document.getElementById('user-email').textContent = user.email;
+  document.getElementById('auth-gate').classList.remove('show');
+  initAppAfterAuth();
+}
+
+async function checkAuth() {
+  const res = await fetch('/api/me');
+  if (res.status === 200) {
+    onAuthenticated(await res.json());
+  } else {
+    document.getElementById('auth-gate').classList.add('show');
+  }
+}
+
+function initAppAfterAuth() {
+  populatePortfolioAddSelect();
+  populateScreenerReasonSelect();
+}
+
 applyStaticI18n();
+checkAuth();
 </script>
 
 </body>
