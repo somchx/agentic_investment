@@ -4,6 +4,22 @@ Proof-of-concept for the numeric-only Phase 1 scope described in
 [PROPOSAL.md](PROPOSAL.md) — one company, one investment reason, walked
 forward quarter by quarter using only point-in-time SEC data (no lookahead).
 
+## Application vs research (2026-11)
+
+The repository now has two parts:
+
+- **ReasonCheck application** (`backend/`, `frontend/`) — the demo: purchases, investment theses, portfolio,
+  reason status, AI assistant with evidence and investigation trace. Unchanged by the research split.
+- **Research pipeline** (`research/`) — financial claim verification experiments for *Evaluating
+  Contradiction-Aware Agentic AI for Evidence-Grounded Financial Claim Verification*: four approaches
+  (conventional RAG, RAG + deterministic numeric verification, contradiction-aware, self-reflection control),
+  datasets and annotation guidelines, resumable immutable runs, metrics, McNemar / bootstrap statistics and six
+  Jupyter notebooks. It runs without the web app or database and reuses `backend/app/core` in place.
+  Start with [research/README.md](research/README.md) and [research/METHODOLOGY.md](research/METHODOLOGY.md).
+  Paid Claude calls happen only in `live` mode with an explicit approval phrase.
+
+The sections below are the historical development log of the application.
+
 ## Run it
 
 ```
