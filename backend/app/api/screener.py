@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 
+import db
 from app.security import current_user_id
 from sec_client import KNOWN_CIKS
 from tools import check_reason_status
@@ -24,12 +25,37 @@ def api_screen(reason_key: list[str] = Query(...), user_id: int = Depends(curren
     if not reason_keys:
         raise HTTPException(status_code=400, detail="missing reason_key")
 
+    # Ownership check (Code Audit Session 3, item 3) -- check_reason_status
+    # will happily evaluate ANY reason_key with no idea who it belongs to,
+    # so without this a user could screen with another user's private
+    # custom reason_key (guessed or otherwise obtained) with no error at
+    # all. Reject the whole request the same way as an unknown key, so this
+    # can't be used to probe which reason_keys exist.
+    definitions = {}
+    for rk in reason_keys:
+        definitions[rk] = db.get_reason_if_accessible(rk, user_id)
+        if definitions[rk] is None:
+            raise HTTPException(status_code=400, detail=f"unknown reason_key '{rk}'")
+
     companies = []
     for ticker in sorted(KNOWN_CIKS.keys()):
         by_reason = {}
         company_name = None
         for rk in reason_keys:
+            definition = definitions[rk]
+            if definition and (definition.get('rule_definition') or {}).get('thesis_type') == 'NATURAL_LANGUAGE' and definition.get('ticker') != ticker:
+                by_reason[rk] = {'status':'Not enough data','computed_value':None,'as_of':None,
+                                 'rule_status':'NOT_EVALUATED','evidence_status':'INSUFFICIENT',
+                                 'explanation':'Company-scoped qualitative thesis does not apply to this company.'}
+                continue
             result = check_reason_status(ticker, rk)
+            if result.get("error_code") == "EVIDENCE_NOT_FOUND":
+                # Missing evidence is not zero and must never fail a threshold.
+                by_reason[rk] = {
+                    "status": "Not enough data", "computed_value": None, "as_of": None,
+                    "rule_status": "NOT_EVALUATED", "evidence_status": "INSUFFICIENT",
+                }
+                continue
             if "error" in result:
                 by_reason[rk] = {"error": result["error"]}
                 continue
@@ -37,6 +63,7 @@ def api_screen(reason_key: list[str] = Query(...), user_id: int = Depends(curren
             by_reason[rk] = {
                 "description": result["reason"], "status": result["status"],
                 "computed_value": result["computed_value"], "as_of": result["as_of"],
+                **{key: result.get(key) for key in ("rule_status", "evidence_status", "value_unit", "comparison_value", "rule_definition", "calculation_trace", "explanation", "evaluated_period")},
             }
         if company_name is None:
             # every selected reason failed for this company (e.g. a custom
