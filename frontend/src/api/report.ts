@@ -1,5 +1,5 @@
 import { apiClient } from "@/api/client"
-import type { AskAgentResponse, ChatTurn, CompanyReport, PersonalizeResponse } from "@/types"
+import type { AskAgentResponse, ChatTurn, CompanyReport, InvestigationReport, PersonalizeResponse } from "@/types"
 
 export async function fetchReport(ticker: string): Promise<CompanyReport> {
   const { data } = await apiClient.get<CompanyReport>(`/report/${encodeURIComponent(ticker)}`)
@@ -29,6 +29,20 @@ export async function askAgentPortfolio(
   history: ChatTurn[] = [],
 ): Promise<AskAgentResponse> {
   const { data } = await apiClient.post<AskAgentResponse>("/ask-agent", { question, history })
+  return data
+}
+
+// The Structured Investigation path -- gated by the Evidence Assessor
+// server-side, unlike askAgent's free-form chat. Also costs real money
+// (LLM call); same confirm-before-send treatment.
+export async function investigateCompany(ticker: string): Promise<InvestigationReport> {
+  const { data } = await apiClient.post<InvestigationReport>(`/investigate/${encodeURIComponent(ticker)}`)
+  return data
+}
+
+// Free: the last stored AI Summary for this ticker (null if never generated).
+export async function fetchLatestInvestigation(ticker: string): Promise<InvestigationReport | null> {
+  const { data } = await apiClient.get<InvestigationReport | null>(`/investigate/${encodeURIComponent(ticker)}`)
   return data
 }
 

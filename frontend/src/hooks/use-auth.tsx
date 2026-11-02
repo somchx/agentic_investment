@@ -18,7 +18,9 @@ interface AuthContextValue {
   token: string | null
   status: "loading" | "authenticated" | "unauthenticated"
   login: (email: string, password: string) => Promise<void>
-  register: (email: string, password: string) => Promise<void>
+  register: (email: string, password: string, fullName: string) => Promise<void>
+  updateProfile: (fullName: string, email: string) => Promise<void>
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>
   logout: () => void
 }
 
@@ -50,7 +52,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setStatus("unauthenticated")
       return
     }
-    setStatus("loading")
     authApi
       .fetchMe()
       .then((me) => {
@@ -82,17 +83,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus("authenticated")
   }, [])
 
-  const register = useCallback(async (email: string, password: string) => {
-    const res = await authApi.register({ email, password })
+  const register = useCallback(async (email: string, password: string, fullName: string) => {
+    const res = await authApi.register({ email, password, full_name: fullName })
     setToken(res.access_token)
     setTokenState(res.access_token)
     setUser(res.user)
     setStatus("authenticated")
   }, [])
 
+  const updateProfile = useCallback(async (fullName: string, email: string) => {
+    setUser(await authApi.updateProfile({ full_name: fullName, email }))
+  }, [])
+
+  const changePassword = useCallback(async (currentPassword: string, newPassword: string) => {
+    const res = await authApi.changePassword(currentPassword, newPassword)
+    setToken(res.access_token)
+    setTokenState(res.access_token)
+    setUser(res.user)
+  }, [])
+
   const value = useMemo(
-    () => ({ user, token, status, login, register, logout }),
-    [user, token, status, login, register, logout],
+    () => ({ user, token, status, login, register, logout, updateProfile, changePassword }),
+    [user, token, status, login, register, logout, updateProfile, changePassword],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

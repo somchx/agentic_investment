@@ -1,15 +1,18 @@
+import { NaturalAgentPanel } from '@/components/theses/natural-agent-panel'
 import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react"
+import type { AgentProgressEvent } from "@/types"
+import { useSearchParams } from "react-router-dom"
 import { Folder, Menu, MessageSquarePlus, Send, Trash2, X } from "lucide-react"
 import { CostConfirmDialog } from "@/components/cost-confirm-dialog"
 import { ChatMessage, type DisplayMessage } from "@/components/agent/chat-message"
 import { AgentEmptyState } from "@/components/agent/agent-empty-state"
+import { AgentProgress } from "@/components/agent/agent-progress"
 import { Select } from "@/components/ui/select"
 import { useConversation, useConversations, useDeleteConversation, useSendMessage } from "@/hooks/use-conversations"
 import { useCompanies } from "@/hooks/use-companies"
 import { getApiErrorMessage } from "@/api/client"
 import { useTranslation } from "@/i18n/context"
 import { cn } from "@/lib/utils"
-import type { ChatTurn } from "@/types"
 
 // Sentinel for the scope picker's "My Portfolio" option -- the backend
 // only has one chat endpoint (portfolio-wide), so picking a single ticker
@@ -31,12 +34,43 @@ function buildScopedQuestion(scope: string, question: string): string {
 // a permanent record, not disposable client state. "New chat" never
 // deletes the old thread -- it's already saved -- it just starts a fresh
 // one, reachable again from the history list.
+const LAST_CONVERSATION_KEY = "agent_last_conversation"
+
+// Per-browser convenience only; storage can be unavailable (private mode), so failures are ignored.
+function rememberConversation(id: number | null) {
+  try {
+    if (id === null) localStorage.removeItem(LAST_CONVERSATION_KEY)
+    else localStorage.setItem(LAST_CONVERSATION_KEY, String(id))
+  } catch { /* ignore */ }
+}
+
+function recallConversation(): number | null {
+  try {
+    return Number(localStorage.getItem(LAST_CONVERSATION_KEY)) || null
+  } catch {
+    return null
+  }
+}
+
 export function AgentPage() {
   const { t } = useTranslation()
   const [historyOpen, setHistoryOpen] = useState(false)
   const [scope, setScope] = useState(PORTFOLIO_SCOPE)
-  const [activeId, setActiveId] = useState<number | null>(null)
+  // The open conversation lives in the URL (/agent?c=3), like ChatGPT's per-chat
+  // URL: reload/back stays in it, and follow-ups keep going into the same thread.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeId = Number(searchParams.get("c")) || null
+  const setActiveId = (id: number | null, replace = false) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      if (id === null) next.delete("c")
+      else next.set("c", String(id))
+      return next
+    }, { replace })
+    rememberConversation(id)
+  }
   const [messages, setMessages] = useState<DisplayMessage[]>([])
+  const [progress, setProgress] = useState<AgentProgressEvent[]>([])
   const [input, setInput] = useState("")
   const [error, setError] = useState<string | null>(null)
   // Armed once the user has confirmed the paid-conversation dialog for the
@@ -53,6 +87,21 @@ export function AgentPage() {
   const sendMessage = useSendMessage()
   const deleteConversation = useDeleteConversation()
 
+  // Coming back to /agent with no chat in the URL resumes the one left open
+  // last; "New chat" clears that, so a fresh chat stays fresh.
+  useEffect(() => {
+    if (activeId !== null) return
+    const last = recallConversation()
+    if (last !== null) setActiveId(last, true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // A chat that no longer exists (deleted elsewhere) falls back to a new chat.
+  useEffect(() => {
+    if (activeId !== null && conversations && !conversations.some((c) => c.id === activeId)) startNewChat()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeId, conversations])
+
   // Load a past conversation's messages once fetched.
   useEffect(() => {
     if (!activeConversation) return
@@ -62,6 +111,8 @@ export function AgentPage() {
         content: m.content,
         costUsd: m.cost_usd ?? undefined,
         toolCalls: m.tool_calls_json ?? undefined,
+        answer: m.answer_json ?? undefined,
+        traceId: m.trace_id ?? undefined,
       })),
     )
     setArmed(true) // a saved conversation already has at least one paid turn
@@ -137,17 +188,22 @@ export function AgentPage() {
   async function doSend(question: string) {
     setError(null)
     setInput("")
-    const history: ChatTurn[] = messages.map(({ role, content }) => ({ role, content }))
     setMessages((prev) => [...prev, { role: "user", content: question }])
+    const events: AgentProgressEvent[] = []
+    setProgress([])
     try {
-      const res = await sendMessage.mutateAsync({ question, conversationId: activeId })
-      setActiveId(res.conversation_id)
+      const res = await sendMessage.mutateAsync({
+        question, conversationId: activeId,
+        onEvent: (e) => { events.push(e); setProgress([...events]) },
+      })
+      // A new chat gets its id now; replace so Back doesn't land on the empty pre-chat state.
+      if (res.conversation_id !== activeId) setActiveId(res.conversation_id, activeId === null)
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: res.answer, costUsd: res.cost_usd, toolCalls: res.tool_calls },
+        { role: "assistant", content: res.answer, costUsd: res.cost_usd, toolCalls: res.tool_calls, answer: res.answer_structured, traceId: res.trace_id, progress: events },
       ])
     } catch (err) {
-      setError(getApiErrorMessage(err, t("ask_agent_err_default")))
+      setError(err instanceof Error && err.message ? err.message : getApiErrorMessage(err, t("ask_agent_err_default")))
       setMessages((prev) => prev.slice(0, -1))
     }
   }
@@ -162,7 +218,8 @@ export function AgentPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem-3rem)] gap-3 md:h-[calc(100vh-3.5rem-4rem)]">
+    <div className="space-y-4"><NaturalAgentPanel/>
+    <div className="flex h-[max(580px,calc(100dvh-16rem))] gap-3 overflow-hidden rounded-2xl border border-[var(--border-primary)] bg-[var(--bg-card)]">
       {/* Chat-history panel -- toggled by the hamburger button, independent
           of the app's own nav sidebar. Overlays on narrow screens, sits
           inline (pushing the chat column over) on wider ones. */}
@@ -258,7 +315,7 @@ export function AgentPage() {
                   }
                 />
               ))}
-              {sendMessage.isPending && <p className="px-1 text-xs text-[var(--text-ghost)]">{t("agent_thinking")}</p>}
+              {sendMessage.isPending && <AgentProgress events={progress} />}
             </div>
           )}
         </div>
@@ -273,7 +330,7 @@ export function AgentPage() {
               e.preventDefault()
               trySend(input)
             }}
-            className="flex flex-col gap-1 rounded-3xl border border-[var(--border-primary)] bg-[var(--bg-card)] px-4 py-2.5 shadow-sm focus-within:border-[var(--accent-blue)]"
+            className="flex flex-col gap-1 rounded-3xl border border-[var(--border-primary)] bg-[var(--bg-card)] px-4 py-2.5 shadow-sm focus-within:border-primary"
           >
             <textarea
               ref={textareaRef}
@@ -312,7 +369,7 @@ export function AgentPage() {
                 type="submit"
                 aria-label={t("agent_send_aria")}
                 disabled={!input.trim() || sendMessage.isPending}
-                className="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-[var(--accent-blue)] text-[var(--bg-primary)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex h-8 w-8 flex-none items-center justify-center rounded-full brand-gradient text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Send className="h-3.5 w-3.5" />
               </button>
@@ -333,6 +390,7 @@ export function AgentPage() {
         isPending={sendMessage.isPending}
         confirmLabel={t("agent_dialog_confirm")}
       />
+    </div>
     </div>
   )
 }

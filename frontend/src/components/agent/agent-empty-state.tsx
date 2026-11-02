@@ -25,14 +25,14 @@ export function AgentEmptyState({
 
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4 px-4 py-10 text-center">
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--accent-purple)]/15">
-        <Sparkles className="h-6 w-6 text-[var(--accent-purple)]" />
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+        <Sparkles className="h-6 w-6 text-primary" />
       </div>
       <div className="flex flex-col gap-1.5">
-        <h2 className="text-base font-bold text-[var(--text-primary)]">{t(headingKey, vars)}</h2>
+        <h2 className="text-2xl font-bold text-[var(--text-primary)]">{t(headingKey, vars)}</h2>
         <p className="max-w-md text-sm text-[var(--text-muted)]">{t(subtitleKey, vars)}</p>
       </div>
-      <div className="flex max-w-lg flex-wrap items-center justify-center gap-2">
+      <div className="grid w-full max-w-xl grid-cols-1 gap-3 sm:grid-cols-2">
         {suggestionKeys.map((key) => {
           const question = t(key, vars)
           return (
@@ -40,7 +40,7 @@ export function AgentEmptyState({
               key={key}
               type="button"
               onClick={() => onPick(question)}
-              className="rounded-full border border-[var(--border-primary)] bg-[var(--bg-card)] px-3.5 py-1.5 text-xs text-[var(--text-faint)] transition-colors hover:border-[var(--accent-purple)]/50 hover:text-[var(--text-primary)]"
+              className="rounded-xl border border-[var(--border-primary)] bg-[var(--bg-secondary)] px-4 py-4 text-left text-sm text-[var(--text-faint)] transition-colors hover:border-primary/50 hover:text-[var(--text-primary)]"
             >
               {question}
             </button>

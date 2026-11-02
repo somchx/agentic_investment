@@ -1,12 +1,20 @@
 import { useState } from "react"
 import { Check, Copy, Pencil, RotateCcw } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { MarkdownMessage } from "@/components/agent/markdown-message"
+import { StructuredAnswer } from "@/components/agent/structured-answer"
+import { AgentProgressLog } from "@/components/agent/agent-progress"
 import { useTranslation } from "@/i18n/context"
-import type { ChatTurn, ToolCall } from "@/types"
+import type { AgentAnswer, AgentProgressEvent, ChatTurn, ToolCall } from "@/types"
 
 export interface DisplayMessage extends ChatTurn {
   costUsd?: number
   toolCalls?: ToolCall[]
+  // Workflow 2.0 answers; older messages only have Markdown `content`.
+  answer?: AgentAnswer
+  traceId?: number
+  // Live steps captured while this answer was produced (this session only).
+  progress?: AgentProgressEvent[]
 }
 
 function CopyButton({ text }: { text: string }) {
@@ -54,7 +62,7 @@ export function ChatMessage({
   if (isUser) {
     return (
       <div className="flex w-full flex-col items-end gap-1">
-        <div className="max-w-[85%] whitespace-pre-wrap break-words rounded-3xl bg-[var(--accent-blue)]/15 px-4 py-2.5 text-sm leading-relaxed text-[var(--text-primary)] sm:max-w-[70%]">
+        <div className="max-w-[85%] whitespace-pre-wrap break-words rounded-3xl bg-primary/15 px-4 py-2.5 text-sm leading-relaxed text-[var(--text-primary)] sm:max-w-[70%]">
           {message.content}
         </div>
         <div className="flex items-center gap-1">
@@ -74,13 +82,12 @@ export function ChatMessage({
     )
   }
 
-  // Assistant messages render as plain text (no bubble/border), matching
-  // the reference chat UI -- only the user's own turns get a bubble.
+  // Assistant messages render without a bubble, matching the reference chat
+  // UI -- only the user's own turns get one. Their Markdown is rendered.
   return (
     <div className="flex w-full flex-col gap-1.5">
-      <div className="whitespace-pre-wrap break-words text-sm leading-relaxed text-[var(--text-primary)]">
-        {message.content}
-      </div>
+      {message.progress && message.progress.length > 1 && <AgentProgressLog events={message.progress} />}
+      {message.answer ? <StructuredAnswer answer={message.answer} traceId={message.traceId} /> : <MarkdownMessage content={message.content} />}
 
       <div className="flex items-center gap-1">
         <CopyButton text={message.content} />

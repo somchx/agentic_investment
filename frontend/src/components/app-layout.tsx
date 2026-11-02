@@ -1,8 +1,13 @@
-import { useState } from "react"
-import { NavLink, Outlet } from "react-router-dom"
+import { useMarketConfig } from "@/hooks/use-market"
+import { Suspense, useEffect, useState } from "react"
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom"
 import {
   ChevronLeft,
+  ChevronRight,
+  Globe,
+  BriefcaseBusiness, FileText, ShieldCheck,
   LayoutDashboard,
+  Loader2,
   LogOut,
   Menu,
   Moon,
@@ -10,7 +15,6 @@ import {
   Sparkles,
   Sun,
   User2,
-  Wallet,
   X,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -18,243 +22,208 @@ import { useAuth } from "@/hooks/use-auth"
 import { useTheme } from "@/theme/context"
 import { useTranslation } from "@/i18n/context"
 import { NotificationBell } from "@/components/notification-bell"
-import { LogoMark, Wordmark } from "@/components/logo"
+import { LogoMark } from "@/components/logo"
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/radix-select"
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+  useEffect(() => {
+    const mql = window.matchMedia("(max-width: 767px)")
+    const onChange = () => setIsMobile(mql.matches)
+    mql.addEventListener("change", onChange)
+    return () => mql.removeEventListener("change", onChange)
+  }, [])
+  return isMobile
+}
 
 function useNavSections() {
-  const { t } = useTranslation()
+  const { t, lang } = useTranslation()
   return [
     {
       label: t("nav_section_main"),
       items: [
         { to: "/", label: t("nav_dashboard"), icon: LayoutDashboard, end: true },
+        { to: "/portfolio", label: t("portfolio_title"), icon: BriefcaseBusiness, end: false },
         { to: "/screener", label: t("nav_screener"), icon: ScanSearch, end: false },
-        { to: "/portfolio", label: t("nav_portfolio"), icon: Wallet, end: false },
       ],
     },
     {
       label: t("nav_section_tools"),
       items: [
         { to: "/agent", label: t("nav_agent"), icon: Sparkles, end: false },
-        { to: "/profiles", label: t("nav_profiles"), icon: User2, end: false },
+        { to: "/reports", label: lang === "th" ? "รายงาน" : "Reports", icon: FileText, end: false },
+      ],
+    },
+    {
+      label: t("nav_section_account"),
+      items: [
+        { to: "/user", label: t("user_profile"), icon: User2, end: true },
       ],
     },
   ]
 }
 
-function LanguageToggle() {
-  const { lang, setLang, t } = useTranslation()
-  return (
-    <div className="flex items-center gap-0.5 rounded-md border border-[var(--border-primary)] bg-[var(--bg-hover)] p-0.5">
-      <button
-        type="button"
-        onClick={() => setLang("en")}
-        className={cn(
-          "rounded px-2 py-1 text-[11px] font-semibold text-[var(--text-faint)] transition-colors",
-          lang === "en" && "bg-[var(--accent-blue)]/15 text-[var(--accent-blue)]",
-        )}
-        aria-pressed={lang === "en"}
-      >
-        {t("lang_toggle_en")}
-      </button>
-      <button
-        type="button"
-        onClick={() => setLang("th")}
-        className={cn(
-          "rounded px-2 py-1 text-[11px] font-semibold text-[var(--text-faint)] transition-colors",
-          lang === "th" && "bg-[var(--accent-blue)]/15 text-[var(--accent-blue)]",
-        )}
-        aria-pressed={lang === "th"}
-      >
-        {t("lang_toggle_th")}
-      </button>
-    </div>
-  )
-}
-
 const navRowBase =
-  "flex items-center gap-2.5 mx-2 px-2.5 py-2 rounded-full text-[13px] transition-colors"
-const navRowActive = "bg-gradient-to-r from-[#f97316] to-[#ea580c] text-white font-medium shadow-glow"
-const navRowInactive = "text-[var(--text-faint)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)]"
+  "flex items-center gap-2.5 rounded-xl transition-all duration-150"
+const navRowActive = "bg-teal-500/25 text-white font-semibold shadow-sm border border-teal-300/15"
+const navRowInactive = "text-slate-300 hover:bg-white/10 hover:text-white"
 
-function SidebarContent({
+// Icon-rail sidebar: nav only, no logo/account chrome inside it -- those
+// live in the always-visible topbar instead (matches the reference
+// project's AppSidebar, whose desktop <aside> carries nothing but
+// sections + links; the mobile drawer alone repeats a small logo header
+// above the nav since the topbar sits behind the drawer overlay there).
+function SidebarNav({
   collapsed,
   onNavigate,
 }: {
   collapsed: boolean
   onNavigate?: () => void
 }) {
-  const { user, logout } = useAuth()
-  const { t } = useTranslation()
-  const { theme, toggle } = useTheme()
   const sections = useNavSections()
 
   return (
-    <div className="flex h-full flex-col">
-      <div
-        className={cn(
-          "flex h-16 flex-none items-center border-b border-[var(--border-sidebar)]",
-          collapsed ? "justify-center px-0" : "gap-2.5 px-4",
-        )}
+    <nav className={cn("no-scrollbar flex-1 overflow-y-auto py-2", collapsed ? "px-2" : "px-3")}>
+      {sections.map((section) => (
+        <div key={section.label} className="py-1">
+          {!collapsed && (
+            <div className="px-3 py-2 text-[10px] uppercase tracking-widest text-slate-400 font-semibold">
+              {section.label}
+            </div>
+          )}
+          <div className="space-y-0.5">
+            {section.items.map(({ to, label, icon: Icon, end }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={end}
+                onClick={onNavigate}
+                title={collapsed ? label : undefined}
+                className={({ isActive }) =>
+                  cn(
+                    navRowBase,
+                    collapsed ? "justify-center px-0 w-10 h-10 mx-auto" : "px-3 py-3 text-sm",
+                    isActive ? navRowActive : navRowInactive,
+                  )
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <Icon className={cn("h-4 w-4 flex-shrink-0", !isActive && "opacity-60")} />
+                    {!collapsed && <span className="truncate">{label}</span>}
+                  </>
+                )}
+              </NavLink>
+            ))}
+          </div>
+        </div>
+      ))}
+    </nav>
+  )
+}
+
+// Match pplus-inv-v1's labels, Radix Select, and responsive trigger.
+const languageLabels = { en: "English", th: "ไทย (Thai)" } as const
+
+function LanguageToggle() {
+  const { lang, setLang, t } = useTranslation()
+
+  return (
+    <Select value={lang} onValueChange={(value) => {
+      if (value === "en" || value === "th") setLang(value)
+    }}>
+      <SelectTrigger
+        title={t("topbar_language")}
+        aria-label={t("topbar_language")}
+        className="language-select h-9 w-auto gap-1.5 border-0 bg-transparent px-2 hover:bg-accent focus:ring-0"
       >
-        <LogoMark size={34} className="shrink-0 text-[var(--text-primary)]" />
-        {!collapsed && (
-          <div className="min-w-0 flex-1">
-            <div className="text-sm font-semibold leading-tight">
-              <Wordmark />
-            </div>
-            <div className="truncate text-[9px] text-[var(--text-ghost)]">{t("app_subtitle")}</div>
-          </div>
-        )}
-      </div>
-
-      <nav className="flex flex-1 flex-col gap-3 overflow-y-auto pb-3">
-        {sections.map((section) => (
-          <div key={section.label}>
-            {!collapsed && (
-              <div className="mx-4 mb-1 mt-2 text-[10px] font-semibold uppercase tracking-wider text-[var(--text-ghost)]">
-                {section.label}
-              </div>
-            )}
-            <div className="flex flex-col gap-0.5">
-              {section.items.map(({ to, label, icon: Icon, end }) => (
-                <NavLink
-                  key={to}
-                  to={to}
-                  end={end}
-                  onClick={onNavigate}
-                  title={collapsed ? label : undefined}
-                  className={({ isActive }) =>
-                    cn(navRowBase, collapsed && "justify-center px-0", isActive ? navRowActive : navRowInactive)
-                  }
-                >
-                  <Icon className="h-[18px] w-[18px] flex-none" />
-                  {!collapsed && <span className="truncate">{label}</span>}
-                </NavLink>
-              ))}
-            </div>
-          </div>
+        <Globe className="w-4 h-4 text-muted-foreground shrink-0" />
+        <div className="hidden sm:block text-xs font-medium uppercase">{languageLabels[lang]}</div>
+      </SelectTrigger>
+      <SelectContent align="end" className="language-select">
+        {(["en", "th"] as const).map((language) => (
+          <SelectItem key={language} value={language}>{languageLabels[language]}</SelectItem>
         ))}
-      </nav>
+      </SelectContent>
+    </Select>
+  )
+}
 
-      <div className="flex flex-none flex-col gap-2 border-t border-[var(--border-secondary)] px-2 py-3">
-        {!collapsed && user?.email && (
-          <div className="truncate px-2.5 font-mono-num text-[11px] text-[var(--text-muted)]" title={user.email}>
-            {user.email}
-          </div>
-        )}
-        <button
-          type="button"
-          onClick={toggle}
-          title={theme === "dark" ? t("theme_toggle_light") : t("theme_toggle_dark")}
-          className={cn(
-            "flex items-center gap-2.5 rounded-full px-2.5 py-2 text-[13px] text-[var(--text-faint)] transition-colors hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)]",
-            collapsed && "justify-center px-0",
-          )}
-        >
-          {theme === "dark" ? <Sun className="h-[18px] w-[18px] flex-none" /> : <Moon className="h-[18px] w-[18px] flex-none" />}
-          {!collapsed && <span>{theme === "dark" ? t("theme_toggle_light") : t("theme_toggle_dark")}</span>}
-        </button>
-        <button
-          type="button"
-          onClick={logout}
-          title={t("nav_logout")}
-          className={cn(
-            "flex items-center gap-2.5 rounded-full px-2.5 py-2 text-[13px] text-[var(--text-faint)] transition-colors hover:bg-[var(--accent-red)]/10 hover:text-[var(--accent-red)]",
-            collapsed && "justify-center px-0",
-          )}
-        >
-          <LogOut className="h-[18px] w-[18px] flex-none" />
-          {!collapsed && <span>{t("nav_logout")}</span>}
-        </button>
-      </div>
+// Avatar and name open the personal profile, as in pplus-inv-v1.
+function AccountChip() {
+  const { user, logout } = useAuth()
+  const { t } = useTranslation()
+  const name = user?.full_name || user?.email || "?"
+  const initials = (user?.full_name
+    ? user.full_name.trim().split(/\s+/).slice(0, 2).map((part) => Array.from(part)[0]).join("")
+    : (user?.email ?? "?").slice(0, 2)).toUpperCase()
+
+  return (
+    <div className="flex items-center gap-2.5 pl-1">
+      <Link to="/user" title={t("user_profile")} aria-label={t("user_profile")} className="flex items-center gap-2.5 rounded-full p-1 -m-1 hover:bg-muted/40 transition-colors">
+        <div className="w-8 h-8 shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary">
+          {initials}
+        </div>
+        <div className="hidden md:block max-w-[180px]">
+          <div className="truncate text-xs font-medium leading-tight">{name}</div>
+          <div className="truncate text-[10px] text-muted-foreground">{user?.email}</div>
+        </div>
+      </Link>
+      <button type="button" onClick={logout} title={t("nav_logout")} aria-label={t("nav_logout")} className="rounded-full p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors">
+        <LogOut className="w-3.5 h-3.5" />
+      </button>
     </div>
   )
 }
 
 export function AppLayout() {
   const { t } = useTranslation()
+  const location = useLocation()
+  const { theme, toggle } = useTheme()
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const isMobile = useIsMobile()
+  // Icon-rail mode only applies on desktop -- the mobile drawer always shows
+  // full labels regardless of the desktop collapsed state.
+  const rc = collapsed && !isMobile
 
+  // Close the mobile drawer automatically whenever the route changes.
+  useEffect(() => setMobileOpen(false), [location.pathname])
+
+  const { lang } = useTranslation()
+  const titles: Record<string,string> = {
+    '/': t('nav_dashboard'), '/portfolio': t('portfolio_title'), '/companies': lang==='th'?'บริษัท':'Companies',
+    '/watchlist': lang==='th'?'รายการติดตาม':'Watchlist', '/screener': t('nav_screener'), '/agent': t('nav_agent'),
+    '/reports': lang==='th'?'รายงาน':'Reports', '/user': t('user_profile'),
+  }
   return (
-    <div className="flex h-screen overflow-hidden bg-[var(--bg-primary)] md:gap-3 md:p-3">
-      {/* Desktop sidebar: floating rounded panel, collapsible between a
-          full nav rail and an icon-only rail. */}
-      <aside
-        className={cn(
-          "relative hidden flex-none flex-col rounded-2xl border border-[var(--border-sidebar)] bg-[var(--bg-sidebar)] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.45)] transition-[width] duration-200 md:flex",
-          collapsed ? "md:w-[72px]" : "md:w-60",
-        )}
-      >
-        <SidebarContent collapsed={collapsed} />
-        <button
-          type="button"
-          onClick={() => setCollapsed((c) => !c)}
-          aria-label={collapsed ? t("sidebar_expand") : t("sidebar_collapse")}
-          className="absolute -right-3 top-5 flex h-6 w-6 items-center justify-center rounded-full border border-[var(--border-primary)] bg-[var(--bg-card)] text-[var(--text-faint)] shadow-sm transition-colors hover:text-[var(--text-primary)]"
-        >
-          <ChevronLeft className={cn("h-3.5 w-3.5 transition-transform", collapsed && "rotate-180")} />
-        </button>
+    <div className="app-shell flex h-dvh overflow-hidden bg-[var(--bg-primary)]">
+      {mobileOpen && <button aria-label={t('sidebar_close')} onClick={()=>setMobileOpen(false)} className="fixed inset-0 z-40 bg-slate-950/50 md:hidden"/>}
+      <aside className={cn('app-sidebar fixed inset-y-0 left-0 z-50 flex w-64 shrink-0 flex-col transition-[width,transform] duration-200 md:relative md:translate-x-0', rc?'md:w-20':'md:w-60',mobileOpen?'translate-x-0':'-translate-x-full')}>
+        <Link to="/" className={cn('flex h-20 shrink-0 items-center gap-3 border-b border-white/10',rc?'justify-center':'px-6')}>
+          <LogoMark size={34}/>{!rc&&<span className="text-lg font-semibold tracking-tight text-white">ReasonCheck</span>}
+        </Link>
+        <button type="button" onClick={()=>setMobileOpen(false)} aria-label={t('sidebar_close')} className="absolute right-2 top-6 p-2 text-white md:hidden"><X className="h-4 w-4"/></button>
+        <SidebarNav collapsed={rc} onNavigate={()=>setMobileOpen(false)}/>
+        {!rc&&<div className="mx-4 mb-5 rounded-xl border border-white/10 bg-white/5 p-4 text-xs leading-relaxed text-slate-300"><ShieldCheck className="mb-2 h-5 w-5 text-teal-300"/>{lang==='th'?'ลงทุนด้วยเหตุผล ติดตามด้วยหลักฐาน':'Invest with a reason. Follow the evidence.'}<p className="mt-1 text-[10px] text-slate-400">Investment Thesis Monitoring</p></div>}
+        <button onClick={()=>setCollapsed(c=>!c)} aria-label={collapsed?t('sidebar_expand'):t('sidebar_collapse')} className="hidden h-12 items-center justify-center gap-2 border-t border-white/10 text-xs text-slate-300 hover:bg-white/5 md:flex">{rc?<ChevronRight size={16}/>:<><ChevronLeft size={16}/>{lang==='th'?'ย่อเมนู':'Collapse sidebar'}</>}</button>
       </aside>
-
-      {/* Mobile drawer */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-40 md:hidden">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 flex w-72 flex-col border-r border-[var(--border-sidebar)] bg-[var(--bg-sidebar)]">
-            {/* Overlaps the h-16 logo row instead of taking its own row
-                above it, matching the reference sidebar exactly. */}
-            <button
-              type="button"
-              onClick={() => setMobileOpen(false)}
-              aria-label={t("sidebar_close")}
-              className="absolute right-3 top-4 z-10 grid h-8 w-8 place-items-center rounded-lg text-[var(--text-faint)] hover:bg-[var(--bg-hover)]"
-            >
-              <X className="h-4 w-4" />
-            </button>
-            <div className="min-h-0 flex-1">
-              <SidebarContent collapsed={false} onNavigate={() => setMobileOpen(false)} />
-            </div>
-          </aside>
-        </div>
-      )}
-
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-        {/* Mobile top bar */}
-        <header className="flex h-14 flex-none items-center justify-between border-b border-[var(--border-primary)] bg-[var(--bg-sidebar)] px-4 md:hidden">
-          <button
-            type="button"
-            onClick={() => setMobileOpen(true)}
-            aria-label={t("sidebar_open")}
-            className="rounded-md p-1.5 text-[var(--text-faint)] hover:bg-[var(--bg-hover)]"
-          >
-            <Menu className="h-5 w-5" />
-          </button>
-          <div className="flex min-w-0 items-center gap-2">
-            <LogoMark size={24} className="text-[var(--text-primary)]" />
-            <span className="truncate text-sm font-semibold">
-              <Wordmark />
-            </span>
-          </div>
-          <div className="flex flex-none items-center gap-1.5">
-            <LanguageToggle />
-            <NotificationBell />
-          </div>
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="flex h-20 shrink-0 items-center justify-between gap-3 border-b border-[var(--border-primary)] bg-[var(--bg-card)] px-4 sm:px-8">
+          <div className="flex min-w-0 items-center gap-3"><button onClick={()=>setMobileOpen(true)} aria-label={t('sidebar_open')} className="p-2 md:hidden"><Menu size={20}/></button><div><p className="text-[10px] font-semibold uppercase tracking-[.18em] text-muted-foreground">Workspace</p><p className="truncate text-sm font-semibold">{titles[location.pathname] || titles['/companies']}</p></div></div>
+          <div className="flex items-center gap-1"><LanguageToggle/><button onClick={toggle} aria-label={theme==='dark'?t('theme_toggle_light'):t('theme_toggle_dark')} className="rounded-lg p-2 text-muted-foreground hover:bg-muted">{theme==='dark'?<Sun size={17}/>:<Moon size={17}/>}</button><NotificationBell/><div className="mx-2 hidden h-7 w-px bg-border sm:block"/><AccountChip/></div>
         </header>
-
-        {/* Desktop top bar -- same h-14/border-b/bg-sidebar treatment as the
-            mobile top bar above, so the app has one consistent top-bar
-            chrome on every breakpoint (the sidebar already carries brand +
-            nav, so this one only needs the right-aligned controls). */}
-        <header className="hidden h-14 flex-none items-center justify-end gap-3 border-b border-[var(--border-primary)] bg-[var(--bg-sidebar)] px-4 md:flex">
-          <LanguageToggle />
-          <NotificationBell />
-        </header>
-
-        <main className="min-w-0 flex-1 overflow-auto px-4 py-4 md:px-6 md:py-4">
-          <Outlet />
+        <main id="main-content" className="min-w-0 flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
+          <div className="mx-auto max-w-[1440px]"><MarketSourceNotice/><Suspense fallback={<div className="flex justify-center py-16"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground"/></div>}><Outlet/></Suspense></div>
         </main>
       </div>
     </div>
   )
+}
+
+function MarketSourceNotice() {
+  const { data } = useMarketConfig()
+  const { t } = useTranslation()
+  if (data?.price_type !== "daily_close") return null
+  return <details className="mb-5 rounded-xl border border-[var(--border-primary)] bg-[var(--bg-card)] px-4 py-2.5 text-xs text-muted-foreground"><summary className="cursor-pointer font-medium">{t("market_daily_close")} · Alpha Vantage · AAPL / MSFT / AMZN / GOOGL / NVDA</summary><p className="pt-2 leading-relaxed">{t("market_daily_notice")}</p></details>
 }

@@ -6,7 +6,7 @@ export interface Credentials {
   password: string
 }
 
-export async function register(payload: Credentials): Promise<AuthResponse> {
+export async function register(payload: Credentials & { full_name: string }): Promise<AuthResponse> {
   const { data } = await apiClient.post<AuthResponse>("/auth/register", payload)
   return data
 }
@@ -18,5 +18,15 @@ export async function login(payload: Credentials): Promise<AuthResponse> {
 
 export async function fetchMe(): Promise<User> {
   const { data } = await apiClient.get<User>("/auth/me")
+  return data
+}
+
+export async function updateProfile(payload: { full_name: string; email: string }): Promise<User> {
+  const { data } = await apiClient.patch<User>("/auth/me", payload)
+  return data
+}
+
+export async function changePassword(current_password: string, new_password: string): Promise<AuthResponse> {
+  const { data } = await apiClient.post<AuthResponse>("/auth/change-password", { current_password, new_password })
   return data
 }

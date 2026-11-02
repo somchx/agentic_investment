@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { deleteConversation, fetchConversation, fetchConversations, sendMessage } from "@/api/conversations"
+import { deleteConversation, fetchConversation, fetchConversations, sendMessage, sendMessageStream } from "@/api/conversations"
+import type { AgentProgressEvent } from "@/types"
 import { queryKeys } from "@/hooks/query-keys"
 
 export function useConversations() {
@@ -20,8 +21,8 @@ export function useConversation(id: number | null) {
 export function useSendMessage() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ question, conversationId }: { question: string; conversationId: number | null }) =>
-      sendMessage(question, conversationId),
+    mutationFn: ({ question, conversationId, onEvent }: { question: string; conversationId: number | null; onEvent?: (e: AgentProgressEvent) => void }) =>
+      onEvent ? sendMessageStream(question, conversationId, onEvent) : sendMessage(question, conversationId),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.conversations })
       queryClient.invalidateQueries({ queryKey: queryKeys.conversation(data.conversation_id) })

@@ -21,6 +21,8 @@ apiClient.interceptors.request.use((config) => {
       config.headers.Authorization = `Bearer ${token}`
     }
   }
+  // Paid LLM runs write their free text in the language the UI is showing.
+  config.headers["Accept-Language"] = window.localStorage.getItem("lang") === "th" ? "th" : "en"
   return config
 })
 
