@@ -1,0 +1,30 @@
+// Requires isolated thesis_browser_fixture on port 8013; synthetic data only.
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+(async()=>{const browser=await chromium.launch({headless:true});const context=await browser.newContext({viewport:{width:1440,height:1000}});const page=await context.newPage();
+// Redirect the compiled local API origin only to the isolated fixture server.
+await page.route('**/api/**',async route=>{const u=new URL(route.request().url());await route.continue({url:'http://127.0.0.1:8013'+u.pathname+u.search});});
+const r=await context.request.post('http://127.0.0.1:8013/api/auth/register',{data:{email:`ui-${Date.now()}@example.com`,password:'TestOnly!123',full_name:'Synthetic UI Test'}});if(!r.ok())throw Error(await r.text());const auth=await r.json();await context.addInitScript(token=>{localStorage.setItem('iar_access_token',token);localStorage.setItem('lang','th')},auth.access_token);
+await page.goto('http://127.0.0.1:8013/screener');await page.waitForTimeout(1200);await page.getByRole('button',{name:'เพิ่มเหตุผล',exact:true}).click();
+await page.getByRole('checkbox',{name:'ยืนยันว่ากฎนี้ตรงกับความคาดหวังของฉัน'}).check();
+await page.screenshot({path:'reports/flexible_thesis_validation/01-rule-preview.png',fullPage:true});
+const saved=page.waitForResponse(r=>r.url().includes('/api/reasons')&&r.request().method()==='POST');
+await page.getByRole('button',{name:'บันทึกเหตุผล',exact:true}).click();if(!(await saved).ok())throw Error('create failed');
+const row=page.getByRole('row').filter({hasText:'รายได้ไม่ลดลงจากงวดเดียวกันปีก่อน'});await row.getByRole('checkbox').check();
+await page.getByRole('button',{name:/รันการคัดกรอง/}).click();await page.getByText('SATISFIED').first().waitFor();
+await page.screenshot({path:'reports/flexible_thesis_validation/02-screener-result.png',fullPage:true});console.log('PASS browser create directional rule, confirm preview, screen SATISFIED');
+await page.goto('http://127.0.0.1:8013/?ticker=AAPL');await page.waitForTimeout(1200);await page.locator('#purchase-quantity').fill('2');await page.locator('#purchase-price').fill('100');await page.getByRole('button',{name:'ถัดไป',exact:true}).click();
+await page.getByRole('checkbox',{name:/รายได้ไม่ลดลงจากงวดเดียวกันปีก่อน/}).check();
+await page.getByRole('button',{name:'ถัดไป',exact:true}).click();
+const purchase=page.waitForResponse(r=>r.url().includes('/api/positions')&&r.request().method()==='POST');
+await page.getByRole('button',{name:'บันทึกการซื้อ',exact:true}).click();const pr=await purchase;if(!pr.ok())throw Error(await pr.text());
+await page.screenshot({path:'reports/flexible_thesis_validation/03-record-purchase.png',fullPage:true});console.log('PASS browser record purchase with directional rule');
+await page.goto('http://127.0.0.1:8013/screener');
+await page.getByRole('row').filter({hasText:'รายได้ไม่ลดลงจากงวดเดียวกันปีก่อน'}).getByRole('button',{name:'แก้ไข',exact:true}).click();
+await page.getByRole('radio',{name:'รายปีบัญชี',exact:true}).check();
+await page.getByRole('checkbox',{name:'ยืนยันว่ากฎนี้ตรงกับความคาดหวังของฉัน'}).check();
+const updated=page.waitForResponse(r=>r.url().includes('/api/reasons/')&&r.request().method()==='PATCH');
+await page.getByRole('button',{name:'บันทึกเหตุผล',exact:true}).click();if(!(await updated).ok())throw Error('edit failed');
+const positions=await context.request.get('http://127.0.0.1:8013/api/positions',{headers:{Authorization:'Bearer '+auth.access_token}});
+const snapshot=(await positions.json())[0].reasons[0].reason_snapshot;
+if(snapshot.rule_definition.evaluation_period!=='quarterly')throw Error('snapshot overwritten');
+console.log('PASS browser edit annual rule; original purchase snapshot remains quarterly');await browser.close();})().catch(e=>{console.error(e);process.exit(1)});
