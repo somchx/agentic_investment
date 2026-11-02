@@ -24,6 +24,7 @@ class Fact:
     accession_number: str
     filed: str  # ISO date the filing was published — the point-in-time cutoff
     cik: str = ""
+    derivation: dict | None = None
 
     @property
     def source_url(self) -> str:
@@ -41,6 +42,7 @@ class Fact:
         return (
             f"{self.metric} {self.period_end} = {self.value:,.0f} {self.unit} "
             f"(filed {self.filed}, {self.form}, accn {self.accession_number})"
+            + (f" [derived FY - 9M; operands: {self.derivation['operands']}; basis review pending]" if self.derivation else "")
         )
 
 
@@ -57,7 +59,7 @@ class Reason:
     company: str
     metric: str
     comparison: str  # ">", ">=", "<", "<="
-    threshold: float  # as a ratio, e.g. 0.10 for 10%
+    threshold: float | None  # as a ratio, e.g. 0.10 for 10%
     kind: str = "yoy_growth"
     denominator_metric: str = ""
     description: str = ""
@@ -71,6 +73,8 @@ class Reason:
     # reasons instead go through the curated METRIC_TAGS/INSTANT_METRIC_TAGS
     # multi-tag lookup in xbrl_extract.py, keyed by `metric`.
     is_custom: bool = False
+    rule_definition: dict | None = None
+    original_text: str = ""
 
 
 @dataclass
@@ -84,3 +88,17 @@ class Evaluation:
     supporting_evidence: list[Fact] = field(default_factory=list)
     conflicting_evidence: list[Fact] = field(default_factory=list)
     explanation: str = ""
+
+    @property
+    def rule_status(self) -> str:
+        if self.computed_value is None:
+            return "NOT_EVALUATED"
+        return "SATISFIED" if self.status == "Supported" else "BREACHED"
+
+    @property
+    def evidence_status(self) -> str:
+        if getattr(self, "not_yet_observable", False):
+            return "NOT_YET_OBSERVABLE"
+        if self.conflicting_evidence:
+            return "CONFLICTING"
+        return "SUFFICIENT" if self.computed_value is not None else "INSUFFICIENT"

@@ -24,12 +24,19 @@ def _pick_primary_and_conflicts(versions: list[Fact]) -> tuple[Fact | None, list
     if not versions:
         return None, []
     primary = versions[-1]  # most recently filed = most authoritative
-    conflicts = [
-        v
-        for v in versions[:-1]
-        if v.value != 0
-        and abs(v.value - primary.value) / abs(primary.value) > RESTATEMENT_TOLERANCE
-    ]
+
+    def _conflicts_with_primary(v: Fact) -> bool:
+        if v.value == 0 and primary.value == 0:
+            return False  # both zero -- not a conflict, and avoids 0/0
+        if primary.value == 0:
+            # Went from a nonzero earlier value to zero (or vice versa) --
+            # a real, material discrepancy, but the usual relative-difference
+            # formula divides by primary.value and would crash here
+            # (reproduced: ZeroDivisionError, found via external code audit).
+            return v.value != 0
+        return abs(v.value - primary.value) / abs(primary.value) > RESTATEMENT_TOLERANCE
+
+    conflicts = [v for v in versions[:-1] if _conflicts_with_primary(v)]
     return primary, conflicts
 
 
@@ -87,6 +94,8 @@ def _classify(comparison: str, computed: float, threshold: float) -> str:
 
 
 def evaluate_yoy_growth(reason: Reason, all_facts: list[Fact], as_of_date: str) -> Evaluation:
+    if reason.rule_definition:
+        return evaluate_structured(reason, all_facts, None, as_of_date)
     pit_facts = facts_as_of(all_facts, as_of_date)
     by_quarter = latest_version_per_quarter(pit_facts)
 
@@ -140,6 +149,8 @@ def evaluate_margin_level(
     denominator_facts: list[Fact],
     as_of_date: str,
 ) -> Evaluation:
+    if reason.rule_definition:
+        return evaluate_structured(reason, numerator_facts, denominator_facts, as_of_date)
     num_pit = facts_as_of(numerator_facts, as_of_date)
     den_pit = facts_as_of(denominator_facts, as_of_date)
     num_by_q = latest_version_per_quarter(num_pit)
@@ -178,3 +189,89 @@ def evaluate_margin_level(
         conflicting_evidence=conflicts,
         explanation=explanation,
     )
+
+
+def evaluate_structured(reason, all_facts, denominator_facts, as_of_date):
+    """Evaluate confirmed v1 definitions; comparisons never divide by prior values."""
+    import math
+    rule = reason.rule_definition
+    if rule.get('thesis_type') == 'NATURAL_LANGUAGE':
+        return Evaluation(reason, as_of_date, 'Not enough data', None, explanation='Qualitative thesis: numeric rule NOT_EVALUATED. Investigate confirmed claims separately.')
+    mode = rule['mode']
+    annual = rule['evaluation_period'] == 'annual'
+    def missing(message, future=False):
+        ev = Evaluation(reason, as_of_date, 'Not enough data', None, explanation=message)
+        ev.not_yet_observable = future
+        return ev
+    def period_valid(f):
+        try:
+            if f.form not in ('10-Q', '10-K') or not f.filed or not f.accession_number:
+                return False
+            if reason.instant:
+                return not f.period_start or f.period_start == f.period_end
+            days = (date.fromisoformat(f.period_end) - date.fromisoformat(f.period_start)).days
+            return (350 <= days <= 380) if annual else (80 <= days <= 100)
+        except (ValueError, TypeError):
+            return False
+    eligible = [f for f in all_facts if period_valid(f)]
+    # Requested cadence may not silently use YTD or a different duration.
+    available = facts_as_of(eligible, as_of_date)
+    by = latest_version_per_quarter(available)
+    current_q = _latest_quarter_on_or_before(by, as_of_date)
+    if current_q is None:
+        future = any(f.period_end <= as_of_date < f.filed for f in eligible)
+        return missing('No eligible published facts for this evaluation period.', future)
+    current, conflicts = _pick_primary_and_conflicts(by[current_q])
+    selected = [current]
+    prior = None
+    if mode in ('value_comparison', 'margin_comparison', 'yoy_growth'):
+        candidates = [q for q in by if abs((date.fromisoformat(current_q)-date.fromisoformat(q)).days-365) <= 8]
+        prior_q = min(candidates, key=lambda q: abs((date.fromisoformat(current_q)-date.fromisoformat(q)).days-365)) if candidates else None
+        if prior_q is None:
+            return missing('Missing comparable same-period prior-year fact.')
+        prior, extra = _pick_primary_and_conflicts(by[prior_q]); conflicts += extra
+        if not reason.instant:
+            days_current = (date.fromisoformat(current.period_end)-date.fromisoformat(current.period_start)).days
+            days_prior = (date.fromisoformat(prior.period_end)-date.fromisoformat(prior.period_start)).days
+            if abs(days_current-days_prior) > 8:
+                return missing('Period duration mismatch between current and comparative.')
+        selected.append(prior)
+    if mode in ('margin_comparison', 'margin_level'):
+        dens = latest_version_per_quarter(facts_as_of([f for f in (denominator_facts or []) if period_valid(f)], as_of_date))
+        margins=[]
+        for num in list(selected):
+            candidates=[f for f in dens.get(num.period_end, []) if f.period_start == num.period_start]
+            den, extra = _pick_primary_and_conflicts(candidates)
+            if den is None:
+                return missing('Missing same-start and same-end revenue denominator.')
+            if den.unit != num.unit or den.value <= 0:
+                return missing('Margin requires matching units and positive revenue.')
+            selected.append(den); conflicts += extra
+            margins.append(num.value / den.value)
+        left=margins[0]; right=margins[1] if mode == 'margin_comparison' else reason.threshold
+    elif mode == 'positive_level':
+        left=current.value;right=0.0
+    elif mode == 'value_comparison':
+        left=current.value;right=prior.value
+    else:
+        if prior.value <= 0:
+            return missing('YoY percent requires a positive prior value; use a directional comparison for zero/negative bases.')
+        left=(current.value-prior.value)/prior.value;right=reason.threshold
+    if any(f.unit != 'USD' or not math.isfinite(f.value) for f in selected):
+        return missing('All operands must be finite consolidated USD facts; unit mismatch or unsupported currency.')
+    if len({f.cik for f in selected}) != 1:
+        return missing('Company scope mismatch.')
+    if not math.isfinite(left) or right is None or not math.isfinite(right):
+        return missing('Nonfinite or missing comparison operand.')
+    holds={'>':left>right, '>=':left>=right, '<':left<right, '<=':left<=right}[reason.comparison]
+    ev=Evaluation(reason,as_of_date,'Supported' if holds else 'Broken',left,
+                  supporting_evidence=selected,conflicting_evidence=conflicts,
+                  explanation=f"{rule['preview']}; {left:,.6g} {reason.comparison} {right:,.6g}; period {current.period_start or 'instant'} to {current.period_end}. "
+                              'Mathematical result only; causal explanation requires separate evidence.')
+    ev.comparison_value=right
+    ev.value_unit=rule['unit']
+    ev.calculation_trace={'mode':mode,'left':left,'operator':reason.comparison,'right':right,
+                          'period':rule['evaluation_period'],
+                          'operands':[{'value':f.value,'unit':f.unit,'start':f.period_start,'end':f.period_end,
+                                       'filed':f.filed,'accession':f.accession_number,'source_url':f.source_url} for f in selected]}
+    return ev
