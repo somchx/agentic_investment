@@ -18,13 +18,14 @@ has the tool's declared schema to go on).
 from earnings_release import get_release_figure, list_earnings_release_filings
 from filing_context import get_filing_narrative, latest_10q_accession
 from models import Reason
-from reason_engine import evaluate_margin_level, evaluate_yoy_growth
+from reason_engine import _latest_quarter_on_or_before, evaluate_margin_level, evaluate_yoy_growth
 from sec_client import get_company_facts
 from xbrl_extract import (
     extract_instant_facts,
     extract_instant_facts_for_tag,
     extract_quarterly_facts,
     extract_quarterly_facts_for_tag,
+    facts_as_of,
     latest_version_per_quarter,
 )
 
@@ -47,12 +48,32 @@ REASON_DEFS = {
 
 def _evaluation_to_dict(ev) -> dict:
     return {
-        "status": ev.status,
+        "status": ev.status,  # legacy display alias, not evidence assessment
+        "rule_status": ev.rule_status,
+        "evidence_status": ev.evidence_status,
+        "evidence_scope": "numeric_operands_only",
+        "rule_definition": ev.reason.rule_definition,
+        "original_text": ev.reason.original_text,
+        "comparison_value": getattr(ev, "comparison_value", ev.reason.threshold),
+        "value_unit": getattr(ev, "value_unit", "ratio"),
+        "calculation_trace": getattr(ev, "calculation_trace", None),
         "computed_value": ev.computed_value,
+        "derivations": [f.derivation for f in ev.supporting_evidence if f.derivation],
+        # Period the number describes (current quarter; numerator's for a
+        # margin) -- what corroborating evidence must match (Evidence Gate).
+        "evaluated_period": ev.supporting_evidence[0].period_end if ev.supporting_evidence else None,
         "explanation": ev.explanation,
         "supporting_evidence": [f.label() for f in ev.supporting_evidence],
         "conflicting_evidence": [f.label() for f in ev.conflicting_evidence],
+        # Tool schema 2.0: the same facts as structured citations, so the
+        # evidence ledger can verify a claim's numbers against its source.
+        "evidence_facts": [fact_citation(f) for f in ev.supporting_evidence],
     }
+
+
+def fact_citation(f) -> dict:
+    keys = ("metric", "period_start", "period_end", "value", "unit", "form", "accession_number", "filed", "source_url")
+    return {**{k: getattr(f, k, None) for k in keys}, "derived": bool(getattr(f, "derivation", None))}
 
 
 def get_reason_def(reason_key: str, ticker: str | None = None) -> Reason | None:
@@ -76,12 +97,14 @@ def get_reason_def(reason_key: str, ticker: str | None = None) -> Reason | None:
     import db
     row = db.get_reason_by_key(reason_key)
     if row and not row["is_builtin"]:
+        if ticker and (row.get("rule_definition") or {}).get("thesis_type") == "NATURAL_LANGUAGE" and row["ticker"] != ticker:
+            return None
         return Reason(
             reason_id=row["reason_key"], company="", metric=row["metric"],
             comparison=row["comparison"], threshold=row["threshold"],
             kind=row["kind"], denominator_metric=row["denominator_metric"] or "",
             description=row["description"], instant=bool(row["instant"]),
-            is_custom=True,
+            is_custom=row.get("is_custom", True), rule_definition=row.get("rule_definition"), original_text=row.get("original_text", ""),
         )
     return None
 
@@ -99,8 +122,43 @@ def _evaluate_reason(ticker: str, reason_key: str, as_of: str | None):
     """
     reason = get_reason_def(reason_key, ticker)
     if reason is None:
-        return {"error": f"unknown reason_key '{reason_key}' for ticker '{ticker}'"}
+        return {"error_code": "INVALID_REASON_KEY", "error": f"unknown reason_key '{reason_key}' for ticker '{ticker}'"}
+    return _evaluate_reason_obj(ticker, reason, as_of)
 
+
+def _evaluate_reason_obj(ticker: str, reason: Reason, as_of: str | None):
+    """Same fetch-facts-and-evaluate step as _evaluate_reason, but given an
+    already-resolved Reason object instead of looking one up by key. This
+    is what lets evaluate_frozen_reason (below) evaluate a *frozen* rule
+    definition -- e.g. one captured in a Purchase snapshot -- without ever
+    touching the live `reasons` table, so editing or deleting that reason
+    later can't silently change what a past purchase is tracked against
+    (Code Audit Session 3, item 2)."""
+    loaded = load_reason_facts(ticker, reason)
+    if isinstance(loaded, dict):  # error case
+        return loaded
+    company_name, facts, denom_facts = loaded
+
+    if as_of is None:
+        from datetime import date
+        as_of = date.today().isoformat() if reason.rule_definition else max(f.filed for f in facts)
+
+    if reason.kind == "margin_level":
+        ev = evaluate_margin_level(reason, facts, denom_facts, as_of)
+    else:
+        ev = evaluate_yoy_growth(reason, facts, as_of)
+
+    return company_name, reason, as_of, ev
+
+
+def load_reason_facts(ticker: str, reason: Reason):
+    """All filed facts a reason is computed from (numerator, and denominator
+    for a margin), unfiltered by date -- callers apply the point-in-time
+    cutoff per evaluation date. Returns (company_name, facts, denom_facts),
+    or an error dict when the metric has no facts for this company."""
+    from natural_thesis import is_natural
+    if is_natural(reason.rule_definition):
+        return ticker, [], None
     facts_json = get_company_facts(ticker)
     cik = str(facts_json.get("cik")).zfill(10)
     company_name = facts_json.get("entityName", ticker)
@@ -113,9 +171,14 @@ def _evaluate_reason(ticker: str, reason_key: str, as_of: str | None):
     quarterly_fn = extract_quarterly_facts_for_tag if reason.is_custom else extract_quarterly_facts
     instant_fn = extract_instant_facts_for_tag if reason.is_custom else extract_instant_facts
 
+    if reason.rule_definition:
+        return load_structured_facts(facts_json, cik, company_name, reason)
     if reason.instant:
         facts = instant_fn(facts_json, cik, reason.metric)
-        denom_facts = None
+        denom_facts = (
+            instant_fn(facts_json, cik, reason.denominator_metric)
+            if reason.kind == "margin_level" else None
+        )
     else:
         facts = quarterly_fn(facts_json, cik, reason.metric)
         denom_facts = (
@@ -124,17 +187,8 @@ def _evaluate_reason(ticker: str, reason_key: str, as_of: str | None):
         )
 
     if not facts:
-        return {"error": f"no {reason.metric} facts found for {ticker}"}
-
-    if as_of is None:
-        as_of = max(f.filed for f in facts)
-
-    if reason.kind == "margin_level":
-        ev = evaluate_margin_level(reason, facts, denom_facts, as_of)
-    else:
-        ev = evaluate_yoy_growth(reason, facts, as_of)
-
-    return company_name, reason, as_of, ev
+        return {"error_code": "EVIDENCE_NOT_FOUND", "error": f"no {reason.metric} facts found for {ticker}"}
+    return company_name, facts, denom_facts
 
 
 def check_reason_status(ticker: str, reason_key: str, as_of: str | None = None) -> dict:
@@ -144,6 +198,71 @@ def check_reason_status(ticker: str, reason_key: str, as_of: str | None = None) 
     reason's threshold.
     """
     result = _evaluate_reason(ticker, reason_key, as_of)
+    if isinstance(result, dict):  # error case
+        return result
+    company_name, reason, as_of, ev = result
+
+    return {
+        "ticker": ticker,
+        "company": company_name,
+        "reason": reason.description,
+        "as_of": as_of,
+        **_evaluation_to_dict(ev),
+    }
+
+
+def reason_from_frozen_def(frozen_def: dict) -> Reason:
+    """Build the Reason a frozen purchase snapshot (or a raw `reasons` row)
+    describes -- see evaluate_frozen_reason for why both shapes occur."""
+    if "is_custom" in frozen_def:
+        is_custom = bool(frozen_def["is_custom"])
+    elif "is_builtin" in frozen_def:
+        is_custom = not frozen_def["is_builtin"]
+    else:
+        is_custom = False
+    return Reason(
+        reason_id=frozen_def.get("reason_key", ""), company="", metric=frozen_def["metric"],
+        comparison=frozen_def["comparison"], threshold=frozen_def["threshold"],
+        kind=frozen_def["kind"], denominator_metric=frozen_def.get("denominator_metric") or "",
+        description=frozen_def.get("description", ""), instant=bool(frozen_def.get("instant", False)),
+        is_custom=is_custom, rule_definition=frozen_def.get("rule_definition"), original_text=frozen_def.get("original_text", ""),
+    )
+
+
+def evaluate_frozen_reason(ticker: str, frozen_def: dict, as_of: str | None = None) -> dict:
+    """Evaluate a reason from an explicit, frozen rule definition (metric,
+    comparison, threshold, kind, denominator_metric, instant) instead of a
+    live reason_key lookup. Same return shape as check_reason_status.
+
+    This is what portfolio tracking (api/portfolio.py) and Continuous
+    Monitoring (monitor.py) must call for a purchase that has a reason
+    snapshot -- if the live `reasons` row for that reason_key is later
+    edited (different threshold) or deleted, check_reason_status(ticker,
+    reason_key) would silently start evaluating a different rule than the
+    one that actually justified the purchase. Confirmed as a real gap in
+    an external code audit (Session 3, item 2) and reproduced: buy under
+    "margin >= 20%", edit the rule to "margin >= 25%", and the old
+    tracking silently re-graded the historical purchase against 25%.
+
+    Whether `metric` is a built-in curated name (e.g. "Revenue", resolved
+    via METRIC_TAGS' multi-tag migration list) or one exact raw XBRL tag a
+    user picked for a custom reason must be known to pick the right
+    extraction path. Hardcoding `is_custom=True` here (the bug this
+    docstring note replaces) silently broke every frozen snapshot of a
+    BUILT-IN reason -- the curated name was looked up as if it were a
+    literal tag, found nothing, and both purchase recording and portfolio
+    tracking failed outright for the 3 built-in reasons. Reproduced live:
+    `POST /api/positions` with reason_key="revenue_growth" returned 400
+    "no Revenue facts found" for a real, data-backed ticker.
+
+    Two call shapes both have to work here: a raw `reasons` DB row (used
+    when first computing the snapshot at purchase time, carrying
+    `is_builtin`) and the frozen snapshot dict itself on every later
+    re-evaluation (positions.py now stores `is_custom` directly in it) --
+    so both keys are checked rather than assuming one caller's shape.
+    """
+    reason = reason_from_frozen_def(frozen_def)
+    result = _evaluate_reason_obj(ticker, reason, as_of)
     if isinstance(result, dict):  # error case
         return result
     company_name, reason, as_of, ev = result
@@ -177,6 +296,7 @@ def calculate_metric(ticker: str, reason_key: str, as_of: str | None = None) -> 
         "ticker": ticker,
         "company": company_name,
         "metric": reason.metric,
+        **_evaluation_to_dict(ev),
         "kind": reason.kind,
         "as_of": as_of,
         "computed_value": ev.computed_value,
@@ -192,7 +312,7 @@ SECONDARY_EVIDENCE_METRICS = {
 }
 
 
-def get_secondary_evidence(ticker: str, reason_key: str) -> dict:
+def get_secondary_evidence(ticker: str, reason_key: str, as_of: str | None = None, frozen_def: dict | None = None) -> dict:
     """Tool: compare the most recent earnings-release (8-K) figure for the
     metric behind `reason_key` against the corresponding 10-Q/10-K value.
     This is the "News Search / dual-source evidence" step for Contribution
@@ -205,10 +325,22 @@ def get_secondary_evidence(ticker: str, reason_key: str) -> dict:
     actually verify debt that way. Generalized to take reason_key and pick
     the right metric, once earnings_release.py could parse OperatingIncome
     and LongTermDebt from the press release too (see README.md).
+
+    `as_of` restricts the candidate 8-Ks to those filed on or before that
+    date -- without it, this always grabbed the globally latest 8-K
+    regardless of what point in time was being evaluated, which would leak
+    look-ahead bias into any point-in-time investigation (e.g. re-checking
+    a purchase snapshot as of its purchase date).
     """
-    if reason_key not in SECONDARY_EVIDENCE_METRICS:
-        return {"error": f"unknown reason_key '{reason_key}', expected one of {list(SECONDARY_EVIDENCE_METRICS)}"}
-    metric = SECONDARY_EVIDENCE_METRICS[reason_key]
+    reason = reason_from_frozen_def(frozen_def) if frozen_def is not None else get_reason_def(reason_key)
+    if reason is None:
+        return {"error_code": "INVALID_REASON_KEY", "error": "Unknown reason"}
+    if (reason.rule_definition or {}).get("thesis_type") == "NATURAL_LANGUAGE":
+        return {"checked": False, "found": False, "rule_status": "NOT_EVALUATED", "evidence_status": "INSUFFICIENT", "reason": "Use confirmed-claim natural thesis investigation; numeric evidence tools cannot grade qualitative claims."}
+    metric = SECONDARY_EVIDENCE_METRICS.get(reason_key, reason.metric)
+
+    if reason.rule_definition:
+        return structured_secondary_evidence(ticker, reason, as_of)
 
     facts_json = get_company_facts(ticker)
     cik = str(facts_json.get("cik")).zfill(10)
@@ -218,10 +350,20 @@ def get_secondary_evidence(ticker: str, reason_key: str) -> dict:
     else:
         facts = extract_quarterly_facts(facts_json, cik, metric)
     facts_by_quarter = latest_version_per_quarter(facts)
+    # The period the rule is actually evaluated on at this point in time: the
+    # latest quarter with a filed fact on or before as_of (same selection as
+    # reason_engine). A release for any other period does not corroborate it.
+    pit_by_quarter = latest_version_per_quarter(facts_as_of(facts, as_of)) if as_of else facts_by_quarter
+    target_period = _latest_quarter_on_or_before(pit_by_quarter, as_of) if as_of else max(facts_by_quarter, default=None)
 
     releases = list_earnings_release_filings(ticker, cik)
+    if as_of is not None:
+        releases = [f for f in releases if f.filed <= as_of]
     if not releases:
-        return {"error": f"no earnings-release 8-Ks found for {ticker}"}
+        return {
+            "error_code": "EVIDENCE_NOT_FOUND",
+            "error": f"no earnings-release 8-Ks found for {ticker}" + (f" as of {as_of}" if as_of else ""),
+        }
 
     latest_filing = max(releases, key=lambda f: f.filed)
     rf = get_release_figure(cik, latest_filing, metric)
@@ -229,14 +371,34 @@ def get_secondary_evidence(ticker: str, reason_key: str) -> dict:
     if rf.period_end is None or rf.value is None:
         return {
             "ticker": ticker, "metric": metric, "checked": False,
+            "period_matches": False, "target_period": target_period,
+            "release_period_end": rf.period_end, "as_of": as_of,
             "reason": "could not parse latest earnings release for this metric",
         }
 
-    versions = facts_by_quarter.get(rf.period_end)
+    if target_period is None or rf.period_end != target_period:
+        # Not evidence for the period being concluded on -- reported as such so
+        # the Evidence Gate cannot count it (and the agent can't present it as
+        # corroboration).
+        return {
+            "ticker": ticker, "metric": metric, "checked": False,
+            "period_matches": False,
+            "target_period": target_period,
+            "release_period_end": rf.period_end,
+            "reason": (
+                f"latest earnings release parsed as period {rf.period_end}, not the evaluated "
+                f"period {target_period} -- it does not corroborate the evaluated figure"
+            ),
+            "as_of": as_of,
+        }
+
+    versions = pit_by_quarter.get(rf.period_end)
     if not versions:
         return {
             "ticker": ticker, "metric": metric, "checked": False,
-            "reason": f"no 10-Q/10-K fact for period {rf.period_end}",
+            "period_matches": False, "target_period": target_period,
+            "release_period_end": rf.period_end, "as_of": as_of,
+            "reason": f"no eligible 10-Q/10-K fact for period {rf.period_end}",
         }
 
     filing_value = versions[-1].value
@@ -245,15 +407,23 @@ def get_secondary_evidence(ticker: str, reason_key: str) -> dict:
         "ticker": ticker,
         "metric": metric,
         "checked": True,
+        "period_matches": True,
+        "target_period": target_period,
         "period_end": rf.period_end,
         "earnings_release_value": rf.value,
         "filed_value": filing_value,
+        "filed_derivation": versions[-1].derivation,
         "diff_pct": diff,
         "conflict": diff is not None and diff > 0.005,
+        "as_of": as_of,
+        "release_accession_number": getattr(latest_filing, "accession_number", None),
+        "release_filed": getattr(latest_filing, "filed", None),
+        "release_exhibit": getattr(latest_filing, "exhibit_filename", None),
+        "filed_evidence": fact_citation(versions[-1]),
     }
 
 
-def get_filing_context(ticker: str, reason_key: str) -> dict:
+def get_filing_context(ticker: str, reason_key: str, as_of: str | None = None, frozen_def: dict | None = None) -> dict:
     """Tool: read the actual narrative text from the company's primary
     10-Q/10-K (MD&A section) discussing this reason's metric -- e.g. why
     long-term debt grew, not just that it did. This is what lets an agent
@@ -261,14 +431,36 @@ def get_filing_context(ticker: str, reason_key: str) -> dict:
     tag-definition mismatch, which check_reason_status's numbers alone
     can't distinguish. See filing_context.py and README.md for how this
     was verified (GOOGL, META, AMZN) and a real case/tag bug it surfaced.
+
+    `as_of` picks the 10-Q/10-K that was actually the latest one filed at
+    that point in time, instead of always reading whatever the single most
+    recent filing is today -- see latest_10q_accession's docstring.
     """
-    if reason_key not in SECONDARY_EVIDENCE_METRICS:
-        return {"error": f"unknown reason_key '{reason_key}', expected one of {list(SECONDARY_EVIDENCE_METRICS)}"}
-    metric = SECONDARY_EVIDENCE_METRICS[reason_key]
+    reason = reason_from_frozen_def(frozen_def) if frozen_def is not None else get_reason_def(reason_key)
+    if reason is None:
+        return {"error_code": "INVALID_REASON_KEY", "error": "Unknown reason"}
+    if (reason.rule_definition or {}).get("thesis_type") == "NATURAL_LANGUAGE":
+        return {"checked": False, "found": False, "rule_status": "NOT_EVALUATED", "evidence_status": "INSUFFICIENT", "reason": "Use confirmed-claim natural thesis investigation; numeric evidence tools cannot grade qualitative claims."}
+    metric = SECONDARY_EVIDENCE_METRICS.get(reason_key, reason.metric)
+
+    if reason.rule_definition:
+        evaluated = _evaluate_reason_obj(ticker, reason, as_of)
+        if isinstance(evaluated, dict): return evaluated
+        ev = evaluated[3]
+        if not ev.supporting_evidence:
+            return {"found": False, "narrative_excerpts": [], "reason": ev.explanation}
+        primary = ev.supporting_evidence[0]
+        snippets = get_filing_narrative(primary.cik, primary.accession_number, metric)
+        return {"ticker": ticker, "reason_key": reason_key, "metric": metric, "found": bool(snippets),
+                "narrative_excerpts": snippets[:2], "as_of": ev.as_of_date, "source_url": primary.source_url,
+                "evaluated_period": primary.period_end}
 
     facts_json = get_company_facts(ticker)
     cik = str(facts_json.get("cik")).zfill(10)
-    accn = latest_10q_accession(ticker)
+    try:
+        accn = latest_10q_accession(ticker, as_of)
+    except RuntimeError as e:
+        return {"error_code": "EVIDENCE_NOT_FOUND", "error": str(e)}
     snippets = get_filing_narrative(cik, accn, metric)
 
     return {
@@ -277,6 +469,7 @@ def get_filing_context(ticker: str, reason_key: str) -> dict:
         "metric": metric,
         "found": bool(snippets),
         "narrative_excerpts": snippets[:2],
+        "as_of": as_of,
     }
 
 
@@ -285,10 +478,12 @@ TOOL_SPECS = [
         "name": "check_reason_status",
         "description": (
             "Evaluate one numeric investment reason (revenue_growth, "
-            "operating_margin, or debt_growth) for a company as of a given "
-            "date (or the most recent filing if omitted). Returns the "
+            "operating_margin, or debt_growth) for a company. Returns the "
             "Supported/Weakened/Broken/Not-enough-data status, the computed "
-            "value, and the cited evidence."
+            "value, and the cited evidence, all as of this investigation's "
+            "fixed analysis date -- there is no way to change that date "
+            "per tool call; every tool call in this investigation uses the "
+            "same one."
         ),
         "input_schema": {
             "type": "object",
@@ -298,10 +493,6 @@ TOOL_SPECS = [
                     "type": "string",
                     "enum": list(REASON_DEFS.keys()),
                     "description": "Which of the three Phase 1 numeric reasons to check",
-                },
-                "as_of": {
-                    "type": "string",
-                    "description": "ISO date to simulate as 'today' (point-in-time). Omit for latest.",
                 },
             },
             "required": ["ticker", "reason_key"],
@@ -316,7 +507,8 @@ TOOL_SPECS = [
             "the evidence it's based on. Use this if you want to double-check "
             "a figure in isolation; for the full status judgment use "
             "check_reason_status instead (it computes the same number and also "
-            "classifies it)."
+            "classifies it). As with every tool here, this always evaluates as "
+            "of this investigation's fixed analysis date."
         ),
         "input_schema": {
             "type": "object",
@@ -326,10 +518,6 @@ TOOL_SPECS = [
                     "type": "string",
                     "enum": list(REASON_DEFS.keys()),
                     "description": "Which of the three Phase 1 numeric reasons' metric to compute",
-                },
-                "as_of": {
-                    "type": "string",
-                    "description": "ISO date to simulate as 'today' (point-in-time). Omit for latest.",
                 },
             },
             "required": ["ticker", "reason_key"],
@@ -344,7 +532,8 @@ TOOL_SPECS = [
             "operating_margin -> OperatingIncome, debt_growth -> LongTermDebt). "
             "Use this when that reason's status looks uncertain and a second, "
             "independently-sourced number would help confirm or contradict the "
-            "filed figure."
+            "filed figure. As with every tool here, this always evaluates as of "
+            "this investigation's fixed analysis date."
         ),
         "input_schema": {
             "type": "object",
@@ -369,7 +558,9 @@ TOOL_SPECS = [
             "want to understand the cause -- a real financing/acquisition "
             "event vs. a restatement vs. a tag-definition mismatch -- before "
             "deciding whether to recommend human review and what to tell "
-            "the reviewer to look into."
+            "the reviewer to look into. As with every tool here, this always "
+            "reads the filing that was current as of this investigation's "
+            "fixed analysis date."
         ),
         "input_schema": {
             "type": "object",
@@ -481,3 +672,161 @@ FINALIZE_SINGLE_REASON_TOOL = {
         "required": ["status", "computed_value", "human_review_recommended", "rationale"],
     },
 }
+
+# Decision Journal / "Attack the Thesis" (Contribution 2 extension): the
+# investor states WHY they bought, frozen at purchase time alongside the
+# usual rule snapshot, and this tool set lets an agent try to build the
+# bear case against that stated thesis specifically -- not just report the
+# frozen rule's status. Deliberately NOT reusing the general TOOL_SPECS:
+# the ticker/reason/purchase-date are fixed for one specific purchase (set
+# in agent.run_thesis_attack's dispatch closures, never LLM-supplied), so
+# these take no arguments at all -- there's no `ticker`/`reason_key` for
+# the model to get wrong or point at a different position.
+THESIS_ATTACK_TOOL_SPECS = [
+    {
+        "name": "get_frozen_reason_status",
+        "description": (
+            "Re-derive the frozen rule's status exactly as it was evaluated at the "
+            "purchase date -- the baseline the investor's thesis is based on. Takes no "
+            "arguments; the ticker, rule, and date are fixed for this review."
+        ),
+        "input_schema": {"type": "object", "properties": {}, "required": []},
+    },
+    {
+        "name": "get_secondary_evidence",
+        "description": (
+            "Cross-check the metric behind this reason against a second, independent "
+            "source (preliminary earnings release vs. the filed figure), as of the "
+            "purchase date. Takes no arguments."
+        ),
+        "input_schema": {"type": "object", "properties": {}, "required": []},
+    },
+    {
+        "name": "get_filing_context",
+        "description": (
+            "Read the company's own narrative explanation (MD&A) for this metric, as of "
+            "the purchase date -- the best place to find qualitative counter-evidence a "
+            "number alone won't show. Takes no arguments."
+        ),
+        "input_schema": {"type": "object", "properties": {}, "required": []},
+    },
+]
+
+FINALIZE_THESIS_REVIEW_TOOL = {
+    "name": "finalize_thesis_review",
+    "description": (
+        "Submit your final adversarial review of the investor's thesis. Call this "
+        "exactly once, after genuinely trying to find counter-evidence -- not as a "
+        "rubber stamp."
+    ),
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "thesis_status": {
+                "type": "string",
+                "enum": ["Still Holds", "Weakened", "Broken"],
+                "description": "Your honest verdict after actively trying to attack the thesis.",
+            },
+            "counter_evidence": {
+                "type": "string",
+                "description": (
+                    "The strongest evidence found AGAINST the thesis, or 'None found' if "
+                    "a genuine search turned up nothing -- never fabricate doubt that "
+                    "isn't there."
+                ),
+            },
+            "supporting_evidence": {
+                "type": "string",
+                "description": "What still supports the thesis, for balance.",
+            },
+            "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
+            "human_review_recommended": {"type": "boolean"},
+            "rationale": {"type": "string", "description": "One or two sentences explaining the verdict."},
+        },
+        "required": [
+            "thesis_status", "counter_evidence", "supporting_evidence",
+            "confidence", "human_review_recommended", "rationale",
+        ],
+    },
+}
+
+# Mr. Bull / Mr. Bear Cross-Debate: a second, more structured extension of
+# the same Decision Journal idea as run_thesis_attack, but with two
+# dedicated roles (build the strongest case FOR the thesis, and separately
+# the strongest case AGAINST it) that then rebut each other once each --
+# instead of one agent asked to be adversarial toward itself. Reuses the
+# same zero-argument, purchase-date-locked tools as the single-sided
+# attack (agent.run_bull_bear_debate supplies the dispatch closures).
+FINALIZE_DEBATE_CASE_TOOL = {
+    "name": "finalize_case",
+    "description": (
+        "Submit your structured case for your assigned side (Bull or Bear). Call this "
+        "exactly once, after genuinely digging for evidence -- not a restatement of the "
+        "thesis or a generic list of risks."
+    ),
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "key_points": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "3-5 bullet-point arguments for your side, each grounded in evidence you actually gathered.",
+            },
+            "strongest_evidence": {
+                "type": "string",
+                "description": "The single strongest piece of evidence for your case, cited specifically.",
+            },
+            "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
+        },
+        "required": ["key_points", "strongest_evidence", "confidence"],
+    },
+}
+
+
+def load_structured_facts(facts_json, cik, company_name, reason):
+    from xbrl_extract import extract_annual_facts
+    annual=reason.rule_definition['evaluation_period']=='annual'
+    if reason.instant:
+        # v1 debt excludes current portions and leases: never use broad debt fallbacks.
+        tag='LongTermDebtNoncurrent' if not reason.is_custom else reason.metric
+        facts=extract_instant_facts_for_tag(facts_json,cik,tag)
+        if annual:
+            ends={f.period_end for f in extract_annual_facts(facts_json,cik,'Revenue')}
+            facts=[f for f in facts if f.period_end in ends]
+        den=extract_instant_facts_for_tag(facts_json,cik,reason.denominator_metric) if reason.denominator_metric else None
+        if annual and den is not None:
+            den=[f for f in den if f.period_end in ends]
+    else:
+        def extract(metric):
+            if annual: return extract_annual_facts(facts_json,cik,metric,reason.is_custom)
+            fn=extract_quarterly_facts_for_tag if reason.is_custom else extract_quarterly_facts
+            return fn(facts_json,cik,metric)
+        facts=extract(reason.metric)
+        den=extract(reason.denominator_metric) if reason.denominator_metric else None
+    return company_name,facts,den
+
+
+def structured_secondary_evidence(ticker, reason, as_of):
+    evaluated = _evaluate_reason_obj(ticker, reason, as_of)
+    if isinstance(evaluated, dict): return evaluated
+    ev = evaluated[3]
+    target = ev.supporting_evidence[0].period_end if ev.supporting_evidence else None
+    out = dict(ticker=ticker, checked=False, period_matches=False, target_period=target,
+               as_of=ev.as_of_date, operand_checks=[])
+    if not ev.supporting_evidence:
+        return {**out, 'reason': ev.explanation}
+    if reason.rule_definition['evaluation_period'] == 'annual' or reason.instant or reason.is_custom:
+        return {**out, 'reason': 'Release parser has no verified annual duration / debt boundary / custom-concept mapping. Manual corroboration required.'}
+    cik=ev.supporting_evidence[0].cik
+    releases=sorted([r for r in list_earnings_release_filings(ticker,cik) if r.filed <= ev.as_of_date], key=lambda r:r.filed, reverse=True)[:12]
+    for fact in ev.supporting_evidence:
+        match=None
+        for release in releases:
+            figure=get_release_figure(cik,release,fact.metric)
+            if figure.period_end == fact.period_end and figure.value is not None:
+                match=figure;break
+        if match is None:
+            return {**out, 'reason': 'No matching secondary figure for every required operand.'}
+        diff=abs(match.value-fact.value)/abs(fact.value) if fact.value else (0 if match.value==0 else 1)
+        out['operand_checks'].append({'metric':fact.metric,'period_end':fact.period_end,'filed_value':fact.value,'release_value':match.value,'release_filed':match.filing.filed,'release_accession':match.filing.accession_number,'source_url':f"https://www.sec.gov/Archives/edgar/data/{int(cik)}/{match.filing.accession_number.replace('-', '')}/{match.filing.exhibit_filename}",'conflict':diff>0.005})
+    return {**out,'checked':True,'period_matches':True,'conflict':any(c['conflict'] for c in out['operand_checks'])}

@@ -69,20 +69,13 @@ def build_company_reasons(ticker: str, user_id: int | None = None, include_custo
         for row in db.list_reasons(ticker=ticker, user_id=user_id):
             if row["is_builtin"]:
                 continue
-            custom_reason = Reason(
-                row["reason_key"], company_name, row["metric"], row["comparison"], row["threshold"],
-                kind=row["kind"], denominator_metric=row["denominator_metric"] or "",
-                description=row["description"], instant=bool(row["instant"]), is_custom=True,
-            )
-            if custom_reason.instant:
-                facts = extract_instant_facts_for_tag(facts_json, cik, custom_reason.metric)
-                denom_facts = None
+            from tools import reason_from_frozen_def, load_reason_facts
+            custom_reason = reason_from_frozen_def(row)
+            loaded = load_reason_facts(ticker, custom_reason)
+            if isinstance(loaded, dict):
+                facts, denom_facts = [], None
             else:
-                facts = extract_quarterly_facts_for_tag(facts_json, cik, custom_reason.metric)
-                denom_facts = (
-                    extract_quarterly_facts_for_tag(facts_json, cik, custom_reason.denominator_metric)
-                    if custom_reason.kind == "margin_level" else None
-                )
+                _, facts, denom_facts = loaded
             reasons.append((custom_reason, facts, denom_facts))
 
     return company_name, reasons
