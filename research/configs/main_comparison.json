@@ -1,0 +1,25 @@
+{
+  "experiment_id": "claimverif-main-v1",
+  "description": "Main comparison: A1 conventional RAG, A2 RAG + deterministic numeric verification, A3 contradiction-aware, SR self-reflection control. Same claims, corpus, cutoffs, model, retrieval and per-claim budget.",
+  "dataset": {"split": "development"},
+  "common": {
+    "llm": {"temperature": 0, "max_output_tokens": 1500},
+    "retrieval": {"top_k": 6, "chunk_chars": 1200, "chunk_overlap": 200,
+                  "max_filings_per_form": {"10-K": 1, "10-Q": 2, "8-K": 2}, "passage_chars_in_prompt": 1200},
+    "numeric": {"max_assertions": 6, "override_final_label": true},
+    "budget": {"max_llm_calls_per_claim": 3, "max_input_tokens_per_claim": 60000, "max_retrieval_queries_per_claim": 4}
+  },
+  "approaches": [
+    {"name": "A1_conventional_rag", "kind": "conventional_rag", "description": "claim -> retrieval -> LLM -> verdict"},
+    {"name": "A2_rag_numeric", "kind": "financial_verification", "description": "A1 + deterministic numeric verification"},
+    {"name": "A3_contradiction_aware", "kind": "contradiction_aware", "description": "A2 + contradiction investigation + reconciliation",
+     "overrides": {"contradiction": {"max_hypotheses": 3, "top_k_per_query": 3, "counter_retrieval": true, "counter_numeric_checks": true}}},
+    {"name": "SR_self_reflection", "kind": "self_reflection", "description": "A2 + self-critique and revision, no new retrieval",
+     "overrides": {"reflection": {"max_items": 3}}}
+  ],
+  "comparisons": [
+    {"name": "main", "a": "A2_rag_numeric", "b": "A3_contradiction_aware"},
+    {"name": "second_look_control", "a": "SR_self_reflection", "b": "A3_contradiction_aware"},
+    {"name": "numeric_stage", "a": "A1_conventional_rag", "b": "A2_rag_numeric"}
+  ]
+}

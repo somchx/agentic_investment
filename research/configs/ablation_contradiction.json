@@ -1,0 +1,26 @@
+{
+  "experiment_id": "claimverif-ablation-v1",
+  "description": "Ablation of the contradiction stage: full A3, A3 without counter-evidence retrieval, A3 without counter numeric checks, and A3 with the stage switched off (must equal A2).",
+  "dataset": {"split": "development"},
+  "common": {
+    "llm": {"temperature": 0, "max_output_tokens": 1500},
+    "retrieval": {"top_k": 6, "chunk_chars": 1200, "chunk_overlap": 200,
+                  "max_filings_per_form": {"10-K": 1, "10-Q": 2, "8-K": 2}, "passage_chars_in_prompt": 1200},
+    "numeric": {"max_assertions": 6, "override_final_label": true},
+    "budget": {"max_llm_calls_per_claim": 3, "max_input_tokens_per_claim": 60000, "max_retrieval_queries_per_claim": 4}
+  },
+  "approaches": [
+    {"name": "A2_rag_numeric", "kind": "financial_verification"},
+    {"name": "A3_full", "kind": "contradiction_aware", "overrides": {"contradiction": {"max_hypotheses": 3, "top_k_per_query": 3}}},
+    {"name": "A3_no_counter_retrieval", "kind": "contradiction_aware",
+     "overrides": {"contradiction": {"max_hypotheses": 3, "top_k_per_query": 3, "counter_retrieval": false}}},
+    {"name": "A3_no_counter_numeric", "kind": "contradiction_aware",
+     "overrides": {"contradiction": {"max_hypotheses": 3, "top_k_per_query": 3, "counter_numeric_checks": false}}},
+    {"name": "A3_stage_off", "kind": "contradiction_aware", "allow_note": "contradiction.enabled=false -> identical to A2",
+     "overrides": {"contradiction": {"enabled": false}}}
+  ],
+  "comparisons": [
+    {"name": "full_vs_off", "a": "A3_stage_off", "b": "A3_full"},
+    {"name": "retrieval_contribution", "a": "A3_no_counter_retrieval", "b": "A3_full"}
+  ]
+}
