@@ -10,6 +10,14 @@ workflow. The ReasonCheck application (`backend/`, `frontend/`) stays the demo a
 engine imports the application's deterministic core rather than copying it (see *Reuse* below).
 Method details: [`METHODOLOGY.md`](METHODOLOGY.md).
 
+> **Provenance corrections for Experiment v1 — read before citing v1:**
+> [`docs/PROVENANCE_CORRECTIONS_v1.md`](docs/PROVENANCE_CORRECTIONS_v1.md). The INSUFFICIENT_EVIDENCE adjudication
+> (5/44 accepted) was AI-assisted and approach-blinded, not independent expert validation; the 23 discordant-case
+> classifications are AI-assisted and await researcher confirmation; A1–A3 shared the initial retrieval
+> configuration but not the total evidence budget (A3: 15 passages and ≈ 4.5× input tokens per claim vs 6 for
+> A1/A2). These correct descriptions only; no v1 number, label or prediction changes, and the frozen files
+> (commit `f16a986`, tag `claimverif-main-v1-frozen`) are left as they are.
+
 ## Status — read first
 
 | Item | State |
