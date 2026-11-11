@@ -48,9 +48,26 @@ def describe_run(run: dict) -> None:
                       "git_dirty": m["code"]["git"]["dirty"], "state": s.get("state")}, indent=1))
 
 
-def load_gold_labels() -> dict[str, dict]:
-    claims = load_split("development") + load_split("gold")
-    return finalized_gold(claims, load_annotations(), load_adjudications())
+def load_gold_labels(source: str = "reference") -> dict[str, dict]:
+    """Evaluation labels. `reference` (default): the researcher-reviewed
+    Final Gold set (engine/reference.py; gold split only, LLM-annotated --
+    see its provenance). `human`: claims finalized by >= 2 independent human
+    reviewers or an adjudication (datasets/annotations)."""
+    if source == "reference":
+        from .reference import load_reference
+        return load_reference()["labels"]
+    if source == "human":
+        claims = load_split("development") + load_split("gold")
+        return finalized_gold(claims, load_annotations(), load_adjudications())
+    raise ValueError("source must be 'reference' or 'human'")
+
+
+def reference_banner() -> None:
+    from .reference import load_reference
+    prov = load_reference()["provenance"]
+    banner(f"Labels: {prov['dataset_version']} ({prov['label_source']}; sha256 {prov['sha256'][:12]}). Not independent "
+           "human gold: three LLMs annotated, AI-assisted adjudication, researcher review. Scores are agreement with "
+           "this reference.", "info")
 
 
 def trace_index(run: dict) -> dict:

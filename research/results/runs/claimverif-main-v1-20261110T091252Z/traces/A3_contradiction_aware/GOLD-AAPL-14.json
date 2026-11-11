@@ -1,0 +1,1111 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-AAPL-14:fd730da9",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-AAPL-14",
+    "company": "AAPL",
+    "claim": "Apple's increased research and development spending weighed on its operating margin in the quarter ended March 28, 2026.",
+    "as_of_date": "2026-05-20",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026 Q2"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingMargin",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-03-28",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Research and development $ 11,419 $ 8,550 34 % $ 22,306 $ 16,818 33 %"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "Research and development (\"R&D\") expense increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher infrastructure-related costs and headcount-related expenses."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes both a numeric assertion (that operating margin decreased) and an interpretive/causal assertion (that increased R&D spending \"weighed on\" or caused this decrease).\n\nFrom the evidence, I can verify:\n1. R&D spending did increase significantly in Q2 2026: from $8,550M to $11,419M (34% increase) per E1\n2. Operating margin can be calculated from E6 and E1:\n   - Q2 2026: Operating income $35,885M / Net sales $111,184M = 32.3%\n   - Q2 2025: Operating income can be calculated from E6 showing net sales $95,359M and cost of sales $50,492M, but operating income is not fully shown in the excerpt\n   \nHowever, the evidence does NOT contain any statement that the increased R&D spending \"weighed on\" or caused a decrease in operating margin. While R&D increased as a percentage of sales (from 9% to 10% per E1), and total operating expenses increased (from 16% to 17% of sales per E1), there is no explicit statement in the filing attributing any operating margin pressure to R&D spending increases.\n\nThe claim requires causal attribution which is not established in the evidence provided. The filing explains what drove R&D increases but does not state that this weighed on operating margin.",
+        "confidence": "medium"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "CONTRADICTED",
+      "rule": "NUMERIC_FALSE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-03-28",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-03-28",
+            "basis": "quarter",
+            "level": 0.32275327385235286,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-12-28",
+                "period_end": "2026-03-28",
+                "value": 35885000000.0,
+                "filed": "2026-05-01",
+                "form": "10-Q",
+                "accession_number": "0000320193-26-000013",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-12-28",
+                "period_end": "2026-03-28",
+                "value": 111184000000.0,
+                "filed": "2026-05-01",
+                "form": "10-Q",
+                "accession_number": "0000320193-26-000013",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.31029058610094484,
+            "prior_period_end": "2025-03-29",
+            "yoy_change": 0.01246268775140802,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did the filing explicitly state that R&D spending increases weighed on, pressured, or negatively impacted operating margin in Q2 2026?",
+          "search_query": "research development operating margin pressure impact weighed expenses Q2 2026",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Does the filing discuss operating margin trends or drivers for Q2 2026 that would explain whether R&D was a factor?",
+          "search_query": "operating margin operating income percentage drivers factors Q2 second quarter 2026",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Does the filing attribute operating margin changes to other factors besides R&D spending, such as gross margin improvements or other operating expenses?",
+          "search_query": "operating margin gross margin operating expenses SG&A selling general administrative Q2 2026",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "research development operating margin pressure impact weighed expenses Q2 2026",
+          "results": [
+            "E12",
+            "E13",
+            "E14"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "operating margin operating income percentage drivers factors Q2 second quarter 2026",
+          "results": [
+            "E15",
+            "E16",
+            "E17"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "operating margin gross margin operating expenses SG&A selling general administrative Q2 2026",
+          "results": [
+            "E18",
+            "E19",
+            "E20"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18",
+        "E19",
+        "E20"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_FALSE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E15",
+              "quote": "Services gross margin percentage increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to a different mix of services and strength in foreign currencies relative to the U.S. dollar, partially offset by higher costs.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-26-000013",
+              "form": "10-Q",
+              "filed": "2026-05-01",
+              "period_end": "2026-03-28",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+              "locator": "10-Q 0000320193-26-000013:41918-42960"
+            },
+            {
+              "evidence_id": "E13",
+              "quote": "Operating income 35,885 29,589 86,737 72,421",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-26-000013",
+              "form": "10-Q",
+              "filed": "2026-05-01",
+              "period_end": "2026-03-28",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+              "locator": "10-Q 0000320193-26-000013:3365-4565"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E2",
+              "quote": "Products gross margin and gross margin percentage increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to a different mix of products and strength in foreign currencies relative to the U.S. dollar, partially offset by higher costs.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-26-000013",
+              "form": "10-Q",
+              "filed": "2026-05-01",
+              "period_end": "2026-03-28",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+              "locator": "10-Q 0000320193-26-000013:40977-42118"
+            },
+            {
+              "evidence_id": "E15",
+              "quote": "Services gross margin percentage increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to a different mix of services and strength in foreign currencies relative to the U.S. dollar, partially offset by higher costs.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-26-000013",
+              "form": "10-Q",
+              "filed": "2026-05-01",
+              "period_end": "2026-03-28",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+              "locator": "10-Q 0000320193-26-000013:41918-42960"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "20398d973bda83b2f042d0e9db474949dba80d9e383af2cdde1029892d362178",
+      "source": "cache",
+      "input_tokens": 4460,
+      "output_tokens": 668,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingMargin",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-03-28",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Research and development $ 11,419 $ 8,550 34 % $ 22,306 $ 16,818 33 %"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "Research and development (\"R&D\") expense increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher infrastructure-related costs and headcount-related expenses."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes both a numeric assertion (that operating margin decreased) and an interpretive/causal assertion (that increased R&D spending \"weighed on\" or caused this decrease).\n\nFrom the evidence, I can verify:\n1. R&D spending did increase significantly in Q2 2026: from $8,550M to $11,419M (34% increase) per E1\n2. Operating margin can be calculated from E6 and E1:\n   - Q2 2026: Operating income $35,885M / Net sales $111,184M = 32.3%\n   - Q2 2025: Operating income can be calculated from E6 showing net sales $95,359M and cost of sales $50,492M, but operating income is not fully shown in the excerpt\n   \nHowever, the evidence does NOT contain any statement that the increased R&D spending \"weighed on\" or caused a decrease in operating margin. While R&D increased as a percentage of sales (from 9% to 10% per E1), and total operating expenses increased (from 16% to 17% of sales per E1), there is no explicit statement in the filing attributing any operating margin pressure to R&D spending increases.\n\nThe claim requires causal attribution which is not established in the evidence provided. The filing explains what drove R&D increases but does not state that this weighed on operating margin.",
+        "confidence": "medium"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "3fc4e8d9a55973be0fad6205ba9be6fbd48992a4f5d86c4320fc491c8ba68e74",
+      "source": "live",
+      "input_tokens": 6021,
+      "output_tokens": 291,
+      "stop_reason": "tool_use",
+      "latency_ms": 5279,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did the filing explicitly state that R&D spending increases weighed on, pressured, or negatively impacted operating margin in Q2 2026?",
+            "search_query": "research development operating margin pressure impact weighed expenses Q2 2026",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Does the filing discuss operating margin trends or drivers for Q2 2026 that would explain whether R&D was a factor?",
+            "search_query": "operating margin operating income percentage drivers factors Q2 second quarter 2026",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Does the filing attribute operating margin changes to other factors besides R&D spending, such as gross margin improvements or other operating expenses?",
+            "search_query": "operating margin gross margin operating expenses SG&A selling general administrative Q2 2026",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "622f3d8671aabfb5a9d6af8cd8133ba31410acadf44a179eec4d3752bbc07872",
+      "source": "live",
+      "input_tokens": 10264,
+      "output_tokens": 1291,
+      "stop_reason": "tool_use",
+      "latency_ms": 21938,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E15",
+                "quote": "Services gross margin percentage increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to a different mix of services and strength in foreign currencies relative to the U.S. dollar, partially offset by higher costs."
+              },
+              {
+                "evidence_id": "E13",
+                "quote": "Operating income 35,885 29,589 86,737 72,421"
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E2",
+                "quote": "Products gross margin and gross margin percentage increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to a different mix of products and strength in foreign currencies relative to the U.S. dollar, partially offset by higher costs."
+              },
+              {
+                "evidence_id": "E15",
+                "quote": "Services gross margin percentage increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to a different mix of services and strength in foreign currencies relative to the U.S. dollar, partially offset by higher costs."
+              }
+            ]
+          }
+        ],
+        "label": "CONTRADICTED",
+        "verdict_changed": true,
+        "change_reason": "The numeric check revealed that operating margin actually INCREASED in Q2 2026 (32.3%) compared to Q2 2025 (31.0%), not decreased as the claim states. This directly contradicts the claim's assertion that increased R&D spending \"weighed on\" operating margin. While R&D spending did increase significantly (34%), the overall operating margin improved due to gross margin expansion from product mix and favorable currency effects, which more than offset the higher operating expenses.",
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Research and development $ 11,419 $ 8,550 34 % $ 22,306 $ 16,818 33 %"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "Research and development (\"R&D\") expense increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher infrastructure-related costs and headcount-related expenses."
+          }
+        ],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E13",
+            "quote": "Operating income 35,885 29,589"
+          },
+          {
+            "evidence_id": "E13",
+            "quote": "Total net sales 111,184 95,359"
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Products gross margin and gross margin percentage increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to a different mix of products and strength in foreign currencies relative to the U.S. dollar, partially offset by higher costs."
+          },
+          {
+            "evidence_id": "E15",
+            "quote": "Services gross margin percentage increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to a different mix of services and strength in foreign currencies relative to the U.S. dollar, partially offset by higher costs."
+          }
+        ],
+        "reasoning_summary": "The claim states that \"Apple's increased research and development spending weighed on its operating margin in the quarter ended March 28, 2026.\"\n\nThe numeric check definitively shows that operating margin INCREASED from 31.0% in Q2 2025 to 32.3% in Q2 2026 (calculated as operating income of $35,885M divided by net sales of $111,184M for Q2 2026, versus $29,589M / $95,359M for Q2 2025).\n\nWhile the claim is correct that R&D spending increased significantly (34% year-over-year from $8,550M to $11,419M), this did NOT weigh on operating margin. Instead, operating margin expanded by 1.3 percentage points.\n\nThe evidence shows that gross margin improvements from product mix and favorable currency effects (E2, E15) more than offset the increase in operating expenses including R&D. The gross margin percentage increased from 47.1% to 49.3% (E2), which provided sufficient expansion to absorb the higher R&D spending (which increased from 9% to 10% of sales) and still deliver operating margin expansion.\n\nTherefore, the claim is factually incorrect - operating margin improved rather than being weighed down, making this CONTRADICTED."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Apple's increased research and development spending weighed on its operating margin in the quarter ended March 28, 2026. FY2026 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "research development operating margin pressure impact weighed expenses Q2 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E12",
+        "E13",
+        "E14"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "operating margin operating income percentage drivers factors Q2 second quarter 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E15",
+        "E16",
+        "E17"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "operating margin gross margin operating expenses SG&A selling general administrative Q2 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E18",
+        "E19",
+        "E20"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-03-28",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-03-28",
+            "basis": "quarter",
+            "level": 0.32275327385235286,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-12-28",
+                "period_end": "2026-03-28",
+                "value": 35885000000.0,
+                "filed": "2026-05-01",
+                "form": "10-Q",
+                "accession_number": "0000320193-26-000013",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-12-28",
+                "period_end": "2026-03-28",
+                "value": 111184000000.0,
+                "filed": "2026-05-01",
+                "form": "10-Q",
+                "accession_number": "0000320193-26-000013",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.31029058610094484,
+            "prior_period_end": "2025-03-29",
+            "yoy_change": 0.01246268775140802,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-26-000013",
+        "filed": "2026-05-01",
+        "report_date": "2026-03-28",
+        "primary_document": "aapl-20260328.htm",
+        "sha256": "8a2c43286c07522163b237664aad64d3f1760654e22d881374dea29362508ea6"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-26-000006",
+        "filed": "2026-01-30",
+        "report_date": "2025-12-27",
+        "primary_document": "aapl-20251227.htm",
+        "sha256": "2d32cfc574b8a8301a1a165a93640ef5ab0de6e140054ccb16ded56d3bb02a78"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0000320193-25-000079",
+        "filed": "2025-10-31",
+        "report_date": "2025-09-27",
+        "primary_document": "aapl-20250927.htm",
+        "sha256": "056f733f13ff7407e64dc81fb96da3c3c55a6ba429bf094f57cb6bd472231f82"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 398
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:42760-43866",
+      "excerpt": ", Item 1A of this Form 10-Q, in each case under the heading “Risk Factors.” As a result, the Company believes, in general, gross margins will be subject to volatility and downward pressure. Apple Inc. | Q2 2026 Form 10-Q | 16 Operating Expenses Operating expenses for the three- and six-month periods ended March 28, 2026 and March 29, 2025, were as follows (dollars in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 Change March 28, 2026 March 29, 2025 Change Research and development $ 11,419 $ 8,550 34 % $ 22,306 $ 16,818 33 % Percentage of total net sales 10 % 9 % 9 % 8 % Selling, general and administrative $ 7,477 $ 6,728 11 % $ 14,969 $ 13,903 8 % Percentage of total net sales 7 % 7 % 6 % 6 % Total operating expenses $ 18,896 $ 15,278 24 % $ 37,275 $ 30,721 21 % Percentage of total net sales 17 % 16 % 15 % 14 % Research and Development Research and development (“R&D”) expense increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher infrastructure-related costs and headcount-related expenses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:40977-42118",
+      "excerpt": "increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales from advertising, the App Store ® and cloud services. Apple Inc. | Q2 2026 Form 10-Q | 15 Gross Margin Products and Services gross margin and gross margin percentage for the three- and six-month periods ended March 28, 2026 and March 29, 2025, were as follows (dollars in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 March 28, 2026 March 29, 2025 Gross margin: Products $ 31,029 $ 24,684 $ 77,294 $ 63,197 Services 23,752 20,183 46,718 39,945 Total gross margin $ 54,781 $ 44,867 $ 124,012 $ 103,142 Gross margin percentage: Products 38.7 % 35.9 % 39.9 % 37.9 % Services 76.7 % 75.7 % 76.6 % 75.4 % Total gross margin percentage 49.3 % 47.1 % 48.6 % 47.0 % Products Gross Margin Products gross margin and gross margin percentage increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to a different mix of products and strength in foreign currencies relative to the U.S. dollar, partially offset by higher costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:35837-36948",
+      "excerpt": "es Services net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales from advertising, the App Store ® and cloud services. Apple Inc. | Q1 2026 Form 10-Q | 15 Gross Margin Products and Services gross margin and gross margin percentage for the three months ended December 27, 2025 and December 28, 2024, were as follows (dollars in millions): Three Months Ended December 27, 2025 December 28, 2024 Gross margin: Products $ 46,265 $ 38,513 Services 22,966 19,762 Total gross margin $ 69,231 $ 58,275 Gross margin percentage: Products 40.7 % 39.3 % Services 76.5 % 75.0 % Total gross margin percentage 48.2 % 46.9 % Products Gross Margin Products gross margin and gross margin percentage increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to a different mix of products, partially offset by tariff costs. Services Gross Margin Services gross margin increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher Services net sales and a different mix of services.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:37272-38221",
+      "excerpt": "and Part II, Item 1A of this Form 10-Q, in each case under the heading “Risk Factors.” As a result, the Company believes, in general, gross margins will be subject to volatility and downward pressure. Operating Expenses Operating expenses for the three months ended December 27, 2025 and December 28, 2024, were as follows (dollars in millions): Three Months Ended December 27, 2025 December 28, 2024 Change Research and development $ 10,887 $ 8,268 32 % Percentage of total net sales 8 % 7 % Selling, general and administrative $ 7,492 $ 7,175 4 % Percentage of total net sales 5 % 6 % Total operating expenses $ 18,379 $ 15,443 19 % Percentage of total net sales 13 % 12 % Research and Development The growth in research and development (“R&D”) expense during the first quarter of 2026 compared to the same quarter in 2025 was primarily driven by increases in infrastructure-related costs, headcount-related expenses and engineering program costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:36814-37964",
+      "excerpt": "and reductions in consumer spending and negative consumer sentiment for the Company’s products and services, all of which can further adversely affect the Company’s business and results of operations. Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 28, 2026 and March 29, 2025 (dollars in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 Change March 28, 2026 March 29, 2025 Change Americas $ 45,093 $ 40,315 12 % $ 103,622 $ 92,963 11 % Europe 28,055 24,454 15 % 66,201 58,315 14 % Greater China 20,497 16,002 28 % 46,023 34,515 33 % Japan 8,401 7,298 15 % 17,814 16,285 9 % Rest of Asia Pacific 9,138 7,290 25 % 21,280 17,581 21 % Total net sales $ 111,184 $ 95,359 17 % $ 254,940 $ 219,659 16 % Americas Americas net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 due to higher net sales of iPhone and Services. The strength in foreign currencies relative to the U.S. dollar had a favorable year-over-year impact on Americas net sales during the second quarter of 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:27409-28609",
+      "excerpt": "reasonable possibility the Company may have incurred a material loss, or a material loss greater than a recorded accrual, concerning loss contingencies for asserted legal and other claims. Apple Inc. | Q2 2026 Form 10-Q | 11 Note 10 – Segment Information The following tables show information by reportable segment for the three- and six-month periods ended March 28, 2026 and March 29, 2025 (in millions): Three Months Ended March 28, 2026 Americas Europe Greater China Japan Rest of Asia Pacific Corporate Total Net sales $ 45,093 $ 28,055 $ 20,497 $ 8,401 $ 9,138 $ — $ 111,184 Cost of sales ( 23,114 ) ( 13,756 ) ( 10,633 ) ( 4,267 ) ( 4,633 ) — ( 56,403 ) Research and development — — — — — ( 11,419 ) ( 11,419 ) Selling and marketing ( 2,606 ) ( 1,247 ) ( 675 ) ( 295 ) ( 378 ) — ( 5,201 ) General and administrative — — — — — ( 2,276 ) ( 2,276 ) Operating income/(loss) $ 19,373 $ 13,052 $ 9,189 $ 3,839 $ 4,127 $ ( 13,695 ) $ 35,885 Three Months Ended March 29, 2025 Americas Europe Greater China Japan Rest of Asia Pacific Corporate Total Net sales $ 40,315 $ 24,454 $ 16,002 $ 7,298 $ 7,290 $ — $ 95,359 Cost of sales ( 21,094 ) ( 13,025 ) ( 8,794 ) ( 3,610 ) ( 3,969 ) — ( 50,492 ) Resear",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": "2025-12-28",
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/0000320193-26-000013-index.htm",
+      "locator": "OperatingIncome 2025-12-28..2026-03-28",
+      "excerpt": null,
+      "values": [
+        35885000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": "2025-12-28",
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/0000320193-26-000013-index.htm",
+      "locator": "Revenue 2025-12-28..2026-03-28",
+      "excerpt": null,
+      "values": [
+        111184000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": "2024-12-29",
+      "period_end": "2025-03-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/0000320193-26-000013-index.htm",
+      "locator": "OperatingIncome 2024-12-29..2025-03-29",
+      "excerpt": null,
+      "values": [
+        29589000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": "2024-12-29",
+      "period_end": "2025-03-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/0000320193-26-000013-index.htm",
+      "locator": "Revenue 2024-12-29..2025-03-29",
+      "excerpt": null,
+      "values": [
+        95359000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "AAPL",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": null,
+      "locator": "OperatingMargin yoy_growth quarter @ 2026-03-28",
+      "excerpt": null,
+      "values": [
+        0.32275327385235286,
+        0.31029058610094484,
+        0.01246268775140802
+      ],
+      "unit": "ratio_points",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:111745-112803",
+      "excerpt": "s, as discussed in Part I, Item 1A of this Form 10-K under the heading “Risk Factors.” As a result, the Company believes, in general, gross margins will be subject to volatility and downward pressure. Operating Expenses Operating expenses for 2025, 2024 and 2023 were as follows (dollars in millions): 2025 Change 2024 Change 2023 Research and development $ 34,550 10 % $ 31,370 5 % $ 29,915 Percentage of total net sales 8 % 8 % 8 % Selling, general and administrative $ 27,601 6 % $ 26,097 5 % $ 24,932 Percentage of total net sales 7 % 7 % 7 % Total operating expenses $ 62,151 8 % $ 57,467 5 % $ 54,847 Percentage of total net sales 15 % 15 % 14 % Research and Development The growth in R&D expense during 2025 compared to 2024 was primarily driven by increases in headcount-related expenses and infrastructure-related costs. Selling, General and Administrative The growth in selling, general and administrative expense during 2025 compared to 2024 was primarily driven by increases in headcount-related expenses and variable selling expenses. Apple Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:3365-4565",
+      "excerpt": "24 Item 3. Defaults Upon Senior Securities 25 Item 4. Mine Safety Disclosures 25 Item 5. Other Information 25 Item 6. Exhibits 25 PART I — FINANCIAL INFORMATION Item 1. Financial Statements Apple Inc. CONDENSED CONSOLIDATED STATEMENTS OF OPERATIONS (Unaudited) (In millions, except number of shares, which are reflected in thousands, and per-share amounts) Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 March 28, 2026 March 29, 2025 Net sales: Products $ 80,208 $ 68,714 $ 193,951 $ 166,674 Services 30,976 26,645 60,989 52,985 Total net sales 111,184 95,359 254,940 219,659 Cost of sales: Products 49,179 44,030 116,657 103,477 Services 7,224 6,462 14,271 13,040 Total cost of sales 56,403 50,492 130,928 116,517 Gross margin 54,781 44,867 124,012 103,142 Operating expenses: Research and development 11,419 8,550 22,306 16,818 Selling, general and administrative 7,477 6,728 14,969 13,903 Total operating expenses 18,896 15,278 37,275 30,721 Operating income 35,885 29,589 86,737 72,421 Other income/(expense), net ( 52 ) ( 279 ) 98 ( 527 ) Income before provision for income taxes 35,833 29,310 86,835 71,894 Provision for income taxes 6,255 4,530 15,160 10,784 Net income $ 29",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:125931-127131",
+      "excerpt": "ial statement schedules have been omitted, since the required information is not applicable or is not present in amounts sufficient to require submission of the schedule, or because the information required is included in the consolidated financial statements and accompanying notes. Apple Inc. | 2025 Form 10-K | 28 Apple Inc. CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except number of shares, which are reflected in thousands, and per-share amounts) Years ended September 27, 2025 September 28, 2024 September 30, 2023 Net sales: Products $ 307,003 $ 294,866 $ 298,085 Services 109,158 96,169 85,200 Total net sales 416,161 391,035 383,285 Cost of sales: Products 194,116 185,233 189,282 Services 26,844 25,119 24,855 Total cost of sales 220,960 210,352 214,137 Gross margin 195,201 180,683 169,148 Operating expenses: Research and development 34,550 31,370 29,915 Selling, general and administrative 27,601 26,097 24,932 Total operating expenses 62,151 57,467 54,847 Operating income 133,050 123,216 114,301 Other income/(expense), net ( 321 ) 269 ( 565 ) Income before provision for income taxes 132,729 123,485 113,736 Provision for income taxes 20,719 29,749 16,741 Net income $ 112,0",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:41918-42960",
+      "excerpt": "t six months of 2026 compared to the same periods in 2025 primarily due to a different mix of products and strength in foreign currencies relative to the U.S. dollar, partially offset by higher costs. Services Gross Margin Services gross margin increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher Services net sales and a different mix of services. Services gross margin percentage increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to a different mix of services and strength in foreign currencies relative to the U.S. dollar, partially offset by higher costs. The Company’s future gross margins can be impacted by a variety of factors, as discussed in Part I, Item 1A of the 2025 Form 10-K and Part II, Item 1A of this Form 10-Q, in each case under the heading “Risk Factors.” As a result, the Company believes, in general, gross margins will be subject to volatility and downward pressure. Apple Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:36748-37472",
+      "excerpt": "Services Gross Margin Services gross margin increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher Services net sales and a different mix of services. Services gross margin percentage increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to a different mix of services, partially offset by higher costs. The Company’s future gross margins can be impacted by a variety of factors, as discussed in Part I, Item 1A of the 2025 Form 10-K and Part II, Item 1A of this Form 10-Q, in each case under the heading “Risk Factors.” As a result, the Company believes, in general, gross margins will be subject to volatility and downward pressure.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:58311-59504",
+      "excerpt": "s. The Company settled certain matters during the second quarter of 2026 that did not individually or in the aggregate have a material impact on the Company’s financial condition or operating results. The outcome of litigation is inherently uncertain. If one or more legal matters were resolved against the Company in a reporting period for amounts above management’s expectations, the Company’s financial condition and operating results for that reporting period could be materially adversely affected. Apple Inc. | Q2 2026 Form 10-Q | 20 Item 1A. Risk Factors The Company’s business, reputation, results of operations, financial condition and stock price can be materially and adversely affected by a number of factors, whether currently known or unknown, including those described in Part I, Item 1A of the 2025 Form 10-K under the heading “Risk Factors.” Except as set forth below, there have been no material changes to the Company’s risk factors since the 2025 Form 10-K. The Company’s products and services may be affected from time to time by design and manufacturing defects that could materially adversely affect the Company’s business and result in harm to the Company’s reputation.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:38021-39114",
+      "excerpt": "pense during the first quarter of 2026 compared to the same quarter in 2025 was primarily driven by increases in infrastructure-related costs, headcount-related expenses and engineering program costs. Selling, General and Administrative The growth in selling, general and administrative expense during the first quarter of 2026 compared to the same quarter in 2025 was primarily driven by increases in headcount-related expenses and variable selling expenses. Apple Inc. | Q1 2026 Form 10-Q | 16 Provision for Income Taxes Provision for income taxes, effective tax rate and statutory federal income tax rate for the three months ended December 27, 2025 and December 28, 2024, were as follows (dollars in millions): Three Months Ended December 27, 2025 December 28, 2024 Provision for income taxes $ 8,905 $ 6,254 Effective tax rate 17.5 % 14.7 % Statutory federal income tax rate 21 % 21 % The Company’s effective tax rate for the first quarter of 2026 was lower than the statutory federal income tax rate primarily due to a lower effective tax rate on foreign earnings, the impact of the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:43666-44845",
+      "excerpt": "R&D”) expense increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher infrastructure-related costs and headcount-related expenses. Selling, General and Administrative Selling, general and administrative expense increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher headcount-related expenses, variable selling expenses and professional services. Provision for Income Taxes Provision for income taxes, effective tax rate and statutory federal income tax rate for the three- and six-month periods ended March 28, 2026 and March 29, 2025, were as follows (dollars in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 March 28, 2026 March 29, 2025 Provision for income taxes $ 6,255 $ 4,530 $ 15,160 $ 10,784 Effective tax rate 17.5 % 15.5 % 17.5 % 15.0 % Statutory federal income tax rate 21 % 21 % 21 % 21 % The Company’s effective tax rate for the second quarter of 2026 was lower than the statutory federal income tax rate primarily due to a lower effective tax rate on foreign earnings, the impact of the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E19"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:3373-4573",
+      "excerpt": "20 Item 3. Defaults Upon Senior Securities 20 Item 4. Mine Safety Disclosures 20 Item 5. Other Information 21 Item 6. Exhibits 21 PART I — FINANCIAL INFORMATION Item 1. Financial Statements Apple Inc. CONDENSED CONSOLIDATED STATEMENTS OF OPERATIONS (Unaudited) (In millions, except number of shares, which are reflected in thousands, and per-share amounts) Three Months Ended December 27, 2025 December 28, 2024 Net sales: Products $ 113,743 $ 97,960 Services 30,013 26,340 Total net sales 143,756 124,300 Cost of sales: Products 67,478 59,447 Services 7,047 6,578 Total cost of sales 74,525 66,025 Gross margin 69,231 58,275 Operating expenses: Research and development 10,887 8,268 Selling, general and administrative 7,492 7,175 Total operating expenses 18,379 15,443 Operating income 50,852 42,832 Other income/(expense), net 150 ( 248 ) Income before provision for income taxes 51,002 42,584 Provision for income taxes 8,905 6,254 Net income $ 42,097 $ 36,330 Earnings per share: Basic $ 2.85 $ 2.41 Diluted $ 2.84 $ 2.40 Shares used in computing earnings per share: Basic 14,748,158 15,081,724 Diluted 14,810,356 15,150,865 See accompanying Notes to Condensed Consolidated Financial Statements.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E20"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "Research and development $ 11,419 $ 8,550 34 % $ 22,306 $ 16,818 33 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:42760-43866"
+    },
+    {
+      "evidence_id": "E13",
+      "quote": "Operating income 35,885 29,589",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:3365-4565"
+    },
+    {
+      "evidence_id": "E2",
+      "quote": "Products gross margin and gross margin percentage increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to a different mix of products and strength in foreign currencies relative to the U.S. dollar, partially offset by higher costs.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:40977-42118"
+    },
+    {
+      "evidence_id": "E15",
+      "quote": "Services gross margin percentage increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to a different mix of services and strength in foreign currencies relative to the U.S. dollar, partially offset by higher costs.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:41918-42960"
+    },
+    {
+      "evidence_id": "E11",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_end": "2026-03-28",
+      "source_url": null,
+      "locator": "OperatingMargin yoy_growth quarter @ 2026-03-28"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 20745,
+    "output": 2250
+  },
+  "latency_ms": 27238,
+  "estimated_cost_usd": 0.095985,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "mixed"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_FALSE",
+        "checks": [
+          "FALSE"
+        ]
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 5282,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 6,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 21940,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "CONTRADICTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_FALSE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 6,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

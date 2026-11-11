@@ -1,0 +1,696 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-WMT-12:15932627",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-WMT-12",
+    "company": "WMT",
+    "claim": "Walmart's results for the quarter ended July 31, 2026 show that higher-income households are driving its growth.",
+    "as_of_date": "2026-09-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2027 Q2"
+  },
+  "initial_label": "INSUFFICIENT_EVIDENCE",
+  "final_label": "INSUFFICIENT_EVIDENCE",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes an interpretive assertion about the driver of Walmart's growth for Q2 FY2027 (quarter ended July 31, 2026), specifically that \"higher-income households are driving its growth.\"\n\nThe evidence provided shows various metrics about Walmart's performance for the quarter ended July 31, 2026:\n- E2 and E3 describe revenue growth driven by \"growth in transactions and average ticket, reflecting strength in grocery\"\n- E1 mentions growth driven by \"store-fulfilled delivery\" and \"continued strength in customer and Walmart+ member engagement\"\n- E6 discusses Sam's Club growth in \"transactions and unit volumes, reflecting strength in grocery and general merchandise\"\n\nHowever, none of the evidence passages mention higher-income households, income demographics, or customer income levels as a driver of growth. The evidence discusses operational drivers (transactions, average ticket, grocery strength, eCommerce, Walmart+ membership) but does not attribute growth to any particular income segment of customers.\n\nSince the claim makes a specific attribution about which customer demographic is driving growth, and the evidence does not address customer income demographics at all, there is insufficient evidence to support or contradict this interpretive claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Does the filing contain any discussion of higher-income households, affluent customers, or income demographics driving growth in the quarter ended July 31, 2026?",
+          "search_query": "higher income households affluent customers income demographics upper income"
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Does the filing mention customer mix, household income trends, or demographic shifts in discussing the drivers of Q2 FY2027 performance?",
+          "search_query": "customer mix household income demographic trends customer demographics income levels"
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Does the filing discuss Walmart+ membership growth or premium services that might indicate higher-income customer engagement as a growth driver?",
+          "search_query": "Walmart+ membership premium services higher margin customers affluent members income"
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "higher income households affluent customers income demographics upper income",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "customer mix household income demographic trends customer demographics income levels",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "Walmart+ membership premium services higher margin customers affluent members income",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "2957bf08e38af31b64599e43da4b6e41a766376d12f7cfc76bcee49b78673e98",
+      "source": "cache",
+      "input_tokens": 3998,
+      "output_tokens": 405,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes an interpretive assertion about the driver of Walmart's growth for Q2 FY2027 (quarter ended July 31, 2026), specifically that \"higher-income households are driving its growth.\"\n\nThe evidence provided shows various metrics about Walmart's performance for the quarter ended July 31, 2026:\n- E2 and E3 describe revenue growth driven by \"growth in transactions and average ticket, reflecting strength in grocery\"\n- E1 mentions growth driven by \"store-fulfilled delivery\" and \"continued strength in customer and Walmart+ member engagement\"\n- E6 discusses Sam's Club growth in \"transactions and unit volumes, reflecting strength in grocery and general merchandise\"\n\nHowever, none of the evidence passages mention higher-income households, income demographics, or customer income levels as a driver of growth. The evidence discusses operational drivers (transactions, average ticket, grocery strength, eCommerce, Walmart+ membership) but does not attribute growth to any particular income segment of customers.\n\nSince the claim makes a specific attribution about which customer demographic is driving growth, and the evidence does not address customer income demographics at all, there is insufficient evidence to support or contradict this interpretive claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "d0c1e165f4594939f59573b01a9c5676d4a573bac22cce45a271f6afd2e75979",
+      "source": "cache",
+      "input_tokens": 4790,
+      "output_tokens": 255,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Does the filing contain any discussion of higher-income households, affluent customers, or income demographics driving growth in the quarter ended July 31, 2026?",
+            "search_query": "higher income households affluent customers income demographics upper income"
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Does the filing mention customer mix, household income trends, or demographic shifts in discussing the drivers of Q2 FY2027 performance?",
+            "search_query": "customer mix household income demographic trends customer demographics income levels"
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Does the filing discuss Walmart+ membership growth or premium services that might indicate higher-income customer engagement as a growth driver?",
+            "search_query": "Walmart+ membership premium services higher margin customers affluent members income"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "2b46ccbc55a54495d43cb1987b697f48cce5c25b10d9472aebebbe541c00e57d",
+      "source": "cache",
+      "input_tokens": 8057,
+      "output_tokens": 622,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "INSUFFICIENT_EVIDENCE",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After investigating potential challenges to the initial verdict, the conclusion remains unchanged.\n\nH1 (Higher-income households/affluent customers): The retrieved evidence (E7-E9) discusses general economic factors, labor costs, and higher margin businesses, but contains no mention of higher-income households, affluent customers, or income demographics as drivers of growth for Q2 FY2027.\n\nH2 (Customer mix/demographic trends): The retrieved evidence (E10-E12) lists various economic and operating factors that could affect Walmart's business, including consumer confidence, disposable income, and shopping patterns. However, none of these passages specifically discuss customer mix, household income trends, or demographic shifts as actual drivers of the Q2 FY2027 performance.\n\nH3 (Walmart+ and premium services): The retrieved evidence (E13-E15) discusses Walmart+ membership growth and membership fee revenue. E15 mentions \"increasing membership through Walmart+ and at Sam's Club U.S.\" as part of growth strategy, and E14 notes membership fee revenue figures. However, none of this evidence connects Walmart+ growth to higher-income customers or affluent members as a driver of growth.\n\nThe original evidence (E1-E6) showed that Q2 FY2027 growth was driven by transactions, average ticket, grocery strength, eCommerce, and Walmart+ engagement, but never attributed this growth to higher-income households. The newly retrieved evidence similarly fails to support the claim's specific attribution about income demographics driving growth.\n\nTherefore, the verdict remains INSUFFICIENT_EVIDENCE because the filings do not address the material claim that higher-income households are driving Walmart's growth.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Walmart's results for the quarter ended July 31, 2026 show that higher-income households are driving its growth. FY2027 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "higher income households affluent customers income demographics upper income",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "customer mix household income demographic trends customer demographics income levels",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "Walmart+ membership premium services higher margin customers affluent members income",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-26-000154",
+        "filed": "2026-08-28",
+        "report_date": "2026-07-31",
+        "primary_document": "wmt-20260731.htm",
+        "sha256": "094d3090d77d8229676fa0b0b1e91c9fd7be8eb00abcd59468c95b4d9e0045d8"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-26-000102",
+        "filed": "2026-05-29",
+        "report_date": "2026-04-30",
+        "primary_document": "wmt-20260430.htm",
+        "sha256": "852d4b1f25a8587899243ce13ea032f74a393cbefc941de3625cc5779b252ff4"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0000104169-26-000055",
+        "filed": "2026-03-13",
+        "report_date": "2026-01-31",
+        "primary_document": "wmt-20260131.htm",
+        "sha256": "81bc136de8961e00236b4d1c299b17de840b9ff49c278f0addf442cee8e909cf"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 687
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:76399-77548",
+      "excerpt": "nded July 31, 2026, respectively. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, which was primarily driven by store-fulfilled delivery. Membership and other income increased 15.6% and 30.4% for the three and six months ended July 31, 2026, respectively, primarily driven by double-digit percentage growth in membership fee revenue from Walmart+. Growth during the six months ended July 31, 2026 also reflects increases in certain miscellaneous items. Gross profit rate increased 158 and 95 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily driven by tariff refunds, partially offset by price investments and higher fuel costs within our supply chain. Gross profit rate also benefited from continued growth in higher margin businesses, including advertising. Operating expenses as a percentage of net sales increased 72 and 64 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:75560-76599",
+      "excerpt": "art U.S. segment increased $4.3 billion or 3.5% and $9.3 billion or 4.0%, for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year. The increases were due to comparable sales of 3.3% and 3.8% for the three and six months ended July 31, 2026, respectively, driven by growth in transactions and average ticket, reflecting strength in grocery, partially offset by a decrease in health and wellness primarily due to the impact from maximum fair price regulation on certain prescription drugs, which went into effect in January 2026. Growth for the six months ended July 31, 2026 also reflects strength in general merchandise. The Walmart U.S. segment's eCommerce net sales positively contributed approximately 4.9% and 5.1% to comparable sales for the three and six months ended July 31, 2026, respectively. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, which was primarily driven by store-fulfilled delivery.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:56073-57091",
+      "excerpt": "2026 2025 With Fuel Fuel Impact With Fuel Fuel Impact Walmart U.S. 3.3 % 4.7 % 0.4 % (0.1) % 3.8 % 3.9 % 0.3 % (0.1) % Sam's Club U.S. 8.6 % 3.3 % 4.2 % (2.6) % 7.3 % 3.1 % 3.2 % (2.6) % Walmart U.S. comparable sales increased 3.3% and 3.8% for the three and six months ended July 31, 2026, respectively, driven by growth in transactions and average ticket, reflecting strength in grocery, partially offset by a decrease in health and wellness primarily due to the impact from maximum fair price regulation on certain prescription drugs, which went into effect in January 2026. Growth for the six months ended July 31, 2026 also reflects strength in general merchandise. Walmart U.S. eCommerce sales positively contributed approximately 4.9% and 5.1% to comparable sales for the three and six months ended July 31, 2026, respectively. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, which was primarily driven by store-fulfilled delivery. Sam's Club U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:50423-51501",
+      "excerpt": "July 31, 2026 and 2025, respectively, and approximately $ 8.8 billion and $ 7.1 billion related to eCommerce for the six months ended July 31, 2026 and 2025, respectively. 16 Table of Contents Item 2. Management's Discussion and Analysis of Financial Condition and Results of Operations Overview This discussion, which presents Walmart Inc.'s (\"Walmart,\" the \"Company,\" \"our,\" \"us\" or \"we\") results for periods occurring in the fiscal year ending January 31, 2027 (\"fiscal 2027\") and the fiscal year ended January 31, 2026 (\"fiscal 2026\"), should be read in conjunction with our Condensed Consolidated Financial Statements as of and for the three and six months ended July 31, 2026, and the accompanying notes included in Part I, Item 1 of this Quarterly Report on Form 10-Q, as well as our Consolidated Financial Statements as of and for the year ended January 31, 2026, the accompanying notes and the related Management's Discussion and Analysis of Financial Condition and Results of Operations, contained in our Annual Report on Form 10-K for the year ended January 31, 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:354543-355743",
+      "excerpt": "orm of Share Purchase Agreement by and a mong Wal-Mart International Holdings, Inc., the shareholders of Flipkart Private Limited identified on Schedule I thereto, Fortis Advisors LLC and Walmart Inc. dated as of May 9, 2018 is incorporated herein by reference to Exhibit 10.2 to the Quarterly Report on Form 10-Q of the Company for the fiscal quarter ended July 31, 2018 filed on September 6, 2018 (portions of this exhibit have been omitted and filed separately with the SEC pursuant to a request for confidential treatment.) 84 10.17 Retirement Agreement by and between the Company and Judith McKenna dated August 16, 2023 is incorporated by reference to Exhibit 10.1 to the Quarterly Report on Form 10-Q of the Company for the fiscal quarter ended July 31, 2023 filed on September 1, 2023 (C) 10.18 Retirement Agreement by and between the Company and Doug McMillon dated November 13 , 202 5 is incorporated by reference to Exhibit 10.1 to the Quarterly Report on Form 10-Q of the Company for the fiscal quarter ended Oc tober 31, 202 5 filed on December 3 , 202 5 (C) 10.19* Separation Agreement between the Company and Kathryn McLay dated January 28, 2026 (C) 19* Insider Trading Policy 21* List",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:56891-57949",
+      "excerpt": "26, respectively. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, which was primarily driven by store-fulfilled delivery. Sam's Club U.S. comparable sales increased 8.6% and 7.3% for the three and six months ended July 31, 2026, respectively, with growth in transactions and unit volumes, reflecting strength in grocery and general merchandise. Additionally, higher fuel sales, driven by higher fuel prices and volumes, positively impacted comparable sales by 4.2% and 3.2% for the three and six months ended July 31, 2026, respectively. Sam's Club U.S. eCommerce sales positively contributed approximately 3.1% to comparable sales for both the three and six months ended July 31, 2026, reflecting continued strength in member engagement with omnichannel offerings, such as club-fulfilled delivery. Margin Our objective of prioritizing margin focuses on growth with a focus on incremental margin accretion through a combination of productivity improvements, as well as category and business mix.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:66878-67932",
+      "excerpt": "ny other economic factors or circumstances resulting in higher transportation, labor, insurance or healthcare costs or commodity prices, including energy prices, and other economic factors in the U.S. and other countries in which we operate can increase our cost of sales and operating, selling, general and administrative expenses and otherwise materially adversely affect our operations and operating results. The economic factors that affect our operations may also adversely affect the operations of our suppliers, which can result in an increase in the cost to us of the goods we sell to our customers or, in more extreme cases, in certain suppliers not producing goods in the volume typically available to us for sale, or adversely impact product margins due to higher labor and material costs of our suppliers that we are unable, or choose not, to pass on to our customers. The performance of strategic alliances and other business relationships to support the expansion of our business could materially adversely affect our financial performance.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:193534-194721",
+      "excerpt": "y double-digit growth in membership fee revenue from Walmart+. For fiscal 2026, the increase was partially offset by decreases in certain other income items, including a reduction in recycling income. Fiscal 2025 also benefited from higher recycling income compared to the previous fiscal year. Gross profit rate increased 22 and 47 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase for fiscal 2026 was primarily driven by disciplined inventory management and growth in higher margin businesses, partially offset by mix shifts into lower margin merchandise categories. The increase for fiscal 2025 was primarily due to managing prices aligned to our competitive historic price gaps and growth in higher margin businesses, partially offset by product mix shifts into lower margin categories. Operating expenses as a percentage of segment net sales increased 15 and 44 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase for fiscal 2026 was primarily due to higher self-insured general liability claims expense and increased depreciation related to our capital investments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:106741-107842",
+      "excerpt": "affect our financial performance. Our ability to continue to conduct and expand our operations depends on our ability to attract and retain a large and growing number of qualified associates globally. Our ability to meet our labor needs, including our ability to find qualified personnel to fill positions that become vacant at our existing stores, clubs, distribution and fulfillment centers and corporate offices, while controlling our associate wage and related labor costs, is generally subject to numerous external factors, including the availability of a sufficient number of qualified persons in the work force of the markets in which we operate, unemployment levels within those markets, prevailing wage rates, changing demographics, health and other insurance costs and adoption of new or revised employment and labor laws and regulations. Additionally, our ability to successfully execute organizational changes, including our enterprise strategy and management transitions within our senior leadership, and to effectively motivate and retain associates are critical to our business success.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:117778-118807",
+      "excerpt": "sition of new trade restrictions; • currency exchange rate fluctuations; • changes in market rates of interest; • inflation or deflation, generally and in certain product categories; • transportation, energy and utility costs; • commodity prices, including the prices of oil and natural gas; • changes in market levels of wages; • changes in the size of various markets, including eCommerce markets; • unemployment levels; • consumer confidence, disposable income, credit availability, spending levels, shopping patterns, debt levels and demand for certain merchandise; • trends in consumer shopping habits around the world and in the markets in which Walmart operates; • consumer enrollment in health and drug insurance programs and such programs' reimbursement rates and drug formularies; and • initiatives of competitors, competitors' entry into and expansion in Walmart's markets or lines of business, and competitive pressures. Operating Factors • the amount of Walmart's net sales and operating expenses denominated in U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:107190-108233",
+      "excerpt": "ns or the imposition of new trade restrictions; • currency exchange rate fluctuations; • changes in market rates of interest; • inflation or deflation, generally and in certain product categories; • transportation, energy and utility costs; • commodity prices, including the prices of oil and natural gas; • changes in market levels of wages; • changes in the size of various markets, including eCommerce markets; • unemployment levels; • consumer confidence, disposable income, credit availability, spending levels, shopping patterns, debt levels and demand for certain merchandise; • trends in consumer shopping habits around the world and in the markets in which Walmart operates; • consumer enrollment in health and drug insurance programs and such programs' reimbursement rates and drug formularies; and • initiatives of competitors, competitors' entry into and expansion in Walmart's markets or lines of business, and competitive pressures. Operating Factors • the amount of Walmart's net sales and operating expenses denominated in U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:8971-10171",
+      "excerpt": "position of new tariffs or new taxes on imports, and changes or modifications in trade restrictions or the imposition of new trade restrictions; • the growth of our business or change in our competitive position in the future, or in or over particular periods, both generally, and with respect to particular markets, segments or lines of business, including, but not limited to, advertising, fulfillment, healthcare and financial services; • the amount, number, growth, increase, reduction or decrease in or over certain periods, of or in certain financial items or measures or operating measures, including our earnings per share, net sales, growth rates, comparable store and club sales, our eCommerce sales, liabilities, expenses of certain categories, including share-based compensation, expense leverage, operating income, returns, capital and operating investments or expenditures of particular types and new store and club openings, inventory levels and associated costs, product mix and demand for certain merchandise, consumer confidence, disposable income, credit availability, spending levels, shopping patterns and debt levels; • our increasing investments in eCommerce, technology (inclu",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:98018-99108",
+      "excerpt": "ve a cascading effect that adversely impacts our partners, third-party service providers, customers, members, financial services firms and other third parties that we interact with on a regular basis. Our reputation with our customers and members is important to the success of our enterprise strategy, which combines traditional retail, membership models, marketplaces, financial services, health and wellness and other customer and business services into a series of interconnected assets to make it seamless for customers to interact with us. Security-related events could be widely publicized and could materially adversely affect our reputation with our customers, members, associates, vendors and shareholders, could harm our competitive position particularly with respect to our eCommerce operations, and 19 could result in a material reduction in our net sales in our eCommerce operations, as well as in our stores, thereby materially adversely affecting our operations, net sales, growth rates, operating income, results of operations, financial position, cash flows and liquidity.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:272500-273562",
+      "excerpt": "timated sales returns are calculated based on expected returns. Financial, Advertising and Other Services The Company recognizes revenue from service transactions at the time the service is performed. Generally, revenue from services is classified as a component of net sales in the Company's Consolidated Statements of Income. Membership and Other Income Membership and other income primarily includes membership fee revenue associated with the Company's various membership offerings for customers and members across each reportable segment. Membership fee revenue is recognized over the term of the membership, which are generally one year, although certain offerings are month-to month. Membership fee revenue was $ 4.4 billion, $ 3.8 billion and $ 3.1 billion for fiscal 2026, 2025 and 2024, respectively. Deferred membership fee revenue is included in accrued liabilities in the Company's Consolidated Balance Sheets. Additionally, membership and other income includes items such as rental and tenant income, recycling income, and gift card breakage income.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:54088-55284",
+      "excerpt": "ter through everyday low prices, supported by everyday low costs. At times, we adjust our business strategies to maintain and strengthen our competitive positions in the countries in which we operate. We define our financial priorities as follows: • Growth - serve customers through a seamless omnichannel experience; • Margin - improve our operating income margin through productivity initiatives as well as category and business mix; and • Returns - improve our Return on Investment through margin improvement and disciplined capital spend. Growth Our objective of prioritizing growth means we will focus on serving customers and members however they want to shop through our omnichannel business model. This includes increasing comparable store and club sales through increasing membership through Walmart+ and at Sam's Club U.S., accelerating eCommerce sales growth and expansion of omnichannel initiatives that complement our strategy. Comparable sales is a metric that indicates the performance of our existing stores and clubs by measuring the change in sales for such stores and clubs, including eCommerce sales, for a particular period over the corresponding period in the previous year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    }
+  ],
+  "citations": [],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 16845,
+    "output": 1282
+  },
+  "latency_ms": 6,
+  "estimated_cost_usd": 0.069765,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "INSUFFICIENT_EVIDENCE"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

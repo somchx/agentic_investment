@@ -1,0 +1,392 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A1_conventional_rag:GOLD-META-03:27904478",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A1_conventional_rag",
+  "approach_kind": "conventional_rag",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": false,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A1_conventional_rag",
+    "kind": "conventional_rag",
+    "description": "claim -> retrieval -> LLM -> verdict"
+  },
+  "config_hash": "1ebada2c6046452b",
+  "claim": {
+    "claim_id": "GOLD-META-03",
+    "company": "META",
+    "claim": "Reality Labs' operating loss for the quarter ended March 31, 2026 was larger than in the same quarter a year earlier.",
+    "as_of_date": "2026-05-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q1"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-03-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Reality Labs RL loss from operations in the three months ended March 31, 2026 decreased $182 million, or 4%, compared to the same period in 2025"
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "Reality Labs Total Three Months Ended March 31, % change 2026 2025 Income (loss) from operations $ (4,028) $ (4,210) 4%"
+          },
+          {
+            "evidence_id": "E6",
+            "quote": "Reality Labs: Loss from operations $ ( 4,028 ) $ ( 4,210 )"
+          }
+        ],
+        "reasoning_summary": "The claim states that Reality Labs' operating loss for Q1 2026 was larger than Q1 2025. However, the evidence clearly contradicts this. Multiple sources show that the operating loss was $4,028 million in Q1 2026 compared to $4,210 million in Q1 2025, representing a decrease of $182 million or 4%. A smaller loss (decrease in loss) means the operating loss was actually smaller, not larger, than the prior year quarter. The claim is therefore contradicted by the evidence.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "1c76dd38e4fd1a78485b3f2996d790813ed8e6ea133dc4020d1161b5e8b81685",
+      "source": "live",
+      "input_tokens": 4285,
+      "output_tokens": 519,
+      "stop_reason": "tool_use",
+      "latency_ms": 9462,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-03-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Reality Labs RL loss from operations in the three months ended March 31, 2026 decreased $182 million, or 4%, compared to the same period in 2025"
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "Reality Labs Total Three Months Ended March 31, % change 2026 2025 Income (loss) from operations $ (4,028) $ (4,210) 4%"
+          },
+          {
+            "evidence_id": "E6",
+            "quote": "Reality Labs: Loss from operations $ ( 4,028 ) $ ( 4,210 )"
+          }
+        ],
+        "reasoning_summary": "The claim states that Reality Labs' operating loss for Q1 2026 was larger than Q1 2025. However, the evidence clearly contradicts this. Multiple sources show that the operating loss was $4,028 million in Q1 2026 compared to $4,210 million in Q1 2025, representing a decrease of $182 million or 4%. A smaller loss (decrease in loss) means the operating loss was actually smaller, not larger, than the prior year quarter. The claim is therefore contradicted by the evidence.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Reality Labs' operating loss for the quarter ended March 31, 2026 was larger than in the same quarter a year earlier. 2026 Q1",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-028526",
+        "filed": "2026-04-30",
+        "report_date": "2026-03-31",
+        "primary_document": "meta-20260331.htm",
+        "sha256": "b37d171bfc7f39222fad96cc6245aa554cc308db8b1e7c77eeb097cd961c1243"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-003942",
+        "filed": "2026-01-29",
+        "report_date": "2025-12-31",
+        "primary_document": "meta-20251231.htm",
+        "sha256": "5c4096ceb780d0fb52f3e3da5164ead16c58030223b453b0386ef2eb1bad8011"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-047240",
+        "filed": "2025-10-30",
+        "report_date": "2025-09-30",
+        "primary_document": "meta-20250930.htm",
+        "sha256": "f39bcd7a00c56aa48b4345190175554d892cdf0c2306ba77158bd09c8edaa6ea"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1475
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-028526",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/meta-20260331.htm",
+      "locator": "10-Q 0001628280-26-028526:121112-122152",
+      "excerpt": "venue in the three months ended March 31, 2026 compared to the same period in 2025. We anticipate that future advertising revenue will be driven by a combination of price and ad impressions delivered. Other revenue FoA other revenue in the three months ended March 31, 2026 increased $375 million, or 74%, compared to the same period in 2025. The increase was mostly driven by paid messaging from WhatsApp and Meta Verified subscriptions. Reality Labs RL revenue in the three months ended March 31, 2026 decreased $10 million, or 2%, compared to the same period in 2025. The decrease was driven by lower Meta Quest sales, offset by an increase in sales of AI glasses. Foreign Exchange Impact on Revenue Changes in foreign exchange rates had a favorable impact on our revenue in the three months ended March 31, 2026 compared to the same period in 2025. To calculate revenue on a constant currency basis, we translated revenue using the prior year's monthly exchange rates for our settlement or billing currencies other than the U.S. dollar.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-028526",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/meta-20260331.htm",
+      "locator": "10-Q 0001628280-26-028526:124432-125554",
+      "excerpt": "ontingencies in the notes to the condensed consolidated financial statements included in Part I, Item 1, of this Quarterly Report on Form 10-Q for additional information regarding legal-related costs. 43 Table of Contents Segment profitability The following table sets forth income (loss) from operations by segment: Three Months Ended March 31, 2026 2025 % change (in millions, except percentages) Family of Apps $ 26,900 $ 21,765 24 % Reality Labs (4,028) (4,210) 4 % Total income from operations $ 22,872 $ 17,555 30 % Family of Apps FoA income from operations in the three months ended March 31, 2026 increased $5.14 billion, or 24%, compared to the same period in 2025. The increase in FoA income from operations was driven by higher advertising revenue which was partially offset by an increase in costs and expenses. The increase in costs and expenses was mainly due to increases in infrastructure costs and employee compensation. Reality Labs RL loss from operations in the three months ended March 31, 2026 decreased $182 million, or 4%, compared to the same period in 2025, driven by lower RL costs and expenses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-028526",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/meta-20260331.htm",
+      "locator": "10-Q 0001628280-26-028526:96336-97502",
+      "excerpt": "(FoA) and Reality Labs (RL). FoA includes Facebook, Instagram, Messenger, WhatsApp, and other services. RL includes our virtual and augmented reality related consumer hardware, software, and content. Family of Apps Reality Labs Total Three Months Ended March 31, % change Three Months Ended March 31, % change Three Months Ended March 31, % change 2026 2025 2026 2025 2026 2025 (in millions, except percentages) Revenue $ 55,909 $ 41,902 33% $ 402 $ 412 (2)% $ 56,311 $ 42,314 33% Costs and expenses 29,009 20,137 44% 4,430 4,622 (4)% 33,439 24,759 35% Income (loss) from operations $ 26,900 $ 21,765 24% $ (4,028) $ (4,210) 4% $ 22,872 $ 17,555 30% Operating margin 48 % 52 % (1,002) % (1,022) % 41 % 41 % • Net income was $26.77 billion, with diluted earnings per share (EPS) of $10.44 for the three months ended March 31, 2026. • Capital expenditures, including principal payments on finance leases, were $19.84 billion for the three months ended March 31, 2026. • Dividend and dividend equivalent payments were $1.35 billion for the three months ended March 31, 2026. • Cash, cash equivalents, and marketable securities were $81.18 billion as of March 31, 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-028526",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/meta-20260331.htm",
+      "locator": "10-Q 0001628280-26-028526:125354-126549",
+      "excerpt": "e compensation. Reality Labs RL loss from operations in the three months ended March 31, 2026 decreased $182 million, or 4%, compared to the same period in 2025, driven by lower RL costs and expenses. RL costs and expenses decreased primarily due to a decrease in employee compensation. See Note 11 — Segment Information in the notes to the condensed consolidated financial statements included in Part I, Item 1, of this Quarterly Report on Form 10-Q for additional information regarding segment employee compensation. Interest and other income (expense), net Three Months Ended March 31, 2026 2025 % change (in millions, except percentages) Interest income $ 744 $ 658 13 % Interest expense (562) (240) (134) % Foreign currency exchange gain (loss), net (226) 232 (197) % Gain (loss) on equity investments and other, net (1,076) 177 NM Interest and other income (expense), net $ (1,120) $ 827 (235) % ____________________________________ NM — not meaningful Total interest and other income (expense), net in the three months ended March 31, 2026 decreased $1.95 billion, or 235%, compared to the same period in 2025, due to an increase in unrealized losses on our marketable equity investments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:292204-293330",
+      "excerpt": "(FoA) and Reality Labs (RL). FoA includes Facebook, Instagram, Messenger, WhatsApp, and other services. RL includes our virtual and augmented reality related consumer hardware, software, and content. Family of Apps Reality Labs Total Year Ended December 31, Year Ended December 31, Year Ended December 31, 2025 2024 % change 2025 2024 % change 2025 2024 % change (in millions, except percentages) Revenue $ 198,759 $ 162,355 22% $ 2,207 $ 2,146 3% $ 200,966 $ 164,501 22% Costs and expenses 96,290 75,246 28% 21,400 19,875 8% 117,690 95,121 24% Income (loss) from operations $ 102,469 $ 87,109 18% $ (19,193) $ (17,729) (8)% $ 83,276 $ 69,380 20% Operating margin 52 % 54 % (870) % (826) % 41 % 42 % • Net income was $60.46 billion, with diluted earnings per share (EPS) of $23.49 for the year ended December 31, 2025. • Capital expenditures, including principal payments on finance leases, were $72.22 billion for the year ended December 31, 2025. • Share repurchases of our Class A common stock were $26.26 billion and total dividend and dividend equivalent payments were $5.32 billion for the year ended December 31, 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-028526",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/meta-20260331.htm",
+      "locator": "10-Q 0001628280-26-028526:90763-91963",
+      "excerpt": "ment Information We report our financial results for our two reportable segments: Family of Apps (FoA) and Reality Labs (RL). FoA includes Facebook, Instagram, Messenger, WhatsApp, and other services. RL includes our virtual and augmented reality related consumer hardware, software, and content. Our operating segments are the same as our reportable segments. The following table sets forth our segment information of revenue, expenses, and income (loss) from operations (in millions): Three Months Ended March 31, 2026 2025 Family of Apps: Revenue $ 55,909 $ 41,902 Employee compensation (1) ( 12,079 ) ( 9,031 ) Other costs and expenses (2) ( 16,930 ) ( 11,106 ) Income from operations $ 26,900 $ 21,765 Reality Labs: Revenue $ 402 $ 412 Employee compensation (1) ( 2,545 ) ( 2,777 ) Other costs and expenses (3) ( 1,885 ) ( 1,845 ) Loss from operations $ ( 4,028 ) $ ( 4,210 ) Total: Revenue $ 56,311 $ 42,314 Employee compensation (1) ( 14,624 ) ( 11,808 ) Other costs and expenses (2)(3) ( 18,815 ) ( 12,951 ) Income from operations $ 22,872 $ 17,555 ____________________________________ (1) Employee compensation includes employee payroll, share-based compensation, bonus, and employee benefit",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E2",
+      "quote": "Reality Labs RL loss from operations in the three months ended March 31, 2026 decreased $182 million, or 4%, compared to the same period in 2025",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-028526",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/meta-20260331.htm",
+      "locator": "10-Q 0001628280-26-028526:124432-125554"
+    },
+    {
+      "evidence_id": "E3",
+      "quote": "Reality Labs Total Three Months Ended March 31, % change 2026 2025 Income (loss) from operations $ (4,028) $ (4,210) 4%",
+      "valid": false,
+      "issues": [
+        "QUOTE_NOT_IN_PASSAGE"
+      ],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-028526",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/meta-20260331.htm",
+      "locator": "10-Q 0001628280-26-028526:96336-97502"
+    },
+    {
+      "evidence_id": "E6",
+      "quote": "Reality Labs: Loss from operations $ ( 4,028 ) $ ( 4,210 )",
+      "valid": false,
+      "issues": [
+        "QUOTE_NOT_IN_PASSAGE"
+      ],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-028526",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/meta-20260331.htm",
+      "locator": "10-Q 0001628280-26-028526:90763-91963"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 4285,
+    "output": 519
+  },
+  "latency_ms": 9468,
+  "estimated_cost_usd": 0.02064,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "conventional_rag",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 9464,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 9,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

@@ -95,6 +95,20 @@ One file per reviewer: `datasets/annotations/<reviewer_id>.jsonl`, one JSON obje
  "annotated_at": "2026-11-10T09:30:00+07:00", "guideline_version": "gold-guidelines-1.0", "time_spent_minutes": 6}
 ```
 
+Reviewers who prefer Excel get a workbook instead of writing JSON by hand:
+
+```bash
+# blank workbook with every gold claim, eligible filings and SEC links (--claims to choose other files)
+research/.venv/bin/python research/scripts/annotation_workbook.py export
+# -> research/datasets/workbooks/annotation_workbook.xlsx (one copy per reviewer)
+
+# a returned workbook -> datasets/annotations/<reviewer_id>.jsonl (validated; never overwrites)
+research/.venv/bin/python research/scripts/annotation_workbook.py import returned.xlsx
+```
+
+The workbook explains these rules in Thai, offers labels / filings as drop-down lists, and flags evidence filed
+after the cutoff or from another company. Import rejects the whole file if any row is invalid.
+
 1. **Two independent reviewers per claim** (minimum).
 2. Notebook 02 shows agreement (Cohen's κ), disagreements, and annotations missing evidence.
 3. **Agreement** (both labels equal) finalizes the label.

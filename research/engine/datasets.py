@@ -16,8 +16,9 @@ import glob
 import hashlib
 import json
 import os
+import random
 import re
-from collections import defaultdict
+from collections import Counter, defaultdict
 from dataclasses import asdict
 from datetime import datetime, timezone
 
@@ -187,6 +188,60 @@ def cohen_kappa(pairs: list[tuple[str, str]]) -> float | None:
     po = sum(1 for a, b in pairs if a == b) / n
     pe = sum((sum(1 for a, _ in pairs if a == lab) / n) * (sum(1 for _, b in pairs if b == lab) / n) for lab in labels)
     return 1.0 if pe == 1 else (po - pe) / (1 - pe)
+
+
+def fleiss_kappa(units: list[list[str]]) -> float | None:
+    """Agreement among a fixed number of raters (>= 2) per claim, nominal
+    labels. `units` holds one list of labels per claim; every list must have
+    the same length (no missing ratings)."""
+    units = [u for u in units if u]
+    if not units:
+        return None
+    m = len(units[0])
+    if m < 2 or any(len(u) != m for u in units):
+        raise ValueError("Fleiss' kappa needs the same number (>= 2) of ratings per claim")
+    n = len(units)
+    counts = [Counter(u) for u in units]
+    p_bar = sum((sum(c * c for c in cnt.values()) - m) / (m * (m - 1)) for cnt in counts) / n
+    totals = Counter(lab for u in units for lab in u)
+    p_e = sum((t / (n * m)) ** 2 for t in totals.values())
+    return 1.0 if p_e == 1 else (p_bar - p_e) / (1 - p_e)
+
+
+def krippendorff_alpha_nominal(units: list[list[str | None]]) -> float | None:
+    """Krippendorff's alpha for nominal labels. Missing ratings (None) are
+    allowed; a claim with fewer than two ratings carries no pairable
+    information and is skipped, as the coefficient prescribes."""
+    coincidence = Counter()
+    for u in units:
+        vals = [v for v in u if v is not None]
+        mu = len(vals)
+        if mu < 2:
+            continue
+        for i, a in enumerate(vals):
+            for j, b in enumerate(vals):
+                if i != j:
+                    coincidence[(a, b)] += 1 / (mu - 1)
+    n = sum(coincidence.values())
+    if n <= 1:
+        return None
+    n_c = Counter()
+    for (a, _), v in coincidence.items():
+        n_c[a] += v
+    d_o = sum(v for (a, b), v in coincidence.items() if a != b)
+    d_e = sum(n_c[a] * n_c[b] for a in n_c for b in n_c if a != b) / (n - 1)
+    return 1.0 if d_e == 0 else 1 - d_o / d_e
+
+
+def bootstrap_agreement(units: list[list], statistic, n_boot: int = 2000, seed: int = 20261102,
+                        level: float = 0.95) -> tuple[float | None, float | None]:
+    """Percentile CI of an agreement statistic, resampling claims."""
+    rng = random.Random(seed)
+    values = sorted(v for v in (statistic([rng.choice(units) for _ in units]) for _ in range(n_boot)) if v is not None)
+    if not values:
+        return None, None
+    lo, hi = (1 - level) / 2, 1 - (1 - level) / 2
+    return values[int(lo * (len(values) - 1))], values[int(hi * (len(values) - 1))]
 
 
 def append_adjudication(adj: Adjudication, path: str = ADJUDICATION_PATH) -> None:

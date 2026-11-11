@@ -1,0 +1,696 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-KO-14:9d4c8354",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-KO-14",
+    "company": "KO",
+    "claim": "Coca-Cola's 2025 results show that its Bottling Investments segment is a drag on overall profitability.",
+    "as_of_date": "2026-03-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "INSUFFICIENT_EVIDENCE",
+  "final_label": "INSUFFICIENT_EVIDENCE",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Coca-Cola's Bottling Investments segment is \"a drag on overall profitability\" based on 2025 results. This is an interpretive claim about the segment's impact on profitability.\n\nEvidence E4 provides operating income contribution data showing that Bottling Investments contributed 3.1% of total operating income in 2025 (compared to 5.0% in 2024). However, this data alone does not establish whether the segment is \"a drag\" on overall profitability. A segment contributing positive operating income (3.1%) is contributing to, not detracting from, overall profitability.\n\nEvidence E2 explains that \"finished product operations generate higher net operating revenues but lower gross profit margins than concentrate operations,\" which describes the structural characteristics of the Bottling Investments segment but does not establish it as a \"drag\" on profitability.\n\nTo support the claim that Bottling Investments is a drag on overall profitability, we would need evidence showing either: (1) negative profitability metrics for the segment, (2) profitability below the company average in a way that reduces overall profitability, or (3) explicit statements in the filing characterizing the segment as reducing overall profitability. The evidence shows the segment had positive operating income contribution (3.1%), which does not support the characterization of being \"a drag.\" However, without specific margin data or explicit comparative analysis, we cannot definitively contradict the claim either, as \"drag\" could be interpreted in various ways (e.g., relative to other segments' margins).",
+        "confidence": "medium"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Does the Bottling Investments segment have a negative operating margin or operating loss in 2025, which would definitively establish it as a drag on profitability?",
+          "search_query": "Bottling Investments operating margin operating income loss 2025 segment results",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Does the Bottling Investments segment have a significantly lower operating margin than the company average or other segments in 2025, supporting the interpretation that it drags down overall profitability?",
+          "search_query": "Bottling Investments margin percentage segment profitability comparison consolidated",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Does the filing contain explicit management discussion or analysis stating that the Bottling Investments segment negatively impacts, reduces, or drags down overall company profitability?",
+          "search_query": "Bottling Investments impact profitability lower dilutive drag consolidated results",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "Bottling Investments operating margin operating income loss 2025 segment results",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "Bottling Investments margin percentage segment profitability comparison consolidated",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "Bottling Investments impact profitability lower dilutive drag consolidated results",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15"
+      ],
+      "counter_numeric": []
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "df97c73bfb16c996832e0b1e76bca6a5fb49c8f8994fe54d4227df6a9b4b77f9",
+      "source": "cache",
+      "input_tokens": 3530,
+      "output_tokens": 496,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Coca-Cola's Bottling Investments segment is \"a drag on overall profitability\" based on 2025 results. This is an interpretive claim about the segment's impact on profitability.\n\nEvidence E4 provides operating income contribution data showing that Bottling Investments contributed 3.1% of total operating income in 2025 (compared to 5.0% in 2024). However, this data alone does not establish whether the segment is \"a drag\" on overall profitability. A segment contributing positive operating income (3.1%) is contributing to, not detracting from, overall profitability.\n\nEvidence E2 explains that \"finished product operations generate higher net operating revenues but lower gross profit margins than concentrate operations,\" which describes the structural characteristics of the Bottling Investments segment but does not establish it as a \"drag\" on profitability.\n\nTo support the claim that Bottling Investments is a drag on overall profitability, we would need evidence showing either: (1) negative profitability metrics for the segment, (2) profitability below the company average in a way that reduces overall profitability, or (3) explicit statements in the filing characterizing the segment as reducing overall profitability. The evidence shows the segment had positive operating income contribution (3.1%), which does not support the characterization of being \"a drag.\" However, without specific margin data or explicit comparative analysis, we cannot definitively contradict the claim either, as \"drag\" could be interpreted in various ways (e.g., relative to other segments' margins).",
+        "confidence": "medium"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "c74a30577f2adda4d8fb4486815cdcb84288325fe42fd4819db611375cec7083",
+      "source": "cache",
+      "input_tokens": 4501,
+      "output_tokens": 312,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Does the Bottling Investments segment have a negative operating margin or operating loss in 2025, which would definitively establish it as a drag on profitability?",
+            "search_query": "Bottling Investments operating margin operating income loss 2025 segment results",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Does the Bottling Investments segment have a significantly lower operating margin than the company average or other segments in 2025, supporting the interpretation that it drags down overall profitability?",
+            "search_query": "Bottling Investments margin percentage segment profitability comparison consolidated",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Does the filing contain explicit management discussion or analysis stating that the Bottling Investments segment negatively impacts, reduces, or drags down overall company profitability?",
+            "search_query": "Bottling Investments impact profitability lower dilutive drag consolidated results",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "985bb676193252d72573b85ff0ba967c844e93ee9ea59e8faa440d0cc37016bb",
+      "source": "cache",
+      "input_tokens": 8349,
+      "output_tokens": 1500,
+      "stop_reason": "max_tokens",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E9",
+                "quote": "Bottling Investments 7.4 8.0"
+              },
+              {
+                "evidence_id": "E7",
+                "quote": "Bottling Investments 1.4 1.7 2.0 4.1"
+              },
+              {
+                "evidence_id": "E8",
+                "quote": "Bottling Investments 1.4 3.7 2.3 5.3"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E9",
+                "quote": "Year Ended December 31, 2025 2024 Consolidated 28.7 % 21.2 % EMEA 39.7 41.4 Latin America 59.1 58.6 North America 25.9 24.1 Asia Pacific 38.3 42.1 Bottling Investments 7.4 8.0"
+              },
+              {
+                "evidence_id": "E11",
+                "quote": "Consolidated 34.1 % 21.3 % 33.6 % 20.2 % Europe, Middle East & Africa 44.1 44.6 43.5 44.5 Latin America 60.3 55.8 60.7 58.7 North America 32.3 28.2 31.6 20.6 Asia Pacific 44.2 46.3 45.6 49.0 Bottling Investments 4.2 6.4 6.2 7.6"
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": true,
+        "change_reason": "The initial verdict was INSUFFICIENT_EVIDENCE because the original evidence only showed that Bottling Investments contributed 3.1% of total operating income, which appeared positive. However, the newly retrieved evidence reveals critical information: Bottling Investments had an operating margin of only 7.4% in 2025 (E9), which is dramatically lower than the consolidated company operating margin of 28.7% and significantly lower than all other geographic segments (EMEA 39.7%, Latin America 59.1%, North America 25.9%, Asia Pacific 38.3%). This substantial margin differential - where Bottling Investments operates at less than one-third the consolidated margin - definitively establishes that the segment is a drag on overall profitability. When a segment has materially lower margins than the company average, it mathematically pulls down (drags) the overall profitability metrics, which is precisely what the claim asserts.",
+        "supporting_evidence": [
+          {
+            "evidence_id": "E9",
+            "quote": "Year Ended December 31, 2025 2024 Consolidated 28.7 % 21.2 % EMEA 39.7 41.4 Latin America 59.1 58.6 North America 25.9 24.1 Asia Pacific 38.3 42.1 Bottling Investments 7.4 8.0"
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Our Bottling Investments operating segment is composed of our consolidated bottling operations, regardless of the geographic location of the bottler. Our consolidated bottling operations derive the majority of their revenues from the manufacture and sale of finished beverages. Generally, finished product operations generate higher net operating revenues but lower gross profit margins than concentrate operations."
+          },
+          {
+            "evidence_id": "E11",
+            "quote": "Consolidated 34.1 % 21.3 % 33.6 % 20.2 % Europe, Middle East & Africa 44.1 44.6 43.5 44.5 Latin America 60.3 55.8 60.7 58.7 North America 32.3 28.2 31.6 20.6 Asia Pacific 44.2 46.3 45.6 49.0 Bottling Investments 4.2 6.4 6.2 7.6"
+          }
+        ],
+        "contradicting_evidence": []
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Coca-Cola's 2025 results show that its Bottling Investments segment is a drag on overall profitability. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "Bottling Investments operating margin operating income loss 2025 segment results",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "Bottling Investments margin percentage segment profitability comparison consolidated",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "Bottling Investments impact profitability lower dilutive drag consolidated results",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-010047",
+        "filed": "2026-02-20",
+        "report_date": "2025-12-31",
+        "primary_document": "ko-20251231.htm",
+        "sha256": "a091d2ed9db7e14f46e64111d3e2154b0e0c26ceb9b7200d9b613db2fe8f0dca"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-046054",
+        "filed": "2025-10-23",
+        "report_date": "2025-09-26",
+        "primary_document": "ko-20250926.htm",
+        "sha256": "94a26963837d00fbcfe420db71b1b6d91208498bb2682f244cff2e17a09c064a"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000021344-25-000061",
+        "filed": "2025-07-24",
+        "report_date": "2025-06-27",
+        "primary_document": "ko-20250627.htm",
+        "sha256": "3326ac76eab810fde30004981c1868e25afea6a8a810e074cb68c21e46a65368"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1187
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:104337-105452",
+      "excerpt": "ns. Such actions could, in the long term, have an adverse effect on our profitability. If our bottling partners’ financial condition deteriorates, our business and financial results could be affected. In the vast majority of our markets, our products are sold and distributed by independent bottling partners, and we therefore derive a significant portion of our net operating revenues from sales of concentrates and syrups to independent bottling partners. Accordingly, the success of our business depends in part on our bottling partners’ financial strength and profitability. While under our agreements with our bottling partners we generally have the right to unilaterally change the prices we charge for our concentrates and syrups, our ability to do so may be materially limited by our bottling partners’ financial condition and their ability to pass price increases along to their customers. In addition, we have investments in certain of our bottling partners, which we account for under the equity method, and our operating results include our proportionate share of such bottling partners’ income or loss.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:523215-524158",
+      "excerpt": "Latin America, North America and Asia Pacific) derive a majority of their revenues from the manufacture and sale of beverage concentrates and syrups and, in some cases, the sale of finished beverages. Our EMEA operating segment also includes the results of the Costa business (excluding the ready-to-drink business), regardless of the location of the retail stores. The results of Costa’s ready-to-drink business and the fees related to Monster are reported within the applicable geographic operating segments. Our Bottling Investments operating segment is composed of our consolidated bottling operations, regardless of the geographic location of the bottler. Our consolidated bottling operations derive the majority of their revenues from the manufacture and sale of finished beverages. Generally, finished product operations generate higher net operating revenues but lower gross profit margins than concentrate operations. Refer to Note 3.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:124991-126113",
+      "excerpt": "lations and laws, could result in litigation or criminal or civil enforcement actions, including voluntary and involuntary 21 document requests, the assessment of damages, the imposition of penalties, the suspension of production or distribution, costly changes to equipment or processes due to required corrective action, or the cessation or interruption of operations at our or our bottling partners’ facilities, as well as damage to our or our bottling partners’ image and reputation, all of which could harm our or our bottling partners’ profitability. RISKS RELATED TO FINANCE, ACCOUNTING AND INVESTMENTS Fluctuations in foreign currency exchange rates could have a material adverse effect on our financial results. We earn revenues, pay expenses, own assets and incur liabilities in countries using many currencies other than the U.S. dollar. In 2025, we derived $28.8 billion of net operating revenues from operations outside the United States. Because our consolidated financial statements are presented in U.S. dollars, we must translate revenues, income and expenses, as well as assets and liabilities, into U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:261554-262555",
+      "excerpt": "impact these charges had on our operating segments and Corporate. Refer to Note 19 of Notes to Consolidated Financial Statements for additional information on the Company’s restructuring initiatives. Operating Income and Operating Margin Information about our operating income contribution by operating segment and Corporate on a percentage basis is as follows: Year Ended December 31, 2025 2024 EMEA 31.2 % 42.6 % Latin America 27.2 38.0 North America 36.8 45.6 Asia Pacific 14.9 21.5 Bottling Investments 3.1 5.0 Corporate (13.2) (52.7) Total 100.0 % 100.0 % Operating margin is a ratio calculated by dividing operating income by net operating revenues. Management believes operating margin provides investors with useful information related to the profitability of our business after considering selling, general and administrative expenses and other operating charges. Management uses this measure in making financial, operating and planning decisions and in evaluating the Company’s performance.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:17897-18760",
+      "excerpt": "zed fountain wholesalers or bottling partners who in turn sell and distribute the fountain syrups to fountain retailers. These fountain syrup sales are included in our North America operating segment. For information regarding net operating revenues and unit case volume related to our concentrate operations and finished product operations, refer to the heading “Our Business — General” set forth in Part II, “Item 7. Management’s Discussion and Analysis of Financial Condition and Results of Operations” of this report. For information regarding how we measure the volume of Company beverage products sold by the Company and our bottling partners (“Coca-Cola system”), refer to the heading “Operations Review — Beverage Volume” set forth in Part II, “Item 7. Management’s Discussion and Analysis of Financial Condition and Results of Operations” of this report.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:34003-35049",
+      "excerpt": "nership interest in a consolidated bottling operation, typically by selling all or a portion of our interest in the bottling operation to an independent bottler to improve Coca-Cola system efficiency. When we sell a consolidated bottling operation to an independent bottling partner in which we have an equity method investment, our Company continues to participate in the bottler’s results of operations through our share of the equity method investee’s earnings or losses. In addition, from time to time we make equity investments representing noncontrolling interests in certain bottling operations with the intention of maximizing the strength and efficiency of the Coca-Cola system’s production, marketing, sales and distribution capabilities around the world by providing expertise and resources to strengthen those businesses. These investments are intended to result in increases in unit case volume, net operating revenues and profits at the bottler level, which in turn generate increased sales for our Company’s concentrate operations.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:152010-153086",
+      "excerpt": "ional information on the Company’s restructuring initiatives. Refer to Note 16 of Notes to Consolidated Financial Statements for additional information on the fairlife acquisition and the impairments. Operating Income and Operating Margin Information about our operating income contribution by operating segment and Corporate on a percentage basis is as follows: Three Months Ended Nine Months Ended September 26, 2025 September 27, 2024 September 26, 2025 September 27, 2024 Europe, Middle East & Africa 27.5 % 39.8 % 29.3 % 46.1 % Latin America 22.5 37.3 23.1 38.5 North America 42.2 58.0 38.9 45.7 Asia Pacific 13.2 18.4 15.0 24.2 Bottling Investments 1.4 1.7 2.0 4.1 Corporate (6.8) (55.2) (8.3) (58.6) Total 100.0 % 100.0 % 100.0 % 100.0 % Operating margin is a ratio calculated by dividing operating income by net operating revenues. Management believes operating margin provides investors with useful information related to the profitability of our business after considering all of the selling, general and administrative expenses and other operating charges incurred.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0000021344-25-000061",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134425000061/ko-20250627.htm",
+      "locator": "10-Q 0000021344-25-000061:145532-146498",
+      "excerpt": "ional information on the Company’s restructuring initiatives. Refer to Note 16 of Notes to Consolidated Financial Statements for additional information on the fairlife acquisition and the impairments. Refer to Note 17 of Notes to Consolidated Financial Statements for the impact certain of these charges had on our operating segments and Corporate. Operating Income and Operating Margin Information about our operating income contribution by operating segment and Corporate on a percentage basis is as follows: Three Months Ended Six Months Ended June 27, 2025 June 28, 2024 June 27, 2025 June 28, 2024 Europe, Middle East & Africa 31.0 % 48.7 % 30.1 % 49.5 % Latin America 22.3 35.0 23.4 39.1 North America 37.9 52.2 37.3 39.2 Asia Pacific 15.1 24.6 16.0 27.3 Bottling Investments 1.4 3.7 2.3 5.3 Corporate (7.7) (64.2) (9.1) (60.4) Total 100.0 % 100.0 % 100.0 % 100.0 % Operating margin is a ratio calculated by dividing operating income by net operating revenues.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:262355-263456",
+      "excerpt": "elling, general and administrative expenses and other operating charges. Management uses this measure in making financial, operating and planning decisions and in evaluating the Company’s performance. Information about our operating margin on a consolidated basis and by operating segment and Corporate is as follows: Year Ended December 31, 2025 2024 Consolidated 28.7 % 21.2 % EMEA 39.7 41.4 Latin America 59.1 58.6 North America 25.9 24.1 Asia Pacific 38.3 42.1 Bottling Investments 7.4 8.0 Corporate * * * Calculation is not meaningful. Operating income was $13,762 million in 2025, compared to $9,992 million in 2024, an increase of $3,770 million, or 38%. The increases in operating income and operating margin were primarily driven by lower other operating charges, due to the prior year remeasurement of our contingent consideration liability to fair value in conjunction with the fairlife acquisition, concentrate sales volume growth of 1% and favorable pricing initiatives. These items were partially offset by higher commodity costs and an unfavorable foreign currency exchange rate impact.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:256579-257647",
+      "excerpt": "0.0 % The percentage contribution of each operating segment fluctuates over time due to net operating revenues in some operating segments growing at a faster rate compared to other operating segments. In addition, foreign currency exchange rate fluctuations impact the percentage contribution of each operating segment. For additional information about the impact of foreign currency exchange rate fluctuations, refer to the heading “Liquidity, Capital Resources and Financial Position — Foreign Exchange” below. Gross Profit Margin Gross profit margin is a ratio calculated by dividing gross profit by net operating revenues. Management believes gross profit margin provides investors with useful information related to the profitability of our business prior to considering all of the selling, general and administrative expenses and other operating charges incurred. Management uses this measure in making financial, operating and planning decisions and in evaluating the Company’s performance. Our gross profit margin increased to 61.6% in 2025 from 61.1% in 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0000021344-25-000061",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134425000061/ko-20250627.htm",
+      "locator": "10-Q 0000021344-25-000061:146298-147365",
+      "excerpt": "ing Investments 1.4 3.7 2.3 5.3 Corporate (7.7) (64.2) (9.1) (60.4) Total 100.0 % 100.0 % 100.0 % 100.0 % Operating margin is a ratio calculated by dividing operating income by net operating revenues. Management believes operating margin provides investors with useful information related to the profitability of our business after considering all of the selling, general and administrative expenses and other operating charges incurred. Management uses this measure in making financial, operating and planning decisions and in evaluating the Company’s performance. Information about our operating margin on a consolidated basis and for each of our operating segments and Corporate is as follows: Three Months Ended Six Months Ended June 27, 2025 June 28, 2024 June 27, 2025 June 28, 2024 Consolidated 34.1 % 21.3 % 33.6 % 20.2 % Europe, Middle East & Africa 44.1 44.6 43.5 44.5 Latin America 60.3 55.8 60.7 58.7 North America 32.3 28.2 31.6 20.6 Asia Pacific 44.2 46.3 45.6 49.0 Bottling Investments 4.2 6.4 6.2 7.6 Corporate * * * * * Calculation is not meaningful.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:144385-145543",
+      "excerpt": "t on our Europe, Middle East and Africa; Asia Pacific; and Bottling Investments operating segments. Refer to the heading “Liquidity, Capital Resources and Financial Position — Foreign Exchange” below. 40 Net operating revenue growth rates are impacted by sales volume; price, product and geographic mix; foreign currency exchange rate fluctuations; and acquisitions and divestitures. The size and timing of acquisitions and divestitures are not consistent from period to period. Based on current spot rates and our hedging coverage in place, we expect foreign currency exchange rate fluctuations will have an unfavorable impact on our full year 2025 net operating revenues. Gross Profit Margin Gross profit margin is a ratio calculated by dividing gross profit by net operating revenues. Management believes gross profit margin provides investors with useful information related to the profitability of our business prior to considering all of the selling, general and administrative expenses and other operating charges incurred. Management uses this measure in making financial, operating and planning decisions and in evaluating the Company’s performance.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:70273-71464",
+      "excerpt": "rrectly anticipate customer and consumer acceptance and trends; obtain, maintain and enforce necessary intellectual property rights; and avoid infringing on the intellectual property rights of others. If we are not successful in our innovation activities, we may not be able to achieve our growth objectives, which may have a negative impact on our financial results. Changes in the retail landscape or the loss of key customers could adversely affect our financial results. Our industry is being affected by the trend toward consolidation in, and the blurring of the lines between, retail channels, particularly in Europe and the United States. Retailers may seek lower prices from us and our bottling partners, may demand increased marketing or promotional expenditures in support of their businesses, and may be more likely to use their distribution networks to introduce and develop private-label brands, any of which could negatively affect the Coca-Cola system’s profitability. In addition, in developed markets, discounters and value stores are growing at a rapid pace, while in emerging and developing markets, modern trade is growing at a faster pace than traditional trade outlets.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:266006-267133",
+      "excerpt": "es volume growth of 1% and favorable pricing initiatives and mix. Bottling Investments’ operating income for the years ended December 31, 2025 and 2024 was $426 million and $496 million, respectively. The decrease in operating income was primarily driven by the impact of refranchising our bottling operations in the Philippines, Bangladesh and certain territories in India, higher commodity costs and an unfavorable foreign currency exchange rate impact of 2%, partially offset by favorable pricing initiatives and lower operating expenses. Corporate’s operating loss for the years ended December 31, 2025 and 2024 was $1,816 million and $5,263 million, respectively. Operating loss in 2025 decreased primarily as a result of lower other operating charges due to the prior year remeasurement of our contingent consideration liability to fair value in conjunction with the fairlife acquisition, lower commodity costs, lower marketing expenses and lower contributions to The Coca-Cola Foundation. Refer to Note 18 of Notes to Consolidated Financial Statements for additional information on the fairlife contingent consideration.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:156691-157778",
+      "excerpt": "d increased marketing spending due to timing. Bottling Investments’ operating income for the three months ended September 26, 2025 and September 27, 2024 was $57 million and $43 million, respectively. The increase in operating income was primarily driven by an increase in unit case volume of 5%, favorable pricing initiatives and a favorable foreign currency exchange rate impact of 12%, partially offset by the impact of refranchising our bottling operations in certain territories in India and higher commodity costs. Corporate’s operating loss for the three months ended September 26, 2025 and September 27, 2024 was $271 million and $1,386 million, respectively. Operating loss in 2025 decreased primarily as a result of lower other operating charges, primarily due to the prior year remeasurement of our contingent consideration liability to fair value in conjunction with the fairlife acquisition, as well as marketing efficiencies and lower operating expenses. Refer to Note 16 of Notes to Consolidated Financial Statements for additional information on the fairlife acquisition.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    }
+  ],
+  "citations": [],
+  "stop_reason": "NO_FINAL_VERDICT",
+  "error": "reconciliation: structured output cut off at max_output_tokens",
+  "token_usage": {
+    "input": 16380,
+    "output": 2308
+  },
+  "latency_ms": 9,
+  "estimated_cost_usd": 0.08376,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "failed",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "error": "reconciliation: structured output cut off at max_output_tokens"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 5,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "stop_reason": "NO_FINAL_VERDICT"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "finalize"
+    ],
+    "failed_stage": "reconcile",
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

@@ -1,0 +1,1000 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-NVDA-02:916fe1b3",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-NVDA-02",
+    "company": "NVDA",
+    "claim": "NVIDIA's operating margin for the quarter ended July 26, 2026 exceeded 60%.",
+    "as_of_date": "2026-09-10",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2027 Q2"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-07-26",
+            "comparison": ">",
+            "threshold": 0.6,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E6",
+            "quote": "Three Months Ended Quarter-over-Quarter Change Year-over-Year Change Jul 26, 2026 Apr 26, 2026 Jul 27, 2025 ($ in millions, except per share data) Revenue $ 96,221 $ 81,615 $ 46,743 18 % 106 % Gross margin 75.0 % 74.9 % 72.4 % 0.1 pts 2.6 pts Operating expenses $ 8,408 $ 7,621 $ 5,413 10 % 55 % Operating income $ 63,734 $ 53,536 $ 28,440 19 % 124 %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that NVIDIA's operating margin for the quarter ended July 26, 2026 exceeded 60%. From evidence E6, I can calculate the operating margin for Q2 FY2027 (quarter ended July 26, 2026):\n\nOperating margin = Operating income / Revenue = $63,734 million / $96,221 million = 0.6623 or 66.23%\n\nSince 66.23% > 60%, the claim is supported. The evidence directly provides both the operating income and revenue figures for the exact quarter in question, allowing for a straightforward calculation that confirms the claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_ALL_TRUE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-07-26",
+            "comparison": ">",
+            "threshold": 0.6,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-07-26",
+            "basis": "quarter",
+            "level": 0.6623710000935347,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2026-04-27",
+                "period_end": "2026-07-26",
+                "value": 63734000000.0,
+                "filed": "2026-08-26",
+                "form": "10-Q",
+                "accession_number": "0001045810-26-000075",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2026-04-27",
+                "period_end": "2026-07-26",
+                "value": 96221000000.0,
+                "filed": "2026-08-26",
+                "form": "10-Q",
+                "accession_number": "0001045810-26-000075",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.6084333483088377,
+            "prior_period_end": "2025-07-27",
+            "yoy_change": 0.053937651784697005,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Were there any restatements, corrections, or adjustments to the operating income or revenue figures for the quarter ended July 26, 2026 that would change the calculated operating margin?",
+          "search_query": "restatement correction adjustment operating income revenue July 2026 Q2 fiscal 2027"
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Did the company report any non-GAAP adjustments or one-time items that affected operating income for Q2 FY2027, which might indicate the GAAP operating margin calculation should be interpreted differently?",
+          "search_query": "non-GAAP operating income adjustments one-time items restructuring charges Q2 fiscal 2027 July 2026"
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Are there any disclosures indicating that the operating income or revenue figures in the summary table are preliminary, estimated, or subject to change?",
+          "search_query": "preliminary estimated subject to change operating income revenue Q2 fiscal 2027 July 26 2026"
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "restatement correction adjustment operating income revenue July 2026 Q2 fiscal 2027",
+          "results": [
+            "E12",
+            "E13",
+            "E14"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "non-GAAP operating income adjustments one-time items restructuring charges Q2 fiscal 2027 July 2026",
+          "results": [
+            "E15",
+            "E16",
+            "E17"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "preliminary estimated subject to change operating income revenue Q2 fiscal 2027 July 26 2026",
+          "results": [
+            "E18",
+            "E19",
+            "E20"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18",
+        "E19",
+        "E20"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_ALL_TRUE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E15",
+              "quote": "The table below presents details of our reportable segments. Compute & Networking Graphics Total (In millions) Three Months Ended Jul 26, 2026 Revenue $ 88,299 $ 7,922 $ 96,221 Other segment items (1) 25,603 4,023 29,626 Operating income $ 62,696 $ 3,899 $ 66,595",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000075",
+              "form": "10-Q",
+              "filed": "2026-08-26",
+              "period_end": "2026-07-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+              "locator": "10-Q 0001045810-26-000075:56222-57422"
+            },
+            {
+              "evidence_id": "E17",
+              "quote": "Other segment items primarily include product costs and inventory provisions, compensation and benefits excluding stock-based compensation expense, computing infrastructure expenses, and engineering development costs.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000075",
+              "form": "10-Q",
+              "filed": "2026-08-26",
+              "period_end": "2026-07-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+              "locator": "10-Q 0001045810-26-000075:57222-58283"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "239b1d479ba7928ab76c9e4b4aada684e98a8f689f882ea59b9eb53434b4ee07",
+      "source": "cache",
+      "input_tokens": 4181,
+      "output_tokens": 550,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-07-26",
+            "comparison": ">",
+            "threshold": 0.6,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E6",
+            "quote": "Three Months Ended Quarter-over-Quarter Change Year-over-Year Change Jul 26, 2026 Apr 26, 2026 Jul 27, 2025 ($ in millions, except per share data) Revenue $ 96,221 $ 81,615 $ 46,743 18 % 106 % Gross margin 75.0 % 74.9 % 72.4 % 0.1 pts 2.6 pts Operating expenses $ 8,408 $ 7,621 $ 5,413 10 % 55 % Operating income $ 63,734 $ 53,536 $ 28,440 19 % 124 %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that NVIDIA's operating margin for the quarter ended July 26, 2026 exceeded 60%. From evidence E6, I can calculate the operating margin for Q2 FY2027 (quarter ended July 26, 2026):\n\nOperating margin = Operating income / Revenue = $63,734 million / $96,221 million = 0.6623 or 66.23%\n\nSince 66.23% > 60%, the claim is supported. The evidence directly provides both the operating income and revenue figures for the exact quarter in question, allowing for a straightforward calculation that confirms the claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "18040d8c6bf117e1cc0a1df3afc924daef48b1c51fdb7f0b4ec0b1227fe835c7",
+      "source": "cache",
+      "input_tokens": 5520,
+      "output_tokens": 317,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Were there any restatements, corrections, or adjustments to the operating income or revenue figures for the quarter ended July 26, 2026 that would change the calculated operating margin?",
+            "search_query": "restatement correction adjustment operating income revenue July 2026 Q2 fiscal 2027"
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Did the company report any non-GAAP adjustments or one-time items that affected operating income for Q2 FY2027, which might indicate the GAAP operating margin calculation should be interpreted differently?",
+            "search_query": "non-GAAP operating income adjustments one-time items restructuring charges Q2 fiscal 2027 July 2026"
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Are there any disclosures indicating that the operating income or revenue figures in the summary table are preliminary, estimated, or subject to change?",
+            "search_query": "preliminary estimated subject to change operating income revenue Q2 fiscal 2027 July 26 2026"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "431f52e756e157edd46d4b4e1a87b255c3242b17065364ce81a5515f9c5ec5bd",
+      "source": "cache",
+      "input_tokens": 9802,
+      "output_tokens": 913,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E15",
+                "quote": "The table below presents details of our reportable segments. Compute & Networking Graphics Total (In millions) Three Months Ended Jul 26, 2026 Revenue $ 88,299 $ 7,922 $ 96,221 Other segment items (1) 25,603 4,023 29,626 Operating income $ 62,696 $ 3,899 $ 66,595"
+              },
+              {
+                "evidence_id": "E17",
+                "quote": "Other segment items primarily include product costs and inventory provisions, compensation and benefits excluding stock-based compensation expense, computing infrastructure expenses, and engineering development costs."
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E6",
+            "quote": "Three Months Ended Quarter-over-Quarter Change Year-over-Year Change Jul 26, 2026 Apr 26, 2026 Jul 27, 2025 ($ in millions, except per share data) Revenue $ 96,221 $ 81,615 $ 46,743 18 % 106 % Gross margin 75.0 % 74.9 % 72.4 % 0.1 pts 2.6 pts Operating expenses $ 8,408 $ 7,621 $ 5,413 10 % 55 % Operating income $ 63,734 $ 53,536 $ 28,440 19 % 124 %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After investigating potential challenges to the initial verdict, I found:\n\nH1 (Restatements/Corrections): NO_RELEVANT_EVIDENCE - The retrieved evidence discusses segment operating income and year-over-year changes but contains no information about restatements, corrections, or adjustments to the Q2 FY2027 figures for the quarter ended July 26, 2026.\n\nH2 (Non-GAAP adjustments): CHALLENGE_REFUTED - Evidence E15 and E17 show that the segment operating income figures ($62,696M + $3,899M = $66,595M) differ slightly from the consolidated operating income of $63,734M shown in E6. However, E17 clarifies that \"Other segment items primarily include product costs and inventory provisions, compensation and benefits excluding stock-based compensation expense, computing infrastructure expenses, and engineering development costs\" and notes that \"Acquisition-related intangible amortization expense is not allocated to either Compute & Networking or Graphics.\" This indicates normal reconciliation between segment and consolidated reporting, not non-GAAP adjustments that would affect the interpretation of the GAAP operating margin calculation.\n\nH3 (Preliminary/Estimated figures): NO_RELEVANT_EVIDENCE - The retrieved evidence contains no disclosures indicating that the operating income or revenue figures are preliminary, estimated, or subject to change.\n\nThe original calculation remains valid: Operating margin = $63,734M / $96,221M = 66.23%, which exceeds 60%. The verdict remains SUPPORTED."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "NVIDIA's operating margin for the quarter ended July 26, 2026 exceeded 60%. FY2027 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "restatement correction adjustment operating income revenue July 2026 Q2 fiscal 2027",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E12",
+        "E13",
+        "E14"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "non-GAAP operating income adjustments one-time items restructuring charges Q2 fiscal 2027 July 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E15",
+        "E16",
+        "E17"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "preliminary estimated subject to change operating income revenue Q2 fiscal 2027 July 26 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E18",
+        "E19",
+        "E20"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-07-26",
+            "comparison": ">",
+            "threshold": 0.6,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-07-26",
+            "basis": "quarter",
+            "level": 0.6623710000935347,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2026-04-27",
+                "period_end": "2026-07-26",
+                "value": 63734000000.0,
+                "filed": "2026-08-26",
+                "form": "10-Q",
+                "accession_number": "0001045810-26-000075",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2026-04-27",
+                "period_end": "2026-07-26",
+                "value": 96221000000.0,
+                "filed": "2026-08-26",
+                "form": "10-Q",
+                "accession_number": "0001045810-26-000075",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.6084333483088377,
+            "prior_period_end": "2025-07-27",
+            "yoy_change": 0.053937651784697005,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001045810-26-000075",
+        "filed": "2026-08-26",
+        "report_date": "2026-07-26",
+        "primary_document": "nvda-20260726.htm",
+        "sha256": "bd3f27471f8ec978357f9a6f10121c41f788bb946b0fa1fe100e5d37e64e871a"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001045810-26-000052",
+        "filed": "2026-05-20",
+        "report_date": "2026-04-26",
+        "primary_document": "nvda-20260426.htm",
+        "sha256": "fb0363d34160d2cb9c1fcbbbda62c592a8e585a14e416cf8c70fba6fb7cb17cd"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001045810-26-000021",
+        "filed": "2026-02-25",
+        "report_date": "2026-01-25",
+        "primary_document": "nvda-20260125.htm",
+        "sha256": "d9135ae2801ec96e80398e2ddf0daa523b3a500ccf939ecf2ff150bdd13ab0dc"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 720
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:2598-3751",
+      "excerpt": "k, $0.001 par value, outstanding as of August 21, 2026, was 24.1 billion. NVIDIA Corporation Form 10-Q For the Quarter Ended July 26, 2026 Table of Contents Page Part I . Financial Information Item 1. Financial Statements (Unaudited) a) Condensed Consolidated Statements of Income for the three and six months ended July 26, 2026 and July 27, 2025 3 b) Condensed Consolidated Statements of Comprehensive Income for the three and six months ended July 26, 2026 and July 27, 2025 4 c) Condensed Consolidated Balance Sheets as of July 26, 2026 and January 25, 2026 5 d) Condensed Consolidated Statements of Shareholders’ Equity for the three and six months ended July 26, 2026 and July 27, 2025 6 e) Condensed Consolidated Statements of Cash Flows for the six months ended July 26, 2026 and July 27, 2025 8 f) Notes to Condensed Consolidated Financial Statements 9 Item 2. Management’s Discussion and Analysis of Financial Condition and Results of Operations 25 Item 3. Quantitative and Qualitative Disclosures About Market Risk 33 Item 4. Controls and Procedures 33 Part II . Other Information Item 1. Legal Proceedings 34 Item 1A. Risk Factors 34 Item 2.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:191068-192240",
+      "excerpt": "with our vendors. Refer to “Item 1A. Risk Factors – Risks Related to Regulatory, Legal, Our Stock and Other Matters” for a further discussion of the potential impact of these factors on our business. Fiscal Year 2026 Summary Year Ended Jan 25, 2026 Jan 26, 2025 Change ($ in millions, except per share data) Revenue $ 215,938 $ 130,497 Up 65% Gross margin 71.1 % 75.0 % -3.9 pts Operating expenses $ 23,076 $ 16,405 Up 41% Operating income $ 130,387 $ 81,453 Up 60% Net income $ 120,067 $ 72,880 Up 65% Net income per diluted share $ 4.90 $ 2.94 Up 67% Revenue for fiscal year 2026 was $215.9 billion, up 65% from a year ago. Data Center revenue for fiscal year 2026 was up 68% from a year ago. The strong year-on-year growth was driven by the major platform shifts – accelerated computing and AI. Gaming revenue for fiscal year 2026 was up 41% from a year ago, driven by strong Blackwell demand. We expect supply constraints to be a headwind to Gaming in the first quarter of fiscal 2027 and beyond. Professional Visualization revenue for fiscal year 2026 was up 70% from a year ago, driven by exceptional demand for Blackwell as well as the launch of our new DGX Spark.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:89683-90659",
+      "excerpt": "and first half of fiscal year 2026, respectively. The net effect on our gross margin was an unfavorable impact of 1.1% and 5.9% in the second quarter and first half of fiscal year 2026, respectively. Operating Expenses Three Months Ended Six Months Ended Jul 26, 2026 Jul 27, 2025 $ Change % Change Jul 26, 2026 Jul 27, 2025 $ Change % Change ($ in millions) Research and development $ 7,054 $ 4,291 $ 2,763 64 % $ 13,375 $ 8,280 $ 5,095 62 % Sales, general and administrative 1,354 1,122 232 21 % 2,654 2,163 491 23 % Total operating expenses $ 8,408 $ 5,413 $ 2,995 55 % $ 16,029 $ 10,443 $ 5,586 53 % The increases in research and development expenses for the second quarter and first half of fiscal year 2027 were primarily driven by a 127% and 120% increase in compute infrastructure, respectively, and a 30% increase in each fiscal year 2027 period in compensation and benefits, including stock-based compensation, reflecting employee growth and compensation increases.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:71537-72530",
+      "excerpt": "d inventory and settlements of excess inventory purchase obligations resulted in a provision release of $103 million and $436 million for the first quarter of fiscal years 2027 and 2026, respectively. The net effect on our gross margin was an unfavorable impact of 1.2% and 11.0% in the first quarter of fiscal years 2027 and 2026, respectively. Operating Expenses Three Months Ended Apr 26, 2026 Apr 27, 2025 $ Change % Change ($ in millions) Research and development $ 6,321 $ 3,989 $ 2,332 58 % Sales, general and administrative 1,300 1,041 259 25 % Total operating expenses $ 7,621 $ 5,030 $ 2,591 52 % The increase in research and development expenses for the first quarter of fiscal year 2027 was primarily driven by a 112% increase in compute and infrastructure, a 31% increase in compensation and benefits, including stock-based compensation, reflecting employee growth and compensation increases, and a 204% increase in engineering development materials for new product introductions.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:52287-53197",
+      "excerpt": "$ 101 million for the first quarter of fiscal years 2027 and 2026, respectively. Short-term, variable, and finance lease costs for the first quarter of fiscal years 2027 and 2026 were not significant. Other information related to leases was as follows: Three Months Ended Apr 26, 2026 Apr 27, 2025 (In millions) Supplemental cash flows information Operating cash flow used for operating leases $ 185 $ 96 Operating lease assets obtained in exchange for lease obligations $ 1,516 $ 98 21 NVIDIA Corporation and Subsidiaries Notes to Condensed Consolidated Financial Statements (Continued) (Unaudited) As of April 26, 2026, our operating leases have a weighted average remaining lease term of 10.4 years and a weighted average discount rate of 4.61 %. As of January 25, 2026, our operating leases had a weighted average remaining lease term of 8.8 years and a weighted average discount rate of 4.38 %. 22 Item 2.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:78740-79776",
+      "excerpt": "our costs. Within our supply chain, we continuously manage product availability and costs with our vendors. Refer to Part II, Item 1A, “Risk Factors” for a discussion of these factors and other risks. Second Quarter of Fiscal Year 2027 Summary Three Months Ended Quarter-over-Quarter Change Year-over-Year Change Jul 26, 2026 Apr 26, 2026 Jul 27, 2025 ($ in millions, except per share data) Revenue $ 96,221 $ 81,615 $ 46,743 18 % 106 % Gross margin 75.0 % 74.9 % 72.4 % 0.1 pts 2.6 pts Operating expenses $ 8,408 $ 7,621 $ 5,413 10 % 55 % Operating income $ 63,734 $ 53,536 $ 28,440 19 % 124 % Net income $ 59,688 $ 58,321 $ 26,422 2 % 126 % Net income per diluted share $ 2.46 $ 2.39 $ 1.08 3 % 128 % We specialize in markets where our computing platforms can provide tremendous acceleration for applications. These platforms incorporate processors, interconnects, software, algorithms, systems, and services to deliver unique value. Our platforms address large markets where our expertise is critical: Data Center and Edge Computing.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": "2026-04-27",
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/0001045810-26-000075-index.htm",
+      "locator": "OperatingIncome 2026-04-27..2026-07-26",
+      "excerpt": null,
+      "values": [
+        63734000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": "2026-04-27",
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/0001045810-26-000075-index.htm",
+      "locator": "Revenue 2026-04-27..2026-07-26",
+      "excerpt": null,
+      "values": [
+        96221000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": "2025-04-28",
+      "period_end": "2025-07-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/0001045810-26-000075-index.htm",
+      "locator": "OperatingIncome 2025-04-28..2025-07-27",
+      "excerpt": null,
+      "values": [
+        28440000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": "2025-04-28",
+      "period_end": "2025-07-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/0001045810-26-000075-index.htm",
+      "locator": "Revenue 2025-04-28..2025-07-27",
+      "excerpt": null,
+      "values": [
+        46743000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "NVDA",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": null,
+      "locator": "OperatingMargin level quarter @ 2026-07-26",
+      "excerpt": null,
+      "values": [
+        0.6623710000935347,
+        0.6084333483088377,
+        0.053937651784697005
+      ],
+      "unit": "ratio",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:67059-68129",
+      "excerpt": "pr 26, 2026 Apr 27, 2025 $ Change % Change ($ in millions) Compute & Networking $ 53,335 $ 22,054 $ 31,281 142 % Graphics 2,941 1,640 1,301 79 % Total $ 56,276 $ 23,694 $ 32,582 138 % Compute & Networking revenue – The year-over-year increase in the first quarter of fiscal year 2027 was due to growth in Data Center products, driven by the ramp of our Blackwell systems and demand for our InfiniBand, Spectrum-X Ethernet, and NVLink solutions. Graphics revenue – The year-over-year increase in the first quarter of fiscal year 2027 was driven by sales of our Blackwell architecture. Reportable segment operating income – The year-over-year increase in Compute & Networking segment operating income in the first quarter of fiscal year 2027 was driven by the growth in revenue and the non-recurrence of a $4.5 billion charge associated with H20 excess inventory and purchase obligations in the first quarter of fiscal year 2026. The year-over-year increase in Graphics segment operating income in the first quarter of fiscal year 2027 was driven by the growth in revenue.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:84240-85412",
+      "excerpt": "cture. Reportable segment operating income – The year-over-year increase in Compute & Networking segment operating income in the second quarter of fiscal year 2027 was driven by the growth in revenue. The year-over-year increase in Compute & Networking segment operating income in the first half of fiscal year 2027 was driven by the growth in revenue and the non-recurrence of a $4.5 billion charge associated with H20 excess inventory and purchase obligations in the first quarter of fiscal year 2026. The year-over-year increase in Graphics segment operating income in the second quarter and first half of fiscal year 2027 was driven by the growth in revenue. Concentration of Revenue We refer to customers who purchase products directly from NVIDIA as direct customers, such as AIBs, distributors, ODMs, OEMs, CSPs, AI model makers, and system integrators. Certain direct customers may use either internal resources or third-party system integrators to complete their build. We refer to indirect customers as those who purchase products through our direct customers; indirect customers include CSPs, AI clouds, AI model makers, enterprises, and public sector entities.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:62122-63275",
+      "excerpt": "46,743 $ 177,837 $ 90,805 Note 14 - Leases Our lease obligations primarily consist of operating leases for our data centers and offices, with lease periods expiring between fiscal years 2027 and 2075. Future minimum lease obligations under our non-cancelable lease agreements as of July 26, 2026, were as follows: Operating Lease Obligations (In millions) Fiscal Year: 2027 (the second half of fiscal year 2027) $ 354 2028 718 2029 715 2030 648 2031 586 2032 and thereafter 4,186 Total 7,207 Less imputed interest 1,713 Present value of net future minimum lease payments 5,494 Less short-term operating lease liabilities 509 Long-term operating lease liabilities $ 4,985 As of July 26, 2026, our operating leases have a weighted average remaining lease term of 10.9 years and a weighted average discount rate of 4.69 %. As of January 25, 2026, our operating leases had a weighted average remaining lease term of 8.8 years and a weighted average discount rate of 4.38 %. Operating lease costs were $ 208 million and $ 109 million for the second quarter, and $ 379 million and $ 210 million for the first half, of fiscal years 2027 and 2026, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:56222-57422",
+      "excerpt": "ased compensation expense, corporate infrastructure and support costs, acquisition-related and other costs, and other non-recurring charges and benefits that our CODM deems to be enterprise in nature. Our CODM does not review any information regarding total assets on a reportable segment basis. There are no intersegment transactions. The accounting policies for segment reporting are the same as for our consolidated financial statements. The table below presents details of our reportable segments. Compute & Networking Graphics Total (In millions) Three Months Ended Jul 26, 2026 Revenue $ 88,299 $ 7,922 $ 96,221 Other segment items (1) 25,603 4,023 29,626 Operating income $ 62,696 $ 3,899 $ 66,595 Three Months Ended Jul 27, 2025 Revenue $ 41,331 $ 5,412 $ 46,743 Other segment items (1) 12,968 3,170 16,138 Operating income $ 28,363 $ 2,242 $ 30,605 Six Months Ended Jul 26, 2026 Revenue $ 162,850 $ 14,987 $ 177,837 Other segment items (1) 46,819 8,147 54,966 Operating income $ 116,031 $ 6,840 $ 122,871 Six Months Ended Jul 27, 2025 Revenue $ 80,920 $ 9,885 $ 90,805 Other segment items (1) 30,503 6,003 36,506 Operating income $ 50,417 $ 3,882 $ 54,299 (1) Other segment items primarily i",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:47155-48301",
+      "excerpt": "are no intersegment transactions. The accounting policies for segment reporting are the same as for our consolidated financial statements. The table below presents details of our reportable segments. Compute & Networking Graphics Total (In millions) Three Months Ended Apr 26, 2026 Revenue $ 74,550 $ 7,065 $ 81,615 Other segment items (1) 21,215 4,124 25,339 Operating income $ 53,335 $ 2,941 $ 56,276 Three Months Ended Apr 27, 2025 Revenue $ 39,589 $ 4,473 $ 44,062 Other segment items (1) 17,535 2,833 20,368 Operating income $ 22,054 $ 1,640 $ 23,694 (1) Other segment items primarily include product costs and inventory provisions, compensation and benefits excluding stock-based compensation expense, computing infrastructure expenses, and engineering development costs. Depreciation and amortization expense attributable to our Compute & Networking segment was $ 526 million and $ 296 million for the first quarter of fiscal years 2027 and 2026, respectively. Depreciation and amortization expense attributable to our Graphics segment was $ 194 million and $ 109 million for the first quarter of fiscal years 2027 and 2026, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:57222-58283",
+      "excerpt": "840 $ 122,871 Six Months Ended Jul 27, 2025 Revenue $ 80,920 $ 9,885 $ 90,805 Other segment items (1) 30,503 6,003 36,506 Operating income $ 50,417 $ 3,882 $ 54,299 (1) Other segment items primarily include product costs and inventory provisions, compensation and benefits excluding stock-based compensation expense, computing infrastructure expenses, and engineering development costs. Depreciation and amortization expense attributable to our Compute & Networking segment was $ 642 million and $ 383 million for the second quarter, and $ 1.2 billion and $ 684 million for the first half, of fiscal years 2027 and 2026, respectively. Depreciation and amortization expense attributable to our Graphics segment was $ 204 million and $ 148 million for the second quarter, and $ 399 million and $ 252 million for the first half, of fiscal years 2027 and 2026, respectively. Acquisition-related intangible amortization expense is not allocated to either Compute & Networking or Graphics for purposes of making operating decisions or assessing financial performance.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:83351-84440",
+      "excerpt": "% $ 162,850 $ 80,920 $ 81,930 101 % Graphics 7,922 5,412 2,510 46 % 14,987 9,885 5,102 52 % Total $ 96,221 $ 46,743 $ 49,478 106 % $ 177,837 $ 90,805 $ 87,032 96 % 28 Operating Income by Reportable Segments Three Months Ended Six Months Ended Jul 26, 2026 Jul 27, 2025 $ Change % Change Jul 26, 2026 Jul 27, 2025 $ Change % Change ($ in millions) Compute & Networking $ 62,696 $ 28,363 $ 34,333 121 % $ 116,031 $ 50,417 $ 65,614 130 % Graphics 3,899 2,242 1,657 74 % 6,840 3,882 2,958 76 % Total $ 66,595 $ 30,605 $ 35,990 118 % $ 122,871 $ 54,299 $ 68,572 126 % Compute & Networking revenue – The year-over-year increase in the second quarter and first half of fiscal year 2027 was driven by the ramp of our Blackwell Ultra infrastructure. Graphics revenue – The year-over-year increase in the second quarter and first half of fiscal year 2027 was driven by sales of our Blackwell architecture. Reportable segment operating income – The year-over-year increase in Compute & Networking segment operating income in the second quarter of fiscal year 2027 was driven by the growth in revenue.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:95505-96491",
+      "excerpt": "r 2027, substantially all of our cash, cash equivalents, and marketable debt securities held outside the U.S. were available for use in the U.S. without incurring additional U.S. federal income taxes. 31 The exception is approximately $1.7 billion, for which we have not accrued the related foreign or state taxes that repatriation would trigger. We made two federal income tax payments in the second quarter of fiscal year 2027, as compared with no estimated tax payments in the first quarter of fiscal year 2027. Capital Return to Shareholders In the second quarter and first half of fiscal year 2027, we repurchased 94 million and 203 million shares of our common stock for $19.7 billion and $39.8 billion, respectively. On May 18, 2026, our Board of Directors approved an additional $80.0 billion in share repurchase authorization, without expiration. As of July 26, 2026, we were authorized, subject to certain specifications, to repurchase up to $99.3 billion of our common stock.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E19"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:213292-214316",
+      "excerpt": "l of our cash, cash equivalents and marketable securities held outside the U.S. at the end of fiscal year 2026 are available for use in the U.S. without incurring additional U.S. federal income taxes. Our first quarter of any fiscal year (including fiscal year 2027) generally does not include any estimated federal and state income tax payments and our second quarter of any fiscal year (including fiscal year 2027) generally includes two estimated federal and state income tax payments. Capital Return to Shareholders On August 26, 2025, our Board of Directors approved an additional $60.0 billion in share repurchase authorization, without expiration. In fiscal year 2026, we repurchased 282 million shares of our common stock for $40.4 billion. As of January 25, 2026, we were authorized, subject to certain specifications, to repurchase up to $58.5 billion of our common stock. From January 26, 2026 through February 20, 2026, we repurchased 8 million shares for $1.5 billion pursuant to a pre-established trading plan.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E20"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E6",
+      "quote": "Three Months Ended Quarter-over-Quarter Change Year-over-Year Change Jul 26, 2026 Apr 26, 2026 Jul 27, 2025 ($ in millions, except per share data) Revenue $ 96,221 $ 81,615 $ 46,743 18 % 106 % Gross margin 75.0 % 74.9 % 72.4 % 0.1 pts 2.6 pts Operating expenses $ 8,408 $ 7,621 $ 5,413 10 % 55 % Operating income $ 63,734 $ 53,536 $ 28,440 19 % 124 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:78740-79776"
+    },
+    {
+      "evidence_id": "E11",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_end": "2026-07-26",
+      "source_url": null,
+      "locator": "OperatingMargin level quarter @ 2026-07-26"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 19503,
+    "output": 1780
+  },
+  "latency_ms": 9,
+  "estimated_cost_usd": 0.085209,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_ALL_TRUE",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_ALL_TRUE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

@@ -1,0 +1,657 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A2_rag_numeric:GOLD-AAPL-01:08739a3c",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A2_rag_numeric",
+  "approach_kind": "financial_verification",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A2_rag_numeric",
+    "kind": "financial_verification",
+    "description": "A1 + deterministic numeric verification"
+  },
+  "config_hash": "53b859cfe39ca3b0",
+  "claim": {
+    "claim_id": "GOLD-AAPL-01",
+    "company": "AAPL",
+    "claim": "Apple's total net sales for the quarter ended December 27, 2025 increased by more than 15% year over year.",
+    "as_of_date": "2026-02-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026 Q1"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2025-12-27",
+            "comparison": ">",
+            "threshold": null,
+            "stated_value": null
+          },
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2025-12-27",
+            "comparison": ">",
+            "threshold": 0.15,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Total net sales $ 143,756 $ 124,300 16 %"
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "Total net sales $ 143,756 $ 124,300 16 %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Apple's total net sales for the quarter ended December 27, 2025 increased by more than 15% year over year. Evidence E1 and E3 both show a table with total net sales for the three months ended December 27, 2025 of $143,756 million compared to $124,300 million for December 28, 2024, representing a 16% increase. Since 16% is greater than 15%, the claim is supported by the evidence.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2025-12-27",
+            "comparison": ">",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "THRESHOLD_MISSING"
+          ],
+          "computed": {
+            "period_end": "2025-12-27",
+            "basis": "quarter",
+            "level": 143756000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-09-28",
+                "period_end": "2025-12-27",
+                "value": 143756000000.0,
+                "filed": "2026-01-30",
+                "form": "10-Q",
+                "accession_number": "0000320193-26-000006",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 124300000000.0,
+            "prior_period_end": "2024-12-28",
+            "yoy_change": 0.15652453740949315,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        },
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2025-12-27",
+            "comparison": ">",
+            "threshold": 0.15,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-27",
+            "basis": "quarter",
+            "level": 143756000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-09-28",
+                "period_end": "2025-12-27",
+                "value": 143756000000.0,
+                "filed": "2026-01-30",
+                "form": "10-Q",
+                "accession_number": "0000320193-26-000006",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 124300000000.0,
+            "prior_period_end": "2024-12-28",
+            "yoy_change": 0.15652453740949315,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E10",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "8105b601cbaf2e726058cbd1a3a7db8d95cc1c34d479b1f4e858b7bd8b6cbf45",
+      "source": "cache",
+      "input_tokens": 4312,
+      "output_tokens": 489,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2025-12-27",
+            "comparison": ">",
+            "threshold": null,
+            "stated_value": null
+          },
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2025-12-27",
+            "comparison": ">",
+            "threshold": 0.15,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Total net sales $ 143,756 $ 124,300 16 %"
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "Total net sales $ 143,756 $ 124,300 16 %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Apple's total net sales for the quarter ended December 27, 2025 increased by more than 15% year over year. Evidence E1 and E3 both show a table with total net sales for the three months ended December 27, 2025 of $143,756 million compared to $124,300 million for December 28, 2024, representing a 16% increase. Since 16% is greater than 15%, the claim is supported by the evidence.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Apple's total net sales for the quarter ended December 27, 2025 increased by more than 15% year over year. FY2026 Q1",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2025-12-27",
+            "comparison": ">",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "THRESHOLD_MISSING"
+          ],
+          "computed": {
+            "period_end": "2025-12-27",
+            "basis": "quarter",
+            "level": 143756000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-09-28",
+                "period_end": "2025-12-27",
+                "value": 143756000000.0,
+                "filed": "2026-01-30",
+                "form": "10-Q",
+                "accession_number": "0000320193-26-000006",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 124300000000.0,
+            "prior_period_end": "2024-12-28",
+            "yoy_change": 0.15652453740949315,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        },
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2025-12-27",
+            "comparison": ">",
+            "threshold": 0.15,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-27",
+            "basis": "quarter",
+            "level": 143756000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-09-28",
+                "period_end": "2025-12-27",
+                "value": 143756000000.0,
+                "filed": "2026-01-30",
+                "form": "10-Q",
+                "accession_number": "0000320193-26-000006",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 124300000000.0,
+            "prior_period_end": "2024-12-28",
+            "yoy_change": 0.15652453740949315,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E10",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-26-000006",
+        "filed": "2026-01-30",
+        "report_date": "2025-12-27",
+        "primary_document": "aapl-20251227.htm",
+        "sha256": "2d32cfc574b8a8301a1a165a93640ef5ab0de6e140054ccb16ded56d3bb02a78"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0000320193-25-000079",
+        "filed": "2025-10-31",
+        "report_date": "2025-09-27",
+        "primary_document": "aapl-20250927.htm",
+        "sha256": "056f733f13ff7407e64dc81fb96da3c3c55a6ba429bf094f57cb6bd472231f82"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-25-000073",
+        "filed": "2025-08-01",
+        "report_date": "2025-06-28",
+        "primary_document": "aapl-20250628.htm",
+        "sha256": "ba858d7226fd3b1b96e238909897dbe1b98b47250453a71b090ccb45fc4a7534"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 369
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:34468-35629",
+      "excerpt": "Rest of Asia Pacific Rest of Asia Pacific net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPhone and Services. Apple Inc. | Q1 2026 Form 10-Q | 14 Products and Services Performance The following table shows net sales by category for the three months ended December 27, 2025 and December 28, 2024 (dollars in millions): Three Months Ended December 27, 2025 December 28, 2024 Change iPhone $ 85,269 $ 69,138 23 % Mac 8,386 8,987 (7) % iPad 8,595 8,088 6 % Wearables, Home and Accessories 11,493 11,747 (2) % Services 30,013 26,340 14 % Total net sales $ 143,756 $ 124,300 16 % iPhone iPhone net sales increased during the first quarter of 2026 compared to the same quarter in 2025 due to higher net sales of Pro models. Mac Mac net sales decreased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to lower net sales of laptops and desktops. iPad iPad net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPad and iPad Pro, partially offset by lower net sales of iPad mini ® .",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:35837-36948",
+      "excerpt": "es Services net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales from advertising, the App Store ® and cloud services. Apple Inc. | Q1 2026 Form 10-Q | 15 Gross Margin Products and Services gross margin and gross margin percentage for the three months ended December 27, 2025 and December 28, 2024, were as follows (dollars in millions): Three Months Ended December 27, 2025 December 28, 2024 Gross margin: Products $ 46,265 $ 38,513 Services 22,966 19,762 Total gross margin $ 69,231 $ 58,275 Gross margin percentage: Products 40.7 % 39.3 % Services 76.5 % 75.0 % Total gross margin percentage 48.2 % 46.9 % Products Gross Margin Products gross margin and gross margin percentage increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to a different mix of products, partially offset by tariff costs. Services Gross Margin Services gross margin increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher Services net sales and a different mix of services.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:32891-34012",
+      "excerpt": "and reductions in consumer spending and negative consumer sentiment for the Company’s products and services, all of which can further adversely affect the Company’s business and results of operations. Segment Operating Performance The following table shows net sales by reportable segment for the three months ended December 27, 2025 and December 28, 2024 (dollars in millions): Three Months Ended December 27, 2025 December 28, 2024 Change Americas $ 58,529 $ 52,648 11 % Europe 38,146 33,861 13 % Greater China 25,526 18,513 38 % Japan 9,413 8,987 5 % Rest of Asia Pacific 12,142 10,291 18 % Total net sales $ 143,756 $ 124,300 16 % Americas Americas net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPhone and Services. Europe Europe net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPhone and Services. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Europe net sales during the first quarter of 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:12737-13937",
+      "excerpt": "ote 10, “Segment Information” for the three months ended December 27, 2025 and December 28, 2024, except in Greater China, where iPhone revenue represented a moderately higher proportion of net sales. As of December 27, 2025 and September 27, 2025, the Company had total deferred revenue of $ 14.3 billion and $ 13.7 billion, respectively. As of December 27, 2025, the Company expects 66 % of total deferred revenue to be realized in less than a year, 23 % within one-to-two years, 9 % within two-to-three years and 2 % in greater than three years. Apple Inc. | Q1 2026 Form 10-Q | 6 Note 3 – Earnings Per Share The following table shows the computation of basic and diluted earnings per share for the three months ended December 27, 2025 and December 28, 2024 (net income in millions and shares in thousands): Three Months Ended December 27, 2025 December 28, 2024 Numerator: Net income $ 42,097 $ 36,330 Denominator: Weighted-average basic shares outstanding 14,748,158 15,081,724 Effect of dilutive share-based awards 62,198 69,141 Weighted-average diluted shares 14,810,356 15,150,865 Basic earnings per share $ 2.85 $ 2.41 Diluted earnings per share $ 2.84 $ 2.40 Note 4 – Financial Instruments",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:37272-38221",
+      "excerpt": "and Part II, Item 1A of this Form 10-Q, in each case under the heading “Risk Factors.” As a result, the Company believes, in general, gross margins will be subject to volatility and downward pressure. Operating Expenses Operating expenses for the three months ended December 27, 2025 and December 28, 2024, were as follows (dollars in millions): Three Months Ended December 27, 2025 December 28, 2024 Change Research and development $ 10,887 $ 8,268 32 % Percentage of total net sales 8 % 7 % Selling, general and administrative $ 7,492 $ 7,175 4 % Percentage of total net sales 5 % 6 % Total operating expenses $ 18,379 $ 15,443 19 % Percentage of total net sales 13 % 12 % Research and Development The growth in research and development (“R&D”) expense during the first quarter of 2026 compared to the same quarter in 2025 was primarily driven by increases in infrastructure-related costs, headcount-related expenses and engineering program costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000073",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628.htm",
+      "locator": "10-Q 0000320193-25-000073:36169-37369",
+      "excerpt": "due primarily to higher net sales of iPhone and Services. The strength in the yen relative to the U.S. dollar had a favorable year-over-year impact on Japan net sales during the third quarter of 2025. Rest of Asia Pacific Rest of Asia Pacific net sales increased during the third quarter and first nine months of 2025 compared to the same periods in 2024 due primarily to higher net sales of Services and iPhone. Apple Inc. | Q3 2025 Form 10-Q | 14 Products and Services Performance The following table shows net sales by category for the three- and nine-month periods ended June 28, 2025 and June 29, 2024 (dollars in millions): Three Months Ended Nine Months Ended June 28, 2025 June 29, 2024 Change June 28, 2025 June 29, 2024 Change iPhone $ 44,582 $ 39,296 13 % $ 160,561 $ 154,961 4 % Mac 8,046 7,009 15 % 24,982 22,240 12 % iPad 6,581 7,162 (8) % 21,071 19,744 7 % Wearables, Home and Accessories 7,404 8,097 (9) % 26,673 27,963 (5) % Services 27,423 24,213 13 % 80,408 71,197 13 % Total net sales $ 94,036 $ 85,777 10 % $ 313,695 $ 296,105 6 % iPhone iPhone net sales increased during the third quarter and first nine months of 2025 compared to the same periods in 2024 due to higher net sale",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": "2025-09-28",
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/0000320193-26-000006-index.htm",
+      "locator": "Revenue 2025-09-28..2025-12-27",
+      "excerpt": null,
+      "values": [
+        143756000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": "2024-09-29",
+      "period_end": "2024-12-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/0000320193-26-000006-index.htm",
+      "locator": "Revenue 2024-09-29..2024-12-28",
+      "excerpt": null,
+      "values": [
+        124300000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "AAPL",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": null,
+      "locator": "Revenue level quarter @ 2025-12-27",
+      "excerpt": null,
+      "values": [
+        143756000000.0,
+        124300000000.0,
+        0.15652453740949315
+      ],
+      "unit": "USD",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "AAPL",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2025-12-27",
+      "excerpt": null,
+      "values": [
+        143756000000.0,
+        124300000000.0,
+        0.15652453740949315
+      ],
+      "unit": "ratio",
+      "evidence_id": "E10"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "Total net sales $ 143,756 $ 124,300 16 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:34468-35629"
+    },
+    {
+      "evidence_id": "E3",
+      "quote": "Total net sales $ 143,756 $ 124,300 16 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:32891-34012"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 4312,
+    "output": 489
+  },
+  "latency_ms": 30,
+  "estimated_cost_usd": 0.020271,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "financial_verification",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 24,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+        "checks": [
+          "UNVERIFIABLE",
+          "TRUE"
+        ]
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

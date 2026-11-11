@@ -3,8 +3,9 @@ import json
 
 import pytest
 
-from engine.datasets import (ADJUDICATED, AGREED, DISAGREED, PENDING, SINGLE, append_adjudication, check_split_separation,
-                             cohen_kappa, finalized_gold, gold_status, load_adjudications, load_claims, load_split)
+from engine.datasets import (ADJUDICATED, AGREED, DISAGREED, PENDING, SINGLE, append_adjudication, bootstrap_agreement,
+                             check_split_separation, cohen_kappa, finalized_gold, fleiss_kappa, gold_status,
+                             krippendorff_alpha_nominal, load_adjudications, load_claims, load_split)
 from engine.schema import Adjudication, Annotation, ClaimInput, DatasetClaim, SchemaError
 
 
@@ -100,3 +101,28 @@ def test_cohen_kappa():
     assert cohen_kappa([("A", "A"), ("B", "B")]) == 1.0
     assert cohen_kappa([("A", "B"), ("B", "A")]) == -1.0
     assert cohen_kappa([]) is None
+
+
+# Expected values from statsmodels.stats.inter_rater.fleiss_kappa and the `krippendorff` package.
+THREE_RATERS = [["A", "A", "B"], ["A", "A", "A"], ["B", "B", "B"], ["C", "B", "C"], ["A", "C", "C"], ["B", "B", "A"]]
+
+
+def test_fleiss_kappa():
+    assert fleiss_kappa(THREE_RATERS) == pytest.approx(0.3142857142857143)
+    assert fleiss_kappa([["A", "A", "A"], ["B", "B", "B"]]) == 1.0
+    assert fleiss_kappa([]) is None
+    with pytest.raises(ValueError):
+        fleiss_kappa([["A", "A"], ["A", "B", "B"]])
+
+
+def test_krippendorff_alpha_nominal():
+    assert krippendorff_alpha_nominal(THREE_RATERS) == pytest.approx(0.35238095238095246)
+    with_missing = [["A", "A", None], ["A", "B", "B"], ["C", None, None], ["B", "B", "B"], [None, "C", "C"]]
+    assert krippendorff_alpha_nominal(with_missing) == pytest.approx(0.7096774193548387)
+    assert krippendorff_alpha_nominal([["A", None]]) is None
+
+
+def test_bootstrap_agreement_is_reproducible_and_brackets_estimate():
+    lo, hi = bootstrap_agreement(THREE_RATERS * 5, fleiss_kappa, n_boot=300)
+    assert (lo, hi) == bootstrap_agreement(THREE_RATERS * 5, fleiss_kappa, n_boot=300)
+    assert lo <= fleiss_kappa(THREE_RATERS * 5) <= hi

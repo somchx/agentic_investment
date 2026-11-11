@@ -1,0 +1,1220 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-AAPL-12:33ae7c26",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-AAPL-12",
+    "company": "AAPL",
+    "claim": "Apple's fiscal 2025 results show that its profitability was resilient despite new tariff costs.",
+    "as_of_date": "2025-11-30",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "INSUFFICIENT_EVIDENCE",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Products gross margin increased during 2025 compared to 2024 primarily due to favorable costs and a different mix of products, partially offset by tariff costs."
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "Total gross margin $ 195,201 $ 180,683 $ 169,148 Gross margin percentage: Products 36.8 % 37.2 % 36.5 % Services 75.4 % 73.9 % 70.8 % Total gross margin percentage 46.9 % 46.2 % 44.1 %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Apple's profitability was \"resilient despite new tariff costs\" in fiscal 2025. This is an interpretive claim about the qualitative nature of profitability performance in the face of tariff headwinds.\n\nThe evidence shows:\n1. Total gross margin percentage increased from 46.2% (FY2024) to 46.9% (FY2025), indicating improved profitability at the gross margin level.\n2. Products gross margin increased in absolute terms despite tariff costs being explicitly mentioned as a partial offset.\n3. E1 states that tariff costs partially offset favorable costs and product mix, but gross margin still increased.\n\nHowever, the claim uses the term \"profitability\" broadly, which could encompass not just gross margin but also operating margin, net margin, or net income. The evidence provided only addresses gross margin metrics. There is no evidence about operating income, operating margin, net income, or net margin for fiscal 2025 to fully assess overall \"profitability.\"\n\nWhile the gross margin data suggests resilience, without comprehensive profitability metrics (operating and net income levels), I cannot fully verify that Apple's overall \"profitability was resilient.\" The evidence is insufficient to support the complete claim about profitability in general, though it does support resilience at the gross margin level specifically.",
+        "confidence": "medium"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did operating margin or net margin actually decline in fiscal 2025 despite gross margin improvement, which would contradict the claim of resilient profitability?",
+          "search_query": "operating income operating margin net income net margin fiscal 2025 2024",
+          "numeric_check": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-09-27",
+            "comparison": ">=",
+            "threshold": null,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Did net income actually decrease in fiscal 2025 compared to 2024, which would undermine the resilience claim?",
+          "search_query": "net income earnings fiscal year 2025 2024 comparison",
+          "numeric_check": {
+            "metric": "NetIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-09-27",
+            "comparison": ">=",
+            "threshold": 0,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Were there significant one-time charges, restructuring costs, or other unusual items in fiscal 2025 that masked underlying profitability deterioration?",
+          "search_query": "restructuring charges one-time items unusual expenses special charges fiscal 2025",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "operating income operating margin net income net margin fiscal 2025 2024",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "net income earnings fiscal year 2025 2024 comparison",
+          "results": [
+            "E15",
+            "E16",
+            "E17"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "restructuring charges one-time items unusual expenses special charges fiscal 2025",
+          "results": [
+            "E21",
+            "E22",
+            "E23"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E15",
+        "E16",
+        "E17",
+        "E21",
+        "E22",
+        "E23"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "THRESHOLD_MISSING"
+          ],
+          "computed": {
+            "period_end": "2025-09-27",
+            "basis": "annual",
+            "level": 0.31970799762591884,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2024-09-29",
+                "period_end": "2025-09-27",
+                "value": 133050000000.0,
+                "filed": "2025-10-31",
+                "form": "10-K",
+                "accession_number": "0000320193-25-000079",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2024-09-29",
+                "period_end": "2025-09-27",
+                "value": 416161000000.0,
+                "filed": "2025-10-31",
+                "form": "10-K",
+                "accession_number": "0000320193-25-000079",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.31510222870075566,
+            "prior_period_end": "2024-09-28",
+            "yoy_change": 0.004605768925163178,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E14",
+            "E10",
+            "E11",
+            "E12",
+            "E13"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-09-27",
+            "basis": "annual",
+            "level": 112010000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "NetIncome",
+                "period_start": "2024-09-29",
+                "period_end": "2025-09-27",
+                "value": 112010000000.0,
+                "filed": "2025-10-31",
+                "form": "10-K",
+                "accession_number": "0000320193-25-000079",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 93736000000.0,
+            "prior_period_end": "2024-09-28",
+            "yoy_change": 0.19495177946573355,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E20",
+            "E18",
+            "E19"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "Operating income 133,050 123,216 114,301",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-25-000079",
+              "form": "10-K",
+              "filed": "2025-10-31",
+              "period_end": "2025-09-27",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+              "locator": "10-K 0000320193-25-000079:125931-127131"
+            },
+            {
+              "evidence_id": "E7",
+              "quote": "Net income $ 112,010 $ 93,736 $ 96,995",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-25-000079",
+              "form": "10-K",
+              "filed": "2025-10-31",
+              "period_end": "2025-09-27",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+              "locator": "10-K 0000320193-25-000079:125931-127131"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E15",
+              "quote": "Net income $ 112,010 $ 93,736 $ 96,995",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-25-000079",
+              "form": "10-K",
+              "filed": "2025-10-31",
+              "period_end": "2025-09-27",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+              "locator": "10-K 0000320193-25-000079:142125-143325"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "6d11b577a7209c82a716f3698197973809f00f09b90acc86c21564884ba0afaa",
+      "source": "cache",
+      "input_tokens": 3912,
+      "output_tokens": 609,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Products gross margin increased during 2025 compared to 2024 primarily due to favorable costs and a different mix of products, partially offset by tariff costs."
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "Total gross margin $ 195,201 $ 180,683 $ 169,148 Gross margin percentage: Products 36.8 % 37.2 % 36.5 % Services 75.4 % 73.9 % 70.8 % Total gross margin percentage 46.9 % 46.2 % 44.1 %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Apple's profitability was \"resilient despite new tariff costs\" in fiscal 2025. This is an interpretive claim about the qualitative nature of profitability performance in the face of tariff headwinds.\n\nThe evidence shows:\n1. Total gross margin percentage increased from 46.2% (FY2024) to 46.9% (FY2025), indicating improved profitability at the gross margin level.\n2. Products gross margin increased in absolute terms despite tariff costs being explicitly mentioned as a partial offset.\n3. E1 states that tariff costs partially offset favorable costs and product mix, but gross margin still increased.\n\nHowever, the claim uses the term \"profitability\" broadly, which could encompass not just gross margin but also operating margin, net margin, or net income. The evidence provided only addresses gross margin metrics. There is no evidence about operating income, operating margin, net income, or net margin for fiscal 2025 to fully assess overall \"profitability.\"\n\nWhile the gross margin data suggests resilience, without comprehensive profitability metrics (operating and net income levels), I cannot fully verify that Apple's overall \"profitability was resilient.\" The evidence is insufficient to support the complete claim about profitability in general, though it does support resilience at the gross margin level specifically.",
+        "confidence": "medium"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "7fd68701661d63e153f9394eeb89012c0e1ffba1e50196d4262f625fa8371089",
+      "source": "cache",
+      "input_tokens": 5070,
+      "output_tokens": 435,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did operating margin or net margin actually decline in fiscal 2025 despite gross margin improvement, which would contradict the claim of resilient profitability?",
+            "search_query": "operating income operating margin net income net margin fiscal 2025 2024",
+            "numeric_check": {
+              "metric": "OperatingMargin",
+              "measure": "level",
+              "period_basis": "annual",
+              "period_end": "2025-09-27",
+              "comparison": ">=",
+              "threshold": null,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Did net income actually decrease in fiscal 2025 compared to 2024, which would undermine the resilience claim?",
+            "search_query": "net income earnings fiscal year 2025 2024 comparison",
+            "numeric_check": {
+              "metric": "NetIncome",
+              "measure": "yoy_growth",
+              "period_basis": "annual",
+              "period_end": "2025-09-27",
+              "comparison": ">=",
+              "threshold": 0,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Were there significant one-time charges, restructuring costs, or other unusual items in fiscal 2025 that masked underlying profitability deterioration?",
+            "search_query": "restructuring charges one-time items unusual expenses special charges fiscal 2025",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "9ccbe32be4db0fe7d81e6595dcf6e8cf987269572cef856e6bb688093dd9e068",
+      "source": "cache",
+      "input_tokens": 10449,
+      "output_tokens": 1116,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "Operating income 133,050 123,216 114,301"
+              },
+              {
+                "evidence_id": "E7",
+                "quote": "Net income $ 112,010 $ 93,736 $ 96,995"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E15",
+                "quote": "Net income $ 112,010 $ 93,736 $ 96,995"
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": true,
+        "change_reason": "The initial verdict was INSUFFICIENT_EVIDENCE because I only had gross margin data and lacked comprehensive profitability metrics. The new evidence provides complete profitability data showing: (1) Operating income increased from $123,216M (FY2024) to $133,050M (FY2025), representing an 8.0% increase; (2) Net income increased from $93,736M (FY2024) to $112,010M (FY2025), representing a 19.5% increase; (3) Operating margin increased from 31.5% to 32.0%. All major profitability metrics improved despite the tariff costs mentioned in E1. This demonstrates resilient profitability across all levels (gross, operating, and net), fully supporting the claim.",
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Products gross margin increased during 2025 compared to 2024 primarily due to favorable costs and a different mix of products, partially offset by tariff costs."
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "Total gross margin percentage 46.9 % 46.2 % 44.1 %"
+          },
+          {
+            "evidence_id": "E7",
+            "quote": "Operating income 133,050 123,216 114,301"
+          },
+          {
+            "evidence_id": "E7",
+            "quote": "Net income $ 112,010 $ 93,736 $ 96,995"
+          },
+          {
+            "evidence_id": "E15",
+            "quote": "Net income $ 112,010 $ 93,736 $ 96,995"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Apple's profitability was resilient despite new tariff costs in fiscal 2025. The evidence now comprehensively supports this claim across all profitability metrics:\n\n1. **Gross Margin**: Total gross margin percentage increased from 46.2% (FY2024) to 46.9% (FY2025). E1 explicitly states that products gross margin increased despite tariff costs being a partial offset.\n\n2. **Operating Income**: Increased from $123,216M (FY2024) to $133,050M (FY2025), an 8.0% increase. Operating margin improved from 31.5% to 32.0%.\n\n3. **Net Income**: Increased from $93,736M (FY2024) to $112,010M (FY2025), a 19.5% increase.\n\n4. **Tariff Context**: E1 and E2 confirm that new tariffs were imposed during fiscal 2025, and E1 explicitly states these tariff costs partially offset other favorable factors but did not prevent gross margin improvement.\n\nAll three challenges were refuted:\n- H1: Operating and net margins did NOT decline; they increased\n- H2: Net income did NOT decrease; it increased by 19.5%\n- H3: No evidence of significant one-time charges or unusual items that would distort the results\n\nThe evidence demonstrates that despite facing new tariff headwinds, Apple maintained and improved profitability across all key metrics, fully supporting the claim of resilient profitability."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Apple's fiscal 2025 results show that its profitability was resilient despite new tariff costs. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "operating income operating margin net income net margin fiscal 2025 2024",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "net income earnings fiscal year 2025 2024 comparison",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E15",
+        "E16",
+        "E17"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "restructuring charges one-time items unusual expenses special charges fiscal 2025",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E21",
+        "E22",
+        "E23"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-09-27",
+            "comparison": ">=",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "THRESHOLD_MISSING"
+          ],
+          "computed": {
+            "period_end": "2025-09-27",
+            "basis": "annual",
+            "level": 0.31970799762591884,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2024-09-29",
+                "period_end": "2025-09-27",
+                "value": 133050000000.0,
+                "filed": "2025-10-31",
+                "form": "10-K",
+                "accession_number": "0000320193-25-000079",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2024-09-29",
+                "period_end": "2025-09-27",
+                "value": 416161000000.0,
+                "filed": "2025-10-31",
+                "form": "10-K",
+                "accession_number": "0000320193-25-000079",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.31510222870075566,
+            "prior_period_end": "2024-09-28",
+            "yoy_change": 0.004605768925163178,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E14",
+            "E10",
+            "E11",
+            "E12",
+            "E13"
+          ]
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H2",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "NetIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-09-27",
+            "comparison": ">=",
+            "threshold": 0,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-09-27",
+            "basis": "annual",
+            "level": 112010000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "NetIncome",
+                "period_start": "2024-09-29",
+                "period_end": "2025-09-27",
+                "value": 112010000000.0,
+                "filed": "2025-10-31",
+                "form": "10-K",
+                "accession_number": "0000320193-25-000079",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 93736000000.0,
+            "prior_period_end": "2024-09-28",
+            "yoy_change": 0.19495177946573355,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E20",
+            "E18",
+            "E19"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0000320193-25-000079",
+        "filed": "2025-10-31",
+        "report_date": "2025-09-27",
+        "primary_document": "aapl-20250927.htm",
+        "sha256": "056f733f13ff7407e64dc81fb96da3c3c55a6ba429bf094f57cb6bd472231f82"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-25-000073",
+        "filed": "2025-08-01",
+        "report_date": "2025-06-28",
+        "primary_document": "aapl-20250628.htm",
+        "sha256": "ba858d7226fd3b1b96e238909897dbe1b98b47250453a71b090ccb45fc4a7534"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-25-000057",
+        "filed": "2025-05-02",
+        "report_date": "2025-03-29",
+        "primary_document": "aapl-20250329.htm",
+        "sha256": "c6c09321ddffdb609f38d2b56925dba3fe0e0484cbcfaabc0a4689fe045f4214"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 387
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:110982-111945",
+      "excerpt": "9 % 46.2 % 44.1 % Products Gross Margin Products gross margin increased during 2025 compared to 2024 primarily due to favorable costs and a different mix of products, partially offset by tariff costs. Products gross margin percentage decreased during 2025 compared to 2024 primarily due to a different mix of products and tariff costs, partially offset by other favorable costs. Services Gross Margin Services gross margin increased during 2025 compared to 2024 primarily due to higher Services net sales and a different mix of services. Services gross margin percentage increased during 2025 compared to 2024 primarily due to a different mix of services, partially offset by higher costs. The Company’s future gross margins can be impacted by a variety of factors, as discussed in Part I, Item 1A of this Form 10-K under the heading “Risk Factors.” As a result, the Company believes, in general, gross margins will be subject to volatility and downward pressure.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:105592-106652",
+      "excerpt": "ompany’s fiscal quarters with calendar quarters, which occurred in the first quarter of 2023. The Company’s fiscal years 2025 and 2024 spanned 52 weeks each, whereas fiscal year 2023 spanned 53 weeks. Macroeconomic Conditions Macroeconomic conditions, including inflation, interest rates and currency fluctuations, have directly and indirectly impacted, and could in the future materially impact, the Company’s results of operations and financial condition. Apple Inc. | 2025 Form 10-K | 21 Tariffs and Other Measures Beginning in the second quarter of 2025, new U.S. Tariffs were announced, including additional tariffs on imports from China, India, Japan, South Korea, Taiwan, Vietnam and the EU, among others. In response, several countries have imposed, or threatened to impose, reciprocal tariffs on imports from the U.S. and other retaliatory measures. Various modifications to the U.S. Tariffs have been announced and further changes could be made in the future, which may include additional sector-based tariffs or other measures. For example, the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:104704-105792",
+      "excerpt": "Form 10-K for the fiscal year ended September 28, 2024. Product, Service and Software Announcements The Company announces new product, service and software offerings at various times during the year. Significant announcements during fiscal year 2025 included the following: First Quarter 2025: • MacBook Pro • Mac mini • iMac • iPad mini Second Quarter 2025: • iPhone 16e • iPad Air • iPad • MacBook Air • Mac Studio Third Quarter 2025: • iOS 26, macOS Tahoe 26, iPadOS 26, watchOS 26, visionOS 26 and tvOS 26 Fourth Quarter 2025: • iPhone 17, iPhone Air, iPhone 17 Pro and iPhone 17 Pro Max • Apple Watch Series 11, Apple Watch SE 3 and Apple Watch Ultra 3 • AirPods Pro 3 Fiscal Period The Company’s fiscal year is the 52- or 53-week period that ends on the last Saturday of September. An additional week is included in the first fiscal quarter every five or six years to realign the Company’s fiscal quarters with calendar quarters, which occurred in the first quarter of 2023. The Company’s fiscal years 2025 and 2024 spanned 52 weeks each, whereas fiscal year 2023 spanned 53 weeks.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:110015-111182",
+      "excerpt": "of laptops and desktops. iPad iPad net sales increased during 2025 compared to 2024 primarily due to higher net sales of iPad Air, iPad mini and iPad, partially offset by lower net sales of iPad Pro. Wearables, Home and Accessories Wearables, Home and Accessories net sales decreased during 2025 compared to 2024 primarily due to lower net sales of Accessories and Wearables. Services Services net sales increased during 2025 compared to 2024 primarily due to higher net sales from advertising, the App Store and cloud services. Apple Inc. | 2025 Form 10-K | 23 Gross Margin Products and Services gross margin and gross margin percentage for 2025, 2024 and 2023 were as follows (dollars in millions): 2025 2024 2023 Gross margin: Products $ 112,887 $ 109,633 $ 108,803 Services 82,314 71,050 60,345 Total gross margin $ 195,201 $ 180,683 $ 169,148 Gross margin percentage: Products 36.8 % 37.2 % 36.5 % Services 75.4 % 73.9 % 70.8 % Total gross margin percentage 46.9 % 46.2 % 44.1 % Products Gross Margin Products gross margin increased during 2025 compared to 2024 primarily due to favorable costs and a different mix of products, partially offset by tariff costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000057",
+      "form": "10-Q",
+      "filed": "2025-05-02",
+      "period_start": null,
+      "period_end": "2025-03-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000057/aapl-20250329.htm",
+      "locator": "10-Q 0000320193-25-000057:30860-32004",
+      "excerpt": "asonality and Product Introductions The Company has historically experienced higher net sales in its first quarter compared to other quarters in its fiscal year due in part to seasonal holiday demand. Additionally, new product and service introductions can significantly impact net sales, cost of sales and operating expenses. The timing of product introductions can also impact the Company’s net sales to its indirect distribution channels as these channels are filled with new inventory following a product launch, and channel inventory of an older product often declines as the launch of a newer product approaches. Net sales can also be affected when consumers and distributors anticipate a product introduction. During the second quarter of 2025, the Company announced the following new or updated products: • iPhone 16e • iPad Air ® • iPad • MacBook Air ® • Mac Studio ® Macroeconomic Conditions Macroeconomic conditions, including inflation, interest rates and currency fluctuations, have directly and indirectly impacted, and could in the future materially impact, the Company’s results of operations and financial condition. Apple Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000073",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628.htm",
+      "locator": "10-Q 0000320193-25-000073:31454-32576",
+      "excerpt": "asonality and Product Introductions The Company has historically experienced higher net sales in its first quarter compared to other quarters in its fiscal year due in part to seasonal holiday demand. Additionally, new product and service introductions can significantly impact net sales, cost of sales and operating expenses. The timing of product introductions can also impact the Company’s net sales to its indirect distribution channels as these channels are filled with new inventory following a product launch, and channel inventory of an older product often declines as the launch of a newer product approaches. Net sales can also be affected when consumers and distributors anticipate a product introduction. During the third quarter of 2025, the Company announced iOS 26, macOS ® Tahoe 26, iPadOS ® 26, watchOS ® 26, visionOS ® 26 and tvOS ® 26. Macroeconomic Conditions Macroeconomic conditions, including inflation, interest rates and currency fluctuations, have directly and indirectly impacted, and could in the future materially impact, the Company’s results of operations and financial condition. Apple Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:125931-127131",
+      "excerpt": "ial statement schedules have been omitted, since the required information is not applicable or is not present in amounts sufficient to require submission of the schedule, or because the information required is included in the consolidated financial statements and accompanying notes. Apple Inc. | 2025 Form 10-K | 28 Apple Inc. CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except number of shares, which are reflected in thousands, and per-share amounts) Years ended September 27, 2025 September 28, 2024 September 30, 2023 Net sales: Products $ 307,003 $ 294,866 $ 298,085 Services 109,158 96,169 85,200 Total net sales 416,161 391,035 383,285 Cost of sales: Products 194,116 185,233 189,282 Services 26,844 25,119 24,855 Total cost of sales 220,960 210,352 214,137 Gross margin 195,201 180,683 169,148 Operating expenses: Research and development 34,550 31,370 29,915 Selling, general and administrative 27,601 26,097 24,932 Total operating expenses 62,151 57,467 54,847 Operating income 133,050 123,216 114,301 Other income/(expense), net ( 321 ) 269 ( 565 ) Income before provision for income taxes 132,729 123,485 113,736 Provision for income taxes 20,719 29,749 16,741 Net income $ 112,0",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000073",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628.htm",
+      "locator": "10-Q 0000320193-25-000073:38167-39218",
+      "excerpt": "net sales increased during the third quarter and first nine months of 2025 compared to the same periods in 2024 due primarily to higher net sales from advertising, the App Store ® and cloud services. Apple Inc. | Q3 2025 Form 10-Q | 15 Gross Margin Products and Services gross margin and gross margin percentage for the three- and nine-month periods ended June 28, 2025 and June 29, 2024, were as follows (dollars in millions): Three Months Ended Nine Months Ended June 28, 2025 June 29, 2024 June 28, 2025 June 29, 2024 Gross margin: Products $ 22,993 $ 21,761 $ 86,190 $ 84,241 Services 20,725 17,917 60,670 52,563 Total gross margin $ 43,718 $ 39,678 $ 146,860 $ 136,804 Gross margin percentage: Products 34.5 % 35.3 % 36.9 % 37.5 % Services 75.6 % 74.0 % 75.5 % 73.8 % Total gross margin percentage 46.5 % 46.3 % 46.8 % 46.2 % Products Gross Margin Products gross margin increased during the third quarter of 2025 compared to the third quarter of 2024 due primarily to a different mix of products and favorable costs, partially offset by tariffs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000073",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628.htm",
+      "locator": "10-Q 0000320193-25-000073:3414-4614",
+      "excerpt": "21 Item 3. Defaults Upon Senior Securities 21 Item 4. Mine Safety Disclosures 21 Item 5. Other Information 21 Item 6. Exhibits 22 PART I — FINANCIAL INFORMATION Item 1. Financial Statements Apple Inc. CONDENSED CONSOLIDATED STATEMENTS OF OPERATIONS (Unaudited) (In millions, except number of shares, which are reflected in thousands, and per-share amounts) Three Months Ended Nine Months Ended June 28, 2025 June 29, 2024 June 28, 2025 June 29, 2024 Net sales: Products $ 66,613 $ 61,564 $ 233,287 $ 224,908 Services 27,423 24,213 80,408 71,197 Total net sales 94,036 85,777 313,695 296,105 Cost of sales: Products 43,620 39,803 147,097 140,667 Services 6,698 6,296 19,738 18,634 Total cost of sales 50,318 46,099 166,835 159,301 Gross margin 43,718 39,678 146,860 136,804 Operating expenses: Research and development 8,866 8,006 25,684 23,605 Selling, general and administrative 6,650 6,320 20,553 19,574 Total operating expenses 15,516 14,326 46,237 43,179 Operating income 28,202 25,352 100,623 93,625 Other income/(expense), net ( 171 ) 142 ( 698 ) 250 Income before provision for income taxes 28,031 25,494 99,925 93,875 Provision for income taxes 4,597 4,046 15,381 14,875 Net income $ 23,434 $",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": "2024-09-29",
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079-index.htm",
+      "locator": "OperatingIncome 2024-09-29..2025-09-27",
+      "excerpt": null,
+      "values": [
+        133050000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": "2024-09-29",
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079-index.htm",
+      "locator": "Revenue 2024-09-29..2025-09-27",
+      "excerpt": null,
+      "values": [
+        416161000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": "2023-10-01",
+      "period_end": "2024-09-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079-index.htm",
+      "locator": "OperatingIncome 2023-10-01..2024-09-28",
+      "excerpt": null,
+      "values": [
+        123216000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": "2023-10-01",
+      "period_end": "2024-09-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079-index.htm",
+      "locator": "Revenue 2023-10-01..2024-09-28",
+      "excerpt": null,
+      "values": [
+        391035000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "AAPL",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": null,
+      "locator": "OperatingMargin level annual @ 2025-09-27",
+      "excerpt": null,
+      "values": [
+        0.31970799762591884,
+        0.31510222870075566,
+        0.004605768925163178
+      ],
+      "unit": "ratio",
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:142125-143325",
+      "excerpt": "reportable segment in Note 13, “Segment Information and Geographic Data” for 2025, 2024 and 2023, except in Greater China, where iPhone revenue represented a moderately higher proportion of net sales. As of September 27, 2025 and September 28, 2024, the Company had total deferred revenue of $ 13.7 billion and $ 12.8 billion, respectively. As of September 27, 2025, the Company expects 66 % of total deferred revenue to be realized in less than a year, 23 % within one-to-two years, 9 % within two-to-three years and 2 % in greater than three years. Note 3 – Earnings Per Share The following table shows the computation of basic and diluted earnings per share for 2025, 2024 and 2023 (net income in millions and shares in thousands): 2025 2024 2023 Numerator: Net income $ 112,010 $ 93,736 $ 96,995 Denominator: Weighted-average basic shares outstanding 14,948,500 15,343,783 15,744,231 Effect of dilutive share-based awards 56,197 64,312 68,316 Weighted-average diluted shares 15,004,697 15,408,095 15,812,547 Basic earnings per share $ 7.49 $ 6.11 $ 6.16 Diluted earnings per share $ 7.46 $ 6.08 $ 6.13 Approximately 24 million restricted stock units (“RSUs”) were excluded from the computation of",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000057",
+      "form": "10-Q",
+      "filed": "2025-05-02",
+      "period_start": null,
+      "period_end": "2025-03-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000057/aapl-20250329.htm",
+      "locator": "10-Q 0000320193-25-000057:14246-15446",
+      "excerpt": "2025, the Company expects 66 % of total deferred revenue to be realized in less than a year, 24 % within one-to-two years, 9 % within two-to-three years and 1 % in greater than three years. Apple Inc. | Q2 2025 Form 10-Q | 6 Note 3 – Earnings Per Share The following table shows the computation of basic and diluted earnings per share for the three- and six-month periods ended March 29, 2025 and March 30, 2024 (net income in millions and shares in thousands): Three Months Ended Six Months Ended March 29, 2025 March 30, 2024 March 29, 2025 March 30, 2024 Numerator: Net income $ 24,780 $ 23,636 $ 61,110 $ 57,552 Denominator: Weighted-average basic shares outstanding 14,994,082 15,405,856 15,037,903 15,457,810 Effect of dilutive share-based awards 62,051 58,853 65,596 62,865 Weighted-average diluted shares 15,056,133 15,464,709 15,103,499 15,520,675 Basic earnings per share $ 1.65 $ 1.53 $ 4.06 $ 3.72 Diluted earnings per share $ 1.65 $ 1.53 $ 4.05 $ 3.71 Note 4 – Financial Instruments Cash, Cash Equivalents and Marketable Securities The following tables show the Company’s cash, cash equivalents and marketable securities by significant investment category as of March 29, 2025 and Septem",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000073",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628.htm",
+      "locator": "10-Q 0000320193-25-000073:14239-15439",
+      "excerpt": "2025, the Company expects 66 % of total deferred revenue to be realized in less than a year, 23 % within one-to-two years, 9 % within two-to-three years and 2 % in greater than three years. Apple Inc. | Q3 2025 Form 10-Q | 6 Note 3 – Earnings Per Share The following table shows the computation of basic and diluted earnings per share for the three- and nine-month periods ended June 28, 2025 and June 29, 2024 (net income in millions and shares in thousands): Three Months Ended Nine Months Ended June 28, 2025 June 29, 2024 June 28, 2025 June 29, 2024 Numerator: Net income $ 23,434 $ 21,448 $ 84,544 $ 79,000 Denominator: Weighted-average basic shares outstanding 14,902,886 15,287,521 14,992,898 15,401,047 Effect of dilutive share-based awards 45,293 60,654 58,828 62,128 Weighted-average diluted shares 14,948,179 15,348,175 15,051,726 15,463,175 Basic earnings per share $ 1.57 $ 1.40 $ 5.64 $ 5.13 Diluted earnings per share $ 1.57 $ 1.40 $ 5.62 $ 5.11 Note 4 – Financial Instruments Cash, Cash Equivalents and Marketable Securities The following tables show the Company’s cash, cash equivalents and marketable securities by significant investment category as of June 28, 2025 and September 2",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": "2024-09-29",
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079-index.htm",
+      "locator": "NetIncome 2024-09-29..2025-09-27",
+      "excerpt": null,
+      "values": [
+        112010000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E18"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": "2023-10-01",
+      "period_end": "2024-09-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079-index.htm",
+      "locator": "NetIncome 2023-10-01..2024-09-28",
+      "excerpt": null,
+      "values": [
+        93736000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E19"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "AAPL",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": null,
+      "locator": "NetIncome yoy_growth annual @ 2025-09-27",
+      "excerpt": null,
+      "values": [
+        112010000000.0,
+        93736000000.0,
+        0.19495177946573355
+      ],
+      "unit": "ratio",
+      "evidence_id": "E20"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:104248-104904",
+      "excerpt": "lidated financial statements and accompanying notes included in Part II, Item 8 of this Form 10-K. This Item generally discusses 2025 and 2024 items and year-to-year comparisons between 2025 and 2024. Discussions of 2023 items and year-to-year comparisons between 2024 and 2023 are not included, and can be found in “Management’s Discussion and Analysis of Financial Condition and Results of Operations” in Part II, Item 7 of the Company’s Annual Report on Form 10-K for the fiscal year ended September 28, 2024. Product, Service and Software Announcements The Company announces new product, service and software offerings at various times during the year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E21"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000057",
+      "form": "10-Q",
+      "filed": "2025-05-02",
+      "period_start": null,
+      "period_end": "2025-03-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000057/aapl-20250329.htm",
+      "locator": "10-Q 0000320193-25-000057:46866-48037",
+      "excerpt": "Company’s definition of selling expenses. The Company will adopt ASU 2024-03 in its fourth quarter of 2028 using a prospective transition method. Income Taxes In December 2023, the FASB issued ASU No. 2023-09, Income Taxes (Topic 740): Improvements to Income Tax Disclosures (“ASU 2023-09”), which will require the Company to disclose specified additional information in its income tax rate reconciliation and provide additional information for reconciling items that meet a quantitative threshold. ASU 2023-09 will also require the Company to disaggregate its income taxes paid disclosure by federal, state and foreign taxes, with further disaggregation required for significant individual jurisdictions. The Company will adopt ASU 2023-09 in its fourth quarter of 2026 using a prospective transition method. Apple Inc. | Q2 2025 Form 10-Q | 17 Segment Reporting In November 2023, the FASB issued ASU No. 2023-07, Segment Reporting (Topic 280): Improvements to Reportable Segment Disclosures (“ASU 2023-07”), which will require the Company to disclose segment expenses that are significant and regularly provided to the Company’s chief operating decision maker (“CODM”).",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E22"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000073",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628.htm",
+      "locator": "10-Q 0000320193-25-000073:46204-47394",
+      "excerpt": "equire the Company to disclose both the amount and the Company’s definition of selling expenses. The Company will adopt ASU 2024-03 in its fourth quarter of 2028 using a prospective transition method. Income Taxes In December 2023, the FASB issued ASU No. 2023-09, Income Taxes (Topic 740): Improvements to Income Tax Disclosures (“ASU 2023-09”), which will require the Company to disclose specified additional information in its income tax rate reconciliation and provide additional information for reconciling items that meet a quantitative threshold. ASU 2023-09 will also require the Company to disaggregate its income taxes paid disclosure by federal, state and foreign taxes, with further disaggregation required for significant individual jurisdictions. The Company will adopt ASU 2023-09 in its fourth quarter of 2026 using a prospective transition method. Segment Reporting In November 2023, the FASB issued ASU No. 2023-07, Segment Reporting (Topic 280): Improvements to Reportable Segment Disclosures (“ASU 2023-07”), which will require the Company to disclose segment expenses that are significant and regularly provided to the Company’s chief operating decision maker (“CODM”).",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E23"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "Products gross margin increased during 2025 compared to 2024 primarily due to favorable costs and a different mix of products, partially offset by tariff costs.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:110982-111945"
+    },
+    {
+      "evidence_id": "E4",
+      "quote": "Total gross margin percentage 46.9 % 46.2 % 44.1 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:110015-111182"
+    },
+    {
+      "evidence_id": "E7",
+      "quote": "Operating income 133,050 123,216 114,301",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:125931-127131"
+    },
+    {
+      "evidence_id": "E15",
+      "quote": "Net income $ 112,010 $ 93,736 $ 96,995",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:142125-143325"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 19431,
+    "output": 2160
+  },
+  "latency_ms": 6,
+  "estimated_cost_usd": 0.090693,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 2,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

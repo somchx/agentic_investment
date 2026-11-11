@@ -1,0 +1,367 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A1_conventional_rag:GOLD-WMT-02:edc03825",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A1_conventional_rag",
+  "approach_kind": "conventional_rag",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": false,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A1_conventional_rag",
+    "kind": "conventional_rag",
+    "description": "claim -> retrieval -> LLM -> verdict"
+  },
+  "config_hash": "1ebada2c6046452b",
+  "claim": {
+    "claim_id": "GOLD-WMT-02",
+    "company": "WMT",
+    "claim": "Walmart's operating income for the quarter ended July 31, 2026 was higher than in the same quarter a year earlier.",
+    "as_of_date": "2026-09-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2027 Q2"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-07-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "operating income increased $1.4 billion and $1.6 billion for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "Three Months Ended July 31, Six Months Ended July 31, (Amounts in millions) 2026 2025 2026 2025 Net sales $ 186,100 $ 175,750 $ 361,784 $ 339,731 Percentage change from comparable period 5.9 % 4.8 % 6.5 % 3.7 % Operating income $ 9,383 $ 7,286 $ 16,876 $ 14,421 Percentage change from comparable period 28.8 % (8.2) % 17.0 % (2.4) %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Walmart's operating income for the quarter ended July 31, 2026 was higher than in the same quarter a year earlier. Evidence E5 provides a clear table showing operating income for the three months ended July 31, 2026 was $9,383 million compared to $7,286 million for the three months ended July 31, 2025, representing a 28.8% increase. Evidence E1 confirms this by stating that \"operating income increased $1.4 billion...for the three...months ended July 31, 2026...when compared to the same periods in the previous fiscal year.\" The difference of $9,383M - $7,286M = $2,097M is approximately $2.1 billion (note: there's a slight discrepancy with the $1.4B stated in E1, but both sources confirm an increase). The claim is fully supported by the evidence.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "b4292c306ea0f9861c65ed0d4ac7a761e4c52943c19bc175e2396546c28b4f36",
+      "source": "cache",
+      "input_tokens": 3884,
+      "output_tokens": 672,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-07-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "operating income increased $1.4 billion and $1.6 billion for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "Three Months Ended July 31, Six Months Ended July 31, (Amounts in millions) 2026 2025 2026 2025 Net sales $ 186,100 $ 175,750 $ 361,784 $ 339,731 Percentage change from comparable period 5.9 % 4.8 % 6.5 % 3.7 % Operating income $ 9,383 $ 7,286 $ 16,876 $ 14,421 Percentage change from comparable period 28.8 % (8.2) % 17.0 % (2.4) %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Walmart's operating income for the quarter ended July 31, 2026 was higher than in the same quarter a year earlier. Evidence E5 provides a clear table showing operating income for the three months ended July 31, 2026 was $9,383 million compared to $7,286 million for the three months ended July 31, 2025, representing a 28.8% increase. Evidence E1 confirms this by stating that \"operating income increased $1.4 billion...for the three...months ended July 31, 2026...when compared to the same periods in the previous fiscal year.\" The difference of $9,383M - $7,286M = $2,097M is approximately $2.1 billion (note: there's a slight discrepancy with the $1.4B stated in E1, but both sources confirm an increase). The claim is fully supported by the evidence.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Walmart's operating income for the quarter ended July 31, 2026 was higher than in the same quarter a year earlier. FY2027 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-26-000154",
+        "filed": "2026-08-28",
+        "report_date": "2026-07-31",
+        "primary_document": "wmt-20260731.htm",
+        "sha256": "094d3090d77d8229676fa0b0b1e91c9fd7be8eb00abcd59468c95b4d9e0045d8"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-26-000102",
+        "filed": "2026-05-29",
+        "report_date": "2026-04-30",
+        "primary_document": "wmt-20260430.htm",
+        "sha256": "852d4b1f25a8587899243ce13ea032f74a393cbefc941de3625cc5779b252ff4"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0000104169-26-000055",
+        "filed": "2026-03-13",
+        "report_date": "2026-01-31",
+        "primary_document": "wmt-20260131.htm",
+        "sha256": "81bc136de8961e00236b4d1c299b17de840b9ff49c278f0addf442cee8e909cf"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 687
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:77348-78307",
+      "excerpt": "ng expenses as a percentage of net sales increased 72 and 64 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year. The increase for the three months ended July 31, 2026 was primarily driven by higher self-insured general liability claims expense, increased depreciation related to our capital investments and higher associate healthcare benefit costs related to increased enrollment and medical cost inflation. The increase for the six months ended July 31, 2026 was primarily driven by higher associate healthcare benefit costs, increased depreciation related to our capital investments and higher self-insured general liability claims expense. As a result of the factors discussed above, operating income increased $1.4 billion and $1.6 billion for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:76399-77548",
+      "excerpt": "nded July 31, 2026, respectively. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, which was primarily driven by store-fulfilled delivery. Membership and other income increased 15.6% and 30.4% for the three and six months ended July 31, 2026, respectively, primarily driven by double-digit percentage growth in membership fee revenue from Walmart+. Growth during the six months ended July 31, 2026 also reflects increases in certain miscellaneous items. Gross profit rate increased 158 and 95 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily driven by tariff refunds, partially offset by price investments and higher fuel costs within our supply chain. Gross profit rate also benefited from continued growth in higher margin businesses, including advertising. Operating expenses as a percentage of net sales increased 72 and 64 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:83477-84638",
+      "excerpt": "-year membership term. Gross profit rate increased 45 and 11 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily due to tariff refunds, partially offset by price investments and increased eCommerce shipping and fulfillment costs, driven by club-fulfilled delivery. Operating expenses as a percentage of net sales decreased 26 and 13 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year. The decreases for both the three and six months ended July 31, 2026 were primarily driven by higher fuel sales, offset by continued technology investments and higher self-insured general liability claims expense. As a result of the factors discussed above, operating income increased $0.2 billion for both the three and six months ended July 31, 2026, when compared to the same periods in the previous fiscal year. Liquidity and Capital Resources Liquidity The strength and stability of our operations have historically supplied us with a significant source of liquidity.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:71180-72213",
+      "excerpt": "individually material. Gross profit rate increased 96 and 53 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily driven by tariff refunds, partially offset by price investments and higher fuel costs within our supply chain. Gross profit rate also benefited from continued growth in higher margin businesses, including advertising. Operating expenses as a percentage of net sales increased 11 and 22 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year. The increase for the three months ended July 31, 2026 was primarily driven by higher self-insured general liability claims expense influenced by rising costs to resolve claims across retail and related industries, increased depreciation related to our capital investments and higher associate healthcare benefit costs related to increased enrollment and medical cost inflation.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:58432-59629",
+      "excerpt": "higher margin areas, such as digital advertising. Our objective over the long-term is to achieve operating income leverage, which we define as growing operating income at a faster rate than net sales. Three Months Ended July 31, Six Months Ended July 31, (Amounts in millions) 2026 2025 2026 2025 Net sales $ 186,100 $ 175,750 $ 361,784 $ 339,731 Percentage change from comparable period 5.9 % 4.8 % 6.5 % 3.7 % Operating income $ 9,383 $ 7,286 $ 16,876 $ 14,421 Percentage change from comparable period 28.8 % (8.2) % 17.0 % (2.4) % Percentage of net sales Gross profit (1) 25.4 % 24.5 % 24.9 % 24.3 % Operating expenses 21.4 % 21.2 % 21.3 % 21.1 % Operating income 5.0 % 4.1 % 4.7 % 4.2 % (1) Gross profit defined as net sales less cost of sales. Gross profit as a percentage of net sales (\"gross profit rate\") increased 96 and 53 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year, primarily due to tariff refunds, partially offset by price investments and higher fuel costs within our supply chain. Gross profit rate also benefited from continued growth in higher margin businesses, including advertising.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:82504-83677",
+      "excerpt": "ally, higher fuel sales, driven by higher fuel prices and volumes, positively impacted comparable sales by 4.2% and 3.2% for the three and six months ended July 31, 2026, respectively. Sam's Club U.S. eCommerce net sales positively contributed approximately 3.1% to comparable sales for both the three and six months ended July 31, 2026, reflecting continued strength in member engagement with omnichannel offerings, such as club-fulfilled delivery. Membership and other income increased 6.0% and 8.5% for the three and six months ended July 31, 2026, when compared to the same periods in the previous fiscal year. The increases were primarily due to growth in the membership base and Plus penetration. Growth during the six months ended July 31, 2026 also reflects increases in certain miscellaneous items. As previously reported, Sam's Club U.S. increased its annual membership fees, effective May 1, 2026. Membership fees are deferred and recognized ratably over the one-year membership term. Gross profit rate increased 45 and 11 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "operating income increased $1.4 billion and $1.6 billion for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:77348-78307"
+    },
+    {
+      "evidence_id": "E5",
+      "quote": "Three Months Ended July 31, Six Months Ended July 31, (Amounts in millions) 2026 2025 2026 2025 Net sales $ 186,100 $ 175,750 $ 361,784 $ 339,731 Percentage change from comparable period 5.9 % 4.8 % 6.5 % 3.7 % Operating income $ 9,383 $ 7,286 $ 16,876 $ 14,421 Percentage change from comparable period 28.8 % (8.2) % 17.0 % (2.4) %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:58432-59629"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 3884,
+    "output": 672
+  },
+  "latency_ms": 3,
+  "estimated_cost_usd": 0.021732,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "conventional_rag",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

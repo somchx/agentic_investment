@@ -1,0 +1,986 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-KO-12:5162ef9d",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-KO-12",
+    "company": "KO",
+    "claim": "Coca-Cola's results for the quarter ended October 2, 2026 show underlying growth that is masked by currency effects.",
+    "as_of_date": "2026-11-01",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q3"
+  },
+  "initial_label": "INSUFFICIENT_EVIDENCE",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes an interpretive assertion that Coca-Cola's Q3 2026 results (quarter ended October 2, 2026) show \"underlying growth that is masked by currency effects.\" This is a qualitative claim about the relationship between reported results and currency impacts.\n\nThe evidence shows strong volume growth for the quarter:\n- E2 states: \"During the three months ended October 2, 2026, worldwide concentrate sales volume increased 6% and unit case volume increased 5%\"\n- E3 provides regional detail showing unit case volume increases in EMEA (5%) and Latin America (6%)\n\nHowever, the evidence does not contain any information about:\n1. The actual reported financial results (revenue, operating income, net income, etc.) for Q3 2026\n2. Currency effects or foreign exchange impacts on those results\n3. Any comparison between reported growth rates and constant currency or organic growth rates\n4. Any management discussion stating that currency masked underlying growth\n\nWhile the volume data suggests underlying business strength, the claim specifically asserts that currency effects \"masked\" growth in the \"results\" - which typically refers to financial metrics like revenue and earnings, not just volume. Without evidence showing both the reported financial results AND the currency impact on those results, I cannot verify this interpretive claim about currency masking growth.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did the filing report actual revenue growth for Q3 2026, and was there a discussion of currency/foreign exchange impacts that masked underlying growth?",
+          "search_query": "revenue three months October 2026 currency foreign exchange impact organic constant",
+          "numeric_check": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-02",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Did management explicitly discuss that currency headwinds or foreign exchange translation negatively impacted reported results for the quarter ended October 2, 2026?",
+          "search_query": "currency headwind foreign exchange translation impact three months October 2026 unfavorable negative",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Did the filing provide organic growth or constant currency growth metrics that showed stronger performance than reported results for Q3 2026?",
+          "search_query": "organic growth constant currency comparable three months October 2026 excluding currency",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "revenue three months October 2026 currency foreign exchange impact organic constant",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "currency headwind foreign exchange translation impact three months October 2026 unfavorable negative",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "organic growth constant currency comparable three months October 2026 excluding currency",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-10-02",
+            "basis": "quarter",
+            "level": 13380000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-07-04",
+                "period_end": "2026-10-02",
+                "value": 13380000000.0,
+                "filed": "2026-10-28",
+                "form": "10-Q",
+                "accession_number": "0001628280-26-067844",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 12455000000.0,
+            "prior_period_end": "2025-09-26",
+            "yoy_change": 0.07426736250501806,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E12",
+            "E10",
+            "E11"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E16",
+              "quote": "During the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-067844",
+              "form": "10-Q",
+              "filed": "2026-10-28",
+              "period_end": "2026-10-02",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+              "locator": "10-Q 0001628280-26-067844:128800-129592"
+            },
+            {
+              "evidence_id": "E8",
+              "quote": "During the three months ended October 2, 2026, operating income was $4,465 million, compared to $3,982 million during the three months ended September 26, 2025, an increase of $483 million, or 12%. The increase was primarily driven by an increase in concentrate sales volume of 7%, favorable price/mix, lower commodity costs, lower other operating charges and a favorable foreign currency exchange rate impact of 3%",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-067844",
+              "form": "10-Q",
+              "filed": "2026-10-28",
+              "period_end": "2026-10-02",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+              "locator": "10-Q 0001628280-26-067844:145153-146305"
+            },
+            {
+              "evidence_id": "E7",
+              "quote": "Based on current spot rates and our hedging coverage in place, we expect foreign currency exchange rate fluctuations will have a favorable impact on our full year 2026 net operating revenues.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-067844",
+              "form": "10-Q",
+              "filed": "2026-10-28",
+              "period_end": "2026-10-02",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+              "locator": "10-Q 0001628280-26-067844:138212-139336"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E8",
+              "quote": "Fluctuations in foreign currency exchange rates, including the effects of our hedging activities, favorably impacted consolidated operating income by 3% due to a weaker U.S. dollar compared to certain foreign currencies, including the Mexican peso and Brazilian real",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-067844",
+              "form": "10-Q",
+              "filed": "2026-10-28",
+              "period_end": "2026-10-02",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+              "locator": "10-Q 0001628280-26-067844:145153-146305"
+            },
+            {
+              "evidence_id": "E9",
+              "quote": "Asia Pacific's operating income for the three months ended October 2, 2026 and September 26, 2025 was $563 million and $521 million, respectively. The increase in operating income was primarily driven by an increase in concentrate sales volume of 8%, partially offset by unfavorable price/mix and an unfavorable foreign currency exchange rate impact of 6%.",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-067844",
+              "form": "10-Q",
+              "filed": "2026-10-28",
+              "period_end": "2026-10-02",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+              "locator": "10-Q 0001628280-26-067844:147910-149035"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "56fd5ec5130cc0cf4df228ebd04727fdc7ec1908cbfcb06f2c0814d8c7ed65b2",
+      "source": "cache",
+      "input_tokens": 3801,
+      "output_tokens": 431,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes an interpretive assertion that Coca-Cola's Q3 2026 results (quarter ended October 2, 2026) show \"underlying growth that is masked by currency effects.\" This is a qualitative claim about the relationship between reported results and currency impacts.\n\nThe evidence shows strong volume growth for the quarter:\n- E2 states: \"During the three months ended October 2, 2026, worldwide concentrate sales volume increased 6% and unit case volume increased 5%\"\n- E3 provides regional detail showing unit case volume increases in EMEA (5%) and Latin America (6%)\n\nHowever, the evidence does not contain any information about:\n1. The actual reported financial results (revenue, operating income, net income, etc.) for Q3 2026\n2. Currency effects or foreign exchange impacts on those results\n3. Any comparison between reported growth rates and constant currency or organic growth rates\n4. Any management discussion stating that currency masked underlying growth\n\nWhile the volume data suggests underlying business strength, the claim specifically asserts that currency effects \"masked\" growth in the \"results\" - which typically refers to financial metrics like revenue and earnings, not just volume. Without evidence showing both the reported financial results AND the currency impact on those results, I cannot verify this interpretive claim about currency masking growth.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "0531b5030979c52d2cafdb7a165c2ad8fd16585626272d36620f64c590146b02",
+      "source": "live",
+      "input_tokens": 4648,
+      "output_tokens": 361,
+      "stop_reason": "tool_use",
+      "latency_ms": 7171,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did the filing report actual revenue growth for Q3 2026, and was there a discussion of currency/foreign exchange impacts that masked underlying growth?",
+            "search_query": "revenue three months October 2026 currency foreign exchange impact organic constant",
+            "numeric_check": {
+              "metric": "Revenue",
+              "measure": "yoy_growth",
+              "period_basis": "quarter",
+              "period_end": "2026-10-02",
+              "comparison": "increase",
+              "threshold": null,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Did management explicitly discuss that currency headwinds or foreign exchange translation negatively impacted reported results for the quarter ended October 2, 2026?",
+            "search_query": "currency headwind foreign exchange translation impact three months October 2026 unfavorable negative",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Did the filing provide organic growth or constant currency growth metrics that showed stronger performance than reported results for Q3 2026?",
+            "search_query": "organic growth constant currency comparable three months October 2026 excluding currency",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "ab21180d5c44c9526a6ca53bb82eca5bb1842db431872310cf2eeed7c7e4c245",
+      "source": "live",
+      "input_tokens": 8689,
+      "output_tokens": 1445,
+      "stop_reason": "tool_use",
+      "latency_ms": 24465,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E16",
+                "quote": "During the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%."
+              },
+              {
+                "evidence_id": "E8",
+                "quote": "During the three months ended October 2, 2026, operating income was $4,465 million, compared to $3,982 million during the three months ended September 26, 2025, an increase of $483 million, or 12%. The increase was primarily driven by an increase in concentrate sales volume of 7%, favorable price/mix, lower commodity costs, lower other operating charges and a favorable foreign currency exchange rate impact of 3%"
+              },
+              {
+                "evidence_id": "E7",
+                "quote": "Based on current spot rates and our hedging coverage in place, we expect foreign currency exchange rate fluctuations will have a favorable impact on our full year 2026 net operating revenues."
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E8",
+                "quote": "Fluctuations in foreign currency exchange rates, including the effects of our hedging activities, favorably impacted consolidated operating income by 3% due to a weaker U.S. dollar compared to certain foreign currencies, including the Mexican peso and Brazilian real"
+              },
+              {
+                "evidence_id": "E9",
+                "quote": "Asia Pacific's operating income for the three months ended October 2, 2026 and September 26, 2025 was $563 million and $521 million, respectively. The increase in operating income was primarily driven by an increase in concentrate sales volume of 8%, partially offset by unfavorable price/mix and an unfavorable foreign currency exchange rate impact of 6%."
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "CONTRADICTED",
+        "verdict_changed": true,
+        "change_reason": "The initial verdict of INSUFFICIENT_EVIDENCE was based on lack of information about currency impacts. However, the newly retrieved evidence directly contradicts the claim. The evidence shows that currency effects had a FAVORABLE (not masking/negative) impact on Q3 2026 results. E8 explicitly states that operating income had \"a favorable foreign currency exchange rate impact of 3%\" for the quarter ended October 2, 2026. E7 indicates management expected favorable currency impacts for full year 2026. While some segments like Asia Pacific experienced unfavorable currency impacts (E9: 6% unfavorable), the consolidated results show net favorable currency effects. This directly contradicts the claim that currency effects \"masked\" underlying growth - instead, currency enhanced reported growth.",
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E8",
+            "quote": "During the three months ended October 2, 2026, operating income was $4,465 million, compared to $3,982 million during the three months ended September 26, 2025, an increase of $483 million, or 12%. The increase was primarily driven by an increase in concentrate sales volume of 7%, favorable price/mix, lower commodity costs, lower other operating charges and a favorable foreign currency exchange rate impact of 3%"
+          },
+          {
+            "evidence_id": "E8",
+            "quote": "Fluctuations in foreign currency exchange rates, including the effects of our hedging activities, favorably impacted consolidated operating income by 3% due to a weaker U.S. dollar compared to certain foreign currencies, including the Mexican peso and Brazilian real"
+          },
+          {
+            "evidence_id": "E7",
+            "quote": "Based on current spot rates and our hedging coverage in place, we expect foreign currency exchange rate fluctuations will have a favorable impact on our full year 2026 net operating revenues."
+          }
+        ],
+        "reasoning_summary": "The claim asserts that Coca-Cola's Q3 2026 results show \"underlying growth that is masked by currency effects.\" This implies that currency had a negative impact that obscured stronger underlying performance.\n\nThe evidence directly contradicts this assertion:\n\n1. **Consolidated currency impact was FAVORABLE, not negative**: E8 explicitly states that for Q3 2026, operating income had \"a favorable foreign currency exchange rate impact of 3%\" and that \"Fluctuations in foreign currency exchange rates, including the effects of our hedging activities, favorably impacted consolidated operating income by 3%.\"\n\n2. **Management expected favorable currency impacts**: E7 states \"we expect foreign currency exchange rate fluctuations will have a favorable impact on our full year 2026 net operating revenues.\"\n\n3. **Reported results showed strong growth**: E16 shows revenue increased 7% and E8 shows operating income increased 12% for Q3 2026.\n\nWhile some individual segments experienced unfavorable currency impacts (e.g., Asia Pacific had a 6% unfavorable impact per E9, Bottling Investments had a 2% unfavorable impact), the consolidated results show that currency effects were net favorable, not masking.\n\nThe claim's assertion that currency \"masked\" growth is the opposite of what occurred - currency actually enhanced reported growth by 3% at the operating income level. Therefore, the claim is contradicted by the evidence."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Coca-Cola's results for the quarter ended October 2, 2026 show underlying growth that is masked by currency effects. 2026 Q3",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "revenue three months October 2026 currency foreign exchange impact organic constant",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "currency headwind foreign exchange translation impact three months October 2026 unfavorable negative",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "organic growth constant currency comparable three months October 2026 excluding currency",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-02",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-10-02",
+            "basis": "quarter",
+            "level": 13380000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-07-04",
+                "period_end": "2026-10-02",
+                "value": 13380000000.0,
+                "filed": "2026-10-28",
+                "form": "10-Q",
+                "accession_number": "0001628280-26-067844",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 12455000000.0,
+            "prior_period_end": "2025-09-26",
+            "yoy_change": 0.07426736250501806,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E12",
+            "E10",
+            "E11"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-067844",
+        "filed": "2026-10-28",
+        "report_date": "2026-10-02",
+        "primary_document": "ko-20261002.htm",
+        "sha256": "cb73baef8278eb1308c05f087dbe2f9df353ae66b8a0dcc6ee8ffe5c1b216e1f"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-050503",
+        "filed": "2026-07-29",
+        "report_date": "2026-07-03",
+        "primary_document": "ko-20260703.htm",
+        "sha256": "46c637a8748563081968c71287b3e88ad5eb09ac3de03a82bf770649b4d09767"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-010047",
+        "filed": "2026-02-20",
+        "report_date": "2025-12-31",
+        "primary_document": "ko-20251231.htm",
+        "sha256": "a091d2ed9db7e14f46e64111d3e2154b0e0c26ceb9b7200d9b613db2fe8f0dca"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1170
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:122538-123594",
+      "excerpt": "rs or consumers and is not based on average daily sales. Each of our quarters, other than the fourth quarter, ends on the Friday closest to the last day of the corresponding quarterly calendar period. As a result, the first quarter of 2026 had six additional days when compared to the first quarter of 2025, and the fourth quarter of 2026 will have six fewer days when compared to the fourth quarter of 2025. 5 After considering the impact of structural changes, unit case volume for Bottling Investments for the three and nine months ended October 2, 2026 increased 10% and 7%, respectively. 6 After considering the impact of divestiture activities, worldwide concentrate sales volume for the three months ended October 2, 2026 increased 7%. Unit Case Volume Although a significant portion of our Company’s net operating revenues is not based directly on unit case volume, we believe unit case volume performance is one of the indicators of the underlying strength of the Coca-Cola system because it measures demand for our products at the consumer level.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:127838-129000",
+      "excerpt": "ate Sales Volume During the three months ended October 2, 2026, worldwide concentrate sales volume increased 6% and unit case volume increased 5% compared to the three months ended September 26, 2025. During the nine months ended October 2, 2026, worldwide concentrate sales volume increased 6% and unit case volume increased 4% compared to the nine months ended September 26, 2025. Concentrate sales volume growth is calculated based on the amount sold during the reporting periods, which is impacted by the number of days. Conversely, unit case volume growth is calculated based on average daily sales, which is not impacted by the number of days in the reporting periods. The first quarter of 2026 had six additional days when compared to the first quarter of 2025, which contributed to the differences between concentrate sales volume and unit case volume growth rates on a consolidated basis and for the individual operating segments during the nine months ended October 2, 2026. Additionally, the differences between concentrate sales volume and unit case volume growth rates for the operating segments were impacted by the timing of concentrate shipments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:123394-124541",
+      "excerpt": "unit case volume, we believe unit case volume performance is one of the indicators of the underlying strength of the Coca-Cola system because it measures demand for our products at the consumer level. Three Months Ended October 2, 2026 versus Three Months Ended September 26, 2025 Unit case volume in EMEA increased 5%, which included 6% growth in Trademark Coca-Cola, 5% growth in water, sports, coffee and tea, 3% growth in sparkling flavors, as well as growth in energy drinks, partially offset by an 8% decline in juice, value-added dairy and plant-based beverages, which was driven by the impact of the sale of our finished product operations in Nigeria in 2025. The operating segment’s volume performance included an increase in unit case volume of 8% in the Eurasia and Middle East operating unit, 7% in the Africa operating unit and 2% in the Europe operating unit. Unit case volume in Latin America increased 6%, which included 6% growth in Trademark Coca-Cola, 7% growth in water, sports, coffee and tea, 6% growth in sparkling flavors, 2% growth in juice, value-added dairy and plant-based beverages, as well as growth in energy drinks.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:14277-15296",
+      "excerpt": "included in our consolidated financial statements. In the opinion of management, all adjustments (including normal recurring accruals) considered necessary for a fair presentation have been included. Operating results for the three and nine months ended October 2, 2026 are not necessarily indicative of the results that may be expected for the year ending December 31, 2026. Sales of our ready-to-drink beverages are somewhat seasonal, with the second and third calendar quarters typically accounting for the highest sales volumes. The volume of sales in the beverage business may be affected by weather conditions. Each of our quarterly reporting periods, other than the fourth quarter, ends on the Friday closest to the last day of the corresponding quarterly calendar period. The third quarter of 2026 and the third quarter of 2025 ended on October 2, 2026 and September 26, 2025, respectively. Our fourth quarter and our fiscal year end on December 31 regardless of the day of the week on which December 31 falls.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:216882-217903",
+      "excerpt": "States Code (18 U.S.C. Section 1350), executed by Henrique Braun, Chief Executive Officer of The Coca-Cola Company, and by John Murphy, President and Chief Financial Officer of The Coca-Cola Company. 101 The following financial information from The Coca-Cola Company’s Quarterly Report on Form 10-Q for the quarter ended October 2, 2026, formatted in iXBRL (Inline Extensible Business Reporting Language): (i) Consolidated Statements of Income for the three and nine months ended October 2, 2026 and September 26, 2025; (ii) Consolidated Statements of Comprehensive Income for the three and nine months ended October 2, 2026 and September 26, 2025; (iii) Consolidated Balance Sheets as of October 2, 2026 and December 31, 2025; (iv) Consolidated Statements of Cash Flows for the nine months ended October 2, 2026 and September 26, 2025; and (v) Notes to Consolidated Financial Statements. 104 Cover Page Interactive Data File (the cover page XBRL tags are embedded within the iXBRL document and included in Exhibit 101).",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050503",
+      "form": "10-Q",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-07-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+      "locator": "10-Q 0001628280-26-050503:119126-120194",
+      "excerpt": "rs or consumers and is not based on average daily sales. Each of our quarters, other than the fourth quarter, ends on the Friday closest to the last day of the corresponding quarterly calendar period. As a result, the first quarter of 2026 had six additional days when compared to the first quarter of 2025, and the fourth quarter of 2026 will have six fewer days when compared to the fourth quarter of 2025. 5 After considering the impact of structural changes, unit case volume for Bottling Investments for the three and six months ended July 3, 2026 increased 8% and 6%, respectively. 6 After considering the impact of structural changes, concentrate sales volume for Asia Pacific for both the three and six months ended July 3, 2026 increased 11%. 33 Unit Case Volume Although a significant portion of our Company’s net operating revenues is not based directly on unit case volume, we believe unit case volume performance is one of the indicators of the underlying strength of the Coca-Cola system because it measures demand for our products at the consumer level.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:138212-139336",
+      "excerpt": "ncial Position — Foreign Exchange” below. 38 Net operating revenue growth rates are impacted by sales volume; price/mix; foreign currency exchange rate fluctuations; and acquisitions and divestitures. The size and timing of acquisitions and divestitures are not consistent from period to period. Based on current spot rates and our hedging coverage in place, we expect foreign currency exchange rate fluctuations will have a favorable impact on our full year 2026 net operating revenues. Gross Profit Margin Gross profit margin is a ratio calculated by dividing gross profit by net operating revenues. Management believes gross profit margin provides investors with useful information related to the profitability of our business prior to considering all of the selling, general and administrative expenses and other operating charges incurred. Management uses this measure in making financial, operating and planning decisions and in evaluating the Company’s performance. Our gross profit margin increased to 63.2% for the three months ended October 2, 2026, compared to 61.5% for the three months ended September 26, 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:145153-146305",
+      "excerpt": "42.1 42.0 Latin America 58.9 57.1 61.5 59.5 North America 32.8 32.0 32.3 31.7 Asia Pacific 37.6 36.3 39.8 42.4 Bottling Investments 13.4 4.2 10.4 5.6 Corporate * * * * * Calculation is not meaningful. Three Months Ended October 2, 2026 versus Three Months Ended September 26, 2025 During the three months ended October 2, 2026, operating income was $4,465 million, compared to $3,982 million during the three months ended September 26, 2025, an increase of $483 million, or 12%. The increase was primarily driven by an increase in concentrate sales volume of 7%, favorable price/mix, lower commodity costs, lower other operating charges and a favorable foreign currency exchange rate impact of 3%, partially offset by increased marketing spending and higher operating expenses. Fluctuations in foreign currency exchange rates, including the effects of our hedging activities, favorably impacted consolidated operating income by 3% due to a weaker U.S. dollar compared to certain foreign currencies, including the Mexican peso and Brazilian real, which had a favorable impact on our Latin America operating segment. The favorable impact of a weaker U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:147910-149035",
+      "excerpt": "perating expenses and higher other operating charges. Asia Pacific’s operating income for the three months ended October 2, 2026 and September 26, 2025 was $563 million and $521 million, respectively. The increase in operating income was primarily driven by an increase in concentrate sales volume of 8%, partially offset by unfavorable price/mix and an unfavorable foreign currency exchange rate impact of 6%. Bottling Investments’ operating income for the three months ended October 2, 2026 and September 26, 2025 was $205 million and $57 million, respectively. The increase in operating income was primarily driven by an increase in unit case volume of 10%, favorable price/mix, lower commodity costs and lower operating expenses, partially offset by an unfavorable foreign currency exchange rate impact of 2%. Corporate’s operating loss for the three months ended October 2, 2026 and September 26, 2025 was $392 million and $271 million, respectively. This increase is primarily a result of higher annual incentive expense due to timing and increased marketing expenses, partially offset by lower other operating charges.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": "2026-07-04",
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/0001628280-26-067844-index.htm",
+      "locator": "Revenue 2026-07-04..2026-10-02",
+      "excerpt": null,
+      "values": [
+        13380000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": "2025-06-28",
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/0001628280-26-067844-index.htm",
+      "locator": "Revenue 2025-06-28..2025-09-26",
+      "excerpt": null,
+      "values": [
+        12455000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "KO",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2026-10-02",
+      "excerpt": null,
+      "values": [
+        13380000000.0,
+        12455000000.0,
+        0.07426736250501806
+      ],
+      "unit": "ratio",
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:43191-44367",
+      "excerpt": "rency exchange rates are recorded in net foreign currency translation adjustments. Any ineffective portions of net investment hedges are reclassified from AOCI into income during the period of change. The following table summarizes the notional values and pretax impact of changes in the fair values of instruments designated as net investment hedges (in millions): Notional Values Gain (Loss) Recognized in OCI as of Three Months Ended Nine Months Ended October 2, 2026 December 31, 2025 October 2, 2026 September 26, 2025 October 2, 2026 September 26, 2025 Foreign currency contracts $ 2,926 $ 1,067 $ ( 4 ) $ 12 $ ( 14 ) $ 11 Foreign currency denominated debt 12,941 14,998 190 23 586 ( 1,721 ) Total $ 15,867 $ 16,065 $ 186 $ 35 $ 572 $ ( 1,710 ) The Company did not reclassify any gains or losses during the three and nine months ended October 2, 2026, or the three and nine months ended September 26, 2025. 14 Economic (Non-Designated) Hedging Strategy In addition to derivative instruments that have been designated and qualify for hedge accounting, the Company also uses certain derivatives as economic hedges of foreign currency, interest rate and commodity exposure.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050503",
+      "form": "10-Q",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-07-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+      "locator": "10-Q 0001628280-26-050503:144751-145858",
+      "excerpt": "her other operating charges and increased marketing spending. Asia Pacific’s operating income for the three months ended July 3, 2026 and June 27, 2025 was $656 million and $647 million, respectively. The increase in operating income was primarily driven by an increase in concentrate sales volume of 11%, lower commodity costs, lower operating expenses and a favorable foreign currency exchange rate impact of 1%, partially offset by unfavorable price/mix and increased marketing spending. Bottling Investments’ operating income for the three months ended July 3, 2026 and June 27, 2025 was $91 million and $59 million, respectively. The increase in operating income was primarily driven by an increase in unit case volume of 8%, favorable price/mix and lower commodity costs, partially offset by higher operating expenses, the impact of refranchising certain territories of our bottling operations in India and an unfavorable foreign currency exchange rate impact of 24%. Corporate’s operating loss for the three months ended July 3, 2026 and June 27, 2025 was $256 million and $329 million, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050503",
+      "form": "10-Q",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-07-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+      "locator": "10-Q 0001628280-26-050503:145658-146713",
+      "excerpt": "a and an unfavorable foreign currency exchange rate impact of 24%. Corporate’s operating loss for the three months ended July 3, 2026 and June 27, 2025 was $256 million and $329 million, respectively. This decrease is primarily a result of lower annual incentive expense and lower other operating charges. Six Months Ended July 3, 2026 versus Six Months Ended June 27, 2025 During the six months ended July 3, 2026, operating income was $9,031 million, compared to $7,939 million during the six months ended June 27, 2025, an increase of $1,092 million, or 14%. The increase was primarily driven by an increase in concentrate sales volume of 6%, favorable price/mix, lower operating expenses, lower other operating charges and a favorable foreign currency exchange rate impact of 4%, partially offset by higher commodity costs and increased marketing spending partly due to timing. Fluctuations in foreign currency exchange rates, including the effects of our hedging activities, favorably impacted consolidated operating income by 4% due to a weaker U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:128800-129592",
+      "excerpt": "ended October 2, 2026. Additionally, the differences between concentrate sales volume and unit case volume growth rates for the operating segments were impacted by the timing of concentrate shipments. We generally expect the differences between concentrate sales volume and unit case volume growth rates to be minimal on a full year basis; however, for the full year 2026 we currently expect worldwide concentrate sales volume growth to be slightly behind unit case volume growth. 36 Net Operating Revenues Three Months Ended October 2, 2026 versus Three Months Ended September 26, 2025 During the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:98162-99127",
+      "excerpt": "item assets held for sale, $ 35 million in the line item other noncurrent assets, $ 5 million in the line item liabilities held for sale and $ 90 million in the line item other noncurrent liabilities. Refer to Note 6 for additional information related to the composition of our derivatives portfolio. Excluding the remeasurement of the fairlife contingent consideration liability during the nine months ended September 26, 2025, gross realized and unrealized gains and losses on Level 3 assets and liabilities were not significant for the three and nine months ended October 2, 2026 and September 26, 2025. Refer to Note 12 for additional information on the fairlife contingent consideration liability. The Company recognizes transfers between levels within the hierarchy as of the beginning of the reporting period. Gross transfers between levels within the hierarchy were not significant for the three and nine months ended October 2, 2026 and September 26, 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:365123-366222",
+      "excerpt": "ceeded the estimated proceeds, which required us to record an impairment loss in excess of the carrying amount of the assets held for sale (excluding the net foreign currency translation adjustments). As a result, the Company recorded a charge of $ 393 million, which consisted of a $ 235 million charge to write off the carrying amount of the assets held for sale (excluding the net foreign currency translation adjustments) and a $ 158 million charge to accrue the remaining difference between the carrying amount (including the net foreign currency translation adjustments) and the estimated proceeds. These charges were recorded in the line item other income (loss) — net in our consolidated statement of income. The sale of these operations was completed in October 2025. 73 In October 2025, the Company entered into a definitive agreement to sell a portion of our interest in our bottling operations in Africa to CCHBC, an equity method investee. Closing is subject to various regulatory approvals and is expected by the end of 2026, upon which we will deconsolidate these bottling operations.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E8",
+      "quote": "During the three months ended October 2, 2026, operating income was $4,465 million, compared to $3,982 million during the three months ended September 26, 2025, an increase of $483 million, or 12%. The increase was primarily driven by an increase in concentrate sales volume of 7%, favorable price/mix, lower commodity costs, lower other operating charges and a favorable foreign currency exchange rate impact of 3%",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:145153-146305"
+    },
+    {
+      "evidence_id": "E7",
+      "quote": "Based on current spot rates and our hedging coverage in place, we expect foreign currency exchange rate fluctuations will have a favorable impact on our full year 2026 net operating revenues.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:138212-139336"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 17138,
+    "output": 2237
+  },
+  "latency_ms": 31667,
+  "estimated_cost_usd": 0.084969,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 7173,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 14,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 24468,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "CONTRADICTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 19,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

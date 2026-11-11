@@ -1,0 +1,801 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-GOOGL-06:e74d8b61",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-GOOGL-06",
+    "company": "GOOGL",
+    "claim": "Google Cloud revenue growth in the quarter ended September 30, 2026 was driven primarily by Google Cloud Platform.",
+    "as_of_date": "2026-11-01",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q3"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Google Cloud revenues increased $15.6 billion from the three months ended September 30, 2025 to the three months ended September 30, 2026, primarily driven by growth in Google Cloud Platform, largely from infrastructure and platform services, and TPU system sales."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Google Cloud revenue growth in Q3 2026 (quarter ended September 30, 2026) was driven primarily by Google Cloud Platform. Evidence E1 directly supports this claim, explicitly stating that Google Cloud revenues increased $15.6 billion from the three months ended September 30, 2025 to the three months ended September 30, 2026, and that this growth was \"primarily driven by growth in Google Cloud Platform, largely from infrastructure and platform services, and TPU system sales.\" This is a qualitative/interpretive claim about the driver of revenue growth, not a numeric claim about specific figures or growth rates. The evidence directly confirms the attribution stated in the claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did Google Workspace (the other major component of Google Cloud besides Google Cloud Platform) contribute significantly or equally to Google Cloud revenue growth in Q3 2026?",
+          "search_query": "Google Workspace revenue growth Q3 2026 September collaboration productivity"
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Was the Google Cloud revenue growth in Q3 2026 primarily driven by one-time factors like TPU system sales rather than ongoing Google Cloud Platform services?",
+          "search_query": "TPU system sales revenue Q3 2026 September Google Cloud hardware"
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Did the filing provide a breakdown showing that Google Workspace or other non-Platform components contributed more to the revenue growth than Google Cloud Platform?",
+          "search_query": "Google Cloud segment breakdown Workspace Platform revenue contribution September 2026"
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "Google Workspace revenue growth Q3 2026 September collaboration productivity",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "TPU system sales revenue Q3 2026 September Google Cloud hardware",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "Google Cloud segment breakdown Workspace Platform revenue contribution September 2026",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "Google Cloud generates services revenues primarily from consumption-based fees and subscriptions received for Google Cloud Platform services, Google Workspace communication and collaboration tools, and other enterprise services.",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001652044-26-000084",
+              "form": "10-Q",
+              "filed": "2026-10-29",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+              "locator": "10-Q 0001652044-26-000084:122221-123285"
+            },
+            {
+              "evidence_id": "E9",
+              "quote": "Google Cloud generates services revenues primarily from consumption-based fees and subscriptions received for Google Cloud Platform services, Google Workspace communication and collaboration tools, and other enterprise services.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001652044-26-000084",
+              "form": "10-Q",
+              "filed": "2026-10-29",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+              "locator": "10-Q 0001652044-26-000084:121234-122421"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "Google Cloud revenues increased $15.6 billion from the three months ended September 30, 2025 to the three months ended September 30, 2026, primarily driven by growth in Google Cloud Platform, largely from infrastructure and platform services, and TPU system sales.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001652044-26-000084",
+              "form": "10-Q",
+              "filed": "2026-10-29",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+              "locator": "10-Q 0001652044-26-000084:146723-147814"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [
+            {
+              "evidence_id": "E13",
+              "quote": "Google Cloud generates services revenues primarily from consumption-based fees and subscriptions received for Google Cloud Platform services, Google Workspace communication and collaboration tools, and other enterprise services.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001652044-26-000071",
+              "form": "10-Q",
+              "filed": "2026-07-23",
+              "period_end": "2026-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+              "locator": "10-Q 0001652044-26-000071:114709-115878"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "7e65129733c6c31c9fa1a130be42b550e9229cffd7f30ef2a38e5a16ef96fd96",
+      "source": "cache",
+      "input_tokens": 3843,
+      "output_tokens": 377,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Google Cloud revenues increased $15.6 billion from the three months ended September 30, 2025 to the three months ended September 30, 2026, primarily driven by growth in Google Cloud Platform, largely from infrastructure and platform services, and TPU system sales."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Google Cloud revenue growth in Q3 2026 (quarter ended September 30, 2026) was driven primarily by Google Cloud Platform. Evidence E1 directly supports this claim, explicitly stating that Google Cloud revenues increased $15.6 billion from the three months ended September 30, 2025 to the three months ended September 30, 2026, and that this growth was \"primarily driven by growth in Google Cloud Platform, largely from infrastructure and platform services, and TPU system sales.\" This is a qualitative/interpretive claim about the driver of revenue growth, not a numeric claim about specific figures or growth rates. The evidence directly confirms the attribution stated in the claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "b1802baefa13a9bdeda160372854e3ceb64f084dc98cf571b666b7257ad3c9f7",
+      "source": "live",
+      "input_tokens": 4544,
+      "output_tokens": 271,
+      "stop_reason": "tool_use",
+      "latency_ms": 5793,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did Google Workspace (the other major component of Google Cloud besides Google Cloud Platform) contribute significantly or equally to Google Cloud revenue growth in Q3 2026?",
+            "search_query": "Google Workspace revenue growth Q3 2026 September collaboration productivity"
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Was the Google Cloud revenue growth in Q3 2026 primarily driven by one-time factors like TPU system sales rather than ongoing Google Cloud Platform services?",
+            "search_query": "TPU system sales revenue Q3 2026 September Google Cloud hardware"
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Did the filing provide a breakdown showing that Google Workspace or other non-Platform components contributed more to the revenue growth than Google Cloud Platform?",
+            "search_query": "Google Cloud segment breakdown Workspace Platform revenue contribution September 2026"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "f3089f9fc45903984645ddf22ff739e6d38fbd36bfa7ed34945e5ffd66d0f056",
+      "source": "live",
+      "input_tokens": 7763,
+      "output_tokens": 809,
+      "stop_reason": "tool_use",
+      "latency_ms": 13738,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "Google Cloud generates services revenues primarily from consumption-based fees and subscriptions received for Google Cloud Platform services, Google Workspace communication and collaboration tools, and other enterprise services."
+              },
+              {
+                "evidence_id": "E9",
+                "quote": "Google Cloud generates services revenues primarily from consumption-based fees and subscriptions received for Google Cloud Platform services, Google Workspace communication and collaboration tools, and other enterprise services."
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E1",
+                "quote": "Google Cloud revenues increased $15.6 billion from the three months ended September 30, 2025 to the three months ended September 30, 2026, primarily driven by growth in Google Cloud Platform, largely from infrastructure and platform services, and TPU system sales."
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": [
+              {
+                "evidence_id": "E13",
+                "quote": "Google Cloud generates services revenues primarily from consumption-based fees and subscriptions received for Google Cloud Platform services, Google Workspace communication and collaboration tools, and other enterprise services."
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Google Cloud revenues increased $15.6 billion from the three months ended September 30, 2025 to the three months ended September 30, 2026, primarily driven by growth in Google Cloud Platform, largely from infrastructure and platform services, and TPU system sales."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Google Cloud revenue growth in Q3 2026 was driven primarily by Google Cloud Platform. Evidence E1 directly supports this, stating that the $15.6 billion revenue increase was \"primarily driven by growth in Google Cloud Platform, largely from infrastructure and platform services, and TPU system sales.\"\n\nChallenge H1 asked whether Google Workspace contributed significantly or equally to the growth. The retrieved evidence (E7, E9, E13) only describes the general composition of Google Cloud revenues but provides no specific information about Google Workspace's contribution to Q3 2026 growth. There is no evidence that Workspace was a primary driver.\n\nChallenge H2 asked whether TPU system sales (rather than ongoing Platform services) were the primary driver. This is refuted by E1, which explicitly states the growth was \"largely from infrastructure and platform services\" with TPU system sales mentioned as an additional factor, not the primary one.\n\nChallenge H3 asked whether any breakdown showed Workspace or other components contributed more than Platform. No such breakdown was found in the evidence.\n\nThe initial verdict remains SUPPORTED as none of the challenges found evidence contradicting the claim.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Google Cloud revenue growth in the quarter ended September 30, 2026 was driven primarily by Google Cloud Platform. 2026 Q3",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "Google Workspace revenue growth Q3 2026 September collaboration productivity",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "TPU system sales revenue Q3 2026 September Google Cloud hardware",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "Google Cloud segment breakdown Workspace Platform revenue contribution September 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001652044-26-000084",
+        "filed": "2026-10-29",
+        "report_date": "2026-09-30",
+        "primary_document": "goog-20260930.htm",
+        "sha256": "a0bfcc3af2b58672cd98586a3036ff19a1cf0842dd58db57962fef17a9c739f3"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001652044-26-000071",
+        "filed": "2026-07-23",
+        "report_date": "2026-06-30",
+        "primary_document": "goog-20260630.htm",
+        "sha256": "96f56cc3c08ac0b48d07416c5f277cb1d5ba2547e08a54291932e935f81858d4"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001652044-26-000018",
+        "filed": "2026-02-05",
+        "report_date": "2025-12-31",
+        "primary_document": "goog-20251231.htm",
+        "sha256": "bab3d2601c394c4b603fa4ae30165a65e123a37087a172c8e4146dba0c80ab82"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 878
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000084",
+      "form": "10-Q",
+      "filed": "2026-10-29",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "locator": "10-Q 0001652044-26-000084:146723-147814",
+      "excerpt": "marily due to the contribution from growth in paid subscriptions across both YouTube services and Google One. The increase in devices revenues was primarily driven by increased sales of Pixel devices. Google subscriptions, platforms, and devices revenues increased $5.1 billion from the nine months ended September 30, 2025 to the nine months ended September 30, 2026. The growth was primarily driven by an increase in subscriptions revenues. This increase was primarily due to the contribution from growth in paid subscriptions across both YouTube services and Google One. Google Cloud Google Cloud revenues increased $15.6 billion from the three months ended September 30, 2025 to the three months ended September 30, 2026, primarily driven by growth in Google Cloud Platform, largely from infrastructure and platform services, and TPU system sales. Google Cloud revenues increased $34.5 billion from the nine months ended September 30, 2025 to the nine months ended September 30, 2026, primarily driven by growth in Google Cloud Platform largely from infrastructure and platform services.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:140439-141549",
+      "excerpt": "growth was primarily driven by an increase in subscriptions revenues. This increase was primarily due to the contribution from growth in paid subscriptions across both YouTube services and Google One. Google Cloud Google Cloud revenues increased $11.1 billion and $18.9 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026 primarily driven by growth in Google Cloud Platform largely from infrastructure and platform services. In addition, in the second quarter of 2026, we began recognizing revenue from the sale of TPU systems. Revenues by Geography The following table presents revenues by geography as a percentage of revenues, determined based on the addresses of our customers: Three Months Ended Six Months Ended June 30, June 30, 2025 2026 2025 2026 United States 48 % 51 % 48 % 50 % EMEA 29 % 27 % 29 % 28 % APAC 17 % 16 % 17 % 16 % Other Americas 6 % 6 % 6 % 6 % Hedging gains (losses) 0 % 0 % 0 % 0 % For additional information, see Note 2 of the Notes to Consolidated Financial Statements included in Item 1 of this Quarterly Report on Form 10-Q.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000084",
+      "form": "10-Q",
+      "filed": "2026-10-29",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "locator": "10-Q 0001652044-26-000084:147614-148354",
+      "excerpt": "illion from the nine months ended September 30, 2025 to the nine months ended September 30, 2026, primarily driven by growth in Google Cloud Platform largely from infrastructure and platform services. Revenues by Geography The following table presents revenues by geography as a percentage of revenues, determined based on the addresses of our customers: Three Months Ended Nine Months Ended September 30, September 30, 2025 2026 2025 2026 United States 48 % 53 % 48 % 51 % EMEA 29 % 26 % 29 % 27 % APAC 17 % 16 % 17 % 16 % Other Americas 6 % 5 % 6 % 6 % Hedging gains (losses) 0 % 0 % 0 % 0 % For additional information, see Note 2 of the Notes to Consolidated Financial Statements included in Item 1 of this Quarterly Report on Form 10-Q.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000084",
+      "form": "10-Q",
+      "filed": "2026-10-29",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "locator": "10-Q 0001652044-26-000084:154813-155975",
+      "excerpt": "tember 30, 2026. The increase in operating income was primarily driven by an increase in revenues and a decrease in expenses related to legal and other matters, partially offset by an increase in TAC. Google Services operating income increased $20.0 billion from the nine months ended September 30, 2025 to the nine months ended September 30, 2026. The increase in operating income was primarily driven by an increase in revenues, partially offset by an increase in TAC. Google Cloud Google Cloud operating income increased $7.5 billion from the three months ended September 30, 2025 to the three months ended September 30, 2026. The increase in operating income was primarily driven by an increase in revenues, partially offset by increases in inventory and related costs associated with the sale of TPU systems and usage costs for technical infrastructure. Google Cloud operating income increased $17.9 billion from the nine months ended September 30, 2025 to the nine months ended September 30, 2026. The increase in operating income was primarily driven by an increase in revenues, partially offset by an increase in usage costs for technical infrastructure.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000084",
+      "form": "10-Q",
+      "filed": "2026-10-29",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "locator": "10-Q 0001652044-26-000084:149064-150134",
+      "excerpt": "billion from the nine months ended September 30, 2025 to the nine months ended September 30, 2026 due to an increase in other cost of revenues and TAC of $17.4 billion and $4.4 billion, respectively. The increase in TAC from the three and nine months ended September 30, 2025 to the three and nine months ended September 30, 2026 was largely due to an increase in TAC paid to distribution partners, primarily driven by growth in revenues subject to TAC. The TAC rate decreased from 20.1% to 20.0% from the three months ended September 30, 2025 to the three months ended September 30, 2026 and decreased from 20.4% to 19.8% from the nine months ended September 30, 2025 to the nine months ended September 30, 2026, primarily due to a revenue mix shift from Google Network properties to Google Search & other properties, partially offset by an increase in the Google Network TAC rate. The TAC rate on Google Search & other revenues was substantially consistent from the three and nine months ended September 30, 2025 to the three and nine months ended September 30, 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000084",
+      "form": "10-Q",
+      "filed": "2026-10-29",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "locator": "10-Q 0001652044-26-000084:143861-144952",
+      "excerpt": "le Search & other Google Search & other revenues increased $6.8 billion and $25.6 billion from the three and nine months ended September 30, 2025 to the three and nine months ended September 30, 2026. The overall growth was driven by interrelated factors including increases in search queries resulting from growth in user adoption and usage on mobile devices; growth in advertiser spending; and improvements we have made in ad formats and delivery. YouTube ads YouTube ads revenues increased $946 million and $3.2 billion from the three and nine months ended September 30, 2025 to the three and nine months ended September 30, 2026. The growth was driven by our brand advertising products followed by our direct response advertising products, both of which benefited from increased spending by our advertisers. Google Network Google Network revenues increased $101 million from the three months ended September 30, 2025 to the three months ended September 30, 2026, primarily due to an increase in AdMob revenues. The overall increase was partially offset by a decrease in AdSense revenues.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000084",
+      "form": "10-Q",
+      "filed": "2026-10-29",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "locator": "10-Q 0001652044-26-000084:122221-123285",
+      "excerpt": "r Google Cloud Platform services, Google Workspace communication and collaboration tools, and other enterprise services. Google Cloud generates product revenues primarily from the sale of TPU systems. • Other Bets is a combination of multiple operating segments that are not individually material. Revenues from Other Bets are generated primarily from the sale of autonomous transportation services and internet services. 41 Revenues, certain costs, such as costs associated with content and traffic acquisition, certain engineering activities, and inventory, as well as certain operating expenses are directly attributable to our segments. Due to the integrated nature of Alphabet, other costs and expenses, such as technical infrastructure and office facilities, are managed centrally at a consolidated level. These costs, including the associated depreciation, are allocated to operating segments as a service cost generally based on usage, headcount, or revenue. Certain costs are not allocated to our segments because they represent Alphabet-level activities.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:115678-116742",
+      "excerpt": "r Google Cloud Platform services, Google Workspace communication and collaboration tools, and other enterprise services. Google Cloud generates product revenues primarily from the sale of TPU systems. • Other Bets is a combination of multiple operating segments that are not individually material. Revenues from Other Bets are generated primarily from the sale of autonomous transportation services and internet services. 39 Revenues, certain costs, such as costs associated with content and traffic acquisition, certain engineering activities, and inventory, as well as certain operating expenses are directly attributable to our segments. Due to the integrated nature of Alphabet, other costs and expenses, such as technical infrastructure and office facilities, are managed centrally at a consolidated level. These costs, including the associated depreciation, are allocated to operating segments as a service cost generally based on usage, headcount, or revenue. Certain costs are not allocated to our segments because they represent Alphabet-level activities.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000084",
+      "form": "10-Q",
+      "filed": "2026-10-29",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "locator": "10-Q 0001652044-26-000084:121234-122421",
+      "excerpt": "$ 11.5 billion and $ 12.5 billion, of which $ 9.7 billion and $ 10.6 billion, if recognized, would affect our effective tax rate, as of December 31, 2025 and September 30, 2026, respectively. Note 15. Information about Segments and Geographic Areas We report our segment results as Google Services, Google Cloud, and Other Bets: • Google Services includes products and services such as ads, Android, Chrome, consumer devices, Google Maps, Google Play, Search, and YouTube. Google Services generates revenues primarily from advertising; fees received for consumer subscription-based products such as YouTube TV, YouTube Music and Premium, and NFL Sunday Ticket, as well as Google One; the sale of apps and in-app purchases; and consumer devices. • Google Cloud includes infrastructure and platform services, applications, and other products and services for enterprise customers. Google Cloud generates services revenues primarily from consumption-based fees and subscriptions received for Google Cloud Platform services, Google Workspace communication and collaboration tools, and other enterprise services. Google Cloud generates product revenues primarily from the sale of TPU systems.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:27343-28514",
+      "excerpt": "primarily the sale of TPU systems. • Other enterprise services. Our cloud services are generally provided on either a consumption or subscription basis and may have contract terms longer than a year. Revenues related to cloud services provided on a consumption basis are recognized when the customer utilizes the services, based on the quantity of services consumed using the relative standalone selling price allocation. Revenues related to cloud services provided on a subscription basis are recognized over the contract term as the customer receives and consumes the benefits of the cloud services. Our Google Cloud product sales generally consist of the sale of TPU systems comprising hardware, software, installation, support, and extended warranty services. Customer arrangements may also include options which are accounted for as rights of return. Product sales revenue from hardware, net of estimated allowances for returns, and software is recognized generally when control of the hardware is transferred to the customer. Installation, support, and extended warranty services revenue are recognized ratably over the service period or as services are performed.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000084",
+      "form": "10-Q",
+      "filed": "2026-10-29",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "locator": "10-Q 0001652044-26-000084:27598-28705",
+      "excerpt": "enterprises, such as Gmail, Docs, Calendar, Drive, and Meet, with integrated features like Gemini for Google Workspace. • Product sales, primarily the sale of TPU systems. • Other enterprise services. Our cloud services are generally provided on either a consumption or subscription basis and may have contract terms longer than a year. Revenues related to cloud services provided on a consumption basis are recognized when the customer utilizes the services, based on the quantity of services consumed using the relative standalone selling price allocation. Revenues related to cloud services provided on a subscription basis are recognized over the contract term as the customer receives and consumes the benefits of the cloud services. Our Google Cloud product sales generally consist of the sale of TPU systems comprising hardware, software, installation, support, and extended warranty services. Customer arrangements may also include options requiring us to repurchase the hardware and embedded software at pre-set prices, over a multi-year term, which are generally accounted for as rights of return.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:129543-130295",
+      "excerpt": "ort; ◦ inventory and other costs related to the devices and TPU system hardware we sell; and ◦ other technical infrastructure operations costs, including energy, equipment, and network capacity costs. TAC as a percentage of revenues generated from ads placed on Google Network properties are significantly higher than TAC as a percentage of revenues generated from ads placed on Google Search & other properties, because most of the advertiser revenues from ads served on Google Network properties are paid as TAC to our Google Network partners. Operating Expenses Operating expenses are generally incurred during our normal course of business, which we categorize as either research and development, sales and marketing, or general and administrative.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:114709-115878",
+      "excerpt": "was $ 11.5 billion and $ 12.1 billion, of which $ 9.7 billion and $ 10.3 billion, if recognized, would affect our effective tax rate, as of December 31, 2025 and June 30, 2026, respectively. Note 15. Information about Segments and Geographic Areas We report our segment results as Google Services, Google Cloud, and Other Bets: • Google Services includes products and services such as ads, Android, Chrome, devices, Google Maps, Google Play, Search, and YouTube. Google Services generates revenues primarily from advertising; fees received for consumer subscription-based products such as YouTube TV, YouTube Music and Premium, and NFL Sunday Ticket, as well as Google One; the sale of apps and in-app purchases; and devices. • Google Cloud includes infrastructure and platform services, applications, and other products and services for enterprise customers. Google Cloud generates services revenues primarily from consumption-based fees and subscriptions received for Google Cloud Platform services, Google Workspace communication and collaboration tools, and other enterprise services. Google Cloud generates product revenues primarily from the sale of TPU systems.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:315506-316609",
+      "excerpt": "d in our tax audits are resolved in a manner not consistent with management's expectations, we could be required to adjust our provision for income taxes in the period such resolutions occur. Note 15. Information about Segments and Geographic Areas We report our segment results as Google Services, Google Cloud, and Other Bets: • Google Services includes products and services such as ads, Android, Chrome, devices, Google Maps, Google Play, Search, and YouTube. Google Services generates revenues primarily from advertising; fees received for consumer subscription-based products such as YouTube TV, YouTube Music and Premium, and NFL Sunday Ticket, as well as Google One; the sale of apps and in-app purchases; and devices. • Google Cloud includes infrastructure and platform services, applications, and other services for enterprise customers. Google Cloud generates revenues primarily from consumption-based fees and subscriptions received for Google Cloud Platform services, Google Workspace communication and collaboration tools, and other enterprise services. 86. Table of Contents Alphabet Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:212149-213170",
+      "excerpt": "fee. Google Cloud Google Cloud revenues consist of revenues from: • Google Cloud Platform primarily generates consumption-based fees and subscriptions for infrastructure, platform, and other services. These services provide access to solutions such as AI offerings including our enterprise AI infrastructure, Vertex AI platform, and Gemini Enterprise; cybersecurity offerings; and data and analytics solutions; • Google Workspace includes subscriptions for cloud-based communication and collaboration tools for enterprises, such as Gmail, Docs, Calendar, Drive, and Meet, with integrated features like Gemini for Google Workspace; and • other enterprise services. Our cloud services are generally provided on either a consumption or subscription basis and may have contract terms longer than a year. Revenues related to cloud services provided on a consumption basis are recognized when the customer utilizes the services, based on the quantity of services consumed using the relative standalone selling price allocation.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "Google Cloud revenues increased $15.6 billion from the three months ended September 30, 2025 to the three months ended September 30, 2026, primarily driven by growth in Google Cloud Platform, largely from infrastructure and platform services, and TPU system sales.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001652044-26-000084",
+      "form": "10-Q",
+      "filed": "2026-10-29",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "locator": "10-Q 0001652044-26-000084:146723-147814"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 16150,
+    "output": 1457
+  },
+  "latency_ms": 19559,
+  "estimated_cost_usd": 0.070305,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 5795,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 15,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 13741,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 12,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

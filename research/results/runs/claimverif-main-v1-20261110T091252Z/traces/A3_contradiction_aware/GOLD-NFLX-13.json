@@ -1,0 +1,1175 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-NFLX-13:4683313b",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-NFLX-13",
+    "company": "NFLX",
+    "claim": "Netflix's free cash flow growth in 2025 reflects the timing of content payments rather than improved underlying economics.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "INSUFFICIENT_EVIDENCE",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "This claim makes an interpretive assertion about the cause or driver of Netflix's free cash flow growth in 2025. Specifically, it attributes the growth to \"the timing of content payments rather than improved underlying economics.\"\n\nThe claim requires two elements to be verified:\n1. That Netflix experienced free cash flow growth in 2025\n2. That this growth was driven by timing of content payments rather than improved underlying economics\n\nThe evidence provided includes:\n- E1: Discussion of accounting treatment for hedging activities and cash flow classification\n- E2: General forward-looking statements about various business factors including content investments and timing of payments\n- E3, E4: Content obligations and payment schedules as of Q3 2025 and Q2 2025\n- E5: Forward-looking statements similar to E2\n- E6: Discussion of foreign exchange hedging related to content\n\nNone of the evidence passages provide:\n1. Actual free cash flow figures for 2025 or comparison periods\n2. Any explicit statement attributing free cash flow changes to timing of content payments\n3. Any discussion distinguishing between timing effects versus underlying economic improvements\n\nWhile E3 and E4 show content payment obligations at different points in time, they do not establish what free cash flow was, whether it grew, or what caused any changes. The evidence discusses content payment timing as a general matter but does not connect it to free cash flow performance or attribute causation.\n\nWithout evidence showing the actual free cash flow growth and an explicit statement in the filings attributing that growth to payment timing rather than economics, this interpretive claim cannot be verified.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did Netflix actually report free cash flow growth in 2025, and if so, what was the magnitude?",
+          "search_query": "free cash flow 2025 2024 operating cash flow capital expenditure",
+          "numeric_check": {
+            "metric": "OperatingCashFlow",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Did Netflix explicitly attribute free cash flow changes in 2025 to the timing of content payments in their management discussion or cash flow analysis?",
+          "search_query": "free cash flow content payments timing content spend content liabilities management discussion analysis",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Did Netflix discuss improved underlying economics, operating margins, or profitability improvements that would contradict the claim that growth was only due to payment timing?",
+          "search_query": "operating margin profitability improvement economics operating income 2025 improved",
+          "numeric_check": {
+            "metric": "OperatingMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "free cash flow 2025 2024 operating cash flow capital expenditure",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "free cash flow content payments timing content spend content liabilities management discussion analysis",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "operating margin profitability improvement economics operating income 2025 improved",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 10149273000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingCashFlow",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 10149273000.0,
+                "filed": "2026-01-23",
+                "form": "10-K",
+                "accession_number": "0001065280-26-000034",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 7361364000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.3787217966670307,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E12",
+            "E10",
+            "E11"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 0.29494704605507255,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 13326603000.0,
+                "filed": "2026-01-23",
+                "form": "10-K",
+                "accession_number": "0001065280-26-000034",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 45183036000.0,
+                "filed": "2026-01-23",
+                "form": "10-K",
+                "accession_number": "0001065280-26-000034",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.26711169154117875,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.027835354513893795,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E23",
+            "E19",
+            "E20",
+            "E21",
+            "E22"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E10",
+              "quote": "Net cash provided by operating activities $ 10,149,273",
+              "valid": true,
+              "issues": [],
+              "kind": "xbrl_fact",
+              "accession_number": "0001065280-26-000034",
+              "form": "10-K",
+              "filed": "2026-01-23",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/0001065280-26-000034-index.htm",
+              "locator": "OperatingCashFlow 2025-01-01..2025-12-31"
+            },
+            {
+              "evidence_id": "E11",
+              "quote": "Net cash provided by operating activities $ 7,361,364",
+              "valid": true,
+              "issues": [],
+              "kind": "xbrl_fact",
+              "accession_number": "0001065280-26-000034",
+              "form": "10-K",
+              "filed": "2026-01-23",
+              "period_end": "2024-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/0001065280-26-000034-index.htm",
+              "locator": "OperatingCashFlow 2024-01-01..2024-12-31"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E16",
+              "quote": "Operating income 13,326,603 10,417,614 6,954,003 Operating margin 29.5 % 26.7 % 20.6 %",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-26-000034",
+              "form": "10-K",
+              "filed": "2026-01-23",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+              "locator": "10-K 0001065280-26-000034:259519-260719"
+            },
+            {
+              "evidence_id": "E17",
+              "quote": "Operating margin for the three months ended June 30, 2025 increased by approximately seven percentage points as compared to the prior comparative period. The increase in operating margin was primarily driven by revenue growth outpacing the growth in cost of revenues",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-25-000323",
+              "form": "10-Q",
+              "filed": "2025-07-18",
+              "period_end": "2025-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+              "locator": "10-Q 0001065280-25-000323:64483-65621"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "a24639c3a6806d5624c23b4ea547e057a98905b0c6a96820cd1615646dd0443a",
+      "source": "cache",
+      "input_tokens": 3837,
+      "output_tokens": 491,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "This claim makes an interpretive assertion about the cause or driver of Netflix's free cash flow growth in 2025. Specifically, it attributes the growth to \"the timing of content payments rather than improved underlying economics.\"\n\nThe claim requires two elements to be verified:\n1. That Netflix experienced free cash flow growth in 2025\n2. That this growth was driven by timing of content payments rather than improved underlying economics\n\nThe evidence provided includes:\n- E1: Discussion of accounting treatment for hedging activities and cash flow classification\n- E2: General forward-looking statements about various business factors including content investments and timing of payments\n- E3, E4: Content obligations and payment schedules as of Q3 2025 and Q2 2025\n- E5: Forward-looking statements similar to E2\n- E6: Discussion of foreign exchange hedging related to content\n\nNone of the evidence passages provide:\n1. Actual free cash flow figures for 2025 or comparison periods\n2. Any explicit statement attributing free cash flow changes to timing of content payments\n3. Any discussion distinguishing between timing effects versus underlying economic improvements\n\nWhile E3 and E4 show content payment obligations at different points in time, they do not establish what free cash flow was, whether it grew, or what caused any changes. The evidence discusses content payment timing as a general matter but does not connect it to free cash flow performance or attribute causation.\n\nWithout evidence showing the actual free cash flow growth and an explicit statement in the filings attributing that growth to payment timing rather than economics, this interpretive claim cannot be verified.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "ad1e826d555558a515ad007060cd0171394c315fa1e8739e17b2ac08aadb5671",
+      "source": "live",
+      "input_tokens": 4812,
+      "output_tokens": 432,
+      "stop_reason": "tool_use",
+      "latency_ms": 7815,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did Netflix actually report free cash flow growth in 2025, and if so, what was the magnitude?",
+            "search_query": "free cash flow 2025 2024 operating cash flow capital expenditure",
+            "numeric_check": {
+              "metric": "OperatingCashFlow",
+              "measure": "yoy_growth",
+              "period_basis": "annual",
+              "period_end": "2025-12-31",
+              "comparison": "increase",
+              "threshold": null,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Did Netflix explicitly attribute free cash flow changes in 2025 to the timing of content payments in their management discussion or cash flow analysis?",
+            "search_query": "free cash flow content payments timing content spend content liabilities management discussion analysis",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Did Netflix discuss improved underlying economics, operating margins, or profitability improvements that would contradict the claim that growth was only due to payment timing?",
+            "search_query": "operating margin profitability improvement economics operating income 2025 improved",
+            "numeric_check": {
+              "metric": "OperatingMargin",
+              "measure": "yoy_growth",
+              "period_basis": "annual",
+              "period_end": "2025-12-31",
+              "comparison": "increase",
+              "threshold": null,
+              "stated_value": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "24138be4b2055b1c0170c1039d77bd79855a9940de4a70a72d06ad7a93455eda",
+      "source": "live",
+      "input_tokens": 9245,
+      "output_tokens": 1152,
+      "stop_reason": "tool_use",
+      "latency_ms": 20438,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E10",
+                "quote": "Net cash provided by operating activities $ 10,149,273"
+              },
+              {
+                "evidence_id": "E11",
+                "quote": "Net cash provided by operating activities $ 7,361,364"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E16",
+                "quote": "Operating income 13,326,603 10,417,614 6,954,003 Operating margin 29.5 % 26.7 % 20.6 %"
+              },
+              {
+                "evidence_id": "E17",
+                "quote": "Operating margin for the three months ended June 30, 2025 increased by approximately seven percentage points as compared to the prior comparative period. The increase in operating margin was primarily driven by revenue growth outpacing the growth in cost of revenues"
+              }
+            ]
+          }
+        ],
+        "label": "CONTRADICTED",
+        "verdict_changed": true,
+        "change_reason": "The initial verdict of INSUFFICIENT_EVIDENCE was based on the absence of free cash flow data and attribution statements in the original evidence. However, the counter-evidence reveals critical information that contradicts the claim.\n\nH1 establishes that Netflix did experience significant free cash flow growth in 2025 (operating cash flow increased from $7.36B in 2024 to $10.15B in 2025, a 37.9% increase).\n\nH3 demonstrates that Netflix's operating margin improved substantially from 26.7% in 2024 to 29.5% in 2025 (2.8 percentage points), with management explicitly attributing this to \"revenue growth outpacing the growth in cost of revenues.\" This represents improved underlying economics.\n\nH2 found no evidence that Netflix attributed the free cash flow growth to timing of content payments rather than improved economics.\n\nThe claim asserts that free cash flow growth \"reflects the timing of content payments rather than improved underlying economics.\" The evidence shows improved underlying economics (higher operating margins driven by revenue growth outpacing costs), which directly contradicts the claim's assertion that growth was due to payment timing rather than improved economics.",
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E16",
+            "quote": "Operating income 13,326,603 10,417,614 6,954,003 Operating margin 29.5 % 26.7 % 20.6 %"
+          },
+          {
+            "evidence_id": "E17",
+            "quote": "Operating margin for the three months ended June 30, 2025 increased by approximately seven percentage points as compared to the prior comparative period. The increase in operating margin was primarily driven by revenue growth outpacing the growth in cost of revenues"
+          }
+        ],
+        "reasoning_summary": "The claim states that Netflix's free cash flow growth in 2025 \"reflects the timing of content payments rather than improved underlying economics.\"\n\nEvidence from the counter-investigation establishes:\n\n1. Free cash flow growth occurred: Operating cash flow increased from $7.36B in 2024 to $10.15B in 2025, representing 37.9% growth (E10, E11).\n\n2. Improved underlying economics: Operating margin improved from 26.7% in 2024 to 29.5% in 2025 (E16), a 2.8 percentage point improvement. Management explicitly stated this was \"primarily driven by revenue growth outpacing the growth in cost of revenues\" (E17).\n\n3. No attribution to payment timing: Despite searching for evidence that Netflix attributed free cash flow changes to content payment timing, no such statement was found in management's discussion and analysis.\n\nThe claim's core assertion is that the free cash flow growth reflects payment timing \"rather than improved underlying economics.\" However, the evidence demonstrates that Netflix did experience improved underlying economics in 2025, as evidenced by the substantial operating margin expansion and management's explanation that revenue growth outpaced cost growth.\n\nThe claim creates a false dichotomy by suggesting the growth was due to payment timing rather than economics, when the evidence shows improved economics were present. This contradicts the claim's central premise."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Netflix's free cash flow growth in 2025 reflects the timing of content payments rather than improved underlying economics. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "free cash flow 2025 2024 operating cash flow capital expenditure",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "free cash flow content payments timing content spend content liabilities management discussion analysis",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "operating margin profitability improvement economics operating income 2025 improved",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingCashFlow",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 10149273000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingCashFlow",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 10149273000.0,
+                "filed": "2026-01-23",
+                "form": "10-K",
+                "accession_number": "0001065280-26-000034",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 7361364000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.3787217966670307,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E12",
+            "E10",
+            "E11"
+          ]
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H3",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 0.29494704605507255,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 13326603000.0,
+                "filed": "2026-01-23",
+                "form": "10-K",
+                "accession_number": "0001065280-26-000034",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 45183036000.0,
+                "filed": "2026-01-23",
+                "form": "10-K",
+                "accession_number": "0001065280-26-000034",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.26711169154117875,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.027835354513893795,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E23",
+            "E19",
+            "E20",
+            "E21",
+            "E22"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001065280-26-000034",
+        "filed": "2026-01-23",
+        "report_date": "2025-12-31",
+        "primary_document": "nflx-20251231.htm",
+        "sha256": "caec332c25a15511728cc54b55ed5479ee04a2c9d9fa77e7d2f81a52bac97678"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001065280-25-000406",
+        "filed": "2025-10-22",
+        "report_date": "2025-09-30",
+        "primary_document": "nflx-20250930.htm",
+        "sha256": "fa3a310cd89c0b545abdf83eff5ad2d137bbcfe3495349a866f4907ccb372f0c"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001065280-25-000323",
+        "filed": "2025-07-18",
+        "report_date": "2025-06-30",
+        "primary_document": "nflx-20250630.htm",
+        "sha256": "9a73c0293b9963bb70b403298d0f98879258e6f540ec1dc3f78b8eb8e27a1048"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 569
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:195000-196190",
+      "excerpt": "mponent of accumulated other comprehensive income (“AOCI”) and reclassified into “Revenues” on the Consolidated Statements of Operations in the same period the forecasted transaction affects earnings. The gain or loss on derivative instruments designated as cash flow hedges of firmly committed or forecasted transactions related to the licensing and production of content assets is initially reported as a component of AOCI and reclassified into “Cost of Revenues” on the Consolidated Statements of Operations in the same period the hedged transaction affects earnings, which occurs as the underlying hedged content assets are amortized. Cash flows from hedging activities are classified in the same category as the cash flows for the underlying item being hedged within “Net cash provided by operating activities” on the Consolidated Statements of Cash Flows. In the event that the likelihood of occurrence of the underlying forecasted transactions is determined to be probable not to occur, the gains or losses on the related cash flow hedges are reclassified from AOCI to “Interest and other income (expense)” in the Consolidated Statements of Operations in the period of dedesignation.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:7110-8310",
+      "excerpt": "any stock repurchases or repurchase programs; stock price volatility; impact of foreign exchange rate fluctuations; expectations regarding hedging activity; impact of interest rate fluctuations; adequacy of existing facilities; future regulatory changes and their impact on our business; intellectual property; cybersecurity; price changes and testing; artificial intelligence (“AI”); accounting treatment for changes related to content assets; acquisitions; actions by competitors; membership growth, including impact of content and pricing changes on membership growth; partnerships; advertising; multi-household usage; member viewing patterns; dividends; future contractual obligations, including unknown content obligations and timing of payments; our global content and marketing investments, including investments in original programming, consumer products and live experiences; impact of work stoppages; content amortization; resolutions of tax examinations; tax expense; unrecognized tax benefits; deferred tax assets; tax deposits; resolutions of disputes and other proceedings; our ability to effectively manage change and growth; our company culture; expectations regarding the transactio",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:91153-92307",
+      "excerpt": "t to meet our cash needs for the next twelve months and beyond. Our material cash requirements from known contractual and other obligations primarily relate to our content, debt and lease obligations. As of September 30, 2025, the expected timing of those payments are as follows: Payments due by Period Contractual obligations (in thousands): Total Next 12 Months Beyond 12 Months Content obligations (1) $ 20,940,900 $ 11,267,688 $ 9,673,212 Debt (2) 18,394,940 690,341 17,704,599 Operating lease obligations (3) 3,031,727 574,669 2,457,058 Total $ 42,367,567 $ 12,532,698 $ 29,834,869 32 Table of Contents (1) As of September 30, 2025, content obligations were comprised of $4.1 billion included in “Current content liabilities” and $1.6 billion of “Non-current content liabilities” on the Consolidated Balance Sheets and $15.2 billion of obligations that are not reflected on the Consolidated Balance Sheets as they did not then meet the criteria for recognition. The material cash requirements above do not include any estimated obligation for the unknown future titles, payment for which could range from less than one year to more than five years.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:88154-89299",
+      "excerpt": "t to meet our cash needs for the next twelve months and beyond. Our material cash requirements from known contractual and other obligations primarily relate to our content, debt and lease obligations. As of June 30, 2025, the expected timing of those payments are as follows: Payments due by Period Contractual obligations (in thousands): Total Next 12 Months Beyond 12 Months Content obligations (1) $ 20,967,270 $ 10,842,959 $ 10,124,311 Debt (2) 18,432,396 690,046 17,742,350 Operating lease obligations (3) 2,843,639 544,910 2,298,729 Total $ 42,243,305 $ 12,077,915 $ 30,165,390 33 Table of Contents (1) As of June 30, 2025, content obligations were comprised of $4.1 billion included in “Current content liabilities” and $1.6 billion of “Non-current content liabilities” on the Consolidated Balance Sheets and $15.3 billion of obligations that are not reflected on the Consolidated Balance Sheets as they did not then meet the criteria for recognition. The material cash requirements above do not include any estimated obligation for the unknown future titles, payment for which could range from less than one year to more than five years.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:61479-62619",
+      "excerpt": "facilities; future regulatory changes and their impact on our business; intellectual property; cybersecurity; price changes and testing; accounting treatment for changes related to content assets; acquisitions; actions by competitors; partnerships; advertising; multi-household usage; reporting of membership-related data; member viewing patterns; dividends; future contractual obligations, including unknown content obligations and timing of payments; our global content and marketing investments, including investments in original programming, consumer products and live experiences; impact of work stoppages; content amortization; resolution of tax examinations; tax expense; unrecognized tax benefits; deferred tax assets; outcome of Brazilian non-income tax matters; payment of deposits relating to Brazilian non-income tax matters; impact of Brazilian non-income taxes; the impact of the One Big Beautiful 24 Table of Contents Bill Act; resolution of disputes and other proceedings; our ability to effectively manage change and growth; our company culture; and our ability to attract and retain qualified employees and key personnel.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:98766-99949",
+      "excerpt": "illion lower, respectively. This adverse change in AOCI would be expected to offset a corresponding favorable foreign currency change in the underlying forecasted revenues when recognized in earnings. We enter into foreign exchange forward contracts to mitigate fluctuations in forecasted and firmly committed U.S. dollar-equivalent transactions related to the licensing and production of content assets from changes in foreign currency exchange rates. These contracts may reduce, but do not entirely eliminate, the effect of foreign currency exchange fluctuations, and we may choose not to hedge certain exposures. We designate these contracts as cash flow hedges and initially record the gains or losses on these derivative instruments as a component of AOCI and reclassify the amounts into “Cost of Revenues” to offset the hedged exposures as they affect earnings, which occurs as the underlying hedged content assets are amortized. If the U.S. dollar strengthened by 10% as of June 30, 2025 and December 31, 2024, the amount recorded in AOCI related to our foreign exchange contracts, before taxes, would have been approximately $195 million and $187 million lower, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:59090-60290",
+      "excerpt": "continues to evaluate the impact on its financial position. The OBBBA is not currently expected to materially impact the Company’s effective tax rate or cash flows in the current fiscal year. Item 2. Management’s Discussion and Analysis of Financial Condition and Results of Operations Forward-Looking Statements This Quarterly Report on Form 10-Q contains forward-looking statements within the meaning of the federal securities laws. These forward-looking statements include, but are not limited to, statements regarding: our core strategy; our ability to improve our content offerings and service; our future financial performance, including expectations regarding revenues, deferred revenue, operating income and margin, net income, expenses, and profitability; liquidity, including the sufficiency of our capital resources, net cash provided by (used in) operating activities, access to financing sources and free cash flows; capital allocation strategies, including any stock repurchases or repurchase programs; 24 Table of Contents seasonality; stock price volatility; impact of foreign exchange rate fluctuations, including on net income, revenues; expectations regarding hedging activity; im",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:60479-61679",
+      "excerpt": "is of Financial Condition and Results of Operations Forward-Looking Statements This Quarterly Report on Form 10-Q contains forward-looking statements within the meaning of the federal securities laws. These forward-looking statements include, but are not limited to, statements regarding: our core strategy; our ability to improve our content offerings and service; our future financial performance, including expectations regarding revenues, deferred revenue, operating income and margin, net income, expenses, and profitability; liquidity, including the sufficiency of our capital resources, net cash provided by (used in) operating activities, access to financing sources and free cash flows; capital allocation strategies, including any stock repurchases or repurchase programs; seasonality; stock price volatility; impact of foreign exchange rate fluctuations, including on net income, revenues; expectations regarding hedging activity; impact of interest rate fluctuations; adequacy of existing facilities; future regulatory changes and their impact on our business; intellectual property; cybersecurity; price changes and testing; accounting treatment for changes related to content assets; ac",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:6110-7310",
+      "excerpt": "Management and Related Stockholder Matters 34 Item 13. Certain Relationships and Related Transactions, and Director Independence 34 Item 14. Principal Accountant Fees and Services 34 PART IV Item 15. Exhibits, Financial Statement Schedules 35 Item 16. Form 10-K Summary 35 Table of Contents PART I Forward-Looking Statements This Annual Report on Form 10-K contains forward-looking statements within the meaning of the federal securities laws. These forward-looking statements include, but are not limited to, statements regarding: our core strategy; our ability to improve our content offerings and service; our future financial performance, including expectations regarding revenues, deferred revenue, operating income and margin, net income, expenses, and profitability; liquidity, including the sufficiency of our capital resources, cash requirements; net cash provided by (used in) operating activities, access to financing sources, and free cash flows; capital allocation strategies, including any stock repurchases or repurchase programs; stock price volatility; impact of foreign exchange rate fluctuations; expectations regarding hedging activity; impact of interest rate fluctuations; adeq",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/0001065280-26-000034-index.htm",
+      "locator": "OperatingCashFlow 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        10149273000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/0001065280-26-000034-index.htm",
+      "locator": "OperatingCashFlow 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        7361364000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "NFLX",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "OperatingCashFlow yoy_growth annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        10149273000.0,
+        7361364000.0,
+        0.3787217966670307
+      ],
+      "unit": "ratio",
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:102818-103704",
+      "excerpt": "ely, and reinvestment of any dividends. Historical stock price performance should not be relied upon as an indication of future stock price performance. Item 6. [Reserved] 19 Table of Contents Item 7. Management’s Discussion and Analysis of Financial Condition and Results of Operations This section of this Form 10-K generally discusses 2025 and 2024 items and year-to-year comparisons between 2025 and 2024. Discussions of 2023 items and year-to-year comparisons between 2024 and 2023 that are not included in this Form 10-K can be found in “Management's Discussion and Analysis of Financial Condition and Results of Operations” in Part II, Item 7 of the Company's Annual Report on Form 10-K for the fiscal year ended December 31, 2024. Results of Operations The following represents our consolidated performance highlights (1) : Year Ended December 31, Change 2025 2024 2023 2025 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:100921-102039",
+      "excerpt": "U.S. dollars. Our revenues, on a constant currency basis, would have been approximately $349 million higher for the nine months ended September 30, 2025 than our reported revenues of $33,132 million. See Part I, Item 2, \"Management’s Discussion and Analysis of Financial Condition and Results of Operations\" for further information regarding our non-GAAP financial measure of constant currency. We enter into foreign exchange forward contracts to mitigate fluctuations in forecasted U.S. dollar-equivalent revenues from changes in foreign currency exchange rates. These contracts may reduce, but do not entirely eliminate, the effect of foreign currency exchange fluctuations, and we may choose not to hedge certain exposures. We designate these contracts as cash flow hedges of forecasted foreign currency revenue and initially record the gains or losses on these derivative instruments as a component of accumulated other comprehensive income (“AOCI”) and reclassify the amounts into “Revenues” on the Consolidated Statements of Operations in the same period the forecasted transaction affects earnings. If the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:142100-143270",
+      "excerpt": "essed in U.S. dollars. Our revenues, on a constant currency basis, would have been approximately $271 million higher for the year ended December 31, 2025 than our reported revenues of $45,183 million. See Part II, Item 7, “Management’s Discussion and Analysis of Financial Condition and Results of Operations” for further information regarding our non-GAAP financial measure of constant currency. We enter into foreign exchange forward contracts to mitigate fluctuations in forecasted U.S. dollar-equivalent revenues from changes in foreign currency exchange rates. These contracts may reduce, but do not entirely eliminate, the effect of foreign currency exchange fluctuations, and we may choose not to hedge certain exposures. We designate these contracts as cash flow hedges of forecasted foreign currency revenue and initially record the gains or losses on these derivative instruments as a component of accumulated other comprehensive income (“AOCI”) within Stockholders' equity in the Consolidated Balance Sheets and reclassify the amounts into “Revenues” on the Consolidated Statements of Operations in the same period the forecasted transaction affects earnings.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:259519-260719",
+      "excerpt": "ecutive officers, who review financial information presented on a consolidated basis. The CODM uses consolidated operating margin and net income to assess financial performance and allocate resources. These financial metrics are used by the CODM to make key operating decisions, such as the determination of the rate at which the Company seeks to grow global operating margin and the allocation of budget between cost of revenues, sales and marketing, technology and development, and general and administrative expenses. The following table presents selected financial information with respect to the Company’s single operating segment for the years ended December 31, 2025, 2024 and 2023: 68 Table of Contents Year Ended December 31, 2025 2024 2023 (in thousands) Revenues $ 45,183,036 $ 39,000,966 $ 33,723,297 Less: Content amortization 16,422,166 15,301,517 14,197,437 Other cost of revenues 6,853,163 5,736,947 5,517,931 Sales and marketing 3,301,306 2,917,554 2,657,883 Technology and development 3,391,390 2,925,295 2,675,758 General and administrative 1,888,408 1,702,039 1,720,285 Operating income 13,326,603 10,417,614 6,954,003 Operating margin 29.5 % 26.7 % 20.6 % Other income (expense)",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:64483-65621",
+      "excerpt": "paying memberships and average monthly revenue per paying membership. (2) See the “Non-GAAP Constant Currency Information” section below for additional details on our use of constant currency revenue. Operating margin for the three months ended June 30, 2025 increased by approximately seven percentage points as compared to the prior comparative period. The increase in operating margin was primarily driven by revenue growth outpacing the growth in cost of revenues, as well as by a slower rate of growth in sales and marketing and general and administrative expenses relative to revenue growth. Net income fo r the three months ended June 30, 2025 increased $978 million as compared to the prior comparative period, primarily due to a $1,172 million increase in operating income, driven by a $1,520 million increase in revenues and partially offset by a $151 million increase in cost of revenues primarily due to the increase in content amortization. The impact of higher operating income was partially offset by a $57 million decrease in foreign exchange gains and losses and a $140 million increase in the provision for income taxes.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:65795-66966",
+      "excerpt": "paying memberships and average monthly revenue per paying membership. (2) See the “Non-GAAP Constant Currency Information” section below for additional details on our use of constant currency revenue. Operating margin for the three months ended September 30, 2025 decreased by approximately one percentage point as compared to the prior comparative period. The decrease in operating margin was primarily driven by the growth in cost of revenues and sales and marketing expenses outpacing the growth in revenues, partially offset by a slower rate of growth in technology and development expenses and general and administrative expenses relative to revenue growth. Net income fo r the three months ended September 30, 2025 increased $183 million as compared to the prior comparative period, primarily due to a $339 million increase in operating income, driven by a $1,686 million increase in revenues and partially offset by a $1,044 million increase in cost of revenues primarily due to the increase in other cost of revenues and content amortization. The impact of higher operating income was partially offset by a $223 million increase in the provision for income taxes.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/0001065280-26-000034-index.htm",
+      "locator": "OperatingIncome 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        13326603000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E19"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/0001065280-26-000034-index.htm",
+      "locator": "Revenue 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        45183036000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E20"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/0001065280-26-000034-index.htm",
+      "locator": "OperatingIncome 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        10417614000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E21"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/0001065280-26-000034-index.htm",
+      "locator": "Revenue 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        39000966000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E22"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "NFLX",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "OperatingMargin yoy_growth annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        0.29494704605507255,
+        0.26711169154117875,
+        0.027835354513893795
+      ],
+      "unit": "ratio_points",
+      "evidence_id": "E23"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E16",
+      "quote": "Operating income 13,326,603 10,417,614 6,954,003 Operating margin 29.5 % 26.7 % 20.6 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:259519-260719"
+    },
+    {
+      "evidence_id": "E17",
+      "quote": "Operating margin for the three months ended June 30, 2025 increased by approximately seven percentage points as compared to the prior comparative period. The increase in operating margin was primarily driven by revenue growth outpacing the growth in cost of revenues",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:64483-65621"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 17894,
+    "output": 2075
+  },
+  "latency_ms": 28276,
+  "estimated_cost_usd": 0.084807,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 7817,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 10,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 2,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 20442,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "CONTRADICTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 9,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

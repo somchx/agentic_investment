@@ -1,0 +1,943 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-MSFT-14:3e8cd359",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-MSFT-14",
+    "company": "MSFT",
+    "claim": "Microsoft's accounting for its investment in OpenAI had no material effect on its net income for the quarter ended September 30, 2026.",
+    "as_of_date": "2026-11-01",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2027 Q1"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Other income (expense), net included $272 million of net gains and $4.1 billion of net losses for the three months ended September 30, 2026 and 2025, respectively, from investments in OpenAI."
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Other, net primarily reflects net recognized gains (losses) on equity method investments, including OpenAI."
+          }
+        ],
+        "reasoning_summary": "The claim states that Microsoft's accounting for its investment in OpenAI had \"no material effect\" on its net income for the quarter ended September 30, 2026. However, the evidence clearly contradicts this assertion. Evidence E1 explicitly states that \"Other income (expense), net included $272 million of net gains...for the three months ended September 30, 2026...from investments in OpenAI.\" This $272 million gain flows through other income (expense), net, which is a component of income before taxes and therefore affects net income. Evidence E2 confirms that \"Other, net primarily reflects net recognized gains (losses) on equity method investments, including OpenAI,\" further establishing that OpenAI investment accounting impacts the income statement. A $272 million gain would be considered material for most companies' quarterly results and would have a direct effect on net income. Therefore, the claim that the OpenAI investment accounting had \"no material effect\" on net income is contradicted by the evidence showing a $272 million gain from OpenAI investments during the quarter.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "What was Microsoft's total net income for Q1 FY2027? If net income was extremely large (e.g., $20+ billion), then a $272 million gain might represent less than 2% of net income and could arguably be considered immaterial.",
+          "search_query": "net income three months ended September 30 2026 total",
+          "numeric_check": {
+            "metric": "NetIncome",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 15000000000,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Did Microsoft provide any disclosure stating that the OpenAI investment gains were offset by corresponding expenses or other accounting entries that resulted in no net effect on net income?",
+          "search_query": "OpenAI offset expense elimination intercompany net effect income",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Does Microsoft's materiality policy or any disclosure indicate that amounts under a certain threshold (potentially higher than $272 million) are considered immaterial for reporting purposes?",
+          "search_query": "materiality threshold immaterial significant accounting policy",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "net income three months ended September 30 2026 total",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "OpenAI offset expense elimination intercompany net effect income",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "materiality threshold immaterial significant accounting policy",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-09-30",
+            "basis": "quarter",
+            "level": 36629000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "NetIncome",
+                "period_start": "2026-07-01",
+                "period_end": "2026-09-30",
+                "value": 36629000000.0,
+                "filed": "2026-10-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-436133",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 27747000000.0,
+            "prior_period_end": "2025-09-30",
+            "yoy_change": 0.320106678199445,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E12",
+            "E10",
+            "E11"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "CONTRADICTED",
+      "guard_reverted": "CHANGE_TO_SUPPORTED_WITHOUT_VALID_EVIDENCE",
+      "numeric_rule": "KEPT_INITIAL",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E8",
+              "quote": "Current year net income and diluted EPS were positively impacted by net gains from investments in OpenAI, which resulted in an increase in net income and diluted EPS of $207 million and $0.03, respectively.",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-436133",
+              "form": "10-Q",
+              "filed": "2026-10-28",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+              "locator": "10-Q 0001193125-26-436133:79451-80627"
+            },
+            {
+              "evidence_id": "E7",
+              "quote": "Basic (A/B) $ 4.93 $ 3.73 Diluted (A/C) $ 4.92 $ 3.72",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-436133",
+              "form": "10-Q",
+              "filed": "2026-10-28",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+              "locator": "10-Q 0001193125-26-436133:25315-26148"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "d82bef9d67a4a9499196bef92e834356446e832dc7d0b1d0f5be9181f4b01d23",
+      "source": "cache",
+      "input_tokens": 4142,
+      "output_tokens": 494,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Other income (expense), net included $272 million of net gains and $4.1 billion of net losses for the three months ended September 30, 2026 and 2025, respectively, from investments in OpenAI."
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Other, net primarily reflects net recognized gains (losses) on equity method investments, including OpenAI."
+          }
+        ],
+        "reasoning_summary": "The claim states that Microsoft's accounting for its investment in OpenAI had \"no material effect\" on its net income for the quarter ended September 30, 2026. However, the evidence clearly contradicts this assertion. Evidence E1 explicitly states that \"Other income (expense), net included $272 million of net gains...for the three months ended September 30, 2026...from investments in OpenAI.\" This $272 million gain flows through other income (expense), net, which is a component of income before taxes and therefore affects net income. Evidence E2 confirms that \"Other, net primarily reflects net recognized gains (losses) on equity method investments, including OpenAI,\" further establishing that OpenAI investment accounting impacts the income statement. A $272 million gain would be considered material for most companies' quarterly results and would have a direct effect on net income. Therefore, the claim that the OpenAI investment accounting had \"no material effect\" on net income is contradicted by the evidence showing a $272 million gain from OpenAI investments during the quarter.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "01309f488fbcf3a038bf8eef764e5c9c56738d70f1792b0b99115a40ce90743a",
+      "source": "cache",
+      "input_tokens": 5061,
+      "output_tokens": 386,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "What was Microsoft's total net income for Q1 FY2027? If net income was extremely large (e.g., $20+ billion), then a $272 million gain might represent less than 2% of net income and could arguably be considered immaterial.",
+            "search_query": "net income three months ended September 30 2026 total",
+            "numeric_check": {
+              "metric": "NetIncome",
+              "measure": "level",
+              "period_basis": "quarter",
+              "period_end": "2026-09-30",
+              "comparison": ">",
+              "threshold": 15000000000,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Did Microsoft provide any disclosure stating that the OpenAI investment gains were offset by corresponding expenses or other accounting entries that resulted in no net effect on net income?",
+            "search_query": "OpenAI offset expense elimination intercompany net effect income",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Does Microsoft's materiality policy or any disclosure indicate that amounts under a certain threshold (potentially higher than $272 million) are considered immaterial for reporting purposes?",
+            "search_query": "materiality threshold immaterial significant accounting policy",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "8b0d113abffdb90478add9f834dc679254f2eb8efe44969b70eb12e36be6e48b",
+      "source": "cache",
+      "input_tokens": 9397,
+      "output_tokens": 878,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E8",
+                "quote": "Current year net income and diluted EPS were positively impacted by net gains from investments in OpenAI, which resulted in an increase in net income and diluted EPS of $207 million and $0.03, respectively."
+              },
+              {
+                "evidence_id": "E7",
+                "quote": "Basic (A/B) $ 4.93 $ 3.73 Diluted (A/C) $ 4.92 $ 3.72"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": true,
+        "change_reason": "The initial verdict was CONTRADICTED based on the $272 million gain from OpenAI investments appearing material. However, new evidence E8 explicitly states that the net impact on net income was only $207 million (not $272 million), representing an increase in diluted EPS of only $0.03 per share. With total diluted EPS of $4.92 for the quarter, the $0.03 impact represents approximately 0.6% of EPS. Given Microsoft's net income of $36.6 billion for the quarter, the $207 million impact represents approximately 0.57% of net income. This is well below typical materiality thresholds (commonly 5% for quantitative materiality). Therefore, the claim that the OpenAI investment accounting had \"no material effect\" on net income is actually supported by the evidence when materiality is properly assessed in context.",
+        "supporting_evidence": [
+          {
+            "evidence_id": "E8",
+            "quote": "Current year net income and diluted EPS were positively impacted by net gains from investments in OpenAI, which resulted in an increase in net income and diluted EPS of $207 million and $0.03, respectively."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Microsoft's accounting for its investment in OpenAI had \"no material effect\" on its net income for Q1 FY2027 (quarter ended September 30, 2026). Evidence E8 explicitly quantifies the impact: \"Current year net income and diluted EPS were positively impacted by net gains from investments in OpenAI, which resulted in an increase in net income and diluted EPS of $207 million and $0.03, respectively.\" With Microsoft's total net income of $36.6 billion for the quarter (computed from counter_numeric), the $207 million impact represents approximately 0.57% of net income, and the $0.03 EPS impact represents approximately 0.6% of the total diluted EPS of $4.92. These percentages are well below conventional materiality thresholds (typically 5% for quantitative assessments). While the OpenAI investment accounting did have a measurable effect, the effect was not material in the accounting sense, supporting the claim."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Microsoft's accounting for its investment in OpenAI had no material effect on its net income for the quarter ended September 30, 2026. FY2027 Q1",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "net income three months ended September 30 2026 total",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "OpenAI offset expense elimination intercompany net effect income",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "materiality threshold immaterial significant accounting policy",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "NetIncome",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 15000000000,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-09-30",
+            "basis": "quarter",
+            "level": 36629000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "NetIncome",
+                "period_start": "2026-07-01",
+                "period_end": "2026-09-30",
+                "value": 36629000000.0,
+                "filed": "2026-10-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-436133",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 27747000000.0,
+            "prior_period_end": "2025-09-30",
+            "yoy_change": 0.320106678199445,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E12",
+            "E10",
+            "E11"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001193125-26-436133",
+        "filed": "2026-10-28",
+        "report_date": "2026-09-30",
+        "primary_document": "msft-20260930.htm",
+        "sha256": "43b6854cc1856c4f9af0f3a305b0ece274b4615e68e506f1a03f8e122282a359"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001193125-26-323660",
+        "filed": "2026-07-29",
+        "report_date": "2026-06-30",
+        "primary_document": "msft-20260630.htm",
+        "sha256": "a2e8af9a97a682ba3b408c9557ec6f0f3dbd4db6f600d310ae23ebe5b3c827a4"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001193125-26-191507",
+        "filed": "2026-04-29",
+        "report_date": "2026-03-31",
+        "primary_document": "msft-20260331.htm",
+        "sha256": "320b75a01f6ea0cf6cb1ccd46e1081de9e596c2a87f43a65412a159da12ad2d5"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 827
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:86119-87292",
+      "excerpt": "xes, and legal and other administrative fees. Three Months Ended September 30, 2026 Compared with Three Months Ended September 30, 2025 General and administrative expenses increased $75 million or 4%. OTHER INCOME (EXPENSE), NET The components of other income (expense), net were as follows: (In millions) Three Months Ended September 30, 2026 2025 Interest and dividends income $ 744 $ 976 Interest expense (870 ) (698 ) Net recognized losses on investments (46 ) (572 ) Net gains (losses) on derivatives (42 ) 1,579 Net losses on foreign currency remeasurements (30 ) (22 ) Other, net 282 (4,923 ) Total $ 38 $ (3,660 ) We use derivative instruments to manage risks related to foreign currencies, interest rates, equity prices, and credit; to enhance investment returns; and to facilitate portfolio diversification. Gains and losses from changes in fair values of derivatives that are not designated as hedging instruments are primarily recognized in other income (expense), net. Other income (expense), net included $272 million of net gains and $4.1 billion of net losses for the three months ended September 30, 2026 and 2025, respectively, from investments in OpenAI.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:87092-88160",
+      "excerpt": "e), net. Other income (expense), net included $272 million of net gains and $4.1 billion of net losses for the three months ended September 30, 2026 and 2025, respectively, from investments in OpenAI. Three Months Ended September 30, 2026 Compared with Three Months Ended September 30, 2025 Interest and dividends income decreased primarily due to lower portfolio balances. Interest expense increased primarily due to higher finance lease interest expense, offset in part by maturities of long-term debt. Net recognized losses on investments decreased primarily due to gains on equity securities in the current period as compared to losses in the prior period. Net losses on derivatives increased primarily due to lower gains on equity derivatives in the current period as compared to the prior period. Other, net primarily reflects net recognized gains (losses) on equity method investments, including OpenAI. 35 PART I Item 2 INCOME TAXES Effective Tax Rate Our effective tax rate was 20% and 19% for the three months ended September 30, 2026 and 2025, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:17289-18436",
+      "excerpt": "nts with OpenAI, inclusive of revenue-sharing payments, of $ 10.0 billion. Accounts receivable from OpenAI as of September 30, 2026 and June 30, 2026 was $ 7.2 billion and $ 6.0 billion, respectively. We have made total funding commitments of $ 13.0 billion related to our investment, of which $ 12.0 billion has been funded as of September 30, 2026. We calculate our equity method income or loss using the hypothetical liquidation at book value (“HLBV”) method because our liquidation rights and priorities differ from our underlying ownership interest. Under the HLBV method, we recognize income or loss based on the change in the amount we would receive if the net assets of the investee were distributed at book value. Derivatives Derivative instruments are recognized as either assets or liabilities and measured at fair value. The accounting for changes in the fair value of a derivative depends on the intended use of the derivative and the resulting designation. For derivative instruments designated as fair value hedges, gains and losses are recognized in other income (expense), net with offsetting gains and losses on the hedged items.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:16381-17489",
+      "excerpt": "on to absorb losses or the right to receive benefits from the VIE that could potentially be significant to the VIE. We have determined we are not the primary beneficiary of any of our VIE investments. Therefore, our VIE investments are not consolidated and the majority are accounted for under the equity method of accounting or the measurement alternative. We have a long-term strategic partnership with OpenAI. We have an investment accounted for under the equity method that represents an approximate 24 % interest on an as-converted basis. As an equity method investee, OpenAI is a related party as defined in Accounting Standards Codification Topic 850, Related Party Disclosures (“ASC 850”). In accordance with ASC 850, we are disclosing revenue and accounts receivable balances from transactions with OpenAI. For the three months ended September 30, 2026, we recorded revenue from commercial arrangements with OpenAI, inclusive of revenue-sharing payments, of $ 10.0 billion. Accounts receivable from OpenAI as of September 30, 2026 and June 30, 2026 was $ 7.2 billion and $ 6.0 billion, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:2504-3700",
+      "excerpt": "r 22, 2026 Common Stock, $ 0.00000625 par value per share 7,426,194,552 shares MICROSOFT CORPORATION FORM 10-Q For the Quarter Ended September 30, 2026 INDEX Page PART I. FINANCIAL INFORMATION Item 1. Financial Statements a) Income Statements for the Three Months Ended September 30, 2026 and 2025 3 b) Comprehensive Income Statements for the Three Months Ended September 30, 2026 and 2025 4 c) Balance Sheets as of September 30, 2026 and June 30, 2026 5 d) Cash Flows Statements for the Three Months Ended September 30, 2026 and 2025 6 e) Stockholders’ Equity Statements for the Three Months Ended September 30, 2026 and 2025 7 f) Notes to Financial Statements 8 g) Report of Independent Registered Public Accounting Firm 27 Item 2. Management’s Discussion and Analysis of Financial Condition and Results of Operations 28 Item 3. Quantitative and Qualitative Disclosures About Market Risk 42 Item 4. Controls and Procedures 42 PART II. OTHER INFORMATION Item 1. Legal Proceedings 43 Item 1A. Risk Factors 43 Item 2. Unregistered Sales of Equity Securities and Use of Proceeds 58 Item 5. Other Information 59 Item 6. Exhibits 60 SIGNATURE 61 2 PART I Item 1 PART I. FINANCI AL INFORMATION ITEM 1.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:25948-27148",
+      "excerpt": ",660 ) Other income (expense), net included $ 272 million of net gains and $ 4.1 billion of net losses for the three months ended September 30, 2026 and 2025, respectively, from investments in OpenAI. 11 PART I Item 1 Net Recognized Gains (Losses) on Investments Net recognized gains (losses) on debt investments were as follows: (In millions) Three Months Ended September 30, 2026 2025 Realized gains from sales of available-for-sale securities $ 12 $ 16 Realized losses from sales of available-for-sale securities ( 18 ) ( 10 ) Impairments and allowance for credit losses ( 35 ) 4 Total $ ( 41 ) $ 10 Net recognized gains (losses) on equity investments were as follows: (In millions) Three Months Ended September 30, 2026 2025 Net realized gains on investments sold $ 74 $ 71 Net unrealized losses on investments still held ( 60 ) ( 635 ) Impairments of investments ( 19 ) ( 18 ) Total $ ( 5 ) $ ( 582 ) 12 PART I Item 1 NOTE 4 — INVESTMENTS Investment Components The components of investments were as follows: (In millions) Fair Value Level Adjusted Cost Basis Unrealized Gains Unrealized Losses Recorded Basis Cash and Cash Equivalents Short-term Investments Equity and Other Investments Septembe",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:25315-26148",
+      "excerpt": "66 Earnings Per Share Basic (A/B) $ 4.93 $ 3.73 Diluted (A/C) $ 4.92 $ 3.72 Anti-dilutive stock-based awards excluded from the calculations of diluted EPS were immaterial during the periods presented. NOTE 3 — OTHER INCOME (EXPENSE), NET The components of other income (expense), net were as follows: (In millions) Three Months Ended September 30, 2026 2025 Interest and dividends income $ 744 $ 976 Interest expense ( 870 ) ( 698 ) Net recognized losses on investments ( 46 ) ( 572 ) Net gains (losses) on derivatives ( 42 ) 1,579 Net losses on foreign currency remeasurements ( 30 ) ( 22 ) Other, net 282 ( 4,923 ) Total $ 38 $ ( 3,660 ) Other income (expense), net included $ 272 million of net gains and $ 4.1 billion of net losses for the three months ended September 30, 2026 and 2025, respectively, from investments in OpenAI.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:79451-80627",
+      "excerpt": "t year net income and diluted EPS were positively impacted by net gains from investments in OpenAI, which resulted in an increase in net income and diluted EPS of $207 million and $0.03, respectively. Prior year net income and diluted EPS were negatively impacted by net losses from investments in OpenAI, which resulted in a decrease in net income and diluted EPS of $3.1 billion and $0.41, respectively. 32 PART I Item 2 SEGMENT RESULTS OF OPERATIONS (In millions, except percentages) Three Months Ended September 30, Percentage Change 2026 2025 Agents and Infra Revenue $ 76,795 $ 61,672 25% Cost of revenue 23,887 17,701 35% Operating expenses 12,350 11,253 10% Operating income $ 40,558 $ 32,718 24% Devices and Consumer Revenue $ 15,484 $ 16,001 (3% ) Cost of revenue 5,833 6,342 (8% ) Operating expenses 4,294 4,416 (3% ) Operating income $ 5,357 $ 5,243 2% Total Revenue $ 92,279 $ 77,673 19% Cost of revenue 29,720 24,043 24% Operating expenses 16,644 15,669 6% Operating income $ 45,915 $ 37,961 21% Reportable Segments Three Months Ended September 30, 2026 Compared with Three Months Ended September 30, 2025 Agents and Infra Revenue increased $15.1 billion or 25%.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:38094-39239",
+      "excerpt": "truments Foreign exchange contracts 262 381 Equity contracts 5 1,579 Other contracts ( 47 ) 0 Gains (losses), net of tax, on derivative instruments recognized in our consolidated comprehensive income statements were as follows: (In millions) Three Months Ended September 30, 2026 2025 Designated as Cash Flow Hedging Instruments Foreign exchange contracts Included in effectiveness assessment $ ( 10 ) $ ( 7 ) NOTE 6 — PROPERTY AND EQUIPMENT The components of property and equipment were as follows: (In millions) September 30, 2026 June 30, 2026 Land $ 10,665 $ 10,546 Buildings and improvements 194,619 182,749 Leasehold improvements 17,647 16,348 Servers, network equipment, and software 244,840 215,874 Furniture and equipment 6,281 6,250 Total, at cost 474,052 431,767 Accumulated depreciation ( 127,208 ) ( 118,691 ) Total, net $ 346,844 $ 313,076 Depreciation expense was $ 11.1 billion and $ 7.1 billion for the three months ended September 30, 2026 and 2025, respectively. As of September 30, 2026 and June 30, 2026, purchases of property and equipment remaining in accounts payable were $ 26.5 billion and $ 26.7 billion, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": "2026-07-01",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/0001193125-26-436133-index.htm",
+      "locator": "NetIncome 2026-07-01..2026-09-30",
+      "excerpt": null,
+      "values": [
+        36629000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": "2025-07-01",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/0001193125-26-436133-index.htm",
+      "locator": "NetIncome 2025-07-01..2025-09-30",
+      "excerpt": null,
+      "values": [
+        27747000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "MSFT",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": null,
+      "locator": "NetIncome level quarter @ 2026-09-30",
+      "excerpt": null,
+      "values": [
+        36629000000.0,
+        27747000000.0,
+        0.320106678199445
+      ],
+      "unit": "USD",
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-191507",
+      "form": "10-Q",
+      "filed": "2026-04-29",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm",
+      "locator": "10-Q 0001193125-26-191507:102096-103182",
+      "excerpt": "acilitate portfolio diversification. Gains and losses from changes in fair values of derivatives that are not designated as hedging instruments are primarily recognized in other income (expense), net. Other income (expense), net included $19 million of net losses and $5.9 billion of net gains for the three and nine months ended March 31, 2026, respectively, and $768 million and $2.7 billion of net losses for the three and nine months ended March 31, 2025, respectively, from investments in OpenAI, primarily net recognized gains (losses) on our equity method investment reflected in Other, net. The net gains recorded for the nine months ended March 31, 2026 primarily relate to the dilution gain from the OpenAI Recapitalization. Three Months Ended March 31, 2026 Compared with Three Months Ended March 31, 2025 Interest and dividends income increased primarily due to higher portfolio balances and higher yields on debt securities. Interest expense increased primarily due to higher finance lease interest expense, offset in part by higher capitalization of debt interest expense.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-323660",
+      "form": "10-K",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+      "locator": "10-K 0001193125-26-323660:164708-165894",
+      "excerpt": "acilitate portfolio diversification. Gains and losses from changes in fair values of derivatives that are not designated as hedging instruments are primarily recognized in other income (expense), net. Other income (expense), net included $6.5 billion of net gains and $4.8 billion of net losses for fiscal years 2026 and 2025, respectively, from investments in OpenAI, primarily net recognized gains (losses) on our equity method investment reflected in Other, net. The net gains recorded for fiscal year 2026 primarily relate to the dilution gain from the OpenAI Recapitalization. Fiscal Year 2026 Compared with Fiscal Year 2025 Interest and dividends income increased primarily due to higher portfolio balances and higher yields on debt securities. Interest expense increased primarily due to higher finance lease interest expense, offset in part by higher capitalization of debt interest expense. Net recognized gains on investments increased primarily due to higher gains on equity securities and lower impairments in the current period. Net gains on derivatives increased primarily due to gains on equity derivatives in the current period as compared to losses in the prior period.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-191507",
+      "form": "10-Q",
+      "filed": "2026-04-29",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm",
+      "locator": "10-Q 0001193125-26-191507:102982-104156",
+      "excerpt": "olio balances and higher yields on debt securities. Interest expense increased primarily due to higher finance lease interest expense, offset in part by higher capitalization of debt interest expense. Net recognized gains on investments increased primarily due to higher gains on equity securities in the current period. Net gains on derivatives decreased primarily due to lower gains on equity derivatives in the current period. Other, net primarily reflects net recognized gains (losses) on equity method investments, including OpenAI. Nine Months Ended March 31, 2026 Compared with Nine Months Ended March 31, 2025 Interest and dividends income increased primarily due to higher portfolio balances and higher yields on debt securities. Interest expense increased primarily due to higher finance lease interest expense, offset in part by higher capitalization of debt interest expense. Net recognized gains on investments increased primarily due to higher gains on equity securities and lower impairments in the current period. Net gains on derivatives increased primarily due to gains on equity derivatives in the current period as compared to losses in the prior period.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-323660",
+      "form": "10-K",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+      "locator": "10-K 0001193125-26-323660:320024-321224",
+      "excerpt": "d Restated Officers’ Indemnification Trust Agreement between Microsoft Corporation and The Bank of New York Mellon Trust Company, N.A., as trustee 10-K 6/30/2025 10.7 7/30/2025 10.16 Form of Indemnification Agreement and Amended and Restated Directors’ Indemnification Trust Agreement between Microsoft Corporation and The Bank of New York Mellon Trust Company, N.A., as trustee 10-K 6/30/2025 10.8 7/30/2025 10.17* Offer Letter, dated February 3, 2014, between Microsoft Corporation and Satya Nadella 8-K 10.1 2/4/2014 19.1 General Insider Trading Policy X 19.2 Restricted Trading Window Policy X 19.3 Insider Trading Compliance and Preclearance Policies for Section 16 Officers and Directors of Microsoft X 21 Subsidiaries of Registrant X 23.1 Consent of Independent Registered Public Accounting Firm X 31.1 Certification of Chief Executive Officer Pursuant to Section 302 of the Sarbanes-Oxley Act of 2002 X 31.2 Certification of Chief Financial Officer Pursuant to Section 302 of the Sarbanes-Oxley Act of 2002 X 32.1** Certification of Chief Executive Officer Pursuant to Section 906 of the Sarbanes-Oxley Act of 2002 X 32.2** Certification of Chief Financial Officer Pursuant to Section 906 of",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-191507",
+      "form": "10-Q",
+      "filed": "2026-04-29",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm",
+      "locator": "10-Q 0001193125-26-191507:110605-111639",
+      "excerpt": "government bonds, mortgage- and asset-backed securities, corporate notes and bonds, and municipal securities. Level 3 investments are valued using internally-developed models with unobservable inputs. Assets and liabilities measured at fair value on a recurring basis using unobservable inputs are an immaterial portion of our portfolio. 43 PART I Item 2 A majority of our investments are priced by pricing vendors and are generally Level 1 or Level 2 investments as these vendors either provide a quoted market price in an active market or use observable inputs for their pricing without applying significant adjustments. Broker pricing is used mainly when a quoted price is not available, the investment is not priced by our pricing vendors, or when a broker price is more reflective of fair values in the market in which the investment trades. Our broker-priced investments are generally classified as Level 2 investments because the broker prices these investments based on similar assets without applying significant adjustments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:93645-94802",
+      "excerpt": "ued using internally-developed models with unobservable inputs. Assets and liabilities measured at fair value on a recurring basis using unobservable inputs are an immaterial portion of our portfolio. A majority of our investments are priced by pricing vendors and are generally Level 1 or Level 2 investments as these vendors either provide a quoted market price in an active market or use observable inputs for their pricing without applying significant adjustments. Broker pricing is used mainly when a quoted price is not available, the investment is not priced by our pricing vendors, or when a broker price is more reflective of fair values in the market in which the investment trades. Our broker-priced investments are generally classified as Level 2 investments because the broker prices these investments based on similar assets without applying significant adjustments. In addition, all our broker-priced investments have a sufficient level of trading volume to demonstrate that the fair values used are appropriate for these investments. Our fair value processes include controls that are designed to ensure appropriate fair values are recorded.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "Other income (expense), net included $272 million of net gains and $4.1 billion of net losses for the three months ended September 30, 2026 and 2025, respectively, from investments in OpenAI.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:86119-87292"
+    },
+    {
+      "evidence_id": "E2",
+      "quote": "Other, net primarily reflects net recognized gains (losses) on equity method investments, including OpenAI.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:87092-88160"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 18600,
+    "output": 1758
+  },
+  "latency_ms": 8,
+  "estimated_cost_usd": 0.08217,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "guard_reverted": "CHANGE_TO_SUPPORTED_WITHOUT_VALID_EVIDENCE",
+        "numeric_rule": "KEPT_INITIAL"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 12,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

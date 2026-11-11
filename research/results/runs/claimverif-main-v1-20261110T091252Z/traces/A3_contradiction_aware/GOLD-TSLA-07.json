@@ -1,0 +1,955 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-TSLA-07:96b00f99",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-TSLA-07",
+    "company": "TSLA",
+    "claim": "Tesla's operating income in the quarter ended June 30, 2026 was reduced by lower regulatory credit revenue.",
+    "as_of_date": "2026-08-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q2"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "INSUFFICIENT_EVIDENCE",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Automotive regulatory credits revenue decreased $293 million, or 67%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025."
+          },
+          {
+            "evidence_id": "E6",
+            "quote": "The fluctuations are primarily due to the changes in automotive sales revenue and cost of automotive sales revenue and a decrease in regulatory credits revenue, as discussed above."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Tesla's operating income in Q2 2026 was reduced by lower regulatory credit revenue. This is an interpretive claim about causation.\n\nEvidence E2 confirms that automotive regulatory credits revenue decreased $293 million (67%) in the three months ended June 30, 2026 compared to the prior year period. \n\nEvidence E6 explicitly addresses the impact on gross margin (which is a component of operating income), stating that \"The fluctuations are primarily due to the changes in automotive sales revenue and cost of automotive sales revenue and a decrease in regulatory credits revenue.\" This directly supports the claim that lower regulatory credit revenue reduced operating income.\n\nSince regulatory credits are high-margin revenue (essentially pure profit with minimal associated costs), a decrease in this revenue would directly reduce operating income. The evidence confirms both that regulatory credit revenue decreased and that this decrease impacted profitability metrics.\n\nThe claim is qualitative/interpretive in nature (stating a cause-effect relationship) rather than making specific numeric assertions about operating income levels or changes.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did operating income actually increase in Q2 2026 despite lower regulatory credit revenue, which would contradict the claim that operating income was 'reduced' by this factor?",
+          "search_query": "operating income three months ended June 30 2026 2025 increase decrease",
+          "numeric_check": {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Does the filing attribute the change in operating income primarily to other factors (such as cost reductions, volume increases, or pricing) rather than regulatory credit revenue?",
+          "search_query": "operating income margin primarily due driven factors cost reduction efficiency volume pricing",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Does Evidence E6 only discuss gross margin impacts rather than operating income impacts, meaning the causal link to operating income is not explicitly stated in the filing?",
+          "search_query": "operating income operating margin regulatory credits impact reduced affected",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "operating income three months ended June 30 2026 2025 increase decrease",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "operating income margin primarily due driven factors cost reduction efficiency volume pricing",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "operating income operating margin regulatory credits impact reduced affected",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-06-30",
+            "basis": "quarter",
+            "level": 398000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 398000000.0,
+                "filed": "2026-07-23",
+                "form": "10-Q",
+                "accession_number": "0001628280-26-049270",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 923000000.0,
+            "prior_period_end": "2025-06-30",
+            "yoy_change": -0.5687973997833152,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E12",
+            "E10",
+            "E11"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E10",
+              "quote": "Operating income decreased to $398 million in the three months ended June 30, 2026",
+              "valid": true,
+              "issues": [],
+              "kind": "xbrl_fact",
+              "accession_number": "0001628280-26-049270",
+              "form": "10-Q",
+              "filed": "2026-07-23",
+              "period_end": "2026-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/0001628280-26-049270-index.htm",
+              "locator": "OperatingIncome 2026-04-01..2026-06-30"
+            },
+            {
+              "evidence_id": "E11",
+              "quote": "Operating income was $923 million in the three months ended June 30, 2025",
+              "valid": true,
+              "issues": [],
+              "kind": "xbrl_fact",
+              "accession_number": "0001628280-26-049270",
+              "form": "10-Q",
+              "filed": "2026-07-23",
+              "period_end": "2025-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/0001628280-26-049270-index.htm",
+              "locator": "OperatingIncome 2025-04-01..2025-06-30"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E6",
+              "quote": "The fluctuations are primarily due to the changes in automotive sales revenue and cost of automotive sales revenue and a decrease in regulatory credits revenue",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-049270",
+              "form": "10-Q",
+              "filed": "2026-07-23",
+              "period_end": "2026-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+              "locator": "10-Q 0001628280-26-049270:103375-104481"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "df51dbc83fcfd57a87021690f70d9ee193029020f8cb835530c2beb58e00f6c6",
+      "source": "cache",
+      "input_tokens": 3868,
+      "output_tokens": 489,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Automotive regulatory credits revenue decreased $293 million, or 67%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025."
+          },
+          {
+            "evidence_id": "E6",
+            "quote": "The fluctuations are primarily due to the changes in automotive sales revenue and cost of automotive sales revenue and a decrease in regulatory credits revenue, as discussed above."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Tesla's operating income in Q2 2026 was reduced by lower regulatory credit revenue. This is an interpretive claim about causation.\n\nEvidence E2 confirms that automotive regulatory credits revenue decreased $293 million (67%) in the three months ended June 30, 2026 compared to the prior year period. \n\nEvidence E6 explicitly addresses the impact on gross margin (which is a component of operating income), stating that \"The fluctuations are primarily due to the changes in automotive sales revenue and cost of automotive sales revenue and a decrease in regulatory credits revenue.\" This directly supports the claim that lower regulatory credit revenue reduced operating income.\n\nSince regulatory credits are high-margin revenue (essentially pure profit with minimal associated costs), a decrease in this revenue would directly reduce operating income. The evidence confirms both that regulatory credit revenue decreased and that this decrease impacted profitability metrics.\n\nThe claim is qualitative/interpretive in nature (stating a cause-effect relationship) rather than making specific numeric assertions about operating income levels or changes.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "5dac6bf016f2cd32e83a297c975da4c7efd199c589d6281133bc21b75354e60e",
+      "source": "live",
+      "input_tokens": 4786,
+      "output_tokens": 371,
+      "stop_reason": "tool_use",
+      "latency_ms": 7324,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did operating income actually increase in Q2 2026 despite lower regulatory credit revenue, which would contradict the claim that operating income was 'reduced' by this factor?",
+            "search_query": "operating income three months ended June 30 2026 2025 increase decrease",
+            "numeric_check": {
+              "metric": "OperatingIncome",
+              "measure": "yoy_growth",
+              "period_basis": "quarter",
+              "period_end": "2026-06-30",
+              "comparison": "increase",
+              "threshold": null,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Does the filing attribute the change in operating income primarily to other factors (such as cost reductions, volume increases, or pricing) rather than regulatory credit revenue?",
+            "search_query": "operating income margin primarily due driven factors cost reduction efficiency volume pricing",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Does Evidence E6 only discuss gross margin impacts rather than operating income impacts, meaning the causal link to operating income is not explicitly stated in the filing?",
+            "search_query": "operating income operating margin regulatory credits impact reduced affected",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "03ad4ea1e961cf7f89ecfb6d171325b0f8422ddba36c65c9c557253f05cc5e38",
+      "source": "live",
+      "input_tokens": 8617,
+      "output_tokens": 895,
+      "stop_reason": "tool_use",
+      "latency_ms": 16341,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E10",
+                "quote": "Operating income decreased to $398 million in the three months ended June 30, 2026"
+              },
+              {
+                "evidence_id": "E11",
+                "quote": "Operating income was $923 million in the three months ended June 30, 2025"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E6",
+                "quote": "The fluctuations are primarily due to the changes in automotive sales revenue and cost of automotive sales revenue and a decrease in regulatory credits revenue"
+              }
+            ]
+          }
+        ],
+        "label": "INSUFFICIENT_EVIDENCE",
+        "verdict_changed": true,
+        "change_reason": "While the evidence confirms that regulatory credit revenue decreased by $293 million in Q2 2026, and that operating income decreased from $923 million to $398 million (a decline of $525 million), the filing does not explicitly state that operating income was reduced by lower regulatory credit revenue. Evidence E6 only discusses the impact on gross margin, not operating income. The claim makes a causal assertion about operating income specifically, but the filing's discussion of regulatory credits' impact is limited to gross margin. Without explicit attribution in the filing linking the regulatory credit decrease to the operating income decline, the causal claim cannot be verified.",
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Automotive regulatory credits revenue decreased $293 million, or 67%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Tesla's operating income in Q2 2026 was reduced by lower regulatory credit revenue. This is a causal claim requiring explicit attribution in the filing.\n\nH1 is REFUTED: The numeric check confirms operating income decreased from $923 million to $398 million in Q2 2026 vs Q2 2025, not increased. This is consistent with the claim's direction.\n\nH2 finds NO_RELEVANT_EVIDENCE: The retrieved evidence discusses gross margin drivers but does not provide explicit discussion of what primarily drove the operating income change.\n\nH3 is SUPPORTED: This is the critical challenge. Evidence E6, which I initially cited as supporting the causal claim, only discusses gross margin impacts: \"The fluctuations are primarily due to the changes in automotive sales revenue and cost of automotive sales revenue and a decrease in regulatory credits revenue.\" This statement is about gross margin fluctuations, not operating income.\n\nWhile regulatory credit revenue is high-margin and its decrease would mathematically contribute to lower operating income, the filing does not explicitly state that operating income was reduced by lower regulatory credit revenue. The only explicit causal attribution found is for gross margin, not operating income. Operating income is affected by many factors beyond gross margin (R&D, SG&A, etc.), and without explicit filing attribution, the causal claim about operating income cannot be verified."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Tesla's operating income in the quarter ended June 30, 2026 was reduced by lower regulatory credit revenue. 2026 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "operating income three months ended June 30 2026 2025 increase decrease",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "operating income margin primarily due driven factors cost reduction efficiency volume pricing",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "operating income operating margin regulatory credits impact reduced affected",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-06-30",
+            "basis": "quarter",
+            "level": 398000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 398000000.0,
+                "filed": "2026-07-23",
+                "form": "10-Q",
+                "accession_number": "0001628280-26-049270",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 923000000.0,
+            "prior_period_end": "2025-06-30",
+            "yoy_change": -0.5687973997833152,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E12",
+            "E10",
+            "E11"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-049270",
+        "filed": "2026-07-23",
+        "report_date": "2026-06-30",
+        "primary_document": "tsla-20260630.htm",
+        "sha256": "cdb152ed27f461291c7772753014f64702f433b15cbf515e2faa8b7611ffdef1"
+      },
+      {
+        "form": "10-K/A",
+        "accession_number": "0001104659-26-053166",
+        "filed": "2026-04-30",
+        "report_date": "2025-12-31",
+        "primary_document": "tm2611837d1_10ka.htm",
+        "sha256": "ef65ead556eda2cdcbf9eeb034dbf5304defb97d26638e5508253ba5f63e5f0d"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-026673",
+        "filed": "2026-04-23",
+        "report_date": "2026-03-31",
+        "primary_document": "tsla-20260331.htm",
+        "sha256": "838c376456a58e0e5100fa187155c2f52f12912987f725a503d41e789ec51cf4"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-003952",
+        "filed": "2026-01-29",
+        "report_date": "2025-12-31",
+        "primary_document": "tsla-20251231.htm",
+        "sha256": "6613b0ffabe8e9b2668eef50f40540756bd4ef03e2f633d489ca83aa58b99729"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 909
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:99780-100839",
+      "excerpt": "t governmental and regulatory actions have restricted certain regulatory credit programs tied to our products. Furthermore, we are impacted by the demand for credits by other automobile manufacturers. Services and other revenue increased $1.54 billion, or 50%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025. Services and other revenue increased $2.64 billion, or 46%, in the six months ended June 30, 2026 as compared to the six months ended June 30, 2025. These increases were primarily due to increases in used vehicle sales volume and average selling price, non-warranty maintenance services and collision revenue and paid Supercharging sessions. Energy Generation and Storage Segment Energy generation and storage revenue increased $350 million, or 13%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025, primarily due to an increase in Megapack deployments, partially offset by a lower average selling price per Megapack unit and a decrease in Powerwall deployments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:98802-99980",
+      "excerpt": "30, 2025, due to an increase of approximately 18% in cash deliveries, in part from bringing down all of our vehicle factories simultaneously for the changeover to the New Model Y in the prior period. Additionally, there was a higher average selling price per unit primarily driven by sales mix and a positive impact from the weakening of the United States dollar when compared to foreign currencies year over year and an increase from higher revenue from FSD (Supervised) subscriptions in the current period. Automotive regulatory credits revenue decreased $293 million, or 67%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025. Automotive regulatory credits revenue decreased $508 million, or 49%, in the six months ended June 30, 2026 as compared to the six months ended June 30, 2025. Fluctuations in automotive regulatory credits are impacted by our supply of credits, subject to changes in regulation, production and sales. Recent governmental and regulatory actions have restricted certain regulatory credit programs tied to our products. Furthermore, we are impacted by the demand for credits by other automobile manufacturers.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:107544-108413",
+      "excerpt": "ployee and labor costs, including professional services, a $196 million increase in operating expenses including litigation related expenses and a $131 million increase in facilities related expenses. 33 Table of Contents Interest Income Three Months Ended June 30, Change Six Months Ended June 30, Change (Dollars in millions) 2026 2025 $ % 2026 2025 $ % Interest income $ 422 $ 392 $ 30 8 % $ 856 $ 792 $ 64 8 % Interest income increased $30 million, or 8%, in the three months ended June 30, 2026 and increased $64 million, or 8%, in the six months ended June 30, 2026 as compared to the three and six months ended June 30, 2025, respectively. The increases were primarily due to higher interest earned on our cash and cash equivalents and short-term investments due to an increase in our average portfolio balance, partially offset by a lower average interest rate.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:108213-109393",
+      "excerpt": "marily due to higher interest earned on our cash and cash equivalents and short-term investments due to an increase in our average portfolio balance, partially offset by a lower average interest rate. Other Income, Net Three Months Ended June 30, Change Six Months Ended June 30, Change (Dollars in millions) 2026 2025 $ % 2026 2025 $ % Other income, net $ 590 $ 320 $ 270 84 % $ 55 $ 201 $ (146) (73) % Other income, net, changed favorably by $270 million in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025. Other income, net, changed unfavorably by $146 million in the six months ended June 30, 2026 as compared to the six months ended June 30, 2025. The changes were primarily due to a mark-to-market gain on our SpaceX equity investment, which we entered into in March 2026, and adjustments on our bitcoin digital assets, as well as fluctuations in foreign currency exchange rates on our intercompany balances. As our intercompany balances are significant in nature and we do not typically hedge foreign currency risk, we can experience significant fluctuations in foreign currency exchange rate gains and losses from period to period.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:84443-85517",
+      "excerpt": "her cost reductions and operational efficiencies, including through vertical integration of our battery and semiconductor supply chains, to enable increased deliveries and deployments of our products. We are also investing heavily in research and development to accelerate our AI, software and fleet-based profits for further revenue growth, which will negatively impact our profitability during this phase. We ended the second quarter of 2026 with $43.52 billion in cash and cash equivalents and short-term investments, representing a decrease of $535 million from the end of 2025. Our cash flows provided by operating activities were $8.63 billion during the six months ended June 30, 2026, compared to $4.70 billion during the same period ended June 30, 2025, representing an increase of $3.94 billion. Capital expenditures amounted to $8.28 billion during the six months ended June 30, 2026, compared to $3.89 billion during the same period ended June 30, 2025, representing an increase of $4.40 billion. Overall growth has allowed our business to generally fund itself.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:103375-104481",
+      "excerpt": "ue and cost of paid Supercharging sessions. Gross margin for total automotive decreased from 17.2% to 16.9% in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025. Gross margin for total automotive increased from 16.8% to 18.7% in the six months ended June 30, 2026 as compared to the six months ended June 30, 2025. The fluctuations are primarily due to the changes in automotive sales revenue and cost of automotive sales revenue and a decrease in regulatory credits revenue, as discussed above. 32 Table of Contents Gross margin for total automotive & services and other segment increased from 15.4% to 16.4% in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025. Gross margin for total automotive & services and other segment increased from 14.9% to 17.5% in the six months ended June 30, 2026 as compared to the six months ended June 30, 2025. The changes in gross margin were primarily due to the changes in automotive sales gross margin, as discussed above, as well as from an improvement in services and other gross margin.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:105975-107175",
+      "excerpt": "189 million and $334 million, respectively. R&D expenses as a percentage of revenue increased from 7% to 8% in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025. R&D expenses as a percentage of revenue increased from 7% to 9% in the six months ended June 30, 2026 as compared to the six months ended June 30, 2025. These increases were primarily due to higher R&D expenses and increases in total revenues in the current periods. Selling, General and Administrative Expense Three Months Ended June 30, Change Six Months Ended June 30, Change (Dollars in millions) 2026 2025 $ % 2026 2025 $ % Selling, general and administrative $ 1,982 $ 1,366 $ 616 45 % $ 3,815 $ 2,617 $ 1,198 46 % As a percentage of revenues 7 % 6 % 8 % 6 % Selling, general and administrative (“SG&A”) expenses increased $616 million, or 45%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025, driven by a $283 million increase in stock-based compensation primarily related to the 2025 CEO Performance Award, a $134 million increase in employee and labor costs, including professional services, a $109 million increase in operating expenses includin",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:104281-105198",
+      "excerpt": "ed June 30, 2025. The changes in gross margin were primarily due to the changes in automotive sales gross margin, as discussed above, as well as from an improvement in services and other gross margin. Energy Generation and Storage Segment Cost of energy generation and storage revenue increased $556 million, or 29%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025, primarily due to the deployment fluctuations as discussed above, as well as an increase in average cost per MWh primarily driven by sales mix and unfavorable warranty adjustments. Gross margin for energy generation and storage decreased from 30.3% to 20.4% in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025. The decrease was primarily due to the changes in energy generation and storage revenue and cost of energy generation and storage revenue, as discussed above.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:109963-110846",
+      "excerpt": "t our California deferred tax assets, other than research and development tax credits, are realizable. Accordingly, we released the valuation allowance related to these California deferred tax assets. The release of this valuation allowance and an immaterial accrual of pillar two tax resulted in a $274 million income tax benefit that was included in our provision for income taxes for the three and six months ended June 30, 2026. Our provision for income taxes decreased by $158 million in the three months ended June 30, 2026 and by $70 million in the six months ended June 30, 2026 as compared to the three and six months ended June 30, 2025, respectively. Our effective tax rate decreased from 23% to 15% in the three months ended June 30, 2026 and from 25% to 22% in the six months ended June 30, 2026 as compared to the three and six months ended June 30, 2025, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": "2026-04-01",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/0001628280-26-049270-index.htm",
+      "locator": "OperatingIncome 2026-04-01..2026-06-30",
+      "excerpt": null,
+      "values": [
+        398000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": "2025-04-01",
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/0001628280-26-049270-index.htm",
+      "locator": "OperatingIncome 2025-04-01..2025-06-30",
+      "excerpt": null,
+      "values": [
+        923000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "TSLA",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": null,
+      "locator": "OperatingIncome yoy_growth quarter @ 2026-06-30",
+      "excerpt": null,
+      "values": [
+        398000000.0,
+        923000000.0,
+        -0.5687973997833152
+      ],
+      "unit": "ratio",
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-026673",
+      "form": "10-Q",
+      "filed": "2026-04-23",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026026673/tsla-20260331.htm",
+      "locator": "10-Q 0001628280-26-026673:99524-100678",
+      "excerpt": "months ended March 31, 2025, primarily due to increases in used vehicle sales volume, cost related to non-warranty maintenance services and collision revenue, and cost of paid Supercharging sessions. Gross margin for total automotive increased from 16.2% to 21.1% in the three months ended March 31, 2026 as compared to the three months ended March 31, 2025, primarily due to the changes in automotive sales revenue and cost of automotive sales revenue and a decrease in regulatory credits revenue, as discussed above. Gross margin for total automotive & services and other segment increased from 14.3% to 18.9% in the three months ended March 31, 2026 as compared to the three months ended March 31, 2025, primarily due to the changes in automotive sales gross margin, as discussed above. Energy Generation and Storage Segment Cost of energy generation and storage revenue decreased $489 million, or 25%, in the three months ended March 31, 2026 as compared to the three months ended March 31, 2025, primarily due to decreases in average cost per unit for Megapack and Powerwall driven by lower materials costs and one-time benefits related to tariffs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-026673",
+      "form": "10-Q",
+      "filed": "2026-04-23",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026026673/tsla-20260331.htm",
+      "locator": "10-Q 0001628280-26-026673:100478-101129",
+      "excerpt": "pared to the three months ended March 31, 2025, primarily due to decreases in average cost per unit for Megapack and Powerwall driven by lower materials costs and one-time benefits related to tariffs. Additionally, there were decreases in cost of energy generation and storage revenue from decreases in Megapack and Powerwall deployments. Gross margin for energy generation and storage increased from 28.8% to 39.5% in the three months ended March 31, 2026 as compared to the three months ended March 31, 2025, primarily due to the changes in energy generation and storage revenue and cost of energy generation and storage revenue, as discussed above.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:186315-187425",
+      "excerpt": "vehicle sales volume and cost, cost of paid Supercharging sessions, cost related to our automotive insurance business, and cost related to our non-warranty maintenance services and collision revenue. Gross margin for total automotive decreased from 18.4% to 17.8% in the year ended December 31, 2025 as compared to the year ended December 31, 2024 primarily due to a decrease in regulatory credits revenue as well as the changes in automotive sales revenue and cost of automotive sales revenue, as discussed above. Gross margin for total automotive & services and other segment decreased from 16.9% to 16.2% in the year ended December 31, 2025 as compared to the year ended December 31, 2024 primarily due to a decrease in regulatory credits revenue, partially offset by an improvement in services and other margins. Energy Generation and Storage Segment Cost of energy generation and storage revenue includes direct and indirect material, tariffs, labor costs, manufacturing overhead, including depreciation costs of tooling and machinery, shipping and logistic costs, warranty expense and cost of servicing.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-026673",
+      "form": "10-Q",
+      "filed": "2026-04-23",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026026673/tsla-20260331.htm",
+      "locator": "10-Q 0001628280-26-026673:87899-88861",
+      "excerpt": "y, our suppliers’ liquidity and allocation plans may be affected by current challenges in the automotive industry, which could reduce our access to components or result in unfavorable changes to cost. These macroeconomic and industry trends have had, and will likely continue to have, an impact on the pricing of, and order rate for our vehicles, and in turn our operating margin. Changes in government and economic policies, incentives or tariffs may also impact our production, cost structure and the competitive landscape. For instance, while the final scope and application of recently announced changes in trade policy remain uncertain at this time, tariffs on imports and subsequent retaliatory tariffs could impact consumer spending and demand for durable goods and related services. Furthermore, certain provisions of the OBBBA, including the removal of tax credits for electric vehicles, may also impact consumer demand for electric vehicles in general.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:114933-116063",
+      "excerpt": "of our products. We may incur expenses or delays relating to such events outside of our control, which could have a material adverse impact on our business, operating results and financial condition. Risks Related to Government Laws and Regulations Demand for our products and services may be impacted by the status of government and economic incentives supporting the development and adoption of such products. Government and economic incentives that support the development and adoption of electric vehicles in the U.S. and abroad, including certain tax exemptions, tax credits and rebates, may be reduced, eliminated, amended or exhausted from time to time. For example, previously available incentives favoring electric vehicles in certain areas have expired or were cancelled or temporarily unavailable, and in some cases were not eventually replaced or reinstituted, which may have negatively impacted sales. Specifically, recent governmental and regulatory actions have repealed and/or restricted consumer, manufacturing and charging infrastructure tax credits, and certain regulatory credit programs tied to our products.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:200112-201189",
+      "excerpt": "tivities are significantly affected by our cash investments to support the growth of our business in areas such as research and development and selling, general and administrative and working capital. Our operating cash inflows include cash from vehicle sales and related servicing, sales of energy generation and storage products, customer lease and financing payments, sales of regulatory credits and interest income on our cash and investments portfolio. These cash inflows are offset by our payments to suppliers for production materials and parts used in our manufacturing process, operating expenses, operating lease payments and interest payments on our financings. Net cash provided by operating activities decreased by $176 million to $14.75 billion during the year ended December 31, 2025 from $14.92 billion during the year ended December 31, 2024. This decrease was primarily due to a decrease in net income excluding non-cash expenses, gains and losses of $737 million, partially offset by favorable changes in net operating assets and liabilities of $561 million.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E2",
+      "quote": "Automotive regulatory credits revenue decreased $293 million, or 67%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:98802-99980"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 17271,
+    "output": 1755
+  },
+  "latency_ms": 23693,
+  "estimated_cost_usd": 0.078138,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 4
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 7326,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 14,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 16344,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "INSUFFICIENT_EVIDENCE"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 15,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

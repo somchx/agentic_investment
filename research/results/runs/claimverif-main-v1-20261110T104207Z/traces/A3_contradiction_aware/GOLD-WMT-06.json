@@ -1,0 +1,863 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-WMT-06:d66e34ca",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-WMT-06",
+    "company": "WMT",
+    "claim": "Walmart U.S. comparable sales growth in fiscal 2026 was driven by increases in both transactions and average ticket.",
+    "as_of_date": "2026-03-31",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions, and also reflected growth in unit volumes and strength in all merchandise categories."
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions, and also reflected growth in unit volumes and strength in all merchandise categories."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Walmart U.S. comparable sales growth in fiscal 2026 was driven by increases in both transactions and average ticket. This is a qualitative/interpretive claim about the drivers of comparable sales growth rather than a numeric assertion about specific values or growth rates.\n\nEvidence E1 and E3 both explicitly state that \"Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions\" for Walmart U.S. This directly supports the claim's assertion about the drivers of comparable sales growth. Both passages are from the 10-K filed 2026-03-13 for the period ending 2026-01-31, which covers fiscal 2026.\n\nThe evidence affirmatively establishes the material parts of the claim - that both transactions and average ticket increased and drove the comparable sales growth. Since this is a qualitative claim about drivers/causes and the filing explicitly states these drivers, the claim is SUPPORTED.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did Walmart U.S. actually have positive comparable sales growth in fiscal 2026, or did comparable sales decline or remain flat?",
+          "search_query": "Walmart U.S. comparable sales fiscal 2026 decrease decline negative",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Were there other primary drivers of Walmart U.S. comparable sales growth in fiscal 2026 that the filing emphasizes more than transactions and average ticket, such as pricing, mix shifts, acquisitions, or one-time factors?",
+          "search_query": "Walmart U.S. comparable sales fiscal 2026 primarily driven pricing mix acquisition",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Does the filing indicate that either transactions or average ticket actually declined in fiscal 2026 for Walmart U.S., contradicting the claim that both increased?",
+          "search_query": "Walmart U.S. fiscal 2026 transactions average ticket decline decrease offset",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "Walmart U.S. comparable sales fiscal 2026 decrease decline negative",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "Walmart U.S. comparable sales fiscal 2026 primarily driven pricing mix acquisition",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "Walmart U.S. fiscal 2026 transactions average ticket decline decrease offset",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "The increases in net sales were primarily due to increases in comparable sales of 4.3% and 4.8% for fiscal 2026 and 2025, respectively.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:192540-193734"
+            },
+            {
+              "evidence_id": "E3",
+              "quote": "Walmart U.S. comparable sales increased 4.3% and 4.8% in fiscal 2026 and 2025, respectively.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:172302-173494"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions, and also reflected growth in unit volumes and strength in all merchandise categories.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:192540-193734"
+            },
+            {
+              "evidence_id": "E3",
+              "quote": "Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions, and also reflected growth in unit volumes and strength in all merchandise categories.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:172302-173494"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:192540-193734"
+            },
+            {
+              "evidence_id": "E3",
+              "quote": "Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:172302-173494"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "6f4ad660b35e5c5d8047aac8e93f4db21e8ef771969f7217d71e7ca5852bab29",
+      "source": "cache",
+      "input_tokens": 4031,
+      "output_tokens": 464,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions, and also reflected growth in unit volumes and strength in all merchandise categories."
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions, and also reflected growth in unit volumes and strength in all merchandise categories."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Walmart U.S. comparable sales growth in fiscal 2026 was driven by increases in both transactions and average ticket. This is a qualitative/interpretive claim about the drivers of comparable sales growth rather than a numeric assertion about specific values or growth rates.\n\nEvidence E1 and E3 both explicitly state that \"Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions\" for Walmart U.S. This directly supports the claim's assertion about the drivers of comparable sales growth. Both passages are from the 10-K filed 2026-03-13 for the period ending 2026-01-31, which covers fiscal 2026.\n\nThe evidence affirmatively establishes the material parts of the claim - that both transactions and average ticket increased and drove the comparable sales growth. Since this is a qualitative claim about drivers/causes and the filing explicitly states these drivers, the claim is SUPPORTED.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "bd90fe726f98b81438542e1c9d576dc305c88b3a8dad3283dc39399700bd784d",
+      "source": "cache",
+      "input_tokens": 4892,
+      "output_tokens": 320,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did Walmart U.S. actually have positive comparable sales growth in fiscal 2026, or did comparable sales decline or remain flat?",
+            "search_query": "Walmart U.S. comparable sales fiscal 2026 decrease decline negative",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Were there other primary drivers of Walmart U.S. comparable sales growth in fiscal 2026 that the filing emphasizes more than transactions and average ticket, such as pricing, mix shifts, acquisitions, or one-time factors?",
+            "search_query": "Walmart U.S. comparable sales fiscal 2026 primarily driven pricing mix acquisition",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Does the filing indicate that either transactions or average ticket actually declined in fiscal 2026 for Walmart U.S., contradicting the claim that both increased?",
+            "search_query": "Walmart U.S. fiscal 2026 transactions average ticket decline decrease offset",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "30702c5fa693d26e9805049ae5019f8890334d280235c710ff51e440f68de0e8",
+      "source": "cache",
+      "input_tokens": 8591,
+      "output_tokens": 920,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E1",
+                "quote": "The increases in net sales were primarily due to increases in comparable sales of 4.3% and 4.8% for fiscal 2026 and 2025, respectively."
+              },
+              {
+                "evidence_id": "E3",
+                "quote": "Walmart U.S. comparable sales increased 4.3% and 4.8% in fiscal 2026 and 2025, respectively."
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E1",
+                "quote": "Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions, and also reflected growth in unit volumes and strength in all merchandise categories."
+              },
+              {
+                "evidence_id": "E3",
+                "quote": "Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions, and also reflected growth in unit volumes and strength in all merchandise categories."
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E1",
+                "quote": "Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions"
+              },
+              {
+                "evidence_id": "E3",
+                "quote": "Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions, and also reflected growth in unit volumes and strength in all merchandise categories."
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions, and also reflected growth in unit volumes and strength in all merchandise categories."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After investigating potential challenges to the initial verdict, all three hypotheses were refuted by the evidence:\n\nH1 (questioning whether comparable sales actually grew): The evidence clearly confirms that Walmart U.S. comparable sales increased 4.3% in fiscal 2026 (E1, E3), so there was positive growth, not a decline or flat performance.\n\nH2 (questioning whether other drivers were emphasized more): The filing consistently states that comparable sales were \"driven by growth in average ticket and transactions\" (E1, E3). While the evidence mentions that growth \"also reflected growth in unit volumes and strength in all merchandise categories,\" the language clearly identifies average ticket and transactions as the primary drivers. No evidence suggests pricing, mix shifts, acquisitions, or one-time factors were emphasized as primary drivers over transactions and average ticket.\n\nH3 (questioning whether either metric declined): The evidence explicitly states growth in both average ticket and transactions for fiscal 2026 (E1, E3), with no indication that either metric declined.\n\nThe original verdict of SUPPORTED remains correct. The claim accurately reflects what the SEC filings state about the drivers of Walmart U.S. comparable sales growth in fiscal 2026."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Walmart U.S. comparable sales growth in fiscal 2026 was driven by increases in both transactions and average ticket. FY2026",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "Walmart U.S. comparable sales fiscal 2026 decrease decline negative",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "Walmart U.S. comparable sales fiscal 2026 primarily driven pricing mix acquisition",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "Walmart U.S. fiscal 2026 transactions average ticket decline decrease offset",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0000104169-26-000055",
+        "filed": "2026-03-13",
+        "report_date": "2026-01-31",
+        "primary_document": "wmt-20260131.htm",
+        "sha256": "81bc136de8961e00236b4d1c299b17de840b9ff49c278f0addf442cee8e909cf"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-25-000191",
+        "filed": "2025-12-03",
+        "report_date": "2025-10-31",
+        "primary_document": "wmt-20251031.htm",
+        "sha256": "163791c139267742812a96517575b3118c5549be0b2984c8d4e9aa0914e2b6f8"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-25-000137",
+        "filed": "2025-08-29",
+        "report_date": "2025-07-31",
+        "primary_document": "wmt-20250731.htm",
+        "sha256": "05974418e411cea9e0bc4acbaeb3ba6400348a940d109fbeac294723401f34b5"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 708
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:192540-193734",
+      "excerpt": "d 2025, respectively, when compared to the previous fiscal year. The increases in net sales were primarily due to increases in comparable sales of 4.3% and 4.8% for fiscal 2026 and 2025, respectively. Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions, and also reflected growth in unit volumes and strength in all merchandise categories. Comparable sales in fiscal 2025 were driven by growth in transactions and unit volumes, with strong sales in grocery and health and wellness. Walmart U.S. eCommerce sales positively contributed approximately 4.3% and 2.9% to comparable sales for fiscal 2026 and 2025, respectively. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, and was primarily driven by store-fulfilled pickup and delivery. Membership and other income increased slightly for fiscal 2026 and increased $0.6 billion for fiscal 2025. In both years, the increases were primarily driven by double-digit growth in membership fee revenue from Walmart+. For fiscal 2026, the increase was partially offset by decreases in certain other income items, including a reduction in recycling income.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:187146-188328",
+      "excerpt": "fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increases were primarily due to strong positive comparable sales across our U.S. segments and international markets. In fiscal 2026, growth was primarily driven by increases in average ticket and transactions, and also reflected growth in unit volumes, while fiscal 2025 growth was primarily driven by higher transactions and unit volumes. Both years include strength in eCommerce as well as strong sales in grocery and health and wellness, with fiscal 2026 also benefiting from improved sales in general merchandise. Net sales were negatively impacted by $2.8 billion and $3.2 billion of fluctuations in currency exchange rates during fiscal 2026 and 2025, respectively. Membership and other income increased $0.3 billion and $1.0 billion for fiscal 2026 and 2025, respectively, primarily driven by growth in membership fee revenue globally, partially offset by decreases in certain other income items, including a reduction in recycling income in fiscal 2026. Our gross profit rate increased 8 and 40 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:172302-173494",
+      "excerpt": "ieve it is a meaningful metric within the context of the U.S. retail market where there is a single currency, one inflationary market and generally consistent store and club formats from year to year. Calendar comparable sales, as well as the impact of fuel, for fiscal 2026 and 2025, were as follows: Fiscal Years Ended January 31, 2026 2025 2026 2025 With Fuel Fuel Impact Walmart U.S. 4.3% 4.8% 0.0% (0.1)% Sam's Club U.S. 2.9% 4.7% (1.9)% (1.5)% Walmart U.S. comparable sales increased 4.3% and 4.8% in fiscal 2026 and 2025, respectively. Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions, and also reflected growth in unit volumes and strength in all merchandise categories. Comparable sales in fiscal 2025 were driven by growth in transactions and unit volumes, with strong sales in grocery and health and wellness. Walmart U.S. eCommerce sales positively contributed approximately 4.3% and 2.9% to comparable sales for fiscal 2026 and 2025, respectively. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, and was primarily driven by store-fulfilled pickup and delivery. Sam's Club U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000137",
+      "form": "10-Q",
+      "filed": "2025-08-29",
+      "period_start": null,
+      "period_end": "2025-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000137/wmt-20250731.htm",
+      "locator": "10-Q 0000104169-25-000137:60355-61438",
+      "excerpt": "les in the U.S., including fuel, increased 4.4% and 3.8% for the three and six months ended July 31, 2025, respectively, when compared to the same periods in the previous fiscal year. The Walmart U.S. segment had comparable sales growth of 4.7% and for 3.9% the three and six months ended July 31, 2025, respectively, driven by growth in average ticket and transactions, reflecting strength in all merchandise categories. The Walmart U.S. segment's eCommerce net sales positively contributed approximately 4.0% and 3.7% to comparable sales for the three and six months ended July 31, 2025, respectively. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, which was primarily driven by store-fulfilled pickup and delivery. Comparable sales in the Sam's Club U.S. segment increased 3.3% and 3.1% for the three and six months ended July 31, 2025, respectively, driven by growth in unit volumes with strength in transactions, reflecting strong sales in grocery, health and wellness, and general merchandise. The Sam's Club U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000137",
+      "form": "10-Q",
+      "filed": "2025-08-29",
+      "period_start": null,
+      "period_end": "2025-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000137/wmt-20250731.htm",
+      "locator": "10-Q 0000104169-25-000137:78343-79377",
+      "excerpt": "net sales Gross profit 27.9 % 27.6 % 27.7 % 27.4 % Operating expenses 22.8 % 22.4 % 22.9 % 22.6 % Operating income 5.6 % 5.7 % 5.3 % 5.3 % Unit counts at period end 4,606 4,606 4,606 4,606 Retail square feet at period end 698 698 698 698 Net sales for the Walmart U.S. segment increased $5.6 billion or 4.8% and $9.1 billion or 4.0% for the three and six months ended July 31, 2025, respectively, when compared to the same periods in the previous fiscal year. The increases were due to comparable sales of 4.7% and 3.9% for the three and six months ended July 31, 2025, driven by growth in average ticket and transactions, reflecting strength in all merchandise categories. The Walmart U.S. segment's eCommerce net sales positively contributed approximately 4.0% and 3.7% to comparable sales for the three and six months ended July 31, 2025, respectively. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, which was primarily driven by store-fulfilled pickup and delivery.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_start": null,
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:60333-61526",
+      "excerpt": "8% and 4.2% for the three and nine months ended October 31, 2025, respectively, driven by growth in average ticket and transactions, reflecting strength in all merchandise categories. The Walmart U.S. segment's eCommerce net sales positively contributed approximately 4.4% and 3.9% to comparable sales for the three and nine months ended October 31, 2025, respectively. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, which was primarily driven by store-fulfilled pickup and delivery. Comparable sales in the Sam's Club U.S. segment increased 2.8% and 3.0% for the three and nine months ended October 31, 2025, respectively, with growth in unit volumes and transactions, reflecting strong sales in grocery, general merchandise and health and wellness. The Sam's Club U.S. segment's eCommerce net sales positively contributed approximately 3.0% and 3.3% to comparable sales for the three and nine months ended October 31, 2025, respectively, which outpaced the total segment growth as a result of lower fuel sales driven by lower fuel prices. This growth reflects continued strength in member engagement with omnichannel offerings.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:195521-196654",
+      "excerpt": "ofit 21.4 % 21.8 % 21.6 % Operating expenses 18.6 % 18.5 % 18.6 % Operating income 3.9 % 4.5 % 4.3 % Retail unit counts at period end 5,743 5,566 5,402 Retail square feet at period end 278 274 274 Net sales for the Walmart International segment increased $8.5 billion or 7.0% and $7.2 billion or 6.3% for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. Net sales growth was primarily due to positive comparable sales growth across our international markets, which includes strong eCommerce growth of $6.3 billion and $4.7 billion for fiscal 2026 and 2025, respectively. The increases were partially offset by negative fluctuations in currency exchange rates of $2.8 billion and $3.2 billion for fiscal 2026 and 2025, respectively. Gross profit rate decreased 49 basis points for fiscal 2026 and increased 20 basis points for fiscal 2025, when compared to the previous fiscal year. For fiscal 2026, the decrease was primarily due to ongoing channel and format mix shifts, as well as strategic growth investments in price and delivery capabilities, partially offset by growth in higher margin businesses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:110223-111377",
+      "excerpt": "al performance could adversely affect the market price and volatility of our stock. We believe that the price of our stock generally reflects high market expectations for our future operating results. Any failure to meet or delay in meeting these expectations, including our consolidated net sales, consolidated operating income, growth rates, eCommerce growth rates, advertising and other higher-margin initiatives (which are expected to help drive our operating income growth at a rate faster than net sales over the long term), capital expenditures, comparable store and club sales growth rates or earnings and adjusted earnings per share could cause the market price of our stock to decline, as could changes in our dividend or stock repurchase programs or policies, changes in our effective tax rates, changes in our financial estimates and recommendations by securities analysts or, failure of our performance to compare favorably to that of other retailers may have a negative effect on the price of our stock. Fluctuations in foreign exchange rates may materially adversely affect our financial performance and our reported results of operations.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:173294-174305",
+      "excerpt": "ctively. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, and was primarily driven by store-fulfilled pickup and delivery. Sam's Club U.S. comparable sales increased 2.9% and 4.7% in fiscal 2026 and 2025, respectively. For fiscal 2026, comparable sales were driven by growth in unit volumes and transactions, reflecting strong sales in grocery, health and wellness and general merchandise. For fiscal 2025, comparable sales were driven by growth in transactions and unit volumes, with strong sales in grocery and health and wellness. Additionally, fiscal 2026 and 2025 growth was partially offset by lower fuel sales, negatively impacting comparable sales by 1.9% and 1.5%, respectively, primarily due to lower fuel prices. Sam's Club U.S. eCommerce sales positively contributed approximately 3.3% and 2.3% to comparable sales for fiscal 2026 and 2025, respectively, which reflects continued strength in member engagement with omnichannel offerings.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:199255-200263",
+      "excerpt": "al 2026 and 2025, respectively. Comparable sales in fiscal 2026 were driven by growth in unit volumes and transactions, reflecting strong sales in grocery, health and wellness and general merchandise. Comparable sales in fiscal 2025 were driven by growth in transactions and unit volumes, with strong sales in grocery and health and wellness. Additionally, fiscal 2026 and 2025 growth was partially offset by lower fuel sales, negatively impacting comparable sales by 1.9% and 1.5%, respectively, primarily due to lower fuel prices. Sam's Club U.S. eCommerce sales positively contributed approximately 3.3% and 2.3% to comparable sales for fiscal 2026 and 2025, respectively, which reflects continued strength in member engagement with omnichannel offerings. Membership and other income increased 8.7% and 13.3% for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. For fiscal 2026 and 2025, the increases were primarily due to growth in the membership base and Plus penetration.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:188128-189201",
+      "excerpt": "tems, including a reduction in recycling income in fiscal 2026. Our gross profit rate increased 8 and 40 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase in fiscal 2026 was primarily driven by the Walmart U.S. segment, due to disciplined inventory management, as well as growth in higher margin businesses globally. The increase in fiscal 2025 was primarily driven by the Walmart U.S. segment, due to managing prices aligned to our competitive historic price gaps, as well as growth in higher margin businesses globally. In both years, the increases were partially offset by mix shifts into lower margin merchandise categories across segments, as well as ongoing channel and format mix shifts in the Walmart International segment. Our operating expenses as a percentage of net sales increased 20 and 36 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase for fiscal 2026 was primarily due to higher self-insured general liability claims expense in the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_start": null,
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:63030-64107",
+      "excerpt": "d 6 basis points for the three and nine months ended October 31, 2025, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily due to the Walmart U.S. segment, driven by disciplined inventory management and growth in higher margin businesses, partially offset by mix shifts into lower margin merchandise categories and the timing of Flipkart's The Big Billion Days (\"BBD\") sales event in the Walmart International segment, which primarily occurred in the fourth quarter of fiscal 2025 but mostly shifted to the third quarter of fiscal 2026. Additionally, the increases were partially offset by ongoing channel and format mix shifts in the Walmart International segment. Operating expenses as a percentage of net sales increased 28 and 33 basis points for the three and nine months ended October 31, 2025, respectively, when compared to the same periods in the previous fiscal year, primarily driven by a charge of $0.7 billion related to modification of certain share-based compensation arrangements for our PhonePe subsidiary.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000137",
+      "form": "10-Q",
+      "filed": "2025-08-29",
+      "period_start": null,
+      "period_end": "2025-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000137/wmt-20250731.htm",
+      "locator": "10-Q 0000104169-25-000137:74041-75203",
+      "excerpt": "s driven by growth in average ticket and transactions, with strength in eCommerce. Net sales growth across channels also reflected strong sales in grocery and health and wellness in our U.S. segments. Net sales for the three and six months ended July 31, 2025 were negatively affected by $1.5 billion and $3.9 billion, respectively, in currency exchange rate fluctuations. Membership and other income increased $0.1 billion or 5.4% and $0.1 billion or 4.5% for the three and six months ended July 31, 2025, respectively, primarily due to strong growth in membership fee income globally, partially offset by decreases in other income items. Gross profit rate increased 4 and 8 basis points for the three and six months ended July 31, 2025, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily due to the Walmart U.S. segment, driven by disciplined inventory management and growth in higher margin businesses, partially offset by mix shifts into lower margin merchandise categories. Additionally, the increases were partially offset by ongoing channel and format mix shifts in the Walmart International segment.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_start": null,
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:74360-75240",
+      "excerpt": "average ticket and transactions, with strength in eCommerce. Net sales growth across channels also reflected strong sales in grocery, health and wellness and general merchandise in our U.S. segments. Net sales for the three and nine months ended October 31, 2025 were negatively affected by $0.2 billion and $4.0 billion, respectively, in currency exchange rate fluctuations. Membership and other income increased $0.1 billion or 9.0% and $0.3 billion or 6.0% for the three and nine months ended October 31, 2025, respectively, primarily due to strong growth in membership fee income globally, partially offset by decreases in other income items. Gross profit rate increased 2 and 6 basis points for the three and nine months ended October 31, 2025, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily due to the Walmart U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:180802-181959",
+      "excerpt": "combined with higher operating income, offset by an increase in average total assets due to higher purchases of property and equipment. ROI was 15.1% and 15.5% for fiscal 2026 and 2025, respectively. The decrease in ROI was primarily due to an increase in average invested capital due to higher purchases of property and equipment. ROI benefited from increased operating income due to improved business performance, which was partially offset by the incremental non-cash share-based compensation charge at PhonePe as well as certain legal matters and other business restructuring charges. Capital Allocation Our strategy includes allocating the majority of our capital to higher-return areas focused on automation such as eCommerce, supply chain and store and club investments. The following table provides additional detail regarding our capital expenditures: (Amounts in millions) Fiscal Years Ended January 31, Allocation of Capital Expenditures 2026 2025 Supply chain, customer-facing initiatives, technology and other $ 16,468 $ 14,603 Store and club remodels 5,571 5,552 New stores and clubs, including expansions and relocations 1,406 450 Total U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions, and also reflected growth in unit volumes and strength in all merchandise categories.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:192540-193734"
+    },
+    {
+      "evidence_id": "E3",
+      "quote": "Comparable sales in fiscal 2026 were driven by growth in average ticket and transactions, and also reflected growth in unit volumes and strength in all merchandise categories.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:172302-173494"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 17514,
+    "output": 1704
+  },
+  "latency_ms": 6,
+  "estimated_cost_usd": 0.078102,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

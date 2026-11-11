@@ -1,0 +1,329 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A2_rag_numeric:GOLD-KO-08:be204ed3",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A2_rag_numeric",
+  "approach_kind": "financial_verification",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A2_rag_numeric",
+    "kind": "financial_verification",
+    "description": "A1 + deterministic numeric verification"
+  },
+  "config_hash": "53b859cfe39ca3b0",
+  "claim": {
+    "claim_id": "GOLD-KO-08",
+    "company": "KO",
+    "claim": "Foreign currency exchange rate fluctuations reduced Coca-Cola's net operating revenues in the quarter ended October 2, 2026.",
+    "as_of_date": "2026-11-01",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q3"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": "[\n  {\n    \"evidence_id\": \"E3\",\n    \"quote\": \"Taking into account the effects of our hedging activities, the impact of fluctuations in foreign currency exchange rates increased our operating income for the three and nine months ended October 2, 2026 by 3% and 4%, respectively.\"\n  },\n  {\n    \"evidence_id\": \"E1\",\n    \"quote\": \"Based on current spot rates and our hedging coverage in place, we expect foreign currency exchange rate fluctuations will have a favorable impact on our full year 2026 net operating revenues.\"\n  }\n",
+        "reasoning_summary": "The claim states that foreign currency exchange rate fluctuations reduced Coca-Cola's net operating revenues in the quarter ended October 2, 2026. However, the evidence directly contradicts this. Evidence E3 explicitly states that \"the impact of fluctuations in foreign currency exchange rates increased our operating income for the three and nine months ended October 2, 2026 by 3% and 4%, respectively.\" While this refers to operating income rather than net operating revenues specifically, Evidence E1 confirms the favorable impact expectation for net operating revenues for full year 2026. The evidence indicates that foreign currency fluctuations had a favorable (positive) impact, not a reduction, on the company's financial results for the quarter ended October 2, 2026. This is a qualitative/interpretive claim about the direction of impact (reduction vs. increase) caused by foreign currency fluctuations, and the evidence contradicts the claimed direction.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "37de6a05e88e2ce8805aa37185f9f768b45081d15c336b3e71809c6e73ca190c",
+      "source": "cache",
+      "input_tokens": 3850,
+      "output_tokens": 483,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": "[\n  {\n    \"evidence_id\": \"E3\",\n    \"quote\": \"Taking into account the effects of our hedging activities, the impact of fluctuations in foreign currency exchange rates increased our operating income for the three and nine months ended October 2, 2026 by 3% and 4%, respectively.\"\n  },\n  {\n    \"evidence_id\": \"E1\",\n    \"quote\": \"Based on current spot rates and our hedging coverage in place, we expect foreign currency exchange rate fluctuations will have a favorable impact on our full year 2026 net operating revenues.\"\n  }\n",
+        "reasoning_summary": "The claim states that foreign currency exchange rate fluctuations reduced Coca-Cola's net operating revenues in the quarter ended October 2, 2026. However, the evidence directly contradicts this. Evidence E3 explicitly states that \"the impact of fluctuations in foreign currency exchange rates increased our operating income for the three and nine months ended October 2, 2026 by 3% and 4%, respectively.\" While this refers to operating income rather than net operating revenues specifically, Evidence E1 confirms the favorable impact expectation for net operating revenues for full year 2026. The evidence indicates that foreign currency fluctuations had a favorable (positive) impact, not a reduction, on the company's financial results for the quarter ended October 2, 2026. This is a qualitative/interpretive claim about the direction of impact (reduction vs. increase) caused by foreign currency fluctuations, and the evidence contradicts the claimed direction.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Foreign currency exchange rate fluctuations reduced Coca-Cola's net operating revenues in the quarter ended October 2, 2026. 2026 Q3",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-067844",
+        "filed": "2026-10-28",
+        "report_date": "2026-10-02",
+        "primary_document": "ko-20261002.htm",
+        "sha256": "cb73baef8278eb1308c05f087dbe2f9df353ae66b8a0dcc6ee8ffe5c1b216e1f"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-050503",
+        "filed": "2026-07-29",
+        "report_date": "2026-07-03",
+        "primary_document": "ko-20260703.htm",
+        "sha256": "46c637a8748563081968c71287b3e88ad5eb09ac3de03a82bf770649b4d09767"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-010047",
+        "filed": "2026-02-20",
+        "report_date": "2025-12-31",
+        "primary_document": "ko-20251231.htm",
+        "sha256": "a091d2ed9db7e14f46e64111d3e2154b0e0c26ceb9b7200d9b613db2fe8f0dca"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1170
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:138212-139336",
+      "excerpt": "ncial Position — Foreign Exchange” below. 38 Net operating revenue growth rates are impacted by sales volume; price/mix; foreign currency exchange rate fluctuations; and acquisitions and divestitures. The size and timing of acquisitions and divestitures are not consistent from period to period. Based on current spot rates and our hedging coverage in place, we expect foreign currency exchange rate fluctuations will have a favorable impact on our full year 2026 net operating revenues. Gross Profit Margin Gross profit margin is a ratio calculated by dividing gross profit by net operating revenues. Management believes gross profit margin provides investors with useful information related to the profitability of our business prior to considering all of the selling, general and administrative expenses and other operating charges incurred. Management uses this measure in making financial, operating and planning decisions and in evaluating the Company’s performance. Our gross profit margin increased to 63.2% for the three months ended October 2, 2026, compared to 61.5% for the three months ended September 26, 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:255598-256779",
+      "excerpt": "en evaluating the Company’s performance. Refer to the heading “Structural Changes, Acquired Brands and Newly Licensed Brands” above for additional information related to acquisitions and divestitures. Net operating revenue growth rates are impacted by sales volume; price/mix; foreign currency exchange rate fluctuations; and acquisitions and divestitures. The size and timing of acquisitions and divestitures are not consistent from period to period. Based on current spot rates and our hedging coverage in place, we expect foreign currency exchange rate fluctuations will have a favorable impact on our full year 2026 net operating revenues. 46 Information about our net operating revenues by operating segment and Corporate as a percentage of Company net operating revenues is as follows: Year Ended December 31, 2025 2024 EMEA 22.6 % 21.8 % Latin America 13.2 13.8 North America 40.8 40.1 Asia Pacific 11.1 10.9 Bottling Investments 12.0 13.2 Corporate 0.3 0.2 Total 100.0 % 100.0 % The percentage contribution of each operating segment fluctuates over time due to net operating revenues in some operating segments growing at a faster rate compared to other operating segments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:184653-185804",
+      "excerpt": "We closely monitor our operations in each country and seek to adopt appropriate strategies that are responsive to changing economic and political environments as well as to fluctuations in currencies. Due to the geographic diversity of our operations, weakness in some currencies may be offset by strength in other currencies over time. Our hedging activities are designed to mitigate, over time, a portion of the impact of exchange rate fluctuations on our net income. Taking into account the effects of our hedging activities, the impact of fluctuations in foreign currency exchange rates increased our operating income for the three and nine months ended October 2, 2026 by 3% and 4%, respectively. Based on current spot rates and our hedging coverage in place, we expect foreign currency exchange rate fluctuations will have a favorable impact on operating income and cash flows from operating activities through the end of the year. Item 3. Quantitative and Qualitative Disclosures About Market Risk We have no material changes to the disclosures on this matter made in our Annual Report on Form 10-K for the year ended December 31, 2025. Item 4.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:306167-307204",
+      "excerpt": "hange rates for foreign currencies in which the Company conducted operations (all operating currencies) and for certain individual currencies. These currencies strengthened (weakened) against the U.S. dollar as follows: Year Ended December 31, 2025 2024 All operating currencies (1) % (5) % Australian dollar (2) (1) Brazilian real (3) (7) British pound 4 3 Chinese yuan — (2) Euro 4 — Indian rupee (4) (1) Japanese yen 2 (7) Mexican peso (4) (3) Philippine peso — (3) South African rand 4 1 The percentages in the table above do not include the effects of our hedging activities and, therefore, do not reflect the actual impact of fluctuations in foreign currency exchange rates on our operating results. Our hedging activities are designed to mitigate, over time, a portion of the impact of exchange rate fluctuations on our net income. The total impact of foreign currency exchange rate fluctuations on net operating revenues, including the effect of our hedging activities, was a decrease of 2% and 5% in 2025 and 2024, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:307004-308201",
+      "excerpt": ". The total impact of foreign currency exchange rate fluctuations on net operating revenues, including the effect of our hedging activities, was a decrease of 2% and 5% in 2025 and 2024, respectively. The total impact of foreign currency exchange rate fluctuations on operating income, including the effect of our hedging activities, was a decrease of 12% and 11% in 2025 and 2024, respectively. 57 Foreign currency exchange gains and losses are primarily the result of the remeasurement of monetary assets and liabilities from certain currencies into functional currencies. The effects of the remeasurement of these assets and liabilities are partially offset by the impact of our economic hedging program for certain exposures on our consolidated balance sheet. Refer to Note 5 of Notes to Consolidated Financial Statements. Foreign currency exchange gains and losses are recorded in the line item other income (loss) — net in our consolidated statement of income. Refer to the heading “Operations Review — Other Income (Loss) — Net” above. The Company recorded net foreign currency exchange losses of $48 million and $180 million during the years ended December 31, 2025 and 2024, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050503",
+      "form": "10-Q",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-07-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+      "locator": "10-Q 0001628280-26-050503:37946-38979",
+      "excerpt": ", 2025 Foreign currency contracts $ ( 770 ) Net operating revenues $ ( 28 ) Foreign currency contracts ( 18 ) Cost of goods sold 4 Foreign currency contracts — Interest expense ( 2 ) Foreign currency contracts 37 Other income (loss) — net 68 Commodity contracts ( 10 ) Cost of goods sold ( 2 ) Interest rate contracts ( 1 ) Interest expense ( 1 ) Total $ ( 762 ) $ 39 As of July 3, 2026, the Company estimates that it will reclassify into income during the next 12 months net losses of $ 34 million from the pretax amount recorded in AOCI as the anticipated cash flows occur. Fair Value Hedging Strategy The Company uses interest rate swap agreements designated as fair value hedges to minimize exposure to changes in the fair value of fixed-rate debt that result from fluctuations in benchmark interest rates. The Company also uses cross-currency interest rate swaps to hedge the changes in the fair value of foreign currency denominated debt relating to fluctuations in foreign currency exchange rates and benchmark interest rates.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "",
+      "quote": "[",
+      "valid": false,
+      "issues": [
+        "MALFORMED_ITEM"
+      ]
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 3850,
+    "output": 483
+  },
+  "latency_ms": 3,
+  "estimated_cost_usd": 0.018795,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "financial_verification",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 5,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

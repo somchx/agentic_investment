@@ -1,0 +1,957 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-GOOGL-15:340e7b15",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-GOOGL-15",
+    "company": "GOOGL",
+    "claim": "Alphabet's operating margin in 2025 reflects durable efficiency gains rather than temporary cost reductions.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "INSUFFICIENT_EVIDENCE",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "This claim is purely interpretive, making a qualitative judgment about the nature of Alphabet's operating margin in 2025 - specifically whether efficiency gains are \"durable\" versus \"temporary.\" The claim does not make any specific numeric assertions about the operating margin level or change.\n\nThe evidence provided does not contain any passages that directly address whether operating margin improvements in 2025 reflect durable efficiency gains versus temporary cost reductions. \n\nEvidence E1, E2, and E3 describe how costs are allocated to segments and what costs are not allocated, including mentions of \"employee severance and office space reductions,\" but these are procedural descriptions of cost allocation methodology rather than statements about the durability of efficiency gains.\n\nEvidence E4 discusses general risks to margins, noting that \"Certain of our costs and expenses are relatively fixed and may not correlate to changes in revenue, and we may also not be able to continue to drive efficiencies at the rate we have in the past\" and that \"our historical revenue growth rate and historical operating margin may not be indicative of our future performance.\" However, this is forward-looking risk disclosure rather than a characterization of 2025's actual operating margin drivers.\n\nEvidence E5 and E6 relate to securities accounting and deferred tax assets/liabilities, which are not relevant to the claim about operating margin efficiency.\n\nNone of the evidence passages provide management's assessment or analysis of whether 2025 operating margin performance reflects durable versus temporary factors. Without such evidence, the claim cannot be verified.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did Alphabet's operating margin actually increase in 2025, and if so, by how much? The claim assumes margin improvement occurred, but this should be verified.",
+          "search_query": "operating margin 2025 2024 operating income revenue percentage",
+          "numeric_check": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": null,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Does management explicitly attribute 2025 margin performance to temporary factors like one-time cost reductions, restructuring charges, or employee severance that would contradict the 'durable efficiency' characterization?",
+          "search_query": "restructuring severance workforce reduction cost reduction efficiency 2025 temporary one-time charges",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Does management's discussion explicitly characterize 2025 margin improvements as driven by sustainable operational efficiencies, productivity gains, or structural cost management that would support the claim?",
+          "search_query": "efficiency gains productivity improvements operational efficiency sustainable margin durable cost management 2025",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "operating margin 2025 2024 operating income revenue percentage",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "restructuring severance workforce reduction cost reduction efficiency 2025 temporary one-time charges",
+          "results": [
+            "E15",
+            "E16",
+            "E17"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "efficiency gains productivity improvements operational efficiency sustainable margin durable cost management 2025",
+          "results": [
+            "E18",
+            "E19",
+            "E20"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E15",
+        "E16",
+        "E17",
+        "E18",
+        "E19",
+        "E20"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "THRESHOLD_MISSING"
+          ],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 0.32032638592380025,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 129039000000.0,
+                "filed": "2026-02-05",
+                "form": "10-K",
+                "accession_number": "0001652044-26-000018",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 402836000000.0,
+                "filed": "2026-02-05",
+                "form": "10-K",
+                "accession_number": "0001652044-26-000018",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.32109777211457696,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": -0.0007713861907767128,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E14",
+            "E10",
+            "E11",
+            "E12",
+            "E13"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E9",
+              "quote": "Operating margin 32 % 32 % 0 %",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001652044-26-000018",
+              "form": "10-K",
+              "filed": "2026-02-05",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+              "locator": "10-K 0001652044-26-000018:147223-148227"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "f9a769556d201b22c9b939aff41113cda7040b197c912afcc0cbd27d66e69f7b",
+      "source": "cache",
+      "input_tokens": 3755,
+      "output_tokens": 474,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "This claim is purely interpretive, making a qualitative judgment about the nature of Alphabet's operating margin in 2025 - specifically whether efficiency gains are \"durable\" versus \"temporary.\" The claim does not make any specific numeric assertions about the operating margin level or change.\n\nThe evidence provided does not contain any passages that directly address whether operating margin improvements in 2025 reflect durable efficiency gains versus temporary cost reductions. \n\nEvidence E1, E2, and E3 describe how costs are allocated to segments and what costs are not allocated, including mentions of \"employee severance and office space reductions,\" but these are procedural descriptions of cost allocation methodology rather than statements about the durability of efficiency gains.\n\nEvidence E4 discusses general risks to margins, noting that \"Certain of our costs and expenses are relatively fixed and may not correlate to changes in revenue, and we may also not be able to continue to drive efficiencies at the rate we have in the past\" and that \"our historical revenue growth rate and historical operating margin may not be indicative of our future performance.\" However, this is forward-looking risk disclosure rather than a characterization of 2025's actual operating margin drivers.\n\nEvidence E5 and E6 relate to securities accounting and deferred tax assets/liabilities, which are not relevant to the claim about operating margin efficiency.\n\nNone of the evidence passages provide management's assessment or analysis of whether 2025 operating margin performance reflects durable versus temporary factors. Without such evidence, the claim cannot be verified.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "181f2a1a7aeeaded48968f02cf9aac06804ba4581a39d04f467a9852b9698b5b",
+      "source": "live",
+      "input_tokens": 4689,
+      "output_tokens": 387,
+      "stop_reason": "tool_use",
+      "latency_ms": 8318,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did Alphabet's operating margin actually increase in 2025, and if so, by how much? The claim assumes margin improvement occurred, but this should be verified.",
+            "search_query": "operating margin 2025 2024 operating income revenue percentage",
+            "numeric_check": {
+              "metric": "OperatingMargin",
+              "measure": "level",
+              "period_basis": "annual",
+              "period_end": "2025-12-31",
+              "comparison": ">",
+              "threshold": null,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Does management explicitly attribute 2025 margin performance to temporary factors like one-time cost reductions, restructuring charges, or employee severance that would contradict the 'durable efficiency' characterization?",
+            "search_query": "restructuring severance workforce reduction cost reduction efficiency 2025 temporary one-time charges",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Does management's discussion explicitly characterize 2025 margin improvements as driven by sustainable operational efficiencies, productivity gains, or structural cost management that would support the claim?",
+            "search_query": "efficiency gains productivity improvements operational efficiency sustainable margin durable cost management 2025",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "5796ea4e41766af5e77e63696022c92082d1b12d712d7ba8c384bf9db3e0329f",
+      "source": "live",
+      "input_tokens": 8565,
+      "output_tokens": 788,
+      "stop_reason": "tool_use",
+      "latency_ms": 15419,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E9",
+                "quote": "Operating margin 32 % 32 % 0 %"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "CONTRADICTED",
+        "verdict_changed": true,
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E9",
+            "quote": "Operating margin 32 % 32 % 0 %"
+          }
+        ],
+        "reasoning_summary": "The verdict has changed from INSUFFICIENT_EVIDENCE to CONTRADICTED based on new evidence.\n\nH1 (CHALLENGE_SUPPORTED): Evidence E9 shows that Alphabet's operating margin was 32% in both 2024 and 2025, with 0% change. The computed numeric check confirms this, showing operating margin of 32.03% in 2025 vs 32.11% in 2024 (a decline of 0.08 percentage points). This directly contradicts the claim's premise that operating margin in 2025 \"reflects durable efficiency gains\" - there was no margin improvement at all in 2025.\n\nH2 (NO_RELEVANT_EVIDENCE): While evidence E15, E16, and E17 mention employee severance and office space charges, they do not provide sufficient detail to determine whether these temporary factors materially affected 2025 margin performance or explain the lack of margin improvement.\n\nH3 (NO_RELEVANT_EVIDENCE): Evidence E18, E19, and E20 discuss general business trends, AI investments, and property accounting, but none explicitly characterize 2025 margin performance as driven by durable efficiency gains or sustainable operational improvements.\n\nThe claim asserts that Alphabet's operating margin in 2025 \"reflects durable efficiency gains rather than temporary cost reductions.\" This statement implies that the operating margin improved in 2025 due to sustainable efficiency improvements. However, the evidence shows that operating margin remained flat at 32% in both 2024 and 2025. Since there was no margin improvement, the claim's characterization of what drove the margin performance is contradicted by the factual evidence.",
+        "change_reason": "New evidence (E9) reveals that Alphabet's operating margin did not improve in 2025 - it remained flat at 32% in both 2024 and 2025. The claim's assertion that the 2025 operating margin \"reflects durable efficiency gains\" is contradicted because there were no efficiency gains reflected in the margin at all. The claim's premise of margin improvement is factually incorrect."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Alphabet's operating margin in 2025 reflects durable efficiency gains rather than temporary cost reductions. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "operating margin 2025 2024 operating income revenue percentage",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "restructuring severance workforce reduction cost reduction efficiency 2025 temporary one-time charges",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E15",
+        "E16",
+        "E17"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "efficiency gains productivity improvements operational efficiency sustainable margin durable cost management 2025",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E18",
+        "E19",
+        "E20"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "THRESHOLD_MISSING"
+          ],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 0.32032638592380025,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 129039000000.0,
+                "filed": "2026-02-05",
+                "form": "10-K",
+                "accession_number": "0001652044-26-000018",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 402836000000.0,
+                "filed": "2026-02-05",
+                "form": "10-K",
+                "accession_number": "0001652044-26-000018",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.32109777211457696,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": -0.0007713861907767128,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E14",
+            "E10",
+            "E11",
+            "E12",
+            "E13"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001652044-26-000018",
+        "filed": "2026-02-05",
+        "report_date": "2025-12-31",
+        "primary_document": "goog-20251231.htm",
+        "sha256": "bab3d2601c394c4b603fa4ae30165a65e123a37087a172c8e4146dba0c80ab82"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001652044-25-000091",
+        "filed": "2025-10-30",
+        "report_date": "2025-09-30",
+        "primary_document": "goog-20250930.htm",
+        "sha256": "57df4d84196b2229b19b397a415de411e01c29326a6f8980d5d37ddb93c9005e"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001652044-25-000062",
+        "filed": "2025-07-24",
+        "report_date": "2025-06-30",
+        "primary_document": "goog-20250630.htm",
+        "sha256": "6033115a6e513f35d04cc6b2831886f6ad0e22d358c5b8a00159058f692f7ef0"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 746
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000091",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/goog-20250930.htm",
+      "locator": "10-Q 0001652044-25-000091:92086-93138",
+      "excerpt": "attributable to our segments. Due to the integrated nature of Alphabet, other costs and expenses, such as technical infrastructure and office facilities, are managed centrally at a consolidated level. These costs, including the associated depreciation, are allocated to operating segments as a service cost generally based on usage, headcount, or revenue. Certain costs are not allocated to our segments because they represent Alphabet-level activities. These costs primarily include certain AI-focused shared R&D activities, including development costs of our general AI models; corporate initiatives such as our philanthropic activities; corporate shared costs such as certain finance, human resource, and legal costs, including certain fines and settlements. Charges associated with employee severance and office space reductions are also not allocated to our segments. Additionally, hedging gains (losses) related to revenue are not allocated to our segments. Our Chief Operating Decision Maker (CODM) is our Chief Executive Officer, Sundar Pichai.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000062",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000062/goog-20250630.htm",
+      "locator": "10-Q 0001652044-25-000062:88676-89728",
+      "excerpt": "attributable to our segments. Due to the integrated nature of Alphabet, other costs and expenses, such as technical infrastructure and office facilities, are managed centrally at a consolidated level. These costs, including the associated depreciation, are allocated to operating segments as a service cost generally based on usage, headcount, or revenue. Certain costs are not allocated to our segments because they represent Alphabet-level activities. These costs primarily include certain AI-focused shared R&D activities, including development costs of our general AI models; corporate initiatives such as our philanthropic activities; corporate shared costs such as certain finance, human resource, and legal costs, including certain fines and settlements. Charges associated with employee severance and office space reductions are also not allocated to our segments. Additionally, hedging gains (losses) related to revenue are not allocated to our segments. Our Chief Operating Decision Maker (CODM) is our Chief Executive Officer, Sundar Pichai.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:317268-318410",
+      "excerpt": "are allocated to operating segments as a service cost generally based on usage, headcount, or revenue. Certain costs are not allocated to our segments because they represent Alphabet-level activities. These costs primarily include: • certain AI-focused shared research and development activities, including employee compensation expenses and technical infrastructure usage costs associated with the development of our general AI models; • corporate initiatives such as our philanthropic activities; and • corporate shared costs such as certain finance, human resource, and legal costs, including certain fines and settlements. Charges associated with employee severance and office space reductions are also not allocated to our segments. Additionally, hedging gains (losses) related to revenue are not allocated to our segments. Our Chief Operating Decision Maker (CODM) is our Chief Executive Officer, Sundar Pichai. Our CODM uses segment operating income (loss) to allocate resources to our segments in our annual planning process and to assess the performance of our segments, primarily by monitoring actual results versus the annual plan.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:48361-49410",
+      "excerpt": "tion. Certain of our costs and expenses are relatively fixed and may not correlate to changes in revenue, and we may also not be able to continue to drive efficiencies at the rate we have in the past. We may also face margin compression from an increase in the mix of lower-margin products and services, in particular from the continued expansion of our business into new fields, including products and services such as Google Cloud, our devices, and consumer subscription products, as well as significant investments in Other Bets. For instance, margins on our devices have had, and may continue to have, an adverse effect on our consolidated margins due to pricing pressures and higher cost of sales. Due to these factors and the evolving nature of our business, our historical revenue growth rate and historical operating margin may not be indicative of our future performance. For additional information, see Trends in Our Business and Financial Effect and Revenues and Monetization Metrics in Part II, Item 7 of this Annual Report on Form 10-K.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:249098-250139",
+      "excerpt": "2 ) 30 Total gain (loss) on debt securities recognized in other income (expense), net $ ( 1,215 ) $ ( 1,043 ) $ 540 Non-marketable Securities Our non-marketable securities primarily consist of non-marketable equity securities accounted for under the measurement alternative. The carrying value is measured at the total initial cost plus the cumulative net upward and downward adjustments (including impairments). We account for non-marketable equity securities through which we exercise significant influence but do not have control over the investee under the equity method. Certain of our non-marketable securities include our investments in VIEs where we are not the primary beneficiary. See Note 5 for further details on VIEs. Realized net gain (loss) on equity securities sold during the period reflects the difference between the sale proceeds and the carrying value of the equity securities at the beginning of the period or the purchase date, if later. All gains and losses, including impairments, are included as components of OI&E.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:310105-311305",
+      "excerpt": "rred income taxes reflect the net effects of temporary differences between the carrying amounts of assets and liabilities for financial reporting purposes and the amounts used for income tax purposes. Significant components of our deferred tax assets and liabilities were as follows (in millions): As of December 31, 2024 2025 Deferred tax assets: Accrued employee benefits $ 1,834 $ 1,951 Accruals and reserves not currently deductible 2,552 3,570 Tax credits 6,384 7,314 Net operating losses 3,472 4,953 Operating leases 3,336 3,337 Capitalized research and development 25,903 24,758 Other 1,376 2,143 Total deferred tax assets 44,857 48,026 Valuation allowance ( 11,493 ) ( 13,942 ) Total deferred tax assets net of valuation allowance 33,364 34,084 Deferred tax liabilities: Property and equipment, net ( 9,932 ) ( 13,256 ) Net investment gains ( 2,978 ) ( 8,242 ) Operating leases ( 2,986 ) ( 3,103 ) Other ( 1,008 ) ( 1,289 ) Total deferred tax liabilities ( 16,904 ) ( 25,890 ) Net deferred tax assets (liabilities) $ 16,460 $ 8,194 As of December 31, 2025, our federal, state, and foreign net operating loss carryforwards for income tax purposes were approximately $ 13.0 billion, $ 25.1 bill",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:47363-48561",
+      "excerpt": "tent providers could harm our financial condition and operating results. Our revenue growth rate could decline over time, and we may experience downward pressure on our operating margin in the future. Our revenue growth rate could decline over time as a result of a number of factors, including changes in customer usage and demand for our existing products and increasing demand for competing technologies; changes in the devices and modalities used to access our products and services; changes in geographic mix; deceleration or declines in advertiser spending; competition; decreases in the pricing of our products and services; ongoing product and policy changes; and shifts to lower priced products and services. We may experience downward pressure on our operating margin resulting from a variety of factors. These include increasing costs for many aspects of our business resulting from a higher level of investment in technical infrastructure, increasing regulations, and increasing competition. Certain of our costs and expenses are relatively fixed and may not correlate to changes in revenue, and we may also not be able to continue to drive efficiencies at the rate we have in the past.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:46809-47563",
+      "excerpt": "perceived to be, substantially similar to or better than ours, and the consumers may change how they obtain information online, potentially reducing the utility of our existing products and services. These technologies could reduce usage of our products and services, and force us to compete in different ways and expend significant resources to develop and operate equal or better products and services. Competitors' success in providing compelling products and services or in attracting and retaining users, advertisers, publishers, customers, and content providers could harm our financial condition and operating results. Our revenue growth rate could decline over time, and we may experience downward pressure on our operating margin in the future.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:147223-148227",
+      "excerpt": "luding a reconciliation of the US federal statutory rate to our effective tax rate, see Note 14 of the Notes to Consolidated Financial Statements included in Item 8 of this Annual Report on Form 10-K. Executive Overview The following table summarizes consolidated financial results (in millions, except for per share information and percentages): Year Ended December 31, 2024 2025 $ Change % Change Consolidated revenues $ 350,018 $ 402,836 $ 52,818 15 % Cost of revenues $ 146,306 $ 162,535 $ 16,229 11 % Operating expenses $ 91,322 $ 111,262 $ 19,940 22 % Operating income $ 112,390 $ 129,039 $ 16,649 15 % Operating margin 32 % 32 % 0 % Other income (expense), net $ 7,425 $ 29,787 $ 22,362 301 % Net income $ 100,118 $ 132,170 $ 32,052 32 % Diluted net income per share (1) $ 8.04 $ 10.81 $ 2.77 34 % (1) For additional information on the calculation of diluted net income per share, see Note 12 of the Notes to Consolidated Financial Statements included in Item 8 of this Annual Report on Form 10-K.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/0001652044-26-000018-index.htm",
+      "locator": "OperatingIncome 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        129039000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/0001652044-26-000018-index.htm",
+      "locator": "Revenue 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        402836000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/0001652044-26-000018-index.htm",
+      "locator": "OperatingIncome 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        112390000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/0001652044-26-000018-index.htm",
+      "locator": "Revenue 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        350018000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "GOOGL",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "OperatingMargin level annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        0.32032638592380025,
+        0.32109777211457696,
+        -0.0007713861907767128
+      ],
+      "unit": "ratio",
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:309495-310305",
+      "excerpt": "l as a separate rule change with guidance on the capitalization and amortization of research and development expenses. A cumulative one-time adjustment for these tax rule changes was recorded in 2023. Changes to US tax law enacted on July 4, 2025, allow for immediate expensing of domestic research and experimentation costs, accelerated depreciation on eligible capital expenditures, and other tax law changes impacting 2025 with certain changes effective in 2026. These changes are reflected in our results for the year ended December 31, 2025 . 84. Table of Contents Alphabet Inc. Deferred Income Taxes Deferred income taxes reflect the net effects of temporary differences between the carrying amounts of assets and liabilities for financial reporting purposes and the amounts used for income tax purposes.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000091",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/goog-20250930.htm",
+      "locator": "10-Q 0001652044-25-000091:127066-128082",
+      "excerpt": "nd $191 million and $(60) million for the nine months ended September 30, 2024 and 2025, respectively. Alphabet-level activities include charges related to employee severance and office space charges. 45 Google Services Google Services operating income increased $2.7 billion and $10.8 billion from the three and nine months ended September 30, 2024 to the three and nine months ended September 30, 2025, respectively. The increase in operating income was primarily driven by an increase in revenues, partially offset by an increase in expenses related to legal and other matters, content acquisition costs, and TAC. Google Cloud Google Cloud operating income increased $1.6 billion and $4.6 billion from the three and nine months ended September 30, 2024 to the three and nine months ended September 30, 2025, respectively. The increase in operating income was primarily driven by an increase in revenues, partially offset by increases in usage costs for technical infrastructure and employee compensation expenses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000062",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000062/goog-20250630.htm",
+      "locator": "10-Q 0001652044-25-000062:122998-124030",
+      "excerpt": "ely, and $174 million an d $148 million for the six months ended June 30, 2024 and 2025, respectively. Alphabet-level activities include charges related to employee severance and office space charges. Google Services Google Services operating income increased $3.4 billion from the three months ended June 30, 2024 to the three months ended June 30, 2025. The increase in operating income was primarily driven by an increase in revenues, partially offset by increases in expenses related to legal and other matters, TAC, and content acquisition costs. Google Services operating income increased $8.2 billion from the six months ended June 30, 2024 to the six months ended June 30, 2025. The increase in operating income was primarily driven by an increase in revenues, partially offset by increases in TAC and content acquisition costs. Google Cloud Google Cloud operating income increased $1.7 billion and $2.9 billion from the three and six months ended June 30, 2024 to the three and six months ended June 30, 2025, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:229312-230489",
+      "excerpt": "Periodically, we assess whether any changes in our interest or relationship with the entity affect our determination of whether the entity is a VIE and, if so, whether we are the primary beneficiary. Property and Equipment Property and equipment is comprised of technical infrastructure, office space, corporate and other assets currently in service, and assets not yet in service. Technical infrastructure includes data center land, buildings and leasehold improvements, and servers and network equipment. Office space includes office land, buildings, and leasehold improvements. Assets not yet in service are those that are not ready for their intended use, including data center buildings and servers in the process of construction or assembly. Property and equipment are stated at cost less accumulated depreciation. Depreciation commences once assets are ready for their intended use and is recorded using the straight-line method over the estimated useful lives of the assets, which we regularly evaluate for factors such as technological obsolescence and our planned use and utilization. We depreciate data center and office buildings over periods of seven to 40 years.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:130326-131256",
+      "excerpt": "-level activities. For further details on our segments, see Part I, Item 1 Business and Note 15 of the Notes to Consolidated Financial Statements included in Item 8 of this Annual Report on Form 10-K. Trends in Our Business and Financial Effect The following long-term trends have contributed to the results of our consolidated operations, and we anticipate that they will continue to affect our future results: • As we continue to grow our business and meet the evolving behaviors and needs of our users and customers, our revenue growth and mix along with our cost and margin profiles are being influenced by a number of factors, including: Expanded AI Offerings in our Products and Services: The continuing evolution of the online world has contributed to the growth of our business. We expect that this evolution, including user engagement with AI products and services, will continue to benefit our business and our revenues.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E19"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:37363-38555",
+      "excerpt": "reasing investment in new businesses, products, services, and technologies is inherently risky, and could divert management attention and harm our business, financial condition, and operating results. We have invested and expect to expand our investment in new businesses, products, services, and technologies in a wide range of industries beyond online advertising. The investments that we are making across our businesses — such as building AI-optimized infrastructure, including our custom TPUs, and integrating AI capabilities into new and existing products and services — reflect our ongoing efforts to innovate and provide products and services that are helpful to users, advertisers, publishers, customers, content providers, and distribution partners. Our investments ultimately may not be commercially viable or may not result in an adequate return of capital and, in pursuing new strategies, we may incur unanticipated liabilities. To meet the compute capacity demands of AI training and inference, as well as traditional cloud computing services, we are entering into significant leasing arrangements with third party operators, which may increase costs and operational complexity.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E20"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E9",
+      "quote": "Operating margin 32 % 32 % 0 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:147223-148227"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 17009,
+    "output": 1649
+  },
+  "latency_ms": 23764,
+  "estimated_cost_usd": 0.075762,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 8320,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 11,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 15423,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "CONTRADICTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 15,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

@@ -1,0 +1,302 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A1_conventional_rag:GOLD-META-14:d8e9b2eb",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A1_conventional_rag",
+  "approach_kind": "conventional_rag",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": false,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A1_conventional_rag",
+    "kind": "conventional_rag",
+    "description": "claim -> retrieval -> LLM -> verdict"
+  },
+  "config_hash": "1ebada2c6046452b",
+  "claim": {
+    "claim_id": "GOLD-META-14",
+    "company": "META",
+    "claim": "Meta's growing capital expenditures in the first nine months of 2026 have not reduced its free cash flow.",
+    "as_of_date": "2026-11-01",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q3"
+  },
+  "initial_label": "INSUFFICIENT_EVIDENCE",
+  "final_label": "INSUFFICIENT_EVIDENCE",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes an interpretive assertion about the relationship between Meta's capital expenditures and free cash flow during the first nine months of 2026. While the evidence confirms that capital expenditures increased during this period (E4 states \"$83.06 billion of purchases of property and equipment\" for the nine months ended September 30, 2026, with E4 also noting \"an increase in cash used in investing activities...mostly due to increases in purchases of property and equipment\"), the evidence does not provide the actual free cash flow figures for the first nine months of 2026 or the comparable period in 2025.\n\nE1 defines free cash flow as \"net cash provided by operating activities reduced by purchases of property and equipment and principal payments on finance leases,\" but this is from the 2025 10-K and does not provide the 2026 nine-month figures. E4 mentions that operating cash flow increased (\"an increase in cash collections from our customers driven by higher revenue\"), but without specific FCF numbers for both periods, we cannot verify whether the growing capital expenditures reduced free cash flow or not.\n\nThe claim is interpretive because it asserts a relationship between two metrics (that growing CapEx has \"not reduced\" FCF), but the evidence does not contain the necessary free cash flow data to verify this assertion.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "fcc3f6cb3b3d4596938a4494095402bf997d15ab7696e6697742e34fe431debf",
+      "source": "live",
+      "input_tokens": 3574,
+      "output_tokens": 434,
+      "stop_reason": "tool_use",
+      "latency_ms": 8732,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes an interpretive assertion about the relationship between Meta's capital expenditures and free cash flow during the first nine months of 2026. While the evidence confirms that capital expenditures increased during this period (E4 states \"$83.06 billion of purchases of property and equipment\" for the nine months ended September 30, 2026, with E4 also noting \"an increase in cash used in investing activities...mostly due to increases in purchases of property and equipment\"), the evidence does not provide the actual free cash flow figures for the first nine months of 2026 or the comparable period in 2025.\n\nE1 defines free cash flow as \"net cash provided by operating activities reduced by purchases of property and equipment and principal payments on finance leases,\" but this is from the 2025 10-K and does not provide the 2026 nine-month figures. E4 mentions that operating cash flow increased (\"an increase in cash collections from our customers driven by higher revenue\"), but without specific FCF numbers for both periods, we cannot verify whether the growing capital expenditures reduced free cash flow or not.\n\nThe claim is interpretive because it asserts a relationship between two metrics (that growing CapEx has \"not reduced\" FCF), but the evidence does not contain the necessary free cash flow data to verify this assertion.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Meta's growing capital expenditures in the first nine months of 2026 have not reduced its free cash flow. 2026 Q3",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-066773",
+        "filed": "2026-10-22",
+        "report_date": "2026-09-30",
+        "primary_document": "meta-20260930.htm",
+        "sha256": "4ca982ff1218f1f71dadb5fd23b2a917721f1b962b6c6d89febfe0d24e318024"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-050705",
+        "filed": "2026-07-30",
+        "report_date": "2026-06-30",
+        "primary_document": "meta-20260630.htm",
+        "sha256": "afb58d54880c61b00cc739d512d9f30d7bb34778ae9371cdc250601dc71e4741"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-003942",
+        "filed": "2026-01-29",
+        "report_date": "2025-12-31",
+        "primary_document": "meta-20251231.htm",
+        "sha256": "5c4096ceb780d0fb52f3e3da5164ead16c58030223b453b0386ef2eb1bad8011"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1525
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:341002-342157",
+      "excerpt": "operty and equipment and non-marketable equity investments. We anticipate making capital expenditures of approximately $115 billion to $135 billion in 2026 to support our AI efforts and core business. 77 Table of Contents Cash Used in Financing Activities Cash used in financing activities during 2025 mostly consisted of $26.25 billion for repurchases of our Class A common stock, $18.40 billion of taxes paid related to net share settlement of RSUs, and $5.32 billion of payments of dividends and dividend equivalents, partially offset by $29.91 billion net proceeds from the issuance of the Notes in November 2025. The decrease in cash used in financing activities during 2025 compared to 2024, was mostly due to an increase in net proceeds from the Notes. Free Cash Flow In addition to other financial measures presented in accordance with U.S. GAAP, we monitor free cash flow (FCF) as a non-GAAP measure to manage our business, make planning decisions, evaluate our performance, and allocate resources. We define FCF as net cash provided by operating activities reduced by purchases of property and equipment and principal payments on finance leases.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:152598-153610",
+      "excerpt": "during the nine months ended September 30, 2026, compared to the same period in 2025, was mostly due to net proceeds from the May 2026 Notes and the absence of share repurchases in the current period. Material Cash Requirements We currently anticipate that our available funds and cash flow from operations and financing activities will be sufficient to meet our operational cash needs and fund our cash commitments for investing and financing activities, including investments in infrastructure and AI initiatives, as well as any return of capital to stockholders over the next 12 months and thereafter for the foreseeable future. We have increased investments in infrastructure and AI initiatives and expect to continue to do so. From time to time we expect to seek to raise additional capital through debt, equity, or other financing arrangements. We continuously evaluate our liquidity and capital resources, including our access to external capital, to ensure we can finance our future capital requirements.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:151862-152798",
+      "excerpt": "offset by a decrease in non-marketable equity investments. We anticipate making capital expenditures of approximately $135 billion to $145 billion in 2026 to support our AI efforts and core business. Cash Provided by Financing Activities Cash provided by financing activities during the nine months ended September 30, 2026 consisted of $24.91 billion net proceeds from the issuance of the Notes in May 2026, partially offset by $12.77 billion of taxes paid related to net share settlement of RSUs, $4.06 billion of payments of dividends and dividend equivalents, $2.77 billion of principal payments on finance leases, and $2.63 billion of cash used in other financing activities. The increase in cash provided by financing activities during the nine months ended September 30, 2026, compared to the same period in 2025, was mostly due to net proceeds from the May 2026 Notes and the absence of share repurchases in the current period.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:151069-152062",
+      "excerpt": "period in 2025, was primarily due to an increase in cash collections from our customers driven by higher revenue, and a decrease in cash tax payments, partially offset by higher operational spending. 49 Table of Contents Cash Used in Investing Activities Cash used in investing activities during the nine months ended September 30, 2026 mostly consisted of $83.06 billion of purchases of property and equipment as we continued to invest in servers, data centers, and network infrastructure, and $28.63 billion of net purchases of marketable securities. The increase in cash used in investing activities during the nine months ended September 30, 2026, compared to the same period in 2025, was mostly due to increases in purchases of property and equipment and marketable securities, partially offset by a decrease in non-marketable equity investments. We anticipate making capital expenditures of approximately $135 billion to $145 billion in 2026 to support our AI efforts and core business.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050705",
+      "form": "10-Q",
+      "filed": "2026-07-30",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm",
+      "locator": "10-Q 0001628280-26-050705:144986-145997",
+      "excerpt": "ities during the six months ended June 30, 2026, compared to the same period in 2025, was mostly due to net proceeds from the May 2026 Notes and the absence of share repurchases in the current period. Material Cash Requirements We currently anticipate that our available funds and cash flow from operations and financing activities will be sufficient to meet our operational cash needs and fund our cash commitments for investing and financing activities, including investments in infrastructure and AI initiatives, as well as any return of capital to stockholders over the next 12 months and thereafter for the foreseeable future. We have increased investments in infrastructure and AI initiatives and expect to continue to do so. From time to time we may also seek to raise additional capital through debt, equity, or other financing arrangements. We continuously evaluate our liquidity and capital resources, including our access to external capital, to ensure we can finance our future capital requirements.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:289949-290878",
+      "excerpt": "\" To calculate revenue on a constant currency basis, we translated revenue for the full year 2025 using 2024 monthly exchange rates for our settlement or billing currencies other than the U.S. dollar. For a full description of our free cash flow non-GAAP measure, see the section entitled \" — Liquidity and Capital Resources—Free Cash Flow.\" These non-GAAP financial measures are not intended to be considered in isolation or as a substitute for, or superior to, financial information prepared and presented in accordance with GAAP. These measures may be different from non‑GAAP financial measures used by other companies, limiting their usefulness for comparison purposes. Moreover, presentation of revenue on a constant currency basis is provided for year-over-year comparison purposes, and investors should be cautioned that the effect of changing foreign currency exchange rates has an actual effect on our operating results.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 3574,
+    "output": 434
+  },
+  "latency_ms": 8739,
+  "estimated_cost_usd": 0.017232,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "conventional_rag",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 8734,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 11,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

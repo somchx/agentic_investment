@@ -80,19 +80,30 @@ def list_filings(ticker: str) -> list[dict]:
              "primary_document": recent["primaryDocument"][i]} for i in range(len(recent["form"]))]
 
 
-def eligible_filings(ticker: str, as_of_date: str, forms: set[str], max_per_form: dict[str, int] | None = None) -> list[dict]:
-    """Most recent filings per form filed on or before the cutoff."""
+def select_filings(filings: list[dict], as_of_date: str, forms: set[str], max_per_form: dict[str, int] | None = None) -> list[dict]:
+    """Most recent original filings per form family filed on or before the
+    cutoff, plus any amendment (10-K/A, 10-Q/A) of a picked original's period
+    also filed by the cutoff. An amendment never takes an original's slot: a
+    Part-III-only 10-K/A must not hide the 10-K that holds the financials."""
     max_per_form = max_per_form or {}
+    ordered = sorted(filings, key=lambda r: r["filed"], reverse=True)
     picked, counts = [], Counter()
-    for f in sorted(list_filings(ticker), key=lambda r: r["filed"], reverse=True):
-        if f["form"] not in forms or f["filed"] > as_of_date:
+    for f in ordered:
+        if f["form"] not in forms or f["filed"] > as_of_date or "/" in f["form"]:
             continue
-        family = f["form"].split("/")[0]
+        family = f["form"]
         if counts[family] >= max_per_form.get(family, 1):
             continue
         counts[family] += 1
         picked.append(f)
-    return picked
+    periods = {(f["form"], f.get("report_date")) for f in picked}
+    amendments = [f for f in ordered if f["form"] in forms and f["filed"] <= as_of_date and "/" in f["form"]
+                  and (f["form"].split("/")[0], f.get("report_date")) in periods]
+    return sorted(picked + amendments, key=lambda r: r["filed"], reverse=True)
+
+
+def eligible_filings(ticker: str, as_of_date: str, forms: set[str], max_per_form: dict[str, int] | None = None) -> list[dict]:
+    return select_filings(list_filings(ticker), as_of_date, forms, max_per_form)
 
 
 def doc_url(f: dict) -> str:

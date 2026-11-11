@@ -1,0 +1,1145 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-AMZN-15:7e34b72d",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-AMZN-15",
+    "company": "AMZN",
+    "claim": "Amazon's 2025 results show that rising employee costs did not affect its margins.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "INSUFFICIENT_EVIDENCE",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes an interpretive assertion that \"rising employee costs did not affect [Amazon's] margins\" in 2025. This is a causal/attribution claim that requires evidence showing: (1) that employee costs rose in 2025, (2) what Amazon's margins were in 2025, and (3) that rising employee costs did not affect those margins.\n\nThe evidence provided does not contain the necessary information to verify this claim:\n\n1. None of the evidence passages discuss employee costs or compensation trends for 2025.\n\n2. None of the evidence passages provide margin data (gross margin, operating margin, or net margin) for Amazon's 2025 fiscal year.\n\n3. None of the evidence passages discuss the relationship between employee costs and margins.\n\nThe evidence primarily consists of risk factor disclosures about security incidents (E1, E2, E3), discussions of marketing costs and severance (E4), fulfillment costs (E5), and technology infrastructure costs (E6). While E4 and E6 mention \"severance costs\" in Q3 2025, this does not constitute comprehensive information about overall employee costs or their impact on margins.\n\nWithout evidence showing Amazon's actual margins for 2025 or any discussion of employee costs and their impact on profitability, the claim cannot be verified as supported or contradicted.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did Amazon's operating margin actually decline in 2025, which would contradict the claim that rising employee costs did not affect margins?",
+          "search_query": "operating margin operating income 2025 2024 percentage",
+          "numeric_check": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Do the filings explicitly state that employee costs or compensation increased in 2025 and negatively impacted margins or profitability?",
+          "search_query": "employee compensation costs wages salaries benefits increased impact margin profitability",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Did gross margin decline in 2025, potentially indicating that cost pressures (including employee costs) affected profitability?",
+          "search_query": "gross profit gross margin 2025 2024 cost of sales",
+          "numeric_check": {
+            "metric": "GrossMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "operating margin operating income 2025 2024 percentage",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "employee compensation costs wages salaries benefits increased impact margin profitability",
+          "results": [
+            "E15",
+            "E16",
+            "E17"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "gross profit gross margin 2025 2024 cost of sales",
+          "results": [
+            "E18",
+            "E19",
+            "E20"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E15",
+        "E16",
+        "E17",
+        "E18",
+        "E19",
+        "E20"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 0.11155296795755199,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 79975000000.0,
+                "filed": "2026-02-06",
+                "form": "10-K",
+                "accession_number": "0001018724-26-000004",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 716924000000.0,
+                "filed": "2026-02-06",
+                "form": "10-K",
+                "accession_number": "0001018724-26-000004",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.1075194487420038,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.00403351921554819,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E14",
+            "E10",
+            "E11",
+            "E12",
+            "E13"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2025-12-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E14",
+              "quote": "Operating margin increased from 10.75% in 2024 to 11.16% in 2025",
+              "valid": true,
+              "issues": [],
+              "kind": "derived_metric",
+              "accession_number": "0001018724-26-000004",
+              "form": "10-K",
+              "filed": "2026-02-06",
+              "period_end": "2025-12-31",
+              "source_url": null,
+              "locator": "OperatingMargin level annual @ 2025-12-31"
+            },
+            {
+              "evidence_id": "E7",
+              "quote": "Operating income was $17.4 billion in Q3 2024 and Q3 2025, and $47.4 billion for the nine months ended September 30, 2024 and $55.0 billion for the nine months ended September 30, 2025.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-25-000123",
+              "form": "10-Q",
+              "filed": "2025-10-31",
+              "period_end": "2025-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/amzn-20250930.htm",
+              "locator": "10-Q 0001018724-25-000123:98087-99231"
+            },
+            {
+              "evidence_id": "E8",
+              "quote": "Operating income increased from $14.7 billion in Q2 2024 to $19.2 billion in Q2 2025, and increased from $30.0 billion for the six months ended June 30, 2024 to $37.6 billion for the six months ended June 30, 2025.",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-25-000086",
+              "form": "10-Q",
+              "filed": "2025-08-01",
+              "period_end": "2025-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+              "locator": "10-Q 0001018724-25-000086:93311-94507"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [
+            {
+              "evidence_id": "E17",
+              "quote": "As of December 31, 2024 and 2025, our liabilities for payroll related expenses were $ 7.5 billion and $ 10.5 billion",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-26-000004",
+              "form": "10-K",
+              "filed": "2026-02-06",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+              "locator": "10-K 0001018724-26-000004:199300-200451"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E20",
+              "quote": "Percent of Net Sales: Cost of sales 49.9 % 48.2 % 50.3 % 48.8 %",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-25-000086",
+              "form": "10-Q",
+              "filed": "2025-08-01",
+              "period_end": "2025-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+              "locator": "10-Q 0001018724-25-000086:83498-84608"
+            },
+            {
+              "evidence_id": "E18",
+              "quote": "The increase in cost of sales in 2025, compared to the prior year, is primarily due to increased product and shipping costs resulting from increased sales, partially offset by operational efficiencies.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-26-000004",
+              "form": "10-K",
+              "filed": "2026-02-06",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+              "locator": "10-K 0001018724-26-000004:114149-115265"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "2ecaca12bc6716653979e5efda7a0873478b5c18a955bbcf0724bb714fdff2e6",
+      "source": "cache",
+      "input_tokens": 3476,
+      "output_tokens": 436,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes an interpretive assertion that \"rising employee costs did not affect [Amazon's] margins\" in 2025. This is a causal/attribution claim that requires evidence showing: (1) that employee costs rose in 2025, (2) what Amazon's margins were in 2025, and (3) that rising employee costs did not affect those margins.\n\nThe evidence provided does not contain the necessary information to verify this claim:\n\n1. None of the evidence passages discuss employee costs or compensation trends for 2025.\n\n2. None of the evidence passages provide margin data (gross margin, operating margin, or net margin) for Amazon's 2025 fiscal year.\n\n3. None of the evidence passages discuss the relationship between employee costs and margins.\n\nThe evidence primarily consists of risk factor disclosures about security incidents (E1, E2, E3), discussions of marketing costs and severance (E4), fulfillment costs (E5), and technology infrastructure costs (E6). While E4 and E6 mention \"severance costs\" in Q3 2025, this does not constitute comprehensive information about overall employee costs or their impact on margins.\n\nWithout evidence showing Amazon's actual margins for 2025 or any discussion of employee costs and their impact on profitability, the claim cannot be verified as supported or contradicted.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "fd93d9b8558e5b2a78b616e59ca6c023d0fcb22da4c3a5ce9372ed165eb7ecdb",
+      "source": "cache",
+      "input_tokens": 4330,
+      "output_tokens": 419,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did Amazon's operating margin actually decline in 2025, which would contradict the claim that rising employee costs did not affect margins?",
+            "search_query": "operating margin operating income 2025 2024 percentage",
+            "numeric_check": {
+              "metric": "OperatingMargin",
+              "measure": "level",
+              "period_basis": "annual",
+              "period_end": "2025-12-31",
+              "comparison": "decrease",
+              "threshold": null,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Do the filings explicitly state that employee costs or compensation increased in 2025 and negatively impacted margins or profitability?",
+            "search_query": "employee compensation costs wages salaries benefits increased impact margin profitability",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Did gross margin decline in 2025, potentially indicating that cost pressures (including employee costs) affected profitability?",
+            "search_query": "gross profit gross margin 2025 2024 cost of sales",
+            "numeric_check": {
+              "metric": "GrossMargin",
+              "measure": "level",
+              "period_basis": "annual",
+              "period_end": "2025-12-31",
+              "comparison": "decrease",
+              "threshold": null,
+              "stated_value": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "c84006c69b3fd092163558efddbac2e800e5bd8fed0b82aa42899f748991bdaf",
+      "source": "cache",
+      "input_tokens": 8706,
+      "output_tokens": 1473,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E14",
+                "quote": "Operating margin increased from 10.75% in 2024 to 11.16% in 2025"
+              },
+              {
+                "evidence_id": "E7",
+                "quote": "Operating income was $17.4 billion in Q3 2024 and Q3 2025, and $47.4 billion for the nine months ended September 30, 2024 and $55.0 billion for the nine months ended September 30, 2025."
+              },
+              {
+                "evidence_id": "E8",
+                "quote": "Operating income increased from $14.7 billion in Q2 2024 to $19.2 billion in Q2 2025, and increased from $30.0 billion for the six months ended June 30, 2024 to $37.6 billion for the six months ended June 30, 2025."
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": [
+              {
+                "evidence_id": "E17",
+                "quote": "As of December 31, 2024 and 2025, our liabilities for payroll related expenses were $ 7.5 billion and $ 10.5 billion"
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E20",
+                "quote": "Percent of Net Sales: Cost of sales 49.9 % 48.2 % 50.3 % 48.8 %"
+              },
+              {
+                "evidence_id": "E18",
+                "quote": "The increase in cost of sales in 2025, compared to the prior year, is primarily due to increased product and shipping costs resulting from increased sales, partially offset by operational efficiencies."
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": true,
+        "change_reason": "The initial verdict of INSUFFICIENT_EVIDENCE was based on lack of margin data and employee cost information. The new evidence shows: (1) Operating margin actually INCREASED from 10.75% in 2024 to 11.16% in 2025 (computed from E14), refuting H1; (2) While payroll liabilities increased from $7.5B to $10.5B (E17), there is no explicit statement that this negatively impacted margins; (3) Cost of sales as a percentage of net sales declined from 50.3% to 48.8% for the six months comparison (E20), showing improved gross margins. The evidence now demonstrates that margins improved in 2025 despite any increases in employee costs, which supports the claim that rising employee costs did not affect margins negatively.",
+        "supporting_evidence": [
+          {
+            "evidence_id": "E14",
+            "quote": "Operating margin increased from 10.75% in 2024 to 11.16% in 2025"
+          },
+          {
+            "evidence_id": "E7",
+            "quote": "Operating income was $17.4 billion in Q3 2024 and Q3 2025, and $47.4 billion for the nine months ended September 30, 2024 and $55.0 billion for the nine months ended September 30, 2025."
+          },
+          {
+            "evidence_id": "E8",
+            "quote": "Operating income increased from $14.7 billion in Q2 2024 to $19.2 billion in Q2 2025, and increased from $30.0 billion for the six months ended June 30, 2024 to $37.6 billion for the six months ended June 30, 2025."
+          },
+          {
+            "evidence_id": "E20",
+            "quote": "Percent of Net Sales: Cost of sales 49.9 % 48.2 % 50.3 % 48.8 %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that \"rising employee costs did not affect [Amazon's] margins\" in 2025. The new evidence provides critical margin data that was missing in the initial analysis:\n\n1. **Operating Margin Improved**: The computed figure shows operating margin increased from 10.75% in 2024 to 11.16% in 2025 (approximately 0.4 percentage points or 41 basis points improvement). This is confirmed by operating income growth shown in E7 and E8.\n\n2. **Gross Margin Improved**: E20 shows cost of sales as a percentage of net sales declined from 50.3% in the first half of 2024 to 48.8% in the first half of 2025, indicating improved gross margins.\n\n3. **Employee Costs**: While E17 shows payroll liabilities increased from $7.5B to $10.5B, the filings do not explicitly state that employee costs rose or that they negatively impacted margins. More importantly, even if employee costs did rise, the margin data shows overall margins improved.\n\n4. **No Attribution of Margin Pressure to Employee Costs**: The operating expense discussions (E7, E9) attribute cost increases to severance, FTC settlement, fulfillment, technology infrastructure, and shipping costs, but do not highlight employee compensation as a margin pressure.\n\nThe evidence supports the claim: margins improved in 2025, demonstrating that any potential increases in employee costs did not negatively affect Amazon's margins."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Amazon's 2025 results show that rising employee costs did not affect its margins. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "operating margin operating income 2025 2024 percentage",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "employee compensation costs wages salaries benefits increased impact margin profitability",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E15",
+        "E16",
+        "E17"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "gross profit gross margin 2025 2024 cost of sales",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E18",
+        "E19",
+        "E20"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 0.11155296795755199,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 79975000000.0,
+                "filed": "2026-02-06",
+                "form": "10-K",
+                "accession_number": "0001018724-26-000004",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 716924000000.0,
+                "filed": "2026-02-06",
+                "form": "10-K",
+                "accession_number": "0001018724-26-000004",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.1075194487420038,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.00403351921554819,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E14",
+            "E10",
+            "E11",
+            "E12",
+            "E13"
+          ]
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H3",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "GrossMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2025-12-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001018724-26-000004",
+        "filed": "2026-02-06",
+        "report_date": "2025-12-31",
+        "primary_document": "amzn-20251231.htm",
+        "sha256": "3702599045ec83f3faca3186c42b62247d1ec0e3bdf47c7f8acc7305b858f139"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001018724-25-000123",
+        "filed": "2025-10-31",
+        "report_date": "2025-09-30",
+        "primary_document": "amzn-20250930.htm",
+        "sha256": "e47779b6d5dcd4239bb9e92b7756092f499d6a14c4feaf247bdd4f0fb365402f"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001018724-25-000086",
+        "filed": "2025-08-01",
+        "report_date": "2025-06-30",
+        "primary_document": "amzn-20250630.htm",
+        "sha256": "c19773c80b3553e653a3d4cc223ce95646f4685c901a05bfae1577c2bd5d4e4b"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 734
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000123",
+      "form": "10-Q",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/amzn-20250930.htm",
+      "locator": "10-Q 0001018724-25-000123:143532-144497",
+      "excerpt": "products, and systems, could: expose us or our customers to a risk of loss, disclosure, or misuse of such information; adversely affect our operating results; result in litigation, liability, or regulatory action (including under laws related to privacy, data use, data protection, data security, network security, and consumer protection); deter customers or sellers from using our stores, products, and services; and otherwise harm our business and reputation. We use third-party technology and systems for a variety of reasons, including, without limitation, encryption and authentication technology, employee email, content delivery to customers, back-office support, and other functions. Some of our systems have experienced past security incidents, and, although they did not have a material adverse effect on our operating results, there can be no assurance that future incidents will not have material adverse effects on our operations or financial results.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:137355-138320",
+      "excerpt": "products, and systems, could: expose us or our customers to a risk of loss, disclosure, or misuse of such information; adversely affect our operating results; result in litigation, liability, or regulatory action (including under laws related to privacy, data use, data protection, data security, network security, and consumer protection); deter customers or sellers from using our stores, products, and services; and otherwise harm our business and reputation. We use third-party technology and systems for a variety of reasons, including, without limitation, encryption and authentication technology, employee email, content delivery to customers, back-office support, and other functions. Some of our systems have experienced past security incidents, and, although they did not have a material adverse effect on our operating results, there can be no assurance that future incidents will not have material adverse effects on our operations or financial results.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:47890-48930",
+      "excerpt": "products, and systems, could: expose us or our customers to a risk of loss, disclosure, or misuse of such information; adversely affect our operating results; result in litigation, liability, or regulatory action (including under laws related to privacy, data use, data protection, data security, network security, and consumer protection); deter customers or sellers from using our stores, products, and services; and otherwise harm our business and reputation. We use third-party technology and systems for a variety of reasons, including, without limitation, artificial intelligence technologies, encryption and authentication technology, employee email and other communication technologies, content delivery to customers, back-office support, and other functions. Some of our systems have experienced past security incidents, and, although they did not have a material adverse effect on our operating results, there can be no assurance that future incidents will not have material adverse effects on our operations or financial results.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000123",
+      "form": "10-Q",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/amzn-20250930.htm",
+      "locator": "10-Q 0001018724-25-000123:96368-97326",
+      "excerpt": "ange in our marketing costs. The increase in sales and marketing costs in Q3 2025, compared to the comparable prior year period, is primarily due to severance costs and increased advertising expenses. The increase in sales and marketing costs for the nine months ended September 30, 2025, compared to the comparable prior year period, is primarily due to increased advertising expenses. While costs associated with Amazon Prime membership benefits and other shipping offers are not included in sales and marketing expense, we view these offers as effective worldwide marketing tools, and intend to continue offering them indefinitely. General and Administrative The increase in general and administrative costs in Q3 2025, compared to the comparable prior year period, is primarily due to severance costs. General and administrative costs for the nine months ended September 30, 2025 did not significantly change compared to the comparable prior year period.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:86609-87774",
+      "excerpt": ", mix of products and services sold, and our ability to affect customer service contacts per unit by implementing improvements in our operations and enhancements to our customer self-service features. Additionally, sales by our sellers have higher payment processing and related transaction costs as a percentage of net sales compared to our retail sales because payment processing costs are based on the gross purchase price of underlying transactions. The increase in fulfillment costs in Q2 2025 and for the six months ended June 30, 2025, compared to the comparable prior year periods, is primarily due to increased sales and investments in our fulfillment network, partially offset by fulfillment network efficiencies. Changes in foreign exchange rates increased fulfillment costs by $227 million for Q2 2025, but did not significantly impact fulfillment costs for the six months ended June 30, 2025. We seek to expand our fulfillment network to accommodate a greater selection and in-stock inventory levels and to meet anticipated shipment volumes from sales of our own products as well as sales by third parties for which we provide the fulfillment services.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000123",
+      "form": "10-Q",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/amzn-20250930.htm",
+      "locator": "10-Q 0001018724-25-000123:94625-95654",
+      "excerpt": "hs ended September 30, 2025, compared to the comparable prior year periods, is primarily due to an increase in spending on infrastructure, including depreciation and amortization, and severance costs. Changes in foreign exchange rates increased technology and infrastructure costs by $128 million for Q3 2025, but did not significantly impact technology and infrastructure costs for the nine months ended September 30, 2025. We currently expense the majority of the costs associated with the development of our satellite network for global broadband service (including production, launch, and payroll costs, and launch services deposits upon launch). We will capitalize certain of these costs once the service achieves commercial viability, including sales to customers. See Item 7 of Part II, “Management’s Discussion and Analysis of Financial Condition and Results of Operations — Overview” of our 2024 Annual Report on Form 10-K for a discussion of how management views advances in technology and the importance of innovation.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000123",
+      "form": "10-Q",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/amzn-20250930.htm",
+      "locator": "10-Q 0001018724-25-000123:98087-99231",
+      "excerpt": "7,390 $ 54,998 Operating income was $17.4 billion in Q3 2024 and Q3 2025, and $47.4 billion for the nine months ended September 30, 2024 and $55.0 billion for the nine months ended September 30, 2025. Operating income in Q3 2025 includes charges of $2.5 billion related to the settlement of a lawsuit with the FTC and $1.8 billion of estimated severance costs primarily related to planned role eliminations. We believe that operating income is a more meaningful measure than gross profit and gross margin due to the diversity of our product categories and services. For more information on the operating expenses that impact segment operating income, see “Operating Expenses” and the descriptions of operating expense line item changes on pages 27 to 29, and “Note 8 — Segment Information” on page 19. The decrease in North America operating income in Q3 2025, compared to the comparable prior year period, is primarily due to increased other operating, fulfillment, technology and infrastructure, and shipping costs, inclusive of the FTC settlement and severance costs, partially offset by increased unit sales and increased advertising sales.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:93311-94507",
+      "excerpt": "me increased from $14.7 billion in Q2 2024 to $19.2 billion in Q2 2025, and increased from $30.0 billion for the six months ended June 30, 2024 to $37.6 billion for the six months ended June 30, 2025. We believe that operating income is a more meaningful measure than gross profit and gross margin due to the diversity of our product categories and services. For more information on the operating expenses that impact segment operating income, see “Operating Expenses” and the descriptions of operating expense line item changes on pages 26 to 28, and “Note 8 — Segment Information” on page 18. The increase in North America operating income in Q2 2025 and for the six months ended June 30, 2025, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment, technology and infrastructure, and shipping costs. The increase in International operating income in Q2 2025 and for the six months ended June 30, 2025, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:122248-123428",
+      "excerpt": "3 2025 related to the settlement of a lawsuit with the FTC and $2.7 billion, of which $1.8 billion was recorded in Q3 2025, of estimated severance costs primarily related to planned role eliminations. We believe that operating income is a more meaningful measure than gross profit and gross margin due to the diversity of our product categories and services. For more information on the operating expenses that impact segment operating income, see “Operating Expenses” and the descriptions of operating expense line item changes on pages 25 to 27, and “Note 10 — Segment Information” on page 67. The increase in North America operating income in 2025, compared to the prior year, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment, technology and infrastructure, shipping, and other operating costs. Changes in foreign exchange rates negatively impacted operating income by $204 million in 2025. The increase in International operating income in 2025, compared to the prior year, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/0001018724-26-000004-index.htm",
+      "locator": "OperatingIncome 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        79975000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/0001018724-26-000004-index.htm",
+      "locator": "Revenue 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        716924000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/0001018724-26-000004-index.htm",
+      "locator": "OperatingIncome 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        68593000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/0001018724-26-000004-index.htm",
+      "locator": "Revenue 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        637959000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "AMZN",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "OperatingMargin level annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        0.11155296795755199,
+        0.1075194487420038,
+        0.00403351921554819
+      ],
+      "unit": "ratio",
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000123",
+      "form": "10-Q",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/amzn-20250930.htm",
+      "locator": "10-Q 0001018724-25-000123:54697-55825",
+      "excerpt": "qualified property, with retroactive application beginning January 20, 2025, and immediate expensing of domestic research and development costs, with retroactive application beginning January 1, 2025. The 2025 Tax Act increased our income tax provision for the nine months ended September 30, 2025, primarily due to a decrease in the foreign income deduction, and will significantly decrease our cash taxes in 2025. For 2025, we estimate that our effective tax rate will be favorably impacted by the U.S. federal research and development credit and adversely affected by state income taxes. Our income tax provision for the nine months ended September 30, 2024 was $ 6.9 billion, which included $ 2.4 billion of net discrete tax benefits primarily attributable to excess tax benefits from stock-based compensation. Our income tax provision 18 Table of Contents for the nine months ended September 30, 2025 was $ 14.1 billion, which included $ 354 million of net discrete tax expense primarily attributable to the net gains from our investments in Anthropic, partially offset by excess tax benefits from stock-based compensation.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:49772-50930",
+      "excerpt": "ovision for the six months ended June 30, 2024 was $ 4.2 billion, which included $ 1.9 billion of net discrete tax benefits primarily attributable to excess tax benefits from stock-based compensation. Our income tax provision for the six months ended June 30, 2025 was $ 7.2 billion, which included $ 753 million of net discrete tax benefits primarily attributable to excess tax benefits from stock-based compensation. Cash paid for income taxes, net of refunds was $ 5.7 billion and $ 4.8 billion in Q2 2024 and Q2 2025, and $ 6.2 billion and $ 5.6 billion for the six months ended June 30, 2024 and 2025. The One Big Beautiful Bill Act of 2025 (the “2025 Tax Act”) was signed into law on July 4, 2025. The 2025 Tax Act makes changes to the U.S. corporate income tax, including reinstating the option to claim 100% accelerated depreciation deductions on qualified property, with retroactive application beginning January 20, 2025, and immediate expensing of domestic research and development costs, with retroactive application beginning January 1, 2025. While we are still evaluating the full extent of the 2025 Tax Act’s impact, in 2025 we expect our U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:199300-200451",
+      "excerpt": "ayroll and related expenses, self-insurance liabilities, unredeemed gift cards, other operating expenses, customer liabilities, marketing liabilities, current debt, and acquired digital media content. As of December 31, 2024 and 2025, our liabilities for payroll related expenses were $ 7.5 billion and $ 10.5 billion and our liabilities for unredeemed gift cards were $ 5.4 billion and $ 5.6 billion. We reduce the liability for a gift card when redeemed by a customer. The portion of gift cards that we do not expect to be redeemed is recognized based on customer usage patterns. Self-Insurance Liabilities Although we maintain certain high-deductible, third-party insurance coverage for catastrophic losses, we effectively self-insure for exposure primarily related to workers’ compensation, employee healthcare benefits, general and product liability, and automobile liability, including liability resulting from third-party transportation service providers. We estimate self-insurance liabilities by considering historical claims experience, frequency and costs of claims, projected claims development, inflation, and other actuarial assumptions.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:114149-115265",
+      "excerpt": "ative 1.8 1.6 Other operating expense (income), net 0.1 0.6 Cost of Sales Cost of sales primarily consists of the purchase price of consumer products, inbound and outbound shipping costs, including costs related to sortation and delivery centers and where we are the transportation service provider, and digital media content costs where we record revenue gross, including video and music. The increase in cost of sales in 2025, compared to the prior year, is primarily due to increased product and shipping costs resulting from increased sales, partially offset by operational efficiencies. Changes in foreign exchange rates increased cost of sales by $2.8 billion in 2025. Shipping costs were $95.8 billion and $102.7 billion in 2024 and 2025. Shipping costs to receive products from our suppliers are included in our inventory and recognized as cost of sales upon sale of products to our customers. We expect our cost of shipping to continue to increase to the extent our customers accept and use our shipping offers at an increasing rate, we use more expensive shipping methods, and we offer additional services.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:163547-164583",
+      "excerpt": "taling $ 992 million, $ 998 million, and $ 1.2 billion as of December 31, 2023, 2024, and 2025, for the rights to recover products from customers associated with our liabilities for return allowances. Cost of Sales Cost of sales primarily consists of the purchase price of consumer products, inbound and outbound shipping costs, including costs related to sortation and delivery centers and where we are the transportation service provider, and digital media content costs where we record revenue gross, including video and music. Shipping costs to receive products from our suppliers are included in our inventory, and recognized as cost of sales upon sale of products to our customers. Payment processing and related transaction costs, including those associated with seller transactions, are classified in “Fulfillment” on our consolidated statements of operations. Vendor Agreements We have agreements with our vendors to receive consideration primarily for cooperative marketing efforts, promotions, incentives, and volume rebates.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E19"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:83498-84608",
+      "excerpt": "4) 108 (12) 56 Percent of Net Sales: Cost of sales 49.9 % 48.2 % 50.3 % 48.8 % Fulfillment 15.9 15.5 15.8 15.6 Technology and infrastructure 15.1 16.2 14.7 15.5 Sales and marketing 7.1 6.8 6.9 6.5 General and administrative 2.1 1.8 2.0 1.7 Other operating expense (income), net 0.1 0.1 0.1 0.2 Cost of Sales Cost of sales primarily consists of the purchase price of consumer products, inbound and outbound shipping costs, including costs related to sortation and delivery centers and where we are the transportation service provider, and digital media content costs where we record revenue gross, including video and music. The increase in cost of sales in Q2 2025 and for the six months ended June 30, 2025, compared to the comparable prior year periods, is primarily due to increased product and shipping costs resulting from increased sales, partially offset by fulfillment network efficiencies, including lower transportation costs. Changes in foreign exchange rates increased cost of sales by $898 million for Q2 2025, but did not significantly impact cost of sales for the six months ended June 30, 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E20"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E14",
+      "quote": "Operating margin increased from 10.75% in 2024 to 11.16% in 2025",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "OperatingMargin level annual @ 2025-12-31"
+    },
+    {
+      "evidence_id": "E7",
+      "quote": "Operating income was $17.4 billion in Q3 2024 and Q3 2025, and $47.4 billion for the nine months ended September 30, 2024 and $55.0 billion for the nine months ended September 30, 2025.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001018724-25-000123",
+      "form": "10-Q",
+      "filed": "2025-10-31",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/amzn-20250930.htm",
+      "locator": "10-Q 0001018724-25-000123:98087-99231"
+    },
+    {
+      "evidence_id": "E8",
+      "quote": "Operating income increased from $14.7 billion in Q2 2024 to $19.2 billion in Q2 2025, and increased from $30.0 billion for the six months ended June 30, 2024 to $37.6 billion for the six months ended June 30, 2025.",
+      "valid": false,
+      "issues": [
+        "QUOTE_NOT_IN_PASSAGE"
+      ],
+      "kind": "filing_passage",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:93311-94507"
+    },
+    {
+      "evidence_id": "E20",
+      "quote": "Percent of Net Sales: Cost of sales 49.9 % 48.2 % 50.3 % 48.8 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:83498-84608"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 16512,
+    "output": 2328
+  },
+  "latency_ms": 7,
+  "estimated_cost_usd": 0.084456,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 2,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

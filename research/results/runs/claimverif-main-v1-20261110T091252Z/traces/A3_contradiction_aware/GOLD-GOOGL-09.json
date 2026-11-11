@@ -1,0 +1,978 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-GOOGL-09:8a4269c6",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-GOOGL-09",
+    "company": "GOOGL",
+    "claim": "Alphabet's Other Bets operating loss narrowed in 2025 because of lower headcount-related expenses.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Other Bets (4,444) (7,515)"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "Other Bets operating loss increased $3.1 billion from 2024 to 2025. The increase in operating loss was primarily driven by an increase in employee compensation expenses largely due to an increase in a valuation-based compensation charge related to Waymo."
+          }
+        ],
+        "reasoning_summary": "The claim states that Alphabet's Other Bets operating loss narrowed in 2025 because of lower headcount-related expenses. This claim makes two material assertions: (1) that the operating loss narrowed (improved), and (2) that this was caused by lower headcount-related expenses.\n\nBoth assertions are contradicted by the evidence:\n\n1. The operating loss did NOT narrow - it widened. Evidence E3 shows Other Bets operating loss was $(4,444) million in 2024 and $(7,515) million in 2025, representing a deterioration (increase in loss) of $3,071 million.\n\n2. The cause was NOT lower headcount-related expenses. Evidence E1 explicitly states: \"Other Bets operating loss increased $3.1 billion from 2024 to 2025. The increase in operating loss was primarily driven by an increase in employee compensation expenses largely due to an increase in a valuation-based compensation charge related to Waymo.\" This directly contradicts the claim's attribution to lower headcount-related expenses.\n\nThe claim is factually incorrect on both the direction of change and the stated cause.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 129039000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 129039000000.0,
+                "filed": "2026-02-05",
+                "form": "10-K",
+                "accession_number": "0001652044-26-000018",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 112390000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.1481359551561527,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Could Other Bets operating loss have narrowed in a specific quarter or different period within 2025, even if the full-year loss widened?",
+          "search_query": "Other Bets operating loss quarterly Q4 2025 fourth quarter",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Could the valuation-based compensation charge related to Waymo be a one-time or non-recurring item, and excluding it, did the operating loss actually narrow due to lower ongoing headcount expenses?",
+          "search_query": "Waymo valuation compensation charge one-time non-recurring headcount reduction restructuring",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Could there be separate disclosure showing that headcount-related expenses (excluding the Waymo valuation charge) actually decreased in Other Bets in 2025?",
+          "search_query": "Other Bets employee compensation headcount expenses 2024 2025 excluding",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "Other Bets operating loss quarterly Q4 2025 fourth quarter",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "Waymo valuation compensation charge one-time non-recurring headcount reduction restructuring",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "Other Bets employee compensation headcount expenses 2024 2025 excluding",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [
+            {
+              "evidence_id": "E10",
+              "quote": "Other Bets operating loss of $7.5 billion for the year ended December 31, 2025 included a $2.1 billion employee compensation charge recognized in the fourth quarter for Waymo",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001652044-26-000018",
+              "form": "10-K",
+              "filed": "2026-02-05",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+              "locator": "10-K 0001652044-26-000018:148934-150011"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E10",
+              "quote": "Other Bets operating loss of $7.5 billion for the year ended December 31, 2025 included a $2.1 billion employee compensation charge recognized in the fourth quarter for Waymo",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001652044-26-000018",
+              "form": "10-K",
+              "filed": "2026-02-05",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+              "locator": "10-K 0001652044-26-000018:148934-150011"
+            },
+            {
+              "evidence_id": "E13",
+              "quote": "The increase in employee compensation expenses was primarily driven by an increase in SBC expenses of $4.2 billion, which included an increase in a valuation-based compensation charge related to Waymo.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001652044-26-000018",
+              "form": "10-K",
+              "filed": "2026-02-05",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+              "locator": "10-K 0001652044-26-000018:156045-156950"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "02a8a42dd5341a963fd7e2786b76af3df0c7023ec58bbd18ac50f4880a87974d",
+      "source": "cache",
+      "input_tokens": 3863,
+      "output_tokens": 597,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Other Bets (4,444) (7,515)"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "Other Bets operating loss increased $3.1 billion from 2024 to 2025. The increase in operating loss was primarily driven by an increase in employee compensation expenses largely due to an increase in a valuation-based compensation charge related to Waymo."
+          }
+        ],
+        "reasoning_summary": "The claim states that Alphabet's Other Bets operating loss narrowed in 2025 because of lower headcount-related expenses. This claim makes two material assertions: (1) that the operating loss narrowed (improved), and (2) that this was caused by lower headcount-related expenses.\n\nBoth assertions are contradicted by the evidence:\n\n1. The operating loss did NOT narrow - it widened. Evidence E3 shows Other Bets operating loss was $(4,444) million in 2024 and $(7,515) million in 2025, representing a deterioration (increase in loss) of $3,071 million.\n\n2. The cause was NOT lower headcount-related expenses. Evidence E1 explicitly states: \"Other Bets operating loss increased $3.1 billion from 2024 to 2025. The increase in operating loss was primarily driven by an increase in employee compensation expenses largely due to an increase in a valuation-based compensation charge related to Waymo.\" This directly contradicts the claim's attribution to lower headcount-related expenses.\n\nThe claim is factually incorrect on both the direction of change and the stated cause.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "659ea793a0e194ee090c6a61ea2350f3756e3c2c03bc9e7b3a5b7a056d87fab8",
+      "source": "live",
+      "input_tokens": 5190,
+      "output_tokens": 317,
+      "stop_reason": "tool_use",
+      "latency_ms": 6231,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Could Other Bets operating loss have narrowed in a specific quarter or different period within 2025, even if the full-year loss widened?",
+            "search_query": "Other Bets operating loss quarterly Q4 2025 fourth quarter",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Could the valuation-based compensation charge related to Waymo be a one-time or non-recurring item, and excluding it, did the operating loss actually narrow due to lower ongoing headcount expenses?",
+            "search_query": "Waymo valuation compensation charge one-time non-recurring headcount reduction restructuring",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Could there be separate disclosure showing that headcount-related expenses (excluding the Waymo valuation charge) actually decreased in Other Bets in 2025?",
+            "search_query": "Other Bets employee compensation headcount expenses 2024 2025 excluding",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "40ff99099dcd996802c9161b8bfbd78d40932b065b78f33ee236643f55af6d6b",
+      "source": "live",
+      "input_tokens": 9113,
+      "output_tokens": 892,
+      "stop_reason": "tool_use",
+      "latency_ms": 16797,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": [
+              {
+                "evidence_id": "E10",
+                "quote": "Other Bets operating loss of $7.5 billion for the year ended December 31, 2025 included a $2.1 billion employee compensation charge recognized in the fourth quarter for Waymo"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E10",
+                "quote": "Other Bets operating loss of $7.5 billion for the year ended December 31, 2025 included a $2.1 billion employee compensation charge recognized in the fourth quarter for Waymo"
+              },
+              {
+                "evidence_id": "E13",
+                "quote": "The increase in employee compensation expenses was primarily driven by an increase in SBC expenses of $4.2 billion, which included an increase in a valuation-based compensation charge related to Waymo."
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "CONTRADICTED",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Other Bets (4,444) (7,515)"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "Other Bets operating loss increased $3.1 billion from 2024 to 2025. The increase in operating loss was primarily driven by an increase in employee compensation expenses largely due to an increase in a valuation-based compensation charge related to Waymo."
+          }
+        ],
+        "reasoning_summary": "After investigating potential challenges to the initial verdict, the conclusion remains CONTRADICTED.\n\nH1 (Quarterly narrowing): E10 mentions a $2.1 billion Waymo charge in Q4 2025, but provides no quarterly operating loss figures to determine if the loss narrowed in any specific quarter. No relevant evidence supports this challenge.\n\nH2 (One-time charge exclusion): This challenge is refuted. While E10 confirms the $2.1 billion Waymo charge in Q4 2025, the total operating loss increase was $3.1 billion for the full year (from $4.4B to $7.5B per E3). Even if we excluded the $2.1 billion Q4 charge, the operating loss would still have increased by approximately $1.0 billion ($3.1B - $2.1B), not narrowed. Additionally, E13 indicates the Waymo charge was part of a broader $4.2 billion increase in SBC expenses, suggesting other compensation increases beyond just the Waymo charge.\n\nH3 (Separate headcount expense disclosure): No evidence was found showing that Other Bets headcount-related expenses decreased when excluding the Waymo charge.\n\nThe claim remains contradicted on both material assertions: (1) the operating loss widened, not narrowed, and (2) the change was driven by increased employee compensation expenses, not decreased headcount-related expenses.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Alphabet's Other Bets operating loss narrowed in 2025 because of lower headcount-related expenses. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "Other Bets operating loss quarterly Q4 2025 fourth quarter",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "Waymo valuation compensation charge one-time non-recurring headcount reduction restructuring",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "Other Bets employee compensation headcount expenses 2024 2025 excluding",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 129039000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 129039000000.0,
+                "filed": "2026-02-05",
+                "form": "10-K",
+                "accession_number": "0001652044-26-000018",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 112390000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.1481359551561527,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001652044-26-000018",
+        "filed": "2026-02-05",
+        "report_date": "2025-12-31",
+        "primary_document": "goog-20251231.htm",
+        "sha256": "bab3d2601c394c4b603fa4ae30165a65e123a37087a172c8e4146dba0c80ab82"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001652044-25-000091",
+        "filed": "2025-10-30",
+        "report_date": "2025-09-30",
+        "primary_document": "goog-20250930.htm",
+        "sha256": "57df4d84196b2229b19b397a415de411e01c29326a6f8980d5d37ddb93c9005e"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001652044-25-000062",
+        "filed": "2025-07-24",
+        "report_date": "2025-06-30",
+        "primary_document": "goog-20250630.htm",
+        "sha256": "6033115a6e513f35d04cc6b2831886f6ad0e22d358c5b8a00159058f692f7ef0"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 746
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:158600-159258",
+      "excerpt": "partially offset by an increase in expenses related to legal and other matters, TAC, and content acquisition costs. Google Cloud Google Cloud operating income increased $7.8 billion from 2024 to 2025. The increase in operating income was primarily driven by an increase in revenues, partially offset by increases in usage costs for technical infrastructure and employee compensation expenses. Other Bets Other Bets operating loss increased $3.1 billion from 2024 to 2025. The increase in operating loss was primarily driven by an increase in employee compensation expenses largely due to an increase in a valuation-based compensation charge related to Waymo.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000062",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000062/goog-20250630.htm",
+      "locator": "10-Q 0001652044-25-000062:123830-124528",
+      "excerpt": "sts. Google Cloud Google Cloud operating income increased $1.7 billion and $2.9 billion from the three and six months ended June 30, 2024 to the three and six months ended June 30, 2025, respectively. The increase in operating income was primarily driven by an increase in revenues, partially offset by increases in usage costs for technical infrastructure and employee compensation expenses. Other Bets 45 Other Bets operating loss increased $112 million and $318 million from the three and six months ended June 30, 2024 to the three and six months ended June 30, 2025, respectively. The increase in operating loss was due to a combination of factors, none of which were individually significant.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:157614-158800",
+      "excerpt": "tability We report our segment results as Google Services, Google Cloud, and Other Bets. Additionally, certain costs are not allocated to our segments because they represent Alphabet-level activities. For further details on our segments, see Part I, Item 1 Business and Note 15 of the Notes to Consolidated Financial Statements included in Item 8 of this Annual Report on Form 10-K. The following table presents segment operating income (loss) (in millions). Year Ended December 31, 2024 2025 Operating income (loss): Google Services $ 121,263 $ 139,404 Google Cloud 6,112 13,910 Other Bets (4,444) (7,515) Alphabet-level activities (1) (10,541) (16,760) Total income from operations $ 112,390 $ 129,039 (1) Alphabet-level activities primarily reflect expenses related to our shared AI research and development. Google Services Google Services operating income increased $18.1 billion from 2024 to 2025. The increase in operating income was primarily driven by an increase in revenues, partially offset by an increase in expenses related to legal and other matters, TAC, and content acquisition costs. Google Cloud Google Cloud operating income increased $7.8 billion from 2024 to 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000091",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/goog-20250930.htm",
+      "locator": "10-Q 0001652044-25-000091:127882-129082",
+      "excerpt": "ctively. The increase in operating income was primarily driven by an increase in revenues, partially offset by increases in usage costs for technical infrastructure and employee compensation expenses. Other Bets Other Bets operating loss increased $310 million and $628 million from the three and nine months ended September 30, 2024 to the three and nine months ended September 30, 2025, respectively. The increase in operating loss was due to a combination of factors, none of which were individually significant. Other Income (Expense), Net The following table presents OI&E (in millions): Three Months Ended Nine Months Ended September 30, September 30, 2024 2025 2024 2025 Interest income $ 1,243 $ 1,076 $ 3,394 $ 3,128 Interest expense (54) (143) (215) (438) Foreign currency exchange gain (loss), net 23 (143) (388) (318) Gain (loss) on debt securities, net 160 122 (612) 489 Gain (loss) on equity securities, net 1,821 10,734 3,350 21,778 Performance fees 29 (174) 261 (297) Income (loss) and impairment from equity method investments, net (107) (30) (101) 367 Other 70 1,317 465 1,895 Other income (expense), net $ 3,185 $ 12,759 $ 6,154 $ 26,604 OI&E, net increased $9.6 billion and $20.5",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:142149-143225",
+      "excerpt": "and may continue to be, affected by factors in addition to the general factors described above, such as changes in customer usage, demand, and supply availability. 30. Table of Contents Alphabet Inc. Other Bets Revenues from Other Bets are generated primarily from the sale of autonomous transportation services and internet services. Costs and Expenses Our cost structure has two components: cost of revenues and operating expenses. Our operating expenses include costs related to research and development, sales and marketing, and general and administrative functions. Certain of our costs and expenses, including those associated with the operation of our technical infrastructure as well as components of our operating expenses, are generally less variable in nature and may not correlate to changes in revenue. Additionally, fluctuations in employee compensation expenses may not directly correlate with changes in headcount, due to factors such as annual SBC awards that vest over time. Cost of Revenues Cost of revenues is comprised of TAC and other costs of revenues.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:318210-319410",
+      "excerpt": "erating income (loss) to allocate resources to our segments in our annual planning process and to assess the performance of our segments, primarily by monitoring actual results versus the annual plan. Our operating segments are not evaluated using asset information. The following table presents revenue, profitability, and expense information about our segments (in millions): Year Ended December 31, 2023 2024 2025 Revenues: Google Services $ 272,543 $ 304,930 $ 342,721 Google Cloud 33,088 43,229 58,705 Other Bets 1,527 1,648 1,537 Hedging gains (losses) 236 211 ( 127 ) Total revenues $ 307,394 $ 350,018 $ 402,836 Operating income (loss): Google Services $ 95,858 $ 121,263 $ 139,404 Google Cloud 1,716 6,112 13,910 Other Bets ( 4,095 ) ( 4,444 ) ( 7,515 ) Alphabet-level activities ( 9,186 ) ( 10,541 ) ( 16,760 ) Total income from operations $ 84,293 $ 112,390 $ 129,039 Supplemental information about segment expenses: Google Services: Employee compensation expenses $ 46,224 $ 44,560 $ 45,124 Other costs and expenses 130,461 139,107 158,193 Total Google Services costs and expenses $ 176,685 $ 183,667 $ 203,317 Google Cloud: Employee compensation expenses $ 19,054 $ 20,519 $ 22,078 Other",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/0001652044-26-000018-index.htm",
+      "locator": "OperatingIncome 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        129039000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/0001652044-26-000018-index.htm",
+      "locator": "OperatingIncome 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        112390000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "GOOGL",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "OperatingIncome yoy_growth annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        129039000000.0,
+        112390000000.0,
+        0.1481359551561527
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:148934-150011",
+      "excerpt": "o acquire Wiz, a leading cloud security platform, for $32.0 billion, and Intersect, a provider of data center and energy infrastructure solutions, for $4.8 billion in cash plus the assumption of debt. Both acquisitions are expected to close in 2026, subject to customary closing conditions, including the receipt of regulatory approvals. • In 2025, we issued senior unsecured notes for net proceeds of $37.3 billion, to be used for general corporate purposes. • OI&E of $29.8 billion for the year ended December 31, 2025 included net gains on equity securities of $24.1 billion, primarily related to unrealized gains on our non-marketable equity securities. • Other Bets operating loss of $7.5 billion for the year ended December 31, 2025 included a $2.1 billion employee compensation charge recognized in the fourth quarter for Waymo, primarily reflected in research and development expenses, based on estimated stock valuation. In February 2026, Waymo announced an investment round of $16.0 billion, the significant majority of which was funded by Alphabet. • Changes to U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:287139-288291",
+      "excerpt": "s. The DOJ's remedy proposal includes structural remedies that could have a material adverse effect on our business. Closing arguments were held in November 2025, and we are awaiting a final judgment. After that judgment, we plan to appeal the adverse portion of the April 2025 decision and potentially aspects of the remedies decision. A trial in the state Attorneys General case in the Eastern District of Texas will take place after a decision on remedies is issued in the DOJ case. Given the nature of these matters, we cannot estimate a possible loss. Further, in September 2025, the EC announced its decision that Google had infringed European competition laws through \"self-preferencing\" practices on the buy-side and the sell-side relating to Google's advertising technology business. The EC decision imposed a € 3.0 billion fine and directed Google to cease and desist the alleged \"self-preferencing\" practices. We appealed the ruling in November 2025. We recognized a charge of 76. Table of Contents Alphabet Inc. $ 3.5 billion in the third quarter of 2025, and we placed bank guarantees in the fourth quarter of 2025 in lieu of cash payment.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000091",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/goog-20250930.htm",
+      "locator": "10-Q 0001652044-25-000091:125432-126402",
+      "excerpt": "r 30, 2024 to the three months ended September 30, 2025, primarily driven by an increase in expenses related to legal and other matters of $3.8 billion, largely the result of the $3.5 billion EC fine. General and administrative expenses increased $6.4 billion from the nine months ended September 30, 2024 to the nine months ended September 30, 2025, primarily driven by an increase in expenses related to legal and other matters of $6.3 billion, largely the result of the $3.5 billion EC fine accrued in the third quarter of 2025 and a $1.4 billion legal accrual made in the second quarter of 2025. Segment Profitability We report our segment results as Google Services, Google Cloud, and Other Bets. Additionally, certain costs are not allocated to our segments because they represent Alphabet-level activities. For further details on our segments, see Note 15 of the Notes to Consolidated Financial Statements included in Item 1 of this Quarterly Report on Form 10-Q.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:156045-156950",
+      "excerpt": "% Research and development expenses increased $11.8 billion from 2024 to 2025, primarily driven by increases in employee compensation expenses of $6.9 billion and depreciation expense of $2.4 billion. The increase in employee compensation expenses was primarily driven by an increase in SBC expenses of $4.2 billion, which included an increase in a valuation-based compensation charge related to Waymo. Sales and Marketing The following table presents sales and marketing expenses (in millions, except percentages): Year Ended December 31, 2024 2025 Sales and marketing expenses $ 27,808 $ 28,693 Sales and marketing expenses as a percentage of revenues 8 % 7 % Sales and marketing expenses increased $885 million from 2024 to 2025, primarily driven by an increase in advertising and promotional activities of $1.2 billion, partially offset by a decrease in employee compensation expenses of $214 million.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:159058-160114",
+      "excerpt": "2024 to 2025. The increase in operating loss was primarily driven by an increase in employee compensation expenses largely due to an increase in a valuation-based compensation charge related to Waymo. Other Income (Expense), Net The following table presents OI&E, (in millions): Year Ended December 31, 2024 2025 Interest income $ 4,482 $ 4,337 Interest expense (268) (736) Foreign currency exchange gain (loss), net (409) (382) Gain (loss) on debt securities, net (1,043) 540 Gain (loss) on equity securities, net 3,714 24,080 Income (loss) and impairment from equity method investments, net (188) 281 Other 1,137 1,667 Other income (expense), net $ 7,425 $ 29,787 OI&E, net increased $22.4 billion from 2024 to 2025, primarily due to increases in net unrealized gains on equity securities resulting from fair value adjustments on non-marketable equity securities. For additional information, see Note 3 and Note 7 of the Notes to Consolidated Financial Statements included in Item 8 of this Annual Report on Form 10-K. 36. Table of Contents Alphabet Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:308520-309695",
+      "excerpt": "credit ( 1,575 ) ( 1.8 ) % ( 1,792 ) ( 1.5 ) % ( 2,088 ) ( 1.3 ) % Foreign tax credits ( 1,396 ) ( 1.6 ) % ( 1,373 ) ( 1.1 ) % ( 1,684 ) ( 1.1 ) % Other ( 498 ) ( 0.6 ) % ( 198 ) ( 0.2 ) % ( 98 ) ( 0.1 ) % Changes in valuation allowances 513 0.6 % 603 0.5 % 1,170 0.7 % Nontaxable or nondeductible items: Stock-based compensation expense ( 602 ) ( 0.7 ) % ( 1,743 ) ( 1.5 ) % ( 2,601 ) ( 1.6 ) % Other 169 0.2 % 203 0.2 % 955 0.6 % Changes in unrecognized tax benefits 432 0.5 % 689 0.6 % ( 1,123 ) ( 0.7 ) % Other adjustments ( 403 ) ( 0.5 ) % ( 211 ) ( 0.2 ) % ( 1,002 ) ( 0.6 ) % Total $ 11,922 13.9 % $ 19,697 16.4 % $ 26,656 16.8 % (1) The tax effect in this category primarily reflects state and local taxes in New York state, New York city, Pennsylvania, Minnesota, Illinois, New Jersey and Wisconsin. In 2023, the IRS issued a rule change allowing taxpayers to temporarily apply the regulations in effect prior to 2022 related to US federal foreign tax credits as well as a separate rule change with guidance on the capitalization and amortization of research and development expenses. A cumulative one-time adjustment for these tax rule changes was recorded in 2023.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000091",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/goog-20250930.htm",
+      "locator": "10-Q 0001652044-25-000091:102667-103723",
+      "excerpt": "anges in customer usage and demand. Other Bets Revenues from Other Bets are generated primarily from the sale of autonomous transportation services, healthcare-related services, and internet services. 37 Costs and Expenses Our cost structure has two components: cost of revenues and operating expenses. Our operating expenses include costs related to R&D, sales and marketing, and general and administrative functions. Certain of our costs and expenses, including those associated with the operation of our technical infrastructure as well as components of our operating expenses, are generally less variable in nature and may not correlate to changes in revenue. Additionally, fluctuations in employee compensation expenses may not directly correlate with changes in headcount due to factors such as annual SBC awards that generally vest over four years. Cost of Revenues Cost of revenues is comprised of TAC and other costs of revenues. • TAC includes: ◦ amounts paid to our distribution partners who make available our search access points and services.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000062",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000062/goog-20250630.htm",
+      "locator": "10-Q 0001652044-25-000062:98962-100065",
+      "excerpt": "ices. Fluctuations in our Google Cloud revenues have been, and may continue to be, affected by factors in addition to the general factors described above, such as changes in customer usage and demand. Other Bets Revenues from Other Bets are generated primarily from the sale of autonomous transportation services, healthcare-related services, and internet services. 37 Costs and Expenses Our cost structure has two components: cost of revenues and operating expenses. Our operating expenses include costs related to R&D, sales and marketing, and general and administrative functions. Certain of our costs and expenses, including those associated with the operation of our technical infrastructure as well as components of our operating expenses, are generally less variable in nature and may not correlate to changes in revenue. Additionally, fluctuations in employee compensation expenses may not directly correlate with changes in headcount due to factors such as annual SBC awards that generally vest over four years. Cost of Revenues Cost of revenues is comprised of TAC and other costs of revenues.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:156750-157814",
+      "excerpt": "million from 2024 to 2025, primarily driven by an increase in advertising and promotional activities of $1.2 billion, partially offset by a decrease in employee compensation expenses of $214 million. General and Administrative The following table presents general and administrative expenses (in millions, except percentages): Year Ended December 31, 2024 2025 General and administrative expenses $ 14,188 $ 21,482 General and administrative expenses as a percentage of revenues 4 % 5 % General and administrative expenses increased $7.3 billion from 2024 to 2025, primarily driven by an increase in expenses related to legal and other matters of $6.2 billion, largely the result of the $3.5 billion EC fine accrued in the third quarter of 2025 and a $1.4 billion legal accrual made in the second quarter of 2025. 35. Table of Contents Alphabet Inc. Segment Profitability We report our segment results as Google Services, Google Cloud, and Other Bets. Additionally, certain costs are not allocated to our segments because they represent Alphabet-level activities.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E3",
+      "quote": "Other Bets (4,444) (7,515)",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:157614-158800"
+    },
+    {
+      "evidence_id": "E1",
+      "quote": "Other Bets operating loss increased $3.1 billion from 2024 to 2025. The increase in operating loss was primarily driven by an increase in employee compensation expenses largely due to an increase in a valuation-based compensation charge related to Waymo.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:158600-159258"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 18166,
+    "output": 1806
+  },
+  "latency_ms": 23053,
+  "estimated_cost_usd": 0.081588,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "mixed"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 6233,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 12,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 16799,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "CONTRADICTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 12,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

@@ -1,0 +1,1038 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-WMT-11:465bca86",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-WMT-11",
+    "company": "WMT",
+    "claim": "Walmart's fiscal 2026 results show that tariffs did not pressure its profitability.",
+    "as_of_date": "2026-03-31",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs."
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "changes in tax and trade policies, including tariffs, trade barriers, other restrictions on the exportation and importation of goods and government regulations affecting trade between the U.S. and other countries where we source many of the products we sell can impact, and have impacted, our business and profit margins"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs."
+          }
+        ],
+        "reasoning_summary": "The claim asserts that tariffs did not pressure Walmart's profitability in fiscal 2026. However, the evidence directly contradicts this assertion. Evidence E2 explicitly states that changes in tax and trade policies, including tariffs, \"can impact, and have impacted, our business and profit margins\" and confirms \"We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs.\" The passage describes these impacts as including \"increases in the costs at which we purchase merchandise and the prices at which we sell such merchandise to our customers.\" Both E1 and E2 confirm that Walmart experienced impacts from incremental import tariffs during fiscal 2026, and E2 specifically mentions impacts to \"profit margins.\" This directly contradicts the claim that tariffs did not pressure profitability. The claim is purely interpretive/qualitative (no specific numeric thresholds stated), so there are no numeric assertions to track.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did Walmart's profit margins actually increase or remain stable in fiscal 2026 despite tariff impacts, suggesting tariffs did not materially pressure overall profitability?",
+          "search_query": "fiscal 2026 gross margin operating margin net margin profitability improved increased",
+          "numeric_check": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2026-01-31",
+            "comparison": ">=",
+            "threshold": null,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Did Walmart successfully mitigate or offset tariff impacts through pricing actions, sourcing changes, or other strategies such that profitability was not materially pressured?",
+          "search_query": "tariff mitigation offset pricing strategy sourcing diversification successfully managed fiscal 2026",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Were the tariff impacts described as immaterial, minimal, or not significant to overall profitability in fiscal 2026?",
+          "search_query": "tariff impact immaterial minimal not material not significant fiscal 2026 profitability",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "fiscal 2026 gross margin operating margin net margin profitability improved increased",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "tariff mitigation offset pricing strategy sourcing diversification successfully managed fiscal 2026",
+          "results": [
+            "E15",
+            "E16",
+            "E17"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "tariff impact immaterial minimal not material not significant fiscal 2026 profitability",
+          "results": [
+            "E18",
+            "E19",
+            "E20"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E15",
+        "E16",
+        "E17",
+        "E18",
+        "E19",
+        "E20"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "THRESHOLD_MISSING"
+          ],
+          "computed": {
+            "period_end": "2026-01-31",
+            "basis": "annual",
+            "level": 0.04222034418958881,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-02-01",
+                "period_end": "2026-01-31",
+                "value": 29825000000.0,
+                "filed": "2026-03-13",
+                "form": "10-K",
+                "accession_number": "0000104169-26-000055",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-02-01",
+                "period_end": "2026-01-31",
+                "value": 706413000000.0,
+                "filed": "2026-03-13",
+                "form": "10-K",
+                "accession_number": "0000104169-26-000055",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.043508297531050885,
+            "prior_period_end": "2025-01-31",
+            "yoy_change": -0.0012879533414620753,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E14",
+            "E10",
+            "E11",
+            "E12",
+            "E13"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "Operating income as a percentage of net sales 4.2 % 4.4 %",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:174967-176165"
+            },
+            {
+              "evidence_id": "E7",
+              "quote": "Gross profit as a percentage of net sales (\"gross profit rate\") increased 8 and 40 basis points for fiscal 2026 and 2025, respectively",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:174967-176165"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "13f196ed58e29f25373e21075ab4a63a8ca441e579a25db35f7e7d6171468edb",
+      "source": "cache",
+      "input_tokens": 3614,
+      "output_tokens": 525,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs."
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "changes in tax and trade policies, including tariffs, trade barriers, other restrictions on the exportation and importation of goods and government regulations affecting trade between the U.S. and other countries where we source many of the products we sell can impact, and have impacted, our business and profit margins"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs."
+          }
+        ],
+        "reasoning_summary": "The claim asserts that tariffs did not pressure Walmart's profitability in fiscal 2026. However, the evidence directly contradicts this assertion. Evidence E2 explicitly states that changes in tax and trade policies, including tariffs, \"can impact, and have impacted, our business and profit margins\" and confirms \"We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs.\" The passage describes these impacts as including \"increases in the costs at which we purchase merchandise and the prices at which we sell such merchandise to our customers.\" Both E1 and E2 confirm that Walmart experienced impacts from incremental import tariffs during fiscal 2026, and E2 specifically mentions impacts to \"profit margins.\" This directly contradicts the claim that tariffs did not pressure profitability. The claim is purely interpretive/qualitative (no specific numeric thresholds stated), so there are no numeric assertions to track.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "a3a4b9c8fc868e32238c0d3c8e261d38ca9f7c7702b697489f91c0bf67a144fd",
+      "source": "cache",
+      "input_tokens": 4578,
+      "output_tokens": 377,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did Walmart's profit margins actually increase or remain stable in fiscal 2026 despite tariff impacts, suggesting tariffs did not materially pressure overall profitability?",
+            "search_query": "fiscal 2026 gross margin operating margin net margin profitability improved increased",
+            "numeric_check": {
+              "metric": "OperatingMargin",
+              "measure": "level",
+              "period_basis": "annual",
+              "period_end": "2026-01-31",
+              "comparison": ">=",
+              "threshold": null,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Did Walmart successfully mitigate or offset tariff impacts through pricing actions, sourcing changes, or other strategies such that profitability was not materially pressured?",
+            "search_query": "tariff mitigation offset pricing strategy sourcing diversification successfully managed fiscal 2026",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Were the tariff impacts described as immaterial, minimal, or not significant to overall profitability in fiscal 2026?",
+            "search_query": "tariff impact immaterial minimal not material not significant fiscal 2026 profitability",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "afa548c166b066681287d88830e56457286a0c7a90ed052265022dab2c712f9d",
+      "source": "cache",
+      "input_tokens": 8609,
+      "output_tokens": 922,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "Operating income as a percentage of net sales 4.2 % 4.4 %"
+              },
+              {
+                "evidence_id": "E7",
+                "quote": "Gross profit as a percentage of net sales (\"gross profit rate\") increased 8 and 40 basis points for fiscal 2026 and 2025, respectively"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "CONTRADICTED",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs."
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "changes in tax and trade policies, including tariffs, trade barriers, other restrictions on the exportation and importation of goods and government regulations affecting trade between the U.S. and other countries where we source many of the products we sell can impact, and have impacted, our business and profit margins"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs."
+          },
+          {
+            "evidence_id": "E7",
+            "quote": "Operating income as a percentage of net sales 4.2 % 4.4 %"
+          }
+        ],
+        "reasoning_summary": "After investigating potential challenges to the initial CONTRADICTED verdict, the verdict remains CONTRADICTED.\n\nH1 (profit margins increased/stable) is REFUTED: Evidence E7 shows that while gross profit margin increased slightly by 8 basis points in fiscal 2026, operating income as a percentage of net sales DECREASED from 4.4% to 4.2% (a 20 basis point decline). This decline in operating margin demonstrates that profitability was indeed pressured, consistent with the tariff impacts described in E1 and E2.\n\nH2 (successful mitigation) has NO_RELEVANT_EVIDENCE: While E15 and E16 mention that Walmart has \"sourcing, pricing, merchandising, inventory management and other strategies in response to cost increases,\" these passages do not state that these strategies successfully offset or mitigated tariff impacts such that profitability was not pressured. The evidence describes strategies but not their effectiveness in preventing profitability pressure.\n\nH3 (immaterial impacts) has NO_RELEVANT_EVIDENCE: None of the retrieved evidence characterizes the tariff impacts as immaterial, minimal, or not significant to profitability in fiscal 2026.\n\nThe claim states tariffs \"did not pressure\" profitability, but the evidence shows: (1) Walmart explicitly experienced impacts to profit margins from tariffs (E2), (2) operating margin declined in fiscal 2026 (E7), and (3) Walmart experienced impacts from incremental import tariffs during fiscal 2026 (E1, E2). This directly contradicts the claim.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Walmart's fiscal 2026 results show that tariffs did not pressure its profitability. FY2026",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "fiscal 2026 gross margin operating margin net margin profitability improved increased",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "tariff mitigation offset pricing strategy sourcing diversification successfully managed fiscal 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E15",
+        "E16",
+        "E17"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "tariff impact immaterial minimal not material not significant fiscal 2026 profitability",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E18",
+        "E19",
+        "E20"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2026-01-31",
+            "comparison": ">=",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "THRESHOLD_MISSING"
+          ],
+          "computed": {
+            "period_end": "2026-01-31",
+            "basis": "annual",
+            "level": 0.04222034418958881,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-02-01",
+                "period_end": "2026-01-31",
+                "value": 29825000000.0,
+                "filed": "2026-03-13",
+                "form": "10-K",
+                "accession_number": "0000104169-26-000055",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-02-01",
+                "period_end": "2026-01-31",
+                "value": 706413000000.0,
+                "filed": "2026-03-13",
+                "form": "10-K",
+                "accession_number": "0000104169-26-000055",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.043508297531050885,
+            "prior_period_end": "2025-01-31",
+            "yoy_change": -0.0012879533414620753,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E14",
+            "E10",
+            "E11",
+            "E12",
+            "E13"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0000104169-26-000055",
+        "filed": "2026-03-13",
+        "report_date": "2026-01-31",
+        "primary_document": "wmt-20260131.htm",
+        "sha256": "81bc136de8961e00236b4d1c299b17de840b9ff49c278f0addf442cee8e909cf"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-25-000191",
+        "filed": "2025-12-03",
+        "report_date": "2025-10-31",
+        "primary_document": "wmt-20251031.htm",
+        "sha256": "163791c139267742812a96517575b3118c5549be0b2984c8d4e9aa0914e2b6f8"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-25-000137",
+        "filed": "2025-08-29",
+        "report_date": "2025-07-31",
+        "primary_document": "wmt-20250731.htm",
+        "sha256": "05974418e411cea9e0bc4acbaeb3ba6400348a940d109fbeac294723401f34b5"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 708
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:119561-120350",
+      "excerpt": "licies have on our business, our results of operations and financial performance could be impacted. We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs. We expect the dynamic tariff environment to continue, including in fiscal 2027, and cannot predict with certainty the future impact that this environment will have on our results of operations or financial performance, which could be material. We are subject to income taxes, other taxes and tax collection and reporting obligations in both the U.S. and the foreign jurisdictions in which we currently operate or have historically operated. The determination of our worldwide provision for income taxes and current and deferred tax assets and liabilities requires judgment and estimation.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:118619-119761",
+      "excerpt": "operating segments generated approximately 82% of our consolidated net sales. A significant portion of the general merchandise we sell in our U.S. stores and clubs is manufactured in other countries. Significant changes in tax and trade policies, including tariffs, trade barriers, other restrictions on the exportation and importation of goods and government regulations affecting trade between the U.S. and other countries where we source many of the products we sell can impact, and have impacted, our business and profit margins, including through increases in the costs at which we purchase merchandise and the prices at which we sell such merchandise to our customers, and the costs we incur in pursuing our strategic initiatives, including those set forth under the headings Strategic Risks and Operational Risks above in this Item 1A. If we are unable to successfully manage the various impacts that changes in these tax and trade policies have on our business, our results of operations and financial performance could be impacted. We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:279716-280916",
+      "excerpt": "e to Walmart is based on the weighted-average common shares outstanding during the relevant period adjusted for the dilutive effect of share-based awards as determined under the treasury stock method. The Company did not have significant share-based awards outstanding that were antidilutive and not included in the calculation of diluted net income per common share attributable to Walmart for fiscal 2026, 2025 and 2024. The following table provides a reconciliation of the numerators and denominators used to determine basic and diluted net income per common share attributable to Walmart: Fiscal Years Ended January 31, (Amounts in millions, except per share data) 2026 2025 2024 Numerator Consolidated net income $ 22,270 $ 20,157 $ 16,270 Consolidated net income attributable to noncontrolling interest ( 377 ) ( 721 ) ( 759 ) Consolidated net income attributable to Walmart $ 21,893 $ 19,436 $ 15,511 Denominator Weighted-average common shares outstanding, basic 7,983 8,041 8,077 Dilutive impact of share-based awards 39 40 31 Weighted-average common shares outstanding, diluted 8,022 8,081 8,108 Net income per common share attributable to Walmart Basic $ 2.74 $ 2.42 $ 1.92 Diluted 2.73 2.4",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_start": null,
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:18485-19359",
+      "excerpt": "on the Company's disclosures. The amendments only impact disclosures and are not expected to have an impact on the Company's financial condition and results of operations. 9 Table of Contents Note 2. Net Income Per Common Share Basic net income per common share attributable to Walmart is based on the weighted-average common shares outstanding during the relevant period. Diluted net income per common share attributable to Walmart is based on the weighted-average common shares outstanding during the relevant period adjusted for the dilutive effect of share-based awards as determined under the treasury stock method. The Company did not have significant share-based awards outstanding that were antidilutive and not included in the calculation of diluted net income per common share attributable to Walmart for the three and nine months ended October 31, 2025 and 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000137",
+      "form": "10-Q",
+      "filed": "2025-08-29",
+      "period_start": null,
+      "period_end": "2025-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000137/wmt-20250731.htm",
+      "locator": "10-Q 0000104169-25-000137:17527-18397",
+      "excerpt": "on the Company's disclosures. The amendments only impact disclosures and are not expected to have an impact on the Company's financial condition and results of operations. 8 Table of Contents Note 2. Net Income Per Common Share Basic net income per common share attributable to Walmart is based on the weighted-average common shares outstanding during the relevant period. Diluted net income per common share attributable to Walmart is based on the weighted-average common shares outstanding during the relevant period adjusted for the dilutive effect of share-based awards as determined under the treasury stock method. The Company did not have significant share-based awards outstanding that were antidilutive and not included in the calculation of diluted net income per common share attributable to Walmart for the three and six months ended July 31, 2025 and 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000137",
+      "form": "10-Q",
+      "filed": "2025-08-29",
+      "period_start": null,
+      "period_end": "2025-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000137/wmt-20250731.htm",
+      "locator": "10-Q 0000104169-25-000137:112636-113836",
+      "excerpt": "nvestment Matters, the India Antitrust Matter, and the liabilities, losses, expenses and costs that Walmart may incur in connection with such matters; • in Part I, Item 2 \" Management's Discussion and Analysis of Financial Condition and Results of Operations \": statements under the caption \" Overview \" regarding future changes to our business and our expectations about the potential impacts on our business, financial position, results of operations or cash flows as a result of macroeconomic factors such as geopolitical conditions, tariffs and trade restrictions, supply chain disruptions, volatility in employment trends and consumer confidence; statements under the caption \" Overview \" relating to the possible impact of inflationary pressures and volatility in currency exchange rates on the results, including net sales and operating income, of Walmart and the Walmart International segment, as well as our sourcing, pricing, merchandising, inventory management and other strategies in response to cost increases; a statement under the caption \" Overview \" relating to management's expectations regarding the timing of cash tax payments; statements under the caption \" Company Performance M",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:174967-176165",
+      "excerpt": "g our ecosystem in higher margin areas, such as digital advertising. Our objective is to achieve operating income leverage, which we define as growing operating income at a faster rate than net sales. Fiscal Years Ended January 31, (Amounts in millions, except unit counts) 2026 2025 Net sales $ 706,413 $ 674,538 Percentage change from comparable period 4.7 % 5.0 % Gross profit (1) as a percentage of net sales 24.2 % 24.1 % Operating expenses as a percentage of net sales 20.9 % 20.7 % Operating income $ 29,825 $ 29,348 Operating income as a percentage of net sales 4.2 % 4.4 % (1) Gross profit defined as net sales less cost of sales. Gross profit as a percentage of net sales (\"gross profit rate\") increased 8 and 40 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase in fiscal 2026 was primarily driven by the Walmart U.S. segment, due to disciplined inventory management, as well as growth in higher margin businesses globally. The increase in fiscal 2025 was primarily driven by the Walmart U.S. segment, due to managing prices aligned to our competitive historic price gaps, as well as growth in higher margin businesses globally.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:200968-202056",
+      "excerpt": "improved operational efficiencies related to merchandise flow and increased margins in fuel, partially offset by higher eCommerce fulfillment costs and product mix shifts into lower margin categories. Operating expenses as a percentage of segment net sales increased 22 and 44 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase for fiscal 2026 was primarily due to lower fuel sales and higher self-insured general liability claims expense. The increase for fiscal 2025 was primarily due to increased compensation related expenses, including associate wage investments and higher variable pay as a result of exceeding our planned performance, as well as elevated technology spend. As a result of the factors discussed above, segment operating income increased slightly for fiscal 2026 and increased $0.2 billion for fiscal 2025, when compared to the previous fiscal year. 41 Liquidity and Capital Resources Liquidity The strength and stability of our operations have historically supplied us with a significant source of liquidity.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:196454-197493",
+      "excerpt": "decrease was primarily due to ongoing channel and format mix shifts, as well as strategic growth investments in price and delivery capabilities, partially offset by growth in higher margin businesses. The increase in fiscal 2025 was primarily due to improved eCommerce margin and business mix changes, partially offset by ongoing channel and format mix changes. Operating expenses as a percentage of segment net sales increased 10 basis points for fiscal 2026 and decreased 5 basis points for fiscal 2025, when compared to the previous fiscal year. The increase for fiscal 2026 was primarily due to a charge of $0.7 billion related to PhonePe's modification of certain share-based payment arrangements in contemplation of a potential public offering (refer to Note 3 ), partially offset by strong sales as well as format mix shifts. The decrease for fiscal 2025 was primarily due to increased sales driving expense leverage, partially offset by planned investments in associate wages and strategic priorities in Mexico and Central America.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": "2025-02-01",
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/0000104169-26-000055-index.htm",
+      "locator": "OperatingIncome 2025-02-01..2026-01-31",
+      "excerpt": null,
+      "values": [
+        29825000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": "2025-02-01",
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/0000104169-26-000055-index.htm",
+      "locator": "Revenue 2025-02-01..2026-01-31",
+      "excerpt": null,
+      "values": [
+        706413000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": "2024-02-01",
+      "period_end": "2025-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/0000104169-26-000055-index.htm",
+      "locator": "OperatingIncome 2024-02-01..2025-01-31",
+      "excerpt": null,
+      "values": [
+        29348000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": "2024-02-01",
+      "period_end": "2025-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/0000104169-26-000055-index.htm",
+      "locator": "Revenue 2024-02-01..2025-01-31",
+      "excerpt": null,
+      "values": [
+        674538000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "WMT",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": null,
+      "locator": "OperatingMargin level annual @ 2026-01-31",
+      "excerpt": null,
+      "values": [
+        0.04222034418958881,
+        0.043508297531050885,
+        -0.0012879533414620753
+      ],
+      "unit": "ratio",
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_start": null,
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:55559-56713",
+      "excerpt": "companying notes and the related Management's Discussion and Analysis of Financial Condition and Results of Operations, contained in our Annual Report on Form 10-K for the year ended January 31, 2025. Recent Developments, Macroeconomic Conditions and Potential Impacts We expect continued uncertainty in our business and the global economy due to tariffs and trade restrictions; inflationary trends; fluctuations in global currencies; swings in macroeconomic conditions and their effect on consumer confidence; volatility in employment trends; and supply chain pressures, any of which may impact our results. While we operate in a highly dynamic tariff environment, less than one third of what we sell in the U.S. is imported, with most of our imports coming from China, Mexico, Vietnam, India and Canada. We are committed to helping customers save money and live better through everyday low prices, supported by everyday low costs. Our operating results are influenced in part by our sourcing, pricing, merchandising, inventory management and other strategies in response to cost increases, which are further discussed in our Annual Report on Form 10-K.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000137",
+      "form": "10-Q",
+      "filed": "2025-08-29",
+      "period_start": null,
+      "period_end": "2025-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000137/wmt-20250731.htm",
+      "locator": "10-Q 0000104169-25-000137:55750-56904",
+      "excerpt": "companying notes and the related Management's Discussion and Analysis of Financial Condition and Results of Operations, contained in our Annual Report on Form 10-K for the year ended January 31, 2025. Recent Developments, Macroeconomic Conditions and Potential Impacts We expect continued uncertainty in our business and the global economy due to tariffs and trade restrictions; inflationary trends; fluctuations in global currencies; swings in macroeconomic conditions and their effect on consumer confidence; volatility in employment trends; and supply chain pressures, any of which may impact our results. While we operate in a highly dynamic tariff environment, less than one third of what we sell in the U.S. is imported, with most of our imports coming from China, Mexico, Vietnam, India and Canada. We are committed to helping customers save money and live better through everyday low prices, supported by everyday low costs. Our operating results are influenced in part by our sourcing, pricing, merchandising, inventory management and other strategies in response to cost increases, which are further discussed in our Annual Report on Form 10-K.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_start": null,
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:115743-116923",
+      "excerpt": "uding net sales and operating income, of Walmart and the Walmart International segment, as well as our sourcing, pricing, merchandising, inventory management and other strategies in response to cost increases; a statement under the caption \" Overview \" relating to management's expectations regarding the timing of cash tax payments; statements under the caption \" Company Performance Metrics - Growth \" regarding our strategy to serve customers through a seamless omnichannel experience; statements under the caption \" Company Performance Metrics - Margin \" regarding our strategy to improve operating income margin through productivity initiatives, as well as category and business mix; statements under the caption \" Company Performance Metrics - Returns \" regarding our belief that returns on capital will improve as we execute on our strategic priorities; statements under the caption \" Results of Operations - Consolidated Results of Operations \" regarding the possibility of fluctuations in Walmart's effective income tax rate from quarter to quarter and the factors that may cause those fluctuations; a statement under the caption \" Results of Operations - Sam's Club U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:90180-91358",
+      "excerpt": "pabilities, or the logging capabilities of third parties, are also not always complete or sufficiently detailed, affecting our ability to fully investigate and understand the scope of security events. Continued advancements and increased use of AI have intensified existing cybersecurity risks by enabling faster and more automated attack techniques, lowering the barrier to creating sophisticated threats, and further compressing the time in which we must detect and respond to potential threats. Advances in AI are also creating novel categories of cyber threats in which attackers use AI systems to autonomously conduct reconnaissance, generate and tailor exploit code, harvest credentials, craft highly convincing social‑engineering content, and execute large‑scale intrusion or extortion campaigns with minimal human involvement. As noted above, some of our information systems and those of our third-party service providers have experienced cybersecurity incidents or breaches, including during fiscal 2026, and, although to date they have not had a material adverse effect on our operating results or business, there can be no assurance of a similar result in the future.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:247605-248727",
+      "excerpt": "tion, the Company is striving to continuously improve a customer-centric experience that seamlessly integrates eCommerce and retail stores in an omnichannel offering that saves time for its customers. The Company's operations comprise three reportable segments: Walmart U.S., Walmart International and Sam's Club U.S. Principles of Consolidation The Consolidated Financial Statements include the accounts of Walmart and its subsidiaries as of and for the fiscal years ended January 31, 2026 (\"fiscal 2026\"), January 31, 2025 (\"fiscal 2025\") and January 31, 2024 (\"fiscal 2024\"). Intercompany accounts and transactions have been eliminated in consolidation. The Company consolidates variable interest entities where it has been determined that the Company is the primary beneficiary of those entities' operations. Investments in common stock or in-substance common stock for which the Company exercises significant influence but does not have control are accounted for under the equity method. These variable interest entities and equity method investments are immaterial to the Company's Consolidated Financial Statements.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E19"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:67732-68878",
+      "excerpt": "pass on to our customers. The performance of strategic alliances and other business relationships to support the expansion of our business could materially adversely affect our financial performance. We may enter into strategic alliances and other business relationships in the countries in which we have existing operations or in other markets to expand our business. These arrangements may not generate the level of sales or profitability we anticipate when entering into the arrangement or may otherwise adversely impact our business and competitive position relative to the results we could have achieved in the absence of such alliance. In addition, any investment we make in connection with a strategic alliance, business relationship or in certain of our divested markets, could materially adversely affect our financial performance. Operational Risks Global or regional health pandemics or epidemics could negatively impact our business, financial position and results of operations. The emergence, severity, magnitude and duration of global or regional pandemics, epidemics or other health crises are uncertain and difficult to predict.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E20"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E2",
+      "quote": "We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:118619-119761"
+    },
+    {
+      "evidence_id": "E1",
+      "quote": "We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:119561-120350"
+    },
+    {
+      "evidence_id": "E7",
+      "quote": "Operating income as a percentage of net sales 4.2 % 4.4 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:174967-176165"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 16801,
+    "output": 1824
+  },
+  "latency_ms": 7,
+  "estimated_cost_usd": 0.077763,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "CONTRADICTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

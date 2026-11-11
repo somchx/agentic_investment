@@ -1,0 +1,1014 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-AAPL-03:a6b3f07e",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-AAPL-03",
+    "company": "AAPL",
+    "claim": "Apple's Services net sales for the quarter ended March 28, 2026 grew by more than 10% year over year.",
+    "as_of_date": "2026-05-20",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026 Q2"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-03-28",
+            "comparison": ">",
+            "threshold": 0.1,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 Change March 28, 2026 March 29, 2025 Change iPhone $ 56,994 $ 46,841 22 % $ 142,263 $ 115,979 23 % Mac 8,399 7,949 6 % 16,785 16,936 (1) % iPad 6,914 6,402 8 % 15,509 14,490 7 % Wearables, Home and Accessories 7,901 7,522 5 % 19,394 19,269 1 % Services 30,976 26,645 16 %"
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales from advertising, the App Store ® and cloud services."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Apple's Services net sales for the quarter ended March 28, 2026 grew by more than 10% year over year. Evidence E1 provides a table showing Services net sales for the three months ended March 28, 2026 was $30,976 million compared to $26,645 million for the three months ended March 29, 2025, with a change of 16%. Since 16% > 10%, the claim is supported. The calculation confirms: (30,976 - 26,645) / 26,645 = 0.1626 or 16.26%, which is indeed more than 10%.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_ALL_TRUE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-03-28",
+            "comparison": ">",
+            "threshold": 0.1,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-03-28",
+            "basis": "quarter",
+            "level": 111184000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-12-28",
+                "period_end": "2026-03-28",
+                "value": 111184000000.0,
+                "filed": "2026-05-01",
+                "form": "10-Q",
+                "accession_number": "0000320193-26-000013",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 95359000000.0,
+            "prior_period_end": "2025-03-29",
+            "yoy_change": 0.16595182415922985,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Were there any restatements, corrections, or adjustments to the Services revenue figures for Q2 2026 or Q2 2025 that would change the reported 16% growth rate?",
+          "search_query": "Services revenue restatement correction adjustment prior period Q2 2025 Q2 2026",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Did the Services revenue growth include any one-time items, non-recurring revenue, or accounting changes that would make the 16% growth rate not representative of organic performance?",
+          "search_query": "Services revenue one-time non-recurring accounting change policy adoption deferred revenue recognition",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Is there any disclosure indicating that the Services category definition or composition changed between Q2 2025 and Q2 2026, which could affect comparability?",
+          "search_query": "Services category definition composition reclassification change comparable prior year",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "Services revenue restatement correction adjustment prior period Q2 2025 Q2 2026",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "Services revenue one-time non-recurring accounting change policy adoption deferred revenue recognition",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "Services category definition composition reclassification change comparable prior year",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_ALL_TRUE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E10",
+              "quote": "Certain prior period amounts in the condensed consolidated financial statements and accompanying notes have been reclassified to conform to the current period's presentation.",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-26-000013",
+              "form": "10-Q",
+              "filed": "2026-05-01",
+              "period_end": "2026-03-28",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+              "locator": "10-Q 0000320193-26-000013:11224-12367"
+            },
+            {
+              "evidence_id": "E11",
+              "quote": "Certain prior period amounts in the condensed consolidated financial statements and accompanying notes have been reclassified to conform to the current period's presentation.",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-26-000013",
+              "form": "10-Q",
+              "filed": "2026-05-01",
+              "period_end": "2026-03-28",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+              "locator": "10-Q 0000320193-26-000013:12167-13186"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E10",
+              "quote": "Certain prior period amounts in the condensed consolidated financial statements and accompanying notes have been reclassified to conform to the current period's presentation.",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-26-000013",
+              "form": "10-Q",
+              "filed": "2026-05-01",
+              "period_end": "2026-03-28",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+              "locator": "10-Q 0000320193-26-000013:11224-12367"
+            },
+            {
+              "evidence_id": "E18",
+              "quote": "Services (1) 109,158 14 % 96,169 13 % 85,200 Total net sales $ 416,161 6 % $ 391,035 2 % $ 383,285 (1) Services net sales include amortization of the deferred value of services bundled in the sales price of certain products.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-25-000079",
+              "form": "10-K",
+              "filed": "2025-10-31",
+              "period_end": "2025-09-27",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+              "locator": "10-K 0000320193-25-000079:109037-110215"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "114fc515e920af5d745bdcb44f1886e34f3c19560a6c0b3d1e613966cce83148",
+      "source": "cache",
+      "input_tokens": 4345,
+      "output_tokens": 633,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-03-28",
+            "comparison": ">",
+            "threshold": 0.1,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 Change March 28, 2026 March 29, 2025 Change iPhone $ 56,994 $ 46,841 22 % $ 142,263 $ 115,979 23 % Mac 8,399 7,949 6 % 16,785 16,936 (1) % iPad 6,914 6,402 8 % 15,509 14,490 7 % Wearables, Home and Accessories 7,901 7,522 5 % 19,394 19,269 1 % Services 30,976 26,645 16 %"
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales from advertising, the App Store ® and cloud services."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Apple's Services net sales for the quarter ended March 28, 2026 grew by more than 10% year over year. Evidence E1 provides a table showing Services net sales for the three months ended March 28, 2026 was $30,976 million compared to $26,645 million for the three months ended March 29, 2025, with a change of 16%. Since 16% > 10%, the claim is supported. The calculation confirms: (30,976 - 26,645) / 26,645 = 0.1626 or 16.26%, which is indeed more than 10%.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "39475981ac7726709927b141822a33bad76b4ede45d8e0d5311694a5b9c0a071",
+      "source": "cache",
+      "input_tokens": 5726,
+      "output_tokens": 317,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Were there any restatements, corrections, or adjustments to the Services revenue figures for Q2 2026 or Q2 2025 that would change the reported 16% growth rate?",
+            "search_query": "Services revenue restatement correction adjustment prior period Q2 2025 Q2 2026",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Did the Services revenue growth include any one-time items, non-recurring revenue, or accounting changes that would make the 16% growth rate not representative of organic performance?",
+            "search_query": "Services revenue one-time non-recurring accounting change policy adoption deferred revenue recognition",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Is there any disclosure indicating that the Services category definition or composition changed between Q2 2025 and Q2 2026, which could affect comparability?",
+            "search_query": "Services category definition composition reclassification change comparable prior year",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "22b4297571ac684c0dd2d0314921975f553bd4225e47ae830091c54a975f75ff",
+      "source": "cache",
+      "input_tokens": 9662,
+      "output_tokens": 1047,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E10",
+                "quote": "Certain prior period amounts in the condensed consolidated financial statements and accompanying notes have been reclassified to conform to the current period's presentation."
+              },
+              {
+                "evidence_id": "E11",
+                "quote": "Certain prior period amounts in the condensed consolidated financial statements and accompanying notes have been reclassified to conform to the current period's presentation."
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E10",
+                "quote": "Certain prior period amounts in the condensed consolidated financial statements and accompanying notes have been reclassified to conform to the current period's presentation."
+              },
+              {
+                "evidence_id": "E18",
+                "quote": "Services (1) 109,158 14 % 96,169 13 % 85,200 Total net sales $ 416,161 6 % $ 391,035 2 % $ 383,285 (1) Services net sales include amortization of the deferred value of services bundled in the sales price of certain products."
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 Change March 28, 2026 March 29, 2025 Change iPhone $ 56,994 $ 46,841 22 % $ 142,263 $ 115,979 23 % Mac 8,399 7,949 6 % 16,785 16,936 (1) % iPad 6,914 6,402 8 % 15,509 14,490 7 % Wearables, Home and Accessories 7,901 7,522 5 % 19,394 19,269 1 % Services 30,976 26,645 16 %"
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales from advertising, the App Store ® and cloud services."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After investigating potential challenges to the initial verdict, I found:\n\nH1 (Restatements/Corrections): CHALLENGE_REFUTED. Evidence E10 and E11 indicate only routine reclassifications to conform prior period presentation, which are described as \"normal and recurring in nature\" adjustments. There is no evidence of material restatements or corrections to Services revenue figures that would alter the reported 16% growth rate.\n\nH2 (One-time items/Non-recurring revenue): NO_RELEVANT_EVIDENCE. The retrieved evidence discusses general litigation settlements and privacy compliance but does not provide specific information about one-time items or non-recurring revenue affecting Services in Q2 2026. The absence of such disclosure does not support the challenge.\n\nH3 (Category definition changes): CHALLENGE_REFUTED. Evidence E18 shows the Services category consistently includes \"amortization of the deferred value of services bundled in the sales price of certain products\" across multiple periods, indicating consistent definition. Evidence E10 mentions only presentation reclassifications, not substantive category changes.\n\nThe original verdict remains SUPPORTED. The evidence clearly shows Services net sales of $30,976 million for Q2 2026 versus $26,645 million for Q2 2025, representing 16% growth, which exceeds the claimed threshold of 10%. No challenges were substantiated by the evidence.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Apple's Services net sales for the quarter ended March 28, 2026 grew by more than 10% year over year. FY2026 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "Services revenue restatement correction adjustment prior period Q2 2025 Q2 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "Services revenue one-time non-recurring accounting change policy adoption deferred revenue recognition",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "Services category definition composition reclassification change comparable prior year",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-03-28",
+            "comparison": ">",
+            "threshold": 0.1,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-03-28",
+            "basis": "quarter",
+            "level": 111184000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-12-28",
+                "period_end": "2026-03-28",
+                "value": 111184000000.0,
+                "filed": "2026-05-01",
+                "form": "10-Q",
+                "accession_number": "0000320193-26-000013",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 95359000000.0,
+            "prior_period_end": "2025-03-29",
+            "yoy_change": 0.16595182415922985,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-26-000013",
+        "filed": "2026-05-01",
+        "report_date": "2026-03-28",
+        "primary_document": "aapl-20260328.htm",
+        "sha256": "8a2c43286c07522163b237664aad64d3f1760654e22d881374dea29362508ea6"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-26-000006",
+        "filed": "2026-01-30",
+        "report_date": "2025-12-27",
+        "primary_document": "aapl-20251227.htm",
+        "sha256": "2d32cfc574b8a8301a1a165a93640ef5ab0de6e140054ccb16ded56d3bb02a78"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0000320193-25-000079",
+        "filed": "2025-10-31",
+        "report_date": "2025-09-27",
+        "primary_document": "aapl-20250927.htm",
+        "sha256": "056f733f13ff7407e64dc81fb96da3c3c55a6ba429bf094f57cb6bd472231f82"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 398
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:39201-40394",
+      "excerpt": "es of iPhone and Services. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Rest of Asia Pacific net sales during the second quarter of 2026. Products and Services Performance The following table shows net sales by category for the three- and six-month periods ended March 28, 2026 and March 29, 2025 (dollars in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 Change March 28, 2026 March 29, 2025 Change iPhone $ 56,994 $ 46,841 22 % $ 142,263 $ 115,979 23 % Mac 8,399 7,949 6 % 16,785 16,936 (1) % iPad 6,914 6,402 8 % 15,509 14,490 7 % Wearables, Home and Accessories 7,901 7,522 5 % 19,394 19,269 1 % Services 30,976 26,645 16 % 60,989 52,985 15 % Total net sales $ 111,184 $ 95,359 17 % $ 254,940 $ 219,659 16 % iPhone iPhone net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 due to higher net sales of Pro models. Mac Mac net sales increased during the second quarter of 2026 compared to the second quarter of 2025 due to higher net sales of laptops. Year-over-year Mac net sales during the first six months of 2026 were relatively flat.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:40977-42118",
+      "excerpt": "increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales from advertising, the App Store ® and cloud services. Apple Inc. | Q2 2026 Form 10-Q | 15 Gross Margin Products and Services gross margin and gross margin percentage for the three- and six-month periods ended March 28, 2026 and March 29, 2025, were as follows (dollars in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 March 28, 2026 March 29, 2025 Gross margin: Products $ 31,029 $ 24,684 $ 77,294 $ 63,197 Services 23,752 20,183 46,718 39,945 Total gross margin $ 54,781 $ 44,867 $ 124,012 $ 103,142 Gross margin percentage: Products 38.7 % 35.9 % 39.9 % 37.9 % Services 76.7 % 75.7 % 76.6 % 75.4 % Total gross margin percentage 49.3 % 47.1 % 48.6 % 47.0 % Products Gross Margin Products gross margin and gross margin percentage increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to a different mix of products and strength in foreign currencies relative to the U.S. dollar, partially offset by higher costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:36814-37964",
+      "excerpt": "and reductions in consumer spending and negative consumer sentiment for the Company’s products and services, all of which can further adversely affect the Company’s business and results of operations. Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 28, 2026 and March 29, 2025 (dollars in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 Change March 28, 2026 March 29, 2025 Change Americas $ 45,093 $ 40,315 12 % $ 103,622 $ 92,963 11 % Europe 28,055 24,454 15 % 66,201 58,315 14 % Greater China 20,497 16,002 28 % 46,023 34,515 33 % Japan 8,401 7,298 15 % 17,814 16,285 9 % Rest of Asia Pacific 9,138 7,290 25 % 21,280 17,581 21 % Total net sales $ 111,184 $ 95,359 17 % $ 254,940 $ 219,659 16 % Americas Americas net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 due to higher net sales of iPhone and Services. The strength in foreign currencies relative to the U.S. dollar had a favorable year-over-year impact on Americas net sales during the second quarter of 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:42760-43866",
+      "excerpt": ", Item 1A of this Form 10-Q, in each case under the heading “Risk Factors.” As a result, the Company believes, in general, gross margins will be subject to volatility and downward pressure. Apple Inc. | Q2 2026 Form 10-Q | 16 Operating Expenses Operating expenses for the three- and six-month periods ended March 28, 2026 and March 29, 2025, were as follows (dollars in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 Change March 28, 2026 March 29, 2025 Change Research and development $ 11,419 $ 8,550 34 % $ 22,306 $ 16,818 33 % Percentage of total net sales 10 % 9 % 9 % 8 % Selling, general and administrative $ 7,477 $ 6,728 11 % $ 14,969 $ 13,903 8 % Percentage of total net sales 7 % 7 % 6 % 6 % Total operating expenses $ 18,896 $ 15,278 24 % $ 37,275 $ 30,721 21 % Percentage of total net sales 17 % 16 % 15 % 14 % Research and Development Research and development (“R&D”) expense increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher infrastructure-related costs and headcount-related expenses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:13986-14599",
+      "excerpt": "rally consistent for each reportable segment in Note 10, “Segment Information” for the three- and six-month periods ended March 28, 2026 and March 29, 2025, except in Greater China, where iPhone revenue represented a moderately higher proportion of net sales. As of March 28, 2026 and September 27, 2025, the Company had total deferred revenue of $ 14.7 billion and $ 13.7 billion, respectively. As of March 28, 2026, the Company expects 64 % of total deferred revenue to be realized in less than a year, 23 % within one-to-two years, 11 % within two-to-three years and 2 % in greater than three years. Apple Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:34468-35629",
+      "excerpt": "Rest of Asia Pacific Rest of Asia Pacific net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPhone and Services. Apple Inc. | Q1 2026 Form 10-Q | 14 Products and Services Performance The following table shows net sales by category for the three months ended December 27, 2025 and December 28, 2024 (dollars in millions): Three Months Ended December 27, 2025 December 28, 2024 Change iPhone $ 85,269 $ 69,138 23 % Mac 8,386 8,987 (7) % iPad 8,595 8,088 6 % Wearables, Home and Accessories 11,493 11,747 (2) % Services 30,013 26,340 14 % Total net sales $ 143,756 $ 124,300 16 % iPhone iPhone net sales increased during the first quarter of 2026 compared to the same quarter in 2025 due to higher net sales of Pro models. Mac Mac net sales decreased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to lower net sales of laptops and desktops. iPad iPad net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPad and iPad Pro, partially offset by lower net sales of iPad mini ® .",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": "2025-12-28",
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/0000320193-26-000013-index.htm",
+      "locator": "Revenue 2025-12-28..2026-03-28",
+      "excerpt": null,
+      "values": [
+        111184000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": "2024-12-29",
+      "period_end": "2025-03-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/0000320193-26-000013-index.htm",
+      "locator": "Revenue 2024-12-29..2025-03-29",
+      "excerpt": null,
+      "values": [
+        95359000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "AAPL",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2026-03-28",
+      "excerpt": null,
+      "values": [
+        111184000000.0,
+        95359000000.0,
+        0.16595182415922985
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:11224-12367",
+      "excerpt": "ending balances $ 45,572 $ 28,162 Supplemental cash flow disclosure: Cash paid for income taxes, net $ 20,397 $ 31,683 See accompanying Notes to Condensed Consolidated Financial Statements. Apple Inc. | Q2 2026 Form 10-Q | 5 Apple Inc. Notes to Condensed Consolidated Financial Statements (Unaudited) Note 1 – Summary of Significant Accounting Policies Basis of Presentation and Preparation The condensed consolidated financial statements include the accounts of Apple Inc. and its wholly owned subsidiaries (collectively “Apple” or the “Company”). In the opinion of the Company’s management, the condensed consolidated financial statements reflect all adjustments, which are normal and recurring in nature, necessary for fair financial statement presentation. The preparation of these condensed consolidated financial statements and accompanying notes in conformity with U.S. generally accepted accounting principles (“GAAP”) requires the use of management estimates. Certain prior period amounts in the condensed consolidated financial statements and accompanying notes have been reclassified to conform to the current period’s presentation.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:12167-13186",
+      "excerpt": "of management estimates. Certain prior period amounts in the condensed consolidated financial statements and accompanying notes have been reclassified to conform to the current period’s presentation. These condensed consolidated financial statements and accompanying notes should be read in conjunction with the Company’s annual consolidated financial statements and accompanying notes included in its Annual Report on Form 10-K for the fiscal year ended September 27, 2025 (the “2025 Form 10-K”). The Company’s fiscal year is the 52- or 53-week period that ends on the last Saturday of September. An additional week is included in the first fiscal quarter every five or six years to realign the Company’s fiscal quarters with calendar quarters. The Company’s fiscal years 2026 and 2025 span 52 weeks each. Unless otherwise stated, references to particular years, quarters, months and periods refer to the Company’s fiscal years ended in September and the associated quarters, months and periods of those fiscal years.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:55078-56234",
+      "excerpt": "the Company to satisfy income tax withholding and remittance obligations. The Prior Plan would have expired on December 31, 2026, subject to early termination in accordance with the terms of the plan. Following termination of the Prior Plan, on November 24, 2025 , Ms. O’Brien entered into a new trading plan intended to satisfy the affirmative defense conditions of Rule 10b5-1(c) under the Exchange Act. The new plan provides for the sale of shares vesting between April 1, 2026 and October 1, 2026, pursuant to certain equity awards granted to Ms. O’Brien, excluding any shares withheld by the Company to satisfy income tax withholding and remittance obligations. Ms. O’Brien’s new plan will expire on December 31, 2026 , subject to early termination in accordance with the terms of the plan. Item 6. Exhibits Incorporated by Reference Exhibit Number Exhibit Description Form Exhibit Filing Date/ Period End Date 31.1* Rule 13a-14(a) / 15d-14(a) Certification of Chief Executive Officer. 31.2* Rule 13a-14(a) / 15d-14(a) Certification of Chief Financial Officer. 32.1** Section 1350 Certifications of Chief Executive Officer and Chief Financial Officer.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:66814-67790",
+      "excerpt": "ages. Regardless of the merit of particular claims, defending against litigation or responding to government investigations can be expensive, time-consuming and disruptive to the Company’s operations. In recognition of these considerations, the Company may enter into agreements or other arrangements to settle litigation and resolve such challenges. However, such agreements may not always be available on acceptable terms, and litigation may still arise. Such agreements can also significantly reduce the Company’s revenue and increase the Company’s cost of sales and operating expenses, materially adversely affecting the Company’s business, results of operations, financial condition and stock price. Additionally, such agreements may require the Company to change its business practices and limit the Company’s ability to offer certain products and services. Apple Inc. | 2025 Form 10-K | 12 The outcome of litigation or government investigations is inherently uncertain.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:74520-75634",
+      "excerpt": "Company to change its business practices, including changes to the design of the Company’s products and services and limiting the Company’s ability to offer a product, service or feature to customers. Such changes in business practices can also otherwise adversely affect the experience for users of the Company’s products and services, and result in harm to the Company’s reputation, loss of competitive advantage, poor market acceptance, reduced demand for products and services, lower revenue, and lower profit margins. Noncompliance could result in suspension or revocation of business licenses, significant penalties and legal liability. The Company makes statements about its use and disclosure of personal data through its privacy policy, information provided on its website, press statements and other privacy notices provided to customers. Any failure or perceived failure by the Company to comply with these public statements or with federal, state or international privacy or data protection laws and regulations could result in inquiries, proceedings and penalties from governmental entities or others.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:141150-142325",
+      "excerpt": "ferring it to the customer. Therefore, the Company accounts for all third-party application–related sales on a net basis by recognizing in Services net sales only the commission it retains. Apple Inc. | 2025 Form 10-K | 35 The following table shows disaggregated net sales, as well as the portion of total net sales that was previously deferred, for 2025, 2024 and 2023 (in millions): 2025 2024 2023 iPhone $ 209,586 $ 201,183 $ 200,583 Mac 33,708 29,984 29,357 iPad 28,023 26,694 28,300 Wearables, Home and Accessories 35,686 37,005 39,845 Services (1) 109,158 96,169 85,200 Total net sales $ 416,161 $ 391,035 $ 383,285 Portion of total net sales that was included in deferred revenue as of the beginning of the period $ 8,229 $ 7,728 $ 8,169 (1) Services net sales include amortization of the deferred value of services bundled in the sales price of certain products. The Company’s proportion of net sales by disaggregated revenue source was generally consistent for each reportable segment in Note 13, “Segment Information and Geographic Data” for 2025, 2024 and 2023, except in Greater China, where iPhone revenue represented a moderately higher proportion of net sales.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:158295-159474",
+      "excerpt": "ax rate. As of September 28, 2024, the total amount of gross unrecognized tax benefits was $ 22.0 billion, of which $ 10.8 billion, if recognized, would have impacted the Company’s effective tax rate. The aggregate change in the balance of gross unrecognized tax benefits, which excludes interest and penalties, for 2025, 2024 and 2023 is as follows (in millions): 2025 2024 2023 Beginning balances $ 22,038 $ 19,454 $ 16,758 Increases related to tax positions taken during a prior year 1,971 1,727 2,044 Decreases related to tax positions taken during a prior year ( 71 ) ( 386 ) ( 1,463 ) Increases related to tax positions taken during the current year 3,795 2,542 2,628 Decreases related to settlements with taxing authorities ( 2,939 ) ( 1,070 ) ( 19 ) Decreases related to expiration of the statute of limitations ( 1,552 ) ( 229 ) ( 494 ) Ending balances $ 23,242 $ 22,038 $ 19,454 The Company is subject to taxation and files income tax returns in the U.S. federal jurisdiction and many state and foreign jurisd ictions. Tax years 2018 and after 2021 for the U.S. federal jurisdiction, and after 2014 in certain major foreign jurisdictions, remain subject to examination.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:133934-135052",
+      "excerpt": "ts Note 1 – Summary of Significant Accounting Policies Basis of Presentation and Preparation The consolidated financial statements include the accounts of Apple Inc. and its wholly owned subsidiaries. The preparation of these consolidated financial statements and accompanying notes in conformity with GAAP requires the use of management estimates. Certain prior period amounts in the notes to consolidated financial statements have been reclassified to conform to the current period’s presentation. The Company’s fiscal year is the 52- or 53-week period that ends on the last Saturday of September. An additional week is included in the first fiscal quarter every five or six years to realign the Company’s fiscal quarters with calendar quarters, which occurred in the first fiscal quarter of 2023. The Company’s fiscal years 2025 and 2024 spanned 52 weeks each, whereas fiscal year 2023 spanned 53 weeks. Unless otherwise stated, references to particular years, quarters, months and periods refer to the Company’s fiscal years ended in September and the associated quarters, months and periods of those fiscal years.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:109037-110215",
+      "excerpt": "sales of iPhone, Services and iPad. Rest of Asia Pacific Rest of Asia Pacific net sales increased during 2025 compared to 2024 primarily due to higher net sales of iPhone, Services and Mac. Apple Inc. | 2025 Form 10-K | 22 Products and Services Performance The following table shows net sales by category for 2025, 2024 and 2023 (dollars in millions): 2025 Change 2024 Change 2023 iPhone $ 209,586 4 % $ 201,183 — % $ 200,583 Mac 33,708 12 % 29,984 2 % 29,357 iPad 28,023 5 % 26,694 (6) % 28,300 Wearables, Home and Accessories 35,686 (4) % 37,005 (7) % 39,845 Services (1) 109,158 14 % 96,169 13 % 85,200 Total net sales $ 416,161 6 % $ 391,035 2 % $ 383,285 (1) Services net sales include amortization of the deferred value of services bundled in the sales price of certain products. iPhone iPhone net sales increased during 2025 compared to 2024 due to higher net sales of Pro models. Mac Mac net sales increased during 2025 compared to 2024 primarily due to higher net sales of laptops and desktops. iPad iPad net sales increased during 2025 compared to 2024 primarily due to higher net sales of iPad Air, iPad mini and iPad, partially offset by lower net sales of iPad Pro.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 Change March 28, 2026 March 29, 2025 Change iPhone $ 56,994 $ 46,841 22 % $ 142,263 $ 115,979 23 % Mac 8,399 7,949 6 % 16,785 16,936 (1) % iPad 6,914 6,402 8 % 15,509 14,490 7 % Wearables, Home and Accessories 7,901 7,522 5 % 19,394 19,269 1 % Services 30,976 26,645 16 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:39201-40394"
+    },
+    {
+      "evidence_id": "E2",
+      "quote": "increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales from advertising, the App Store ® and cloud services.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:40977-42118"
+    },
+    {
+      "evidence_id": "E9",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_end": "2026-03-28",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2026-03-28"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 19733,
+    "output": 1997
+  },
+  "latency_ms": 6,
+  "estimated_cost_usd": 0.089154,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_ALL_TRUE",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_ALL_TRUE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

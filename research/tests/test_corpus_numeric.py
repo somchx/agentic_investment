@@ -22,6 +22,17 @@ def test_eligible_filings_respect_cutoff_and_forms():
     assert {f["form"] for f in only_q} == {"10-Q"} and len(only_q) == 2
 
 
+def test_amendment_never_displaces_the_original_filing():
+    # Tesla's 10-K/A (2026-04-30) is Part III only; the FY2025 10-K must stay eligible
+    picked = eligible_filings("TSLA", "2026-08-15", {"10-K", "10-K/A", "10-Q", "10-Q/A"}, {"10-K": 1, "10-Q": 2})
+    forms = [(f["form"], f["filed"]) for f in picked]
+    assert ("10-K", "2026-01-29") in forms and ("10-K/A", "2026-04-30") in forms
+    assert sum(1 for f, _ in forms if f == "10-Q") == 2
+    # an amendment whose original is not picked is not added on its own
+    no_k = eligible_filings("TSLA", "2026-08-15", {"10-K/A", "10-Q"}, {"10-Q": 2})
+    assert {f["form"] for f in no_k} == {"10-Q"}
+
+
 def test_retrieval_returns_registered_point_in_time_passages():
     ledger = EvidenceLedger()
     r = Retriever(claim(), RetrievalConfig(), ledger)

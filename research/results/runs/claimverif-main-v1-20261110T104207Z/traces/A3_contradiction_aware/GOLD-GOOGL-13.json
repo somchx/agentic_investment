@@ -1,0 +1,1129 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-GOOGL-13:75012575",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-GOOGL-13",
+    "company": "GOOGL",
+    "claim": "Alphabet's net income for the quarter ended June 30, 2026 was boosted by gains on equity securities that do not reflect its operating performance.",
+    "as_of_date": "2026-08-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q2"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "OI&E, net increased $95.3 billion and $121.9 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026, respectively, primarily related to unrealized gains in our equity securities portfolio from SpaceX and a private company."
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "Gain (loss) on equity securities, net 1,286 99,031 11,044 135,946"
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "Gross unrealized gain on non-marketable equity securities accounted for under the measurement alternative $ 670 $ 77,544 $ 10,374 $ 114,161"
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "OI&E of $98.0 billion for the three months ended June 30, 2026 included net gains on equity securities of $99.0 billion, primarily related to unrealized gains in our equity securities portfolio from SpaceX and a private company."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes a qualitative/interpretive assertion that Alphabet's net income for Q2 2026 (quarter ended June 30, 2026) was boosted by gains on equity securities that do not reflect operating performance. This is supported by multiple pieces of evidence:\n\n1. E3 shows that for the three months ended June 30, 2026, \"Gain (loss) on equity securities, net\" was $99,031 million (approximately $99 billion), which is part of \"Other Income (Expense), Net\" - not operating income.\n\n2. E1 and E5 both explicitly state that these gains were \"primarily related to unrealized gains in our equity securities portfolio from SpaceX and a private company.\"\n\n3. E4 provides detail showing that the majority of these gains ($77,544 million for the quarter) were \"Gross unrealized gain on non-marketable equity securities accounted for under the measurement alternative.\"\n\n4. These gains appear in \"Other Income (Expense), Net\" which is separate from operating income, confirming they do not reflect operating performance.\n\n5. The evidence shows net income would have been significantly boosted by these $99 billion in equity security gains, which flowed through to pre-tax income and ultimately net income.\n\nThe claim is interpretive in nature (asserting that these gains \"do not reflect operating performance\") and is supported by the filing's presentation of these gains outside of operating results.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did Alphabet actually report positive net income for Q2 2026, or could net income have been negative or zero despite the equity gains?",
+          "search_query": "net income three months ended June 30 2026 consolidated statements of income",
+          "numeric_check": {
+            "metric": "NetIncome",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": ">",
+            "threshold": 0,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Could the filing indicate that these equity security gains are actually considered part of operating performance or core business results, contradicting the claim that they don't reflect operating performance?",
+          "search_query": "equity securities gains operating performance core business recurring non-GAAP adjusted earnings",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Could the equity gains have been offset by losses or other negative items such that net income was not actually 'boosted' on a net basis?",
+          "search_query": "net income increase decrease compared prior year quarter ended June 30 2026 2025",
+          "numeric_check": {
+            "metric": "NetIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": ">",
+            "threshold": 0,
+            "stated_value": null
+          }
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "net income three months ended June 30 2026 consolidated statements of income",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "equity securities gains operating performance core business recurring non-GAAP adjusted earnings",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "net income increase decrease compared prior year quarter ended June 30 2026 2025",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-06-30",
+            "basis": "quarter",
+            "level": 112193000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "NetIncome",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 112193000000.0,
+                "filed": "2026-07-23",
+                "form": "10-Q",
+                "accession_number": "0001652044-26-000071",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 28196000000.0,
+            "prior_period_end": "2025-06-30",
+            "yoy_change": 2.979039580082281,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E12",
+            "E10",
+            "E11"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-06-30",
+            "basis": "quarter",
+            "level": 112193000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "NetIncome",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 112193000000.0,
+                "filed": "2026-07-23",
+                "form": "10-Q",
+                "accession_number": "0001652044-26-000071",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 28196000000.0,
+            "prior_period_end": "2025-06-30",
+            "yoy_change": 2.979039580082281,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E19",
+            "E10",
+            "E11"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E10",
+              "quote": "Net income $ 28,196 $ 112,193 $ 62,736 $ 174,771",
+              "valid": true,
+              "issues": [],
+              "kind": "xbrl_fact",
+              "accession_number": "0001652044-26-000071",
+              "form": "10-Q",
+              "filed": "2026-07-23",
+              "period_end": "2026-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/0001652044-26-000071-index.htm",
+              "locator": "NetIncome 2026-04-01..2026-06-30"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E10",
+              "quote": "Net income $ 28,196 $ 112,193 $ 62,736 $ 174,771",
+              "valid": true,
+              "issues": [],
+              "kind": "xbrl_fact",
+              "accession_number": "0001652044-26-000071",
+              "form": "10-Q",
+              "filed": "2026-07-23",
+              "period_end": "2026-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/0001652044-26-000071-index.htm",
+              "locator": "NetIncome 2026-04-01..2026-06-30"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "d2a17c8c872ddc32665d1deaf10fab1c9dbad49321e8f8d454c362037add0b28",
+      "source": "cache",
+      "input_tokens": 4208,
+      "output_tokens": 754,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "OI&E, net increased $95.3 billion and $121.9 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026, respectively, primarily related to unrealized gains in our equity securities portfolio from SpaceX and a private company."
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "Gain (loss) on equity securities, net 1,286 99,031 11,044 135,946"
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "Gross unrealized gain on non-marketable equity securities accounted for under the measurement alternative $ 670 $ 77,544 $ 10,374 $ 114,161"
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "OI&E of $98.0 billion for the three months ended June 30, 2026 included net gains on equity securities of $99.0 billion, primarily related to unrealized gains in our equity securities portfolio from SpaceX and a private company."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes a qualitative/interpretive assertion that Alphabet's net income for Q2 2026 (quarter ended June 30, 2026) was boosted by gains on equity securities that do not reflect operating performance. This is supported by multiple pieces of evidence:\n\n1. E3 shows that for the three months ended June 30, 2026, \"Gain (loss) on equity securities, net\" was $99,031 million (approximately $99 billion), which is part of \"Other Income (Expense), Net\" - not operating income.\n\n2. E1 and E5 both explicitly state that these gains were \"primarily related to unrealized gains in our equity securities portfolio from SpaceX and a private company.\"\n\n3. E4 provides detail showing that the majority of these gains ($77,544 million for the quarter) were \"Gross unrealized gain on non-marketable equity securities accounted for under the measurement alternative.\"\n\n4. These gains appear in \"Other Income (Expense), Net\" which is separate from operating income, confirming they do not reflect operating performance.\n\n5. The evidence shows net income would have been significantly boosted by these $99 billion in equity security gains, which flowed through to pre-tax income and ultimately net income.\n\nThe claim is interpretive in nature (asserting that these gains \"do not reflect operating performance\") and is supported by the filing's presentation of these gains outside of operating results.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "afe196c60904dd1fe61123441ae10840478c4b0006533ea7d2dda2eea566a3f5",
+      "source": "cache",
+      "input_tokens": 5623,
+      "output_tokens": 443,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did Alphabet actually report positive net income for Q2 2026, or could net income have been negative or zero despite the equity gains?",
+            "search_query": "net income three months ended June 30 2026 consolidated statements of income",
+            "numeric_check": {
+              "metric": "NetIncome",
+              "measure": "level",
+              "period_basis": "quarter",
+              "period_end": "2026-06-30",
+              "comparison": ">",
+              "threshold": 0,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Could the filing indicate that these equity security gains are actually considered part of operating performance or core business results, contradicting the claim that they don't reflect operating performance?",
+            "search_query": "equity securities gains operating performance core business recurring non-GAAP adjusted earnings",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Could the equity gains have been offset by losses or other negative items such that net income was not actually 'boosted' on a net basis?",
+            "search_query": "net income increase decrease compared prior year quarter ended June 30 2026 2025",
+            "numeric_check": {
+              "metric": "NetIncome",
+              "measure": "yoy_growth",
+              "period_basis": "quarter",
+              "period_end": "2026-06-30",
+              "comparison": ">",
+              "threshold": 0,
+              "stated_value": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "4aa062f0beadf947adf2167cd194e93a34b9f6bbbf576b81fe09e149fc3bbfec",
+      "source": "cache",
+      "input_tokens": 10330,
+      "output_tokens": 1057,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E10",
+                "quote": "Net income $ 28,196 $ 112,193 $ 62,736 $ 174,771"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E10",
+                "quote": "Net income $ 28,196 $ 112,193 $ 62,736 $ 174,771"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "OI&E, net increased $95.3 billion and $121.9 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026, respectively, primarily related to unrealized gains in our equity securities portfolio from SpaceX and a private company."
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "Gain (loss) on equity securities, net 1,286 99,031 11,044 135,946"
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "Gross unrealized gain on non-marketable equity securities accounted for under the measurement alternative $ 670 $ 77,544 $ 10,374 $ 114,161"
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "OI&E of $98.0 billion for the three months ended June 30, 2026 included net gains on equity securities of $99.0 billion, primarily related to unrealized gains in our equity securities portfolio from SpaceX and a private company."
+          },
+          {
+            "evidence_id": "E10",
+            "quote": "Net income $ 28,196 $ 112,193 $ 62,736 $ 174,771"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "All three challenges have been refuted or found to have no relevant evidence:\n\nH1 (Was net income positive?) - CHALLENGE_REFUTED: The numeric computation confirms net income for Q2 2026 was $112,193 million (positive), compared to $28,196 million in Q2 2025. This represents a YoY growth of approximately 298%, confirming net income was indeed positive and substantially boosted.\n\nH2 (Are equity gains considered operating performance?) - NO_RELEVANT_EVIDENCE: The retrieved evidence does not indicate that equity security gains are considered part of operating performance or core business results. The original evidence already showed these gains appear in \"Other Income (Expense), Net\" which is separate from operating income, and no new evidence contradicts this.\n\nH3 (Were gains offset by losses?) - CHALLENGE_REFUTED: Net income increased from $28.2 billion in Q2 2025 to $112.2 billion in Q2 2026, an increase of $84 billion. This is consistent with the ~$99 billion in equity security gains reported for the quarter, confirming that net income was indeed \"boosted\" on a net basis despite any offsetting items.\n\nThe claim remains SUPPORTED. The evidence confirms that: (1) Alphabet reported net income of $112.2 billion for Q2 2026; (2) this included $99.0 billion in gains on equity securities; (3) these gains were unrealized gains from investments in SpaceX and a private company; and (4) these gains appear in \"Other Income (Expense), Net\" rather than operating income, supporting the assertion that they \"do not reflect operating performance.\""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Alphabet's net income for the quarter ended June 30, 2026 was boosted by gains on equity securities that do not reflect its operating performance. 2026 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "net income three months ended June 30 2026 consolidated statements of income",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "equity securities gains operating performance core business recurring non-GAAP adjusted earnings",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "net income increase decrease compared prior year quarter ended June 30 2026 2025",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "NetIncome",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": ">",
+            "threshold": 0,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-06-30",
+            "basis": "quarter",
+            "level": 112193000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "NetIncome",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 112193000000.0,
+                "filed": "2026-07-23",
+                "form": "10-Q",
+                "accession_number": "0001652044-26-000071",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 28196000000.0,
+            "prior_period_end": "2025-06-30",
+            "yoy_change": 2.979039580082281,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E12",
+            "E10",
+            "E11"
+          ]
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H3",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "NetIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": ">",
+            "threshold": 0,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-06-30",
+            "basis": "quarter",
+            "level": 112193000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "NetIncome",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 112193000000.0,
+                "filed": "2026-07-23",
+                "form": "10-Q",
+                "accession_number": "0001652044-26-000071",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 28196000000.0,
+            "prior_period_end": "2025-06-30",
+            "yoy_change": 2.979039580082281,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E19",
+            "E10",
+            "E11"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001652044-26-000071",
+        "filed": "2026-07-23",
+        "report_date": "2026-06-30",
+        "primary_document": "goog-20260630.htm",
+        "sha256": "96f56cc3c08ac0b48d07416c5f277cb1d5ba2547e08a54291932e935f81858d4"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001652044-26-000048",
+        "filed": "2026-04-30",
+        "report_date": "2026-03-31",
+        "primary_document": "goog-20260331.htm",
+        "sha256": "b5fbb89b7f18bba819e00eb99ae48c319a75f31a30e0715c35289bfea72ea4bc"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001652044-26-000018",
+        "filed": "2026-02-05",
+        "report_date": "2025-12-31",
+        "primary_document": "goog-20251231.htm",
+        "sha256": "bab3d2601c394c4b603fa4ae30165a65e123a37087a172c8e4146dba0c80ab82"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 802
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:149540-150672",
+      "excerpt": "$ 135,699 50 OI&E, net increased $95.3 billion and $121.9 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026, respectively, primarily related to unrealized gains in our equity securities portfolio from SpaceX and a private company. For additional information, see Note 3 and Note 7 of the Notes to Consolidated Financial Statements included in Item 1 of this Quarterly Report on Form 10-Q. Provision for Income Taxes The following table presents provision for income taxes (in millions, except effective tax rate): Three Months Ended Six Months Ended June 30, June 30, 2025 2026 2025 2026 Income before provision for income taxes $ 33,933 $ 138,753 $ 75,722 $ 216,165 Provision for income taxes $ 5,737 $ 26,560 $ 12,986 $ 41,394 Effective tax rate 16.9 % 19.1 % 17.1 % 19.1 % The effective tax rate increased from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026. The increase is primarily attributed to higher pre-tax earnings from unrealized gains on equity securities that are deferred tax liabilities at the statutory tax rate.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:47906-49039",
+      "excerpt": "able and non-marketable equity securities sold during the period 217 278 435 836 Total gain (loss) on equity securities in other income (expense), net (1) $ 1,286 $ 99,031 $ 11,044 $ 135,946 (1) Excludes income (loss) and impairment from equity method investments. Refer to Note 7 for further details. Cumulative net gains (losses), calculated as the difference between the sales price and purchase price, represent the total net gains (losses) recognized after the initial purchase date. This represents the total economic impact of the investment, regardless of when the gains or losses were previously recognized. Cumulative net gains on equity securities sold were $ 43 million and $ 490 million during the three months ended June 30, 2025 and 2026, respectively, and $ 204 million and $ 992 million during the six months ended June 30, 2025 and 2026, respectively. Derivative Financial Instruments We utilize derivative instruments to manage risks relating to our ongoing business operations, including foreign currencies, interest rates, commodity prices, credit risk, and market prices of certain marketable equity securities.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:148540-149740",
+      "excerpt": "mbination of other factors, none of which were individually significant. Other Bets operating loss increased $1.4 billion from the six months ended June 30, 2025 to the six months ended June 30, 2026. The increase in operating loss was primarily driven by increases in employee compensation expenses, third-party services fees, and a combination of other factors, none of which were individually significant. Other Income (Expense), Net The following table presents OI&E (in millions): Three Months Ended Six Months Ended June 30, June 30, 2025 2026 2025 2026 Interest income $ 1,050 $ 1,430 $ 2,051 $ 2,811 Interest expense (261) (1,278) (295) (1,811) Foreign currency exchange gain (loss), net (69) (160) (175) (14) Gain (loss) on debt securities, net 165 (32) 367 (143) Gain (loss) on equity securities, net 1,286 99,031 11,044 135,946 Income (loss) and impairment from equity method investments, net 419 (35) 397 25 Other 72 (973) 456 (1,115) Other income (expense), net $ 2,662 $ 97,983 $ 13,845 $ 135,699 50 OI&E, net increased $95.3 billion and $121.9 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026, respectively, primarily related to",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:46906-48106",
+      "excerpt": "ities $ 68,687 $ 131,461 (1) As of June 30, 2026, our investments in non-marketable securities accounted for under the measurement alternative primarily consist of our investment in a private company. Gains and Losses on Equity Securities Gains and losses (including impairments), net, for equity securities included in OI&E are summarized below (in millions): Three Months Ended Six Months Ended June 30, June 30, 2025 2026 2025 2026 Gross unrealized gain on non-marketable equity securities accounted for under the measurement alternative $ 670 $ 77,544 $ 10,374 $ 114,161 Gross unrealized loss (including impairments) on non-marketable equity securities accounted for under the measurement alternative ( 454 ) ( 190 ) ( 853 ) ( 582 ) Unrealized net gain (loss) on non-marketable equity securities accounted for under the measurement alternative 216 77,354 9,521 113,579 Unrealized net gain (loss) on marketable and other equity securities 853 21,399 1,088 21,531 Realized net gain (loss) on marketable and non-marketable equity securities sold during the period 217 278 435 836 Total gain (loss) on equity securities in other income (expense), net (1) $ 1,286 $ 99,031 $ 11,044 $ 135,946 (1) Exclu",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:135343-136407",
+      "excerpt": "rmation regarding the equity capital raise and related capped call transactions, see Note 11 of the Notes to Consolidated Financial Statements included in Item 1 of this Quarterly Report on Form 10-Q. • On July 2, 2026, the EC upheld its 2018 decision that certain provisions in Google's Android-related distribution agreements infringed European antitrust laws. The court imposed fine and interest of $5.2 billion, which was previously accrued, was paid in July 2026. • In the second quarter of 2026, we issued senior unsecured notes for net proceeds of $20.3 billion, to be used for general corporate purposes. • OI&E of $98.0 billion for the three months ended June 30, 2026 included net gains on equity securities of $99.0 billion, primarily related to unrealized gains in our equity securities portfolio from SpaceX and a private company. • In the second quarter of 2026, we accrued $2.1 billion in legal charges related to a Stockholm Patent and Market Court decision regarding a private action brought against Google by PriceRunner (a subsidiary of Klarna).",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:44542-45621",
+      "excerpt": "n fair value are recorded in other income (expense), net (OI&E). The fair value option was elected for these securities to align with the unrealized gains and losses from related derivative contracts. The following table summarizes gains and losses for debt securities, reflected as a component of OI&E (in millions): Three Months Ended Six Months Ended June 30, June 30, 2025 2026 2025 2026 Unrealized gain (loss) on fair value option debt securities $ 130 $ 28 $ 227 $ ( 114 ) Gross realized gain on debt securities 84 65 350 148 Gross realized loss on debt securities ( 63 ) ( 105 ) ( 238 ) ( 138 ) (Increase) decrease in allowance for credit losses 14 ( 20 ) 28 ( 39 ) Total gain (loss) on debt securities recognized in other income (expense), net $ 165 $ ( 32 ) $ 367 $ ( 143 ) Non-Marketable Securities Our non-marketable securities primarily consist of non-marketable equity securities accounted for under the measurement alternative. The carrying value is measured at the total initial cost plus the cumulative net upward and downward adjustments (including impairments).",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:4916-6103",
+      "excerpt": "s C stock outstanding. 1 Table of Contents Alphabet Inc. Alphabet Inc. Form 10-Q For the Quarterly Period Ended June 30, 2026 TABLE OF CONTENTS Page No. Note About Forward-Looking Statements 3 PART I. FINANCIAL INFORMATION Item 1 Financial Statements 4 Consolidated Balance Sheets - December 31, 2025 and June 30, 2026 4 Consolidated Statements of Income - Three and Six Months Ended June 30 , 2025 and 2026 5 Consolidated Statements of Comprehensive Income - Three and Six Months Ended June 30 , 2025 and 2026 6 Consolidated Statements of Stockholders' Equity - Three and Six Months Ended June 30 , 2025 and 2026 7 Consolidated Statements of Cash Flows - Six Months Ended June 30 , 2025 and 2026 9 Notes to Consolidated Financial Statements 10 Item 2 Management’s Discussion and Analysis of Financial Condition and Results of Operations 42 Item 3 Quantitative and Qualitative Disclosures About Market Risk 56 Item 4 Controls and Procedures 56 PART II. OTHER INFORMATION Item 1 Legal Proceedings 57 Item 1A Risk Factors 57 Item 2 Unregistered Sales of Equity Securities and Use of Proceeds 60 Item 5 Other Information 60 Item 6 Exhibits 61 Signatures 64 2 Table of Contents Alphabet Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:147698-148740",
+      "excerpt": "d June 30, 2025 to the three and six months ended June 30, 2026, respectively. The increase in operating income was primarily driven by an increase in revenues, partially offset by an increase in TAC. Google Cloud Google Cloud operating income increased $6.0 billion and $10.4 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026, respectively. The increase in operating income was primarily driven by an increase in revenues, partially offset by increases in usage costs for technical infrastructure and employee compensation expenses. Other Bets Other Bets operating loss increased $553 million from the three months ended June 30, 2025 to the three months ended June 30, 2026. The increase in operating loss was primarily driven by an increase in employee compensation expenses and a combination of other factors, none of which were individually significant. Other Bets operating loss increased $1.4 billion from the six months ended June 30, 2025 to the six months ended June 30, 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:146829-147898",
+      "excerpt": "e they represent Alphabet-level activities. For further details on our segments, see Note 15 of the Notes to Consolidated Financial Statements included in Item 1 of this Quarterly Report on Form 10-Q. The following table presents segment operating income (loss) (in millions): Three Months Ended Six Months Ended June 30, June 30, 2025 2026 2025 2026 Operating income (loss): Google Services $ 33,063 $ 39,544 $ 65,745 $ 80,133 Google Cloud 2,826 8,814 5,003 15,412 Other Bets (1,246) (1,799) (2,472) (3,899) Alphabet-level activities (1) (3,372) (5,789) (6,399) (11,180) Total income from operations $ 31,271 $ 40,770 $ 61,877 $ 80,466 (1) Alphabet-level activities primarily reflect expenses related to our shared AI research and development. Google Services Google Services operating income increased $6.5 billion and $14.4 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026, respectively. The increase in operating income was primarily driven by an increase in revenues, partially offset by an increase in TAC.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": "2026-04-01",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/0001652044-26-000071-index.htm",
+      "locator": "NetIncome 2026-04-01..2026-06-30",
+      "excerpt": null,
+      "values": [
+        112193000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": "2025-04-01",
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/0001652044-26-000071-index.htm",
+      "locator": "NetIncome 2025-04-01..2025-06-30",
+      "excerpt": null,
+      "values": [
+        28196000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "GOOGL",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": null,
+      "locator": "NetIncome level quarter @ 2026-06-30",
+      "excerpt": null,
+      "values": [
+        112193000000.0,
+        28196000000.0,
+        2.979039580082281
+      ],
+      "unit": "USD",
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000048",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm",
+      "locator": "10-Q 0001652044-26-000048:107608-108472",
+      "excerpt": "OI&E of $37.7 billion for the three months ended March 31, 2026 included net gains on equity securities of $36.9 billion, primarily related to unrealized gains on our non-marketable equity securities. • Operating cash flow was $45.8 billion for the three months ended March 31, 2026. • Capital expenditures, which primarily reflected investments in technical infrastructure, were $35.7 billion for the three months ended March 31, 2026. • As of March 31, 2026, we had 194,668 employees. We are monitoring ongoing developments surrounding geopolitical tension, international trade, and the macroeconomic environment. As a result, we may experience direct and indirect effects on our business, operations, and financial results. Our past results may not be indicative of our future performance, and our financial results may differ materially from historical trends.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000048",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm",
+      "locator": "10-Q 0001652044-26-000048:146089-147231",
+      "excerpt": "ful or will not harm our reputation, financial condition, and operating results. ITEM 2. UNREGISTERED SALES OF EQUITY SECURITIES AND USE OF PROCEEDS Issuer Purchases of Equity Securities None. ITEM 5. OTHER INFORMATION 10b5-1 Trading Plans During the quarter ended March 31, 2026, the following Section 16 officer terminated a “Rule 10b5-1 trading arrangement” (as defined in Item 408 of Regulation S-K of the Exchange Act): • Ruth M. Porat , President and Chief Investment Officer , Alphabet and Google, terminated a trading plan on March 3, 2026 that was originally adopted on November 29, 2025. The trading plan was scheduled to be in effect until March 2, 2027 to sell up to 154,486 shares (gross, plus any dividend equivalent units) of Class C Capital Stock issued upon the vesting of Ruth's Alphabet 2021 Performance Stock Units, as adjusted based on performance (shares sold are net of tax withholding). There were no “non-Rule 10b5-1 trading arrangements” (as defined in Item 408 of Regulation S-K of the Exchange Act) adopted , modified, or terminated during the quarter ended March 31, 2026 by our directors and Section 16 officers.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:246151-247351",
+      "excerpt": "tables present fair values and gross unrealized gains and losses recorded to AOCI, less any expected credit losses, aggregated by investment category (in millions): 62. Table of Contents Alphabet Inc. As of December 31, 2024 Adjusted Cost Gross Unrealized Gains Gross Unrealized Losses Fair Value Time deposits $ 2,217 $ 0 $ 0 $ 2,217 Government bonds 27,551 83 ( 214 ) 27,420 Corporate debt securities 18,300 79 ( 222 ) 18,157 Mortgage-backed and asset-backed securities 14,437 63 ( 385 ) 14,115 Total investments with fair value change reflected in other comprehensive income $ 62,505 $ 225 $ ( 821 ) $ 61,909 As of December 31, 2025 Adjusted Cost Gross Unrealized Gains Gross Unrealized Losses Fair Value Time deposits $ 3,353 $ 0 $ 0 $ 3,353 Government bonds 49,087 443 ( 26 ) 49,504 Corporate debt securities 18,346 242 ( 32 ) 18,556 Mortgage-backed and asset-backed securities 14,337 174 ( 128 ) 14,383 Total investments with fair value change reflected in other comprehensive income $ 85,123 $ 859 $ ( 186 ) $ 85,796 The following tables present fair values and gross unrealized losses recorded to AOCI, aggregated by investment category and the length of time that individual securities have",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:154535-155698",
+      "excerpt": "the sale of interests in consolidated entities. Cash used in financing activities consists primarily of repayments of debt, net payments related to stock-based award activities, and dividend payments. Net cash provided by financing activities for the six months ended June 30, 2026 compared to net cash used in financing activities for the six months ended June 30, 2025 was primarily due to the issuance of common stock, a decrease in repurchases of stock, an increase in the issuance of debt, and the issuance of mandatory convertible preferred stock. Liquidity and Material Cash Requirements We expect existing cash, cash equivalents, short-term marketable securities, and cash flows from operations and financing activities to continue to be sufficient to fund our operating activities and cash commitments for investing and financing activities for at least the next 12 months, and thereafter for the foreseeable future. Capital Expenditures and Leases We make investments in land, buildings, and servers and network equipment through purchases of property and equipment and lease arrangements to provide capacity for the growth of our services and products.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:159914-161040",
+      "excerpt": "curities. For additional information, see Note 3 and Note 7 of the Notes to Consolidated Financial Statements included in Item 8 of this Annual Report on Form 10-K. 36. Table of Contents Alphabet Inc. Provision for Income Taxes The following table presents provision for income taxes (in millions, except effective tax rate): Year Ended December 31, 2024 2025 Income before provision for income taxes $ 119,815 $ 158,826 Provision for income taxes $ 19,697 $ 26,656 Effective tax rate 16.4 % 16.8 % The effective tax rate increased from 2024 to 2025. This increase was primarily due to a decrease in the US Federal Foreign Derived Intangible Income tax deduction, a non-deductible EC fine and legal settlement in the US, partially offset by changes in prior period tax positions. Changes to US tax law enacted on July 4, 2025, allow for immediate expensing of domestic research and experimentation costs, accelerated depreciation on eligible capital expenditures, and other tax law changes impacting 2025 with certain changes effective in 2026. These changes are reflected in our results for the year ended December 31, 2025 .",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:137955-139031",
+      "excerpt": "rtising Google Search & other Google Search & other revenues increased $9.1 billion and $18.8 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026. The overall growth was driven by interrelated factors including increases in search queries resulting from growth in user adoption and usage on mobile devices; growth in advertiser spending; and improvements we have made in ad formats and delivery. YouTube ads YouTube ads revenues increased $1.3 billion and $2.2 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026. The growth was driven by our direct response advertising products followed by our brand advertising products, both of which benefited from increased spending by our advertisers. Google Network Google Network revenues decreased $51 million and $336 million from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026, primarily due to a decrease in AdSense revenues, partially offset by an increase in AdMob revenues.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "GOOGL",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": null,
+      "locator": "NetIncome yoy_growth quarter @ 2026-06-30",
+      "excerpt": null,
+      "values": [
+        112193000000.0,
+        28196000000.0,
+        2.979039580082281
+      ],
+      "unit": "ratio",
+      "evidence_id": "E19"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "OI&E, net increased $95.3 billion and $121.9 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026, respectively, primarily related to unrealized gains in our equity securities portfolio from SpaceX and a private company.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:149540-150672"
+    },
+    {
+      "evidence_id": "E3",
+      "quote": "Gain (loss) on equity securities, net 1,286 99,031 11,044 135,946",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:148540-149740"
+    },
+    {
+      "evidence_id": "E4",
+      "quote": "Gross unrealized gain on non-marketable equity securities accounted for under the measurement alternative $ 670 $ 77,544 $ 10,374 $ 114,161",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:46906-48106"
+    },
+    {
+      "evidence_id": "E5",
+      "quote": "OI&E of $98.0 billion for the three months ended June 30, 2026 included net gains on equity securities of $99.0 billion, primarily related to unrealized gains in our equity securities portfolio from SpaceX and a private company.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:135343-136407"
+    },
+    {
+      "evidence_id": "E10",
+      "quote": "Net income $ 28,196 $ 112,193 $ 62,736 $ 174,771",
+      "valid": true,
+      "issues": [],
+      "kind": "xbrl_fact",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/0001652044-26-000071-index.htm",
+      "locator": "NetIncome 2026-04-01..2026-06-30"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 20161,
+    "output": 2254
+  },
+  "latency_ms": 9,
+  "estimated_cost_usd": 0.094293,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 2,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

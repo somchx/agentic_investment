@@ -1,0 +1,852 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-GOOGL-07:c6d62da9",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-GOOGL-07",
+    "company": "GOOGL",
+    "claim": "The increase in Alphabet's cost of revenues in 2025 was driven mainly by higher technical infrastructure costs, including depreciation.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E4",
+            "quote": "The increase in other cost of revenues from 2024 to 2025 was primarily due to increases in content acquisition costs, largely for YouTube, depreciation expense, and other technical infrastructure operations costs."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "Cost of revenues was $162.5 billion, an increase of 11% ye ar over year, primarily driven by increases in TAC, content acquisition costs, and depreciation expense."
+          },
+          {
+            "evidence_id": "E6",
+            "quote": "Other cost of revenues primarily includes: ◦ content acquisition costs, which are payments to content providers from whom we license video and other content for distribution, primarily related to YouTube (we pay fees to these content providers based on revenues generated, subscriber counts, or a flat fee); ◦ depreciation expense related to our technical infrastructure; ◦ employee compensation expenses related to our technical infrastructure and other operations such as content review and customer and product support; ◦ inventory and other costs related to the devices we sell; and ◦ other technical infrastructure operations costs, including network capacity, energy, and equipment costs."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that the increase in Alphabet's cost of revenues in 2025 was driven mainly by higher technical infrastructure costs, including depreciation. This is an interpretive claim about the drivers of cost increases.\n\nEvidence E5 directly supports this claim, stating that \"Cost of revenues was $162.5 billion, an increase of 11% year over year, primarily driven by increases in TAC, content acquisition costs, and depreciation expense.\" While TAC and content acquisition costs are also mentioned, depreciation expense is explicitly listed as one of the primary drivers.\n\nEvidence E4 provides additional support by stating \"The increase in other cost of revenues from 2024 to 2025 was primarily due to increases in content acquisition costs, largely for YouTube, depreciation expense, and other technical infrastructure operations costs.\" This confirms that both depreciation expense and other technical infrastructure operations costs were primary drivers.\n\nEvidence E6 clarifies that depreciation expense is specifically \"related to our technical infrastructure\" and that \"other technical infrastructure operations costs\" include \"network capacity, energy, and equipment costs,\" confirming these are indeed technical infrastructure costs.\n\nWhile the evidence shows that TAC and content acquisition costs were also significant drivers, the claim uses \"mainly\" which allows for multiple drivers. The evidence confirms that technical infrastructure costs (including depreciation and operations costs) were among the primary drivers of the cost of revenues increase in 2025, supporting the claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Was TAC (Traffic Acquisition Costs) actually the largest driver of the cost of revenues increase in 2025, making the claim that technical infrastructure costs were the 'main' driver incorrect?",
+          "search_query": "TAC traffic acquisition costs 2025 2024 increase billion cost of revenues breakdown components",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Did content acquisition costs (primarily YouTube) increase more than technical infrastructure costs including depreciation, contradicting the claim that technical infrastructure was the main driver?",
+          "search_query": "content acquisition costs YouTube 2025 2024 increase billion year over year change",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Does the filing provide a quantitative breakdown showing that technical infrastructure costs (depreciation plus operations costs) were NOT the largest component of the cost of revenues increase?",
+          "search_query": "cost of revenues 2025 2024 breakdown depreciation technical infrastructure TAC content acquisition dollar amounts billion",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "TAC traffic acquisition costs 2025 2024 increase billion cost of revenues breakdown components",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "content acquisition costs YouTube 2025 2024 increase billion year over year change",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "cost of revenues 2025 2024 breakdown depreciation technical infrastructure TAC content acquisition dollar amounts billion",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "Cost of revenues increased $16.2 billion from 2024 to 2025 due to an increase in other cost of revenues and TAC of $11.2 billion and $5.0 billion, respectively.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001652044-26-000018",
+              "form": "10-K",
+              "filed": "2026-02-05",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+              "locator": "10-K 0001652044-26-000018:154235-155268"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "Cost of revenues increased $16.2 billion from 2024 to 2025 due to an increase in other cost of revenues and TAC of $11.2 billion and $5.0 billion, respectively.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001652044-26-000018",
+              "form": "10-K",
+              "filed": "2026-02-05",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+              "locator": "10-K 0001652044-26-000018:154235-155268"
+            },
+            {
+              "evidence_id": "E4",
+              "quote": "The increase in other cost of revenues from 2024 to 2025 was primarily due to increases in content acquisition costs, largely for YouTube, depreciation expense, and other technical infrastructure operations costs.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001652044-26-000018",
+              "form": "10-K",
+              "filed": "2026-02-05",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+              "locator": "10-K 0001652044-26-000018:155068-156245"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "45e4ef0a3940ab9e6a0c13fbcad9dd83037cc381a9ab73d9189821c6d1c6314b",
+      "source": "cache",
+      "input_tokens": 3692,
+      "output_tokens": 731,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E4",
+            "quote": "The increase in other cost of revenues from 2024 to 2025 was primarily due to increases in content acquisition costs, largely for YouTube, depreciation expense, and other technical infrastructure operations costs."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "Cost of revenues was $162.5 billion, an increase of 11% ye ar over year, primarily driven by increases in TAC, content acquisition costs, and depreciation expense."
+          },
+          {
+            "evidence_id": "E6",
+            "quote": "Other cost of revenues primarily includes: ◦ content acquisition costs, which are payments to content providers from whom we license video and other content for distribution, primarily related to YouTube (we pay fees to these content providers based on revenues generated, subscriber counts, or a flat fee); ◦ depreciation expense related to our technical infrastructure; ◦ employee compensation expenses related to our technical infrastructure and other operations such as content review and customer and product support; ◦ inventory and other costs related to the devices we sell; and ◦ other technical infrastructure operations costs, including network capacity, energy, and equipment costs."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that the increase in Alphabet's cost of revenues in 2025 was driven mainly by higher technical infrastructure costs, including depreciation. This is an interpretive claim about the drivers of cost increases.\n\nEvidence E5 directly supports this claim, stating that \"Cost of revenues was $162.5 billion, an increase of 11% year over year, primarily driven by increases in TAC, content acquisition costs, and depreciation expense.\" While TAC and content acquisition costs are also mentioned, depreciation expense is explicitly listed as one of the primary drivers.\n\nEvidence E4 provides additional support by stating \"The increase in other cost of revenues from 2024 to 2025 was primarily due to increases in content acquisition costs, largely for YouTube, depreciation expense, and other technical infrastructure operations costs.\" This confirms that both depreciation expense and other technical infrastructure operations costs were primary drivers.\n\nEvidence E6 clarifies that depreciation expense is specifically \"related to our technical infrastructure\" and that \"other technical infrastructure operations costs\" include \"network capacity, energy, and equipment costs,\" confirming these are indeed technical infrastructure costs.\n\nWhile the evidence shows that TAC and content acquisition costs were also significant drivers, the claim uses \"mainly\" which allows for multiple drivers. The evidence confirms that technical infrastructure costs (including depreciation and operations costs) were among the primary drivers of the cost of revenues increase in 2025, supporting the claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "ea76de2bf2bd32fabdaccf2ea85577c9a1a8e7d7caa5390e5558dbb1e1a2c99c",
+      "source": "live",
+      "input_tokens": 5089,
+      "output_tokens": 320,
+      "stop_reason": "tool_use",
+      "latency_ms": 5995,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Was TAC (Traffic Acquisition Costs) actually the largest driver of the cost of revenues increase in 2025, making the claim that technical infrastructure costs were the 'main' driver incorrect?",
+            "search_query": "TAC traffic acquisition costs 2025 2024 increase billion cost of revenues breakdown components",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Did content acquisition costs (primarily YouTube) increase more than technical infrastructure costs including depreciation, contradicting the claim that technical infrastructure was the main driver?",
+            "search_query": "content acquisition costs YouTube 2025 2024 increase billion year over year change",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Does the filing provide a quantitative breakdown showing that technical infrastructure costs (depreciation plus operations costs) were NOT the largest component of the cost of revenues increase?",
+            "search_query": "cost of revenues 2025 2024 breakdown depreciation technical infrastructure TAC content acquisition dollar amounts billion",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "e63f5c93b8ebffa54c561302650a3e04e12adedd5bf69e8ba043c1ea5ba0aa4c",
+      "source": "live",
+      "input_tokens": 8893,
+      "output_tokens": 1058,
+      "stop_reason": "tool_use",
+      "latency_ms": 17387,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "Cost of revenues increased $16.2 billion from 2024 to 2025 due to an increase in other cost of revenues and TAC of $11.2 billion and $5.0 billion, respectively."
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "Cost of revenues increased $16.2 billion from 2024 to 2025 due to an increase in other cost of revenues and TAC of $11.2 billion and $5.0 billion, respectively."
+              },
+              {
+                "evidence_id": "E4",
+                "quote": "The increase in other cost of revenues from 2024 to 2025 was primarily due to increases in content acquisition costs, largely for YouTube, depreciation expense, and other technical infrastructure operations costs."
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E7",
+            "quote": "Cost of revenues increased $16.2 billion from 2024 to 2025 due to an increase in other cost of revenues and TAC of $11.2 billion and $5.0 billion, respectively."
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "The increase in other cost of revenues from 2024 to 2025 was primarily due to increases in content acquisition costs, largely for YouTube, depreciation expense, and other technical infrastructure operations costs."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "Cost of revenues was $162.5 billion, an increase of 11% ye ar over year, primarily driven by increases in TAC, content acquisition costs, and depreciation expense."
+          },
+          {
+            "evidence_id": "E6",
+            "quote": "depreciation expense related to our technical infrastructure"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After investigating potential challenges, the initial SUPPORTED verdict remains correct.\n\nH1 (TAC as largest driver): CHALLENGE_REFUTED. Evidence E7 clearly shows that TAC increased by $5.0 billion while \"other cost of revenues\" increased by $11.2 billion from 2024 to 2025. Therefore, TAC was NOT the largest driver of the cost of revenues increase - \"other cost of revenues\" was more than twice as large.\n\nH2 (Content acquisition costs larger than technical infrastructure): NO_RELEVANT_EVIDENCE. While the evidence mentions content acquisition costs as one of the drivers, there is no quantitative breakdown showing the specific dollar amounts for content acquisition costs versus technical infrastructure costs (depreciation + operations costs) that would allow us to determine which was larger.\n\nH3 (Technical infrastructure NOT the largest component): CHALLENGE_REFUTED. Evidence E7 shows that \"other cost of revenues\" (which increased $11.2 billion) was the largest component of the $16.2 billion total increase. Evidence E4 states that this $11.2 billion increase in \"other cost of revenues\" was \"primarily due to increases in content acquisition costs, largely for YouTube, depreciation expense, and other technical infrastructure operations costs.\" Since \"other cost of revenues\" includes both technical infrastructure costs (depreciation + operations) AND content acquisition costs, and the filing states these were the primary drivers, the claim that technical infrastructure costs (including depreciation) were a main driver is supported.\n\nThe claim uses \"mainly\" which appropriately allows for multiple significant drivers. The evidence confirms that technical infrastructure costs (depreciation expense and other technical infrastructure operations costs) were among the primary drivers of the cost of revenues increase, alongside content acquisition costs and TAC. The verdict remains SUPPORTED."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "The increase in Alphabet's cost of revenues in 2025 was driven mainly by higher technical infrastructure costs, including depreciation. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "TAC traffic acquisition costs 2025 2024 increase billion cost of revenues breakdown components",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "content acquisition costs YouTube 2025 2024 increase billion year over year change",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "cost of revenues 2025 2024 breakdown depreciation technical infrastructure TAC content acquisition dollar amounts billion",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001652044-26-000018",
+        "filed": "2026-02-05",
+        "report_date": "2025-12-31",
+        "primary_document": "goog-20251231.htm",
+        "sha256": "bab3d2601c394c4b603fa4ae30165a65e123a37087a172c8e4146dba0c80ab82"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001652044-25-000091",
+        "filed": "2025-10-30",
+        "report_date": "2025-09-30",
+        "primary_document": "goog-20250930.htm",
+        "sha256": "57df4d84196b2229b19b397a415de411e01c29326a6f8980d5d37ddb93c9005e"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001652044-25-000062",
+        "filed": "2025-07-24",
+        "report_date": "2025-06-30",
+        "primary_document": "goog-20250630.htm",
+        "sha256": "6033115a6e513f35d04cc6b2831886f6ad0e22d358c5b8a00159058f692f7ef0"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 746
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:132034-133118",
+      "excerpt": "over time. Certain of these revenues have been growing at a rate higher than our advertising revenues, becoming a larger percentage of our consolidated revenues, and we expect this trend to continue. The margins on these revenues vary significantly and are generally lower than the margins on our advertising revenues. Increased Investment in Technical Infrastructure: We continue to invest in capital expenditures as we scale our technical infrastructure, in particular for AI, to meet the demand of our users and enterprise customers and to support research internally. We invested heavily in capital expenditures in 2025 and in 2026, we expect to significantly increase , relative to 2025, our i nvestment in our technical infrastructure, including servers and network equipment, and data centers. The costs associated with operating our technical infrastructure - depreciation, energy, equipment, and network capacity - are expected to significantly increase as developing and serving AI offerings require more compute power than our historical consumer and enterprise offerings.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000091",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/goog-20250930.htm",
+      "locator": "10-Q 0001652044-25-000091:108538-109615",
+      "excerpt": "y information. (2) For additional information on the calculation of diluted EPS, see Note 12 of the Notes to Consolidated Financial Statements included in Item 1 of this Quarterly Report on Form 10-Q. • Revenues were $102.3 billion, an increase of 16% year over year, primarily driven by an increase in Google Services revenues of $10.5 billion, or 14%, and an increase in Google Cloud revenues of $3.8 billion, or 34%. • Total constant currency revenues, which exclude the effect of hedging, increased 15% y ear over year. • Cost of revenues was $41.4 billion, an increase of 13% year over year, primarily driven by increases in content acquisition costs, TAC, depreciation expense, and other technical infrastructure operations costs. 39 • Operating expenses were $29.7 billion, an increase of 28% year over year, primarily driven by increases in expenses related to legal and other matters, employee compensation expenses, and depreciation expense. Other Information: • On September 5, 2025, the EC announced its decision that Google had infringed European competition laws.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000091",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/goog-20250930.htm",
+      "locator": "10-Q 0001652044-25-000091:122407-123196",
+      "excerpt": "rates on Google Search & other and Google Network revenues were substantially consistent from the three and nine months ended September 30, 2024 to the three and nine months ended September 30, 2025. The increase in other cost of revenues from the three months ended September 30, 2024 to the three months ended September 30, 2025 was primarily due to increases in content acquisition costs, largely for YouTube, depreciation expense, other technical infrastructure operations costs, and devices costs. The increase in other cost of revenues from the nine months ended September 30, 2024 to the nine months ended September 30, 2025 was primarily due to increases in content acquisition costs, largely for YouTube, depreciation expense, and other technical infrastructure operations costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:155068-156245",
+      "excerpt": "illion and $5.0 billion, respectively. The increase in TAC from 2024 to 2025 was largely due to an increase in TAC paid to distribution partners, primarily driven by growth in revenues subject to TAC. The TAC rate decreased from 20.7% to 20.3% from 2024 to 2025, primarily due to a revenue mix shift from Google Network properties to Google Search & other properties. The TAC rates on Google Search & other and Google Network revenues were substantially consistent from 2024 to 2025. The increase in other cost of revenues from 2024 to 2025 was primarily due to increases in content acquisition costs, largely for YouTube, depreciation expense, and other technical infrastructure operations costs. Research and Development The following table presents research and development expenses (in millions, except percentages): Year Ended December 31, 2024 2025 Research and development expenses $ 49,326 $ 61,087 Research and development expenses as a percentage of revenues 14 % 15 % Research and development expenses increased $11.8 billion from 2024 to 2025, primarily driven by increases in employee compensation expenses of $6.9 billion and depreciation expense of $2.4 billion.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:148027-149134",
+      "excerpt": "(1) For additional information on the calculation of diluted net income per share, see Note 12 of the Notes to Consolidated Financial Statements included in Item 8 of this Annual Report on Form 10-K. • Revenues were $402.8 billion, an increase of 15% year over year, primarily driven by an increase in Google Services revenues of $37.8 billion, or 12%, and an increase in Google Cloud revenues of $15.5 billion, or 36%. • Cost of revenues was $162.5 billion, an increase of 11% ye ar over year, primarily driven by increases in TAC, content acquisition costs, and depreciation expense. • Operating ex penses were $111.3 billion, an increase of 22% ye ar over year, primarily driven by increases in employee compensation expenses, expenses related to legal and other matters, and depreciation expense. Other Information: 32. Table of Contents Alphabet Inc. • In 2025, we entered into definitive agreements to acquire Wiz, a leading cloud security platform, for $32.0 billion, and Intersect, a provider of data center and energy infrastructure solutions, for $4.8 billion in cash plus the assumption of debt.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000091",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/goog-20250930.htm",
+      "locator": "10-Q 0001652044-25-000091:103523-104644",
+      "excerpt": "Cost of Revenues Cost of revenues is comprised of TAC and other costs of revenues. • TAC includes: ◦ amounts paid to our distribution partners who make available our search access points and services. Our distribution partners include browser providers, mobile carriers, original equipment manufacturers, and software developers; and ◦ amounts paid to Google Network partners primarily for ads displayed on their properties. • Other cost of revenues primarily includes: ◦ content acquisition costs, which are payments to content providers from whom we license video and other content for distribution, primarily related to YouTube (we pay fees to these content providers based on revenues generated, subscriber counts, or a flat fee); ◦ depreciation expense related to our technical infrastructure; ◦ employee compensation expenses related to our technical infrastructure and other operations such as content review and customer and product support; ◦ inventory and other costs related to the devices we sell; and ◦ other technical infrastructure operations costs, including network capacity, energy, and equipment costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:154235-155268",
+      "excerpt": "% 17 % Other Americas (1) 6 % 6 % Hedging gains (losses) 0 % 0 % (1) Regions represent Europe, the Middle East, and Africa (EMEA); Asia-Pacific (APAC); and Canada and Latin America (\"Other Americas\"). For additional information, see Note 2 of the Notes to Consolidated Financial Statements included in Item 8 of this Annual Report on Form 10-K. Costs and Expenses 34. Table of Contents Alphabet Inc. Cost of Revenues The following table presents cost of revenues, including TAC (in millions, except percentages): Year Ended December 31, 2024 2025 TAC $ 54,900 $ 59,926 Other cost of revenues 91,406 102,609 Total cost of revenues $ 146,306 $ 162,535 Total cost of revenues as a percentage of revenues 42 % 40 % Cost of revenues increased $16.2 billion from 2024 to 2025 due to an increase in other cost of revenues and TAC of $11.2 billion and $5.0 billion, respectively. The increase in TAC from 2024 to 2025 was largely due to an increase in TAC paid to distribution partners, primarily driven by growth in revenues subject to TAC.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000091",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/goog-20250930.htm",
+      "locator": "10-Q 0001652044-25-000091:120672-121780",
+      "excerpt": "n. Other Americas revenue growth was unfavorably affected by changes in foreign currency exchange rates, primarily due to the U.S. dollar strengthening relative to the Brazilian real and Mexican peso. Costs and Expenses 43 Cost of Revenues The following table presents cost of revenues, including TAC (in millions, except percentages): Three Months Ended Nine Months Ended September 30, September 30, 2024 2025 2024 2025 TAC $ 13,719 $ 14,876 $ 40,052 $ 43,329 Other cost of revenues 22,755 26,493 65,641 73,439 Total cost of revenues $ 36,474 $ 41,369 $ 105,693 $ 116,768 Total cost of revenues as a percentage of revenues 41 % 40 % 42 % 40 % Cost of revenues increased $4.9 billion from the three months ended September 30, 2024 to the three months ended September 30, 2025 due to an increase in other cost of revenues and TAC of $3.7 billion and $1.2 billion, respectively. Cost of revenues increased $11.1 billion from the nine months ended September 30, 2024 to the nine months ended September 30, 2025 due to an increase in other cost of revenues and TAC of $7.8 billion and $3.3 billion, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000062",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000062/goog-20250630.htm",
+      "locator": "10-Q 0001652044-25-000062:117211-118283",
+      "excerpt": "e. Other Americas revenue growth was unfavorably affected by changes in foreign currency exchange rates, primarily due to the U.S. dollar strengthening relative to the Brazilian real and Mexican peso. Costs and Expenses 43 Cost of Revenues The following table presents cost of revenues, including TAC (in millions, except percentages): Three Months Ended Six Months Ended June 30, June 30, 2024 2025 2024 2025 TAC $ 13,387 $ 14,705 $ 26,333 $ 28,453 Other cost of revenues 22,120 24,334 42,886 46,947 Total cost of revenues $ 35,507 $ 39,039 $ 69,219 $ 75,400 Total cost of revenues as a percentage of revenues 42 % 41 % 42 % 40 % Cost of revenues increased $3.5 billion from the three months ended June 30, 2024 to the three months ended June 30, 2025 due to an increase in other cost of revenues and TAC of $2.2 billion and $1.3 billion, respectively. Cost of revenues increased $6.2 billion from the six months ended June 30, 2024 to the six months ended June 30, 2025 due to an increase in other cost of revenues and TAC of $4.1 billion and $2.1 billion, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000062",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000062/goog-20250630.htm",
+      "locator": "10-Q 0001652044-25-000062:122998-124030",
+      "excerpt": "ely, and $174 million an d $148 million for the six months ended June 30, 2024 and 2025, respectively. Alphabet-level activities include charges related to employee severance and office space charges. Google Services Google Services operating income increased $3.4 billion from the three months ended June 30, 2024 to the three months ended June 30, 2025. The increase in operating income was primarily driven by an increase in revenues, partially offset by increases in expenses related to legal and other matters, TAC, and content acquisition costs. Google Services operating income increased $8.2 billion from the six months ended June 30, 2024 to the six months ended June 30, 2025. The increase in operating income was primarily driven by an increase in revenues, partially offset by increases in TAC and content acquisition costs. Google Cloud Google Cloud operating income increased $1.7 billion and $2.9 billion from the three and six months ended June 30, 2024 to the three and six months ended June 30, 2025, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:158600-159258",
+      "excerpt": "partially offset by an increase in expenses related to legal and other matters, TAC, and content acquisition costs. Google Cloud Google Cloud operating income increased $7.8 billion from 2024 to 2025. The increase in operating income was primarily driven by an increase in revenues, partially offset by increases in usage costs for technical infrastructure and employee compensation expenses. Other Bets Other Bets operating loss increased $3.1 billion from 2024 to 2025. The increase in operating loss was primarily driven by an increase in employee compensation expenses largely due to an increase in a valuation-based compensation charge related to Waymo.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000062",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000062/goog-20250630.htm",
+      "locator": "10-Q 0001652044-25-000062:104990-106130",
+      "excerpt": "y information. (2) For additional information on the calculation of diluted EPS, see Note 12 of the Notes to Consolidated Financial Statements included in Item 1 of this Quarterly Report on Form 10-Q. • R evenues were $96.4 billion, an increase of 14% year over year, primarily driven by an increase in Google Services revenues of $8.6 billion, or 12%, and an increase in Google Cloud revenues of $3.3 billion, or 32%. • Total constant currency revenues, which exclude the effect of hedging, increased 13% y ear over year. • Cost of revenues was $39.0 billion, an increase of 10% year over year, primarily driven by increases in TAC, content acquisition costs, and depreciation expense. 39 • Operating expenses were $26.1 billion, an increase of 20% year over year, primarily driven by increases in expenses related to legal and other matters, employee compensation expenses, and depreciation expense. Other Information: • General and administrative expenses of $5.2 billion for the three months ended June 30, 2025 included a $1.4 billion charge in our Google Services segment related to a settlement in principle of certain legal matters.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:143025-144225",
+      "excerpt": "s may not directly correlate with changes in headcount, due to factors such as annual SBC awards that vest over time. Cost of Revenues Cost of revenues is comprised of TAC and other costs of revenues. • TAC includes: ◦ amounts paid to our distribution partners who make available our search access points and other ad-supported services. Our distribution partners include browser providers, mobile carriers, original equipment manufacturers, and software developers; and ◦ amounts paid to Google Network partners primarily for ads displayed on their properties. • Other cost of revenues primarily includes: ◦ content acquisition costs, which are payments to content providers from whom we license video and other content for distribution, primarily related to YouTube (we pay fees to these content providers based on revenues generated, subscriber counts, or a flat fee); ◦ depreciation expense, primarily related to our technical infrastructure; ◦ employee compensation expenses related to our technical infrastructure and other operations such as content review and customer and product support; ◦ inventory and other costs related to the devices we sell; and ◦ other technical infrastructure opera",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000062",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000062/goog-20250630.htm",
+      "locator": "10-Q 0001652044-25-000062:99865-101065",
+      "excerpt": "tly correlate with changes in headcount due to factors such as annual SBC awards that generally vest over four years. Cost of Revenues Cost of revenues is comprised of TAC and other costs of revenues. • TAC includes: ◦ amounts paid to our distribution partners who make available our search access points and services. Our distribution partners include browser providers, mobile carriers, original equipment manufacturers, and software developers; and ◦ amounts paid to Google Network partners primarily for ads displayed on their properties. • Other cost of revenues primarily includes: ◦ content acquisition costs, which are payments to content providers from whom we license video and other content for distribution, primarily related to YouTube (we pay fees to these content providers based on revenues generated, subscriber counts, or a flat fee); ◦ depreciation expense related to our technical infrastructure; ◦ employee compensation expenses related to our technical infrastructure and other operations such as content review and customer and product support; ◦ inventory and other costs related to the devices we sell; and ◦ other technical infrastructure operations costs, including network",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:214793-215901",
+      "excerpt": "acturers, and software developers; and ◦ amounts paid to Google Network partners primarily for ads displayed on their properties. • Other cost of revenues includes: 54. Table of Contents Alphabet Inc. ◦ content acquisition costs, which are payments to content providers from whom we license video and other content for distribution, primarily related to YouTube (we pay fees to these content providers based on revenues generated, subscriber counts, or a flat fee); ◦ depreciation expense, primarily related to our technical infrastructure; ◦ employee compensation expenses related to our technical infrastructure and other operations such as content review and customer and product support; ◦ inventory and other costs related to the devices we sell; and ◦ other technical infrastructure operations costs, including energy, equipment, and network capacity costs. Software Development Costs We expense software development costs, including costs to develop software products or the software component of products to be sold, leased, or marketed to external users, before technological feasibility is reached.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E7",
+      "quote": "Cost of revenues increased $16.2 billion from 2024 to 2025 due to an increase in other cost of revenues and TAC of $11.2 billion and $5.0 billion, respectively.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:154235-155268"
+    },
+    {
+      "evidence_id": "E4",
+      "quote": "The increase in other cost of revenues from 2024 to 2025 was primarily due to increases in content acquisition costs, largely for YouTube, depreciation expense, and other technical infrastructure operations costs.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:155068-156245"
+    },
+    {
+      "evidence_id": "E5",
+      "quote": "Cost of revenues was $162.5 billion, an increase of 11% ye ar over year, primarily driven by increases in TAC, content acquisition costs, and depreciation expense.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:148027-149134"
+    },
+    {
+      "evidence_id": "E6",
+      "quote": "depreciation expense related to our technical infrastructure",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001652044-25-000091",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/goog-20250930.htm",
+      "locator": "10-Q 0001652044-25-000091:103523-104644"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 17674,
+    "output": 2109
+  },
+  "latency_ms": 23412,
+  "estimated_cost_usd": 0.084657,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 5997,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 14,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 17390,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 13,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

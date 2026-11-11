@@ -1,0 +1,346 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A1_conventional_rag:GOLD-META-02:74fff485",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A1_conventional_rag",
+  "approach_kind": "conventional_rag",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": false,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A1_conventional_rag",
+    "kind": "conventional_rag",
+    "description": "claim -> retrieval -> LLM -> verdict"
+  },
+  "config_hash": "1ebada2c6046452b",
+  "claim": {
+    "claim_id": "GOLD-META-02",
+    "company": "META",
+    "claim": "Meta's operating margin for fiscal year 2025 exceeded 40%.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.4,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E4",
+            "quote": "Operating margin 52 % 54 % (870) % (826) % 41 % 42 %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Meta's operating margin for fiscal year 2025 exceeded 40%. Evidence E4 provides a detailed breakdown of Meta's financial results for the year ended December 31, 2025, showing operating margins by segment. The table shows that the total operating margin for fiscal year 2025 was 41%, which is clearly stated in the rightmost column of the operating margin row. Since 41% exceeds 40%, the claim is supported by the evidence.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "e0a6f73432b34c94a3007c35faa0e850d850a2682ccc26b854fe4d7623d78b94",
+      "source": "cache",
+      "input_tokens": 3895,
+      "output_tokens": 377,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.4,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E4",
+            "quote": "Operating margin 52 % 54 % (870) % (826) % 41 % 42 %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Meta's operating margin for fiscal year 2025 exceeded 40%. Evidence E4 provides a detailed breakdown of Meta's financial results for the year ended December 31, 2025, showing operating margins by segment. The table shows that the total operating margin for fiscal year 2025 was 41%, which is clearly stated in the rightmost column of the operating margin row. Since 41% exceeds 40%, the claim is supported by the evidence.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Meta's operating margin for fiscal year 2025 exceeded 40%. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-003942",
+        "filed": "2026-01-29",
+        "report_date": "2025-12-31",
+        "primary_document": "meta-20251231.htm",
+        "sha256": "5c4096ceb780d0fb52f3e3da5164ead16c58030223b453b0386ef2eb1bad8011"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-047240",
+        "filed": "2025-10-30",
+        "report_date": "2025-09-30",
+        "primary_document": "meta-20250930.htm",
+        "sha256": "f39bcd7a00c56aa48b4345190175554d892cdf0c2306ba77158bd09c8edaa6ea"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-036791",
+        "filed": "2025-07-31",
+        "report_date": "2025-06-30",
+        "primary_document": "meta-20250630.htm",
+        "sha256": "7b6a13ec0a671ca273fc0f7757071c664ae7b73fd87ab4f55615e88a52c6f3e3"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1460
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:504621-505697",
+      "excerpt": "Stock Market LLC listing standards. Our insider trading policy and our 10b5-1 trading plan policy are filed as Exhibit 19.1 and Exhibit 19.2, respectively, to this Annual Report on Form 10-K. Item 11. Executive Compensation The information required by this item is incorporated by reference to our Proxy Statement for the 2026 Annual Meeting of Stockholders to be filed with the SEC within 120 days of the fiscal year ended December 31, 2025. Item 12. Security Ownership of Certain Beneficial Owners and Management and Related Stockholder Matters The information required by this item is incorporated by reference to our Proxy Statement for the 2026 Annual Meeting of Stockholders to be filed with the SEC within 120 days of the fiscal year ended December 31, 2025. Item 13. Certain Relationships and Related Transactions, and Director Independence The information required by this item is incorporated by reference to our Proxy Statement for the 2026 Annual Meeting of Stockholders to be filed with the SEC within 120 days of the fiscal year ended December 31, 2025. Item 14.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:0-675",
+      "excerpt": "meta-20251231 UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 __________________________ FORM 10-K __________________________ (Mark One) ☒ ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 For the fiscal year ended December 31 , 2025 or ☐ TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 For the transition period from to Commission File Number: 001-35551 __________________________ Meta Platforms, Inc. (Exact name of registrant as specified in its charter) __________________________ Delaware 20-1665019 (State or other jurisdiction of incorporation or organization) (I.R.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:505497-506482",
+      "excerpt": "this item is incorporated by reference to our Proxy Statement for the 2026 Annual Meeting of Stockholders to be filed with the SEC within 120 days of the fiscal year ended December 31, 2025. Item 14. Principal Accountant Fees and Services The information required by this item is incorporated by reference to our Proxy Statement for the 2026 Annual Meeting of Stockholders to be filed with the SEC within 120 days of the fiscal year ended December 31, 2025. 129 Table of Contents PART IV Item 15. Exhibit and Financial Statement Schedules We have filed the following documents as part of this Form 10-K: 1. Consolidated Financial Statements: Page Reports of Independent Registered Public Accounting Firm (PCAOB ID No. 42) 83 Consolidated Balance Sheets 88 Consolidated Statements of Income 89 Consolidated Statements of Comprehensive Income 90 Consolidated Statements of Stockholders' Equity 91 Consolidated Statements of Cash Flows 92 Notes to Consolidated Financial Statements 94 2.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:292204-293330",
+      "excerpt": "(FoA) and Reality Labs (RL). FoA includes Facebook, Instagram, Messenger, WhatsApp, and other services. RL includes our virtual and augmented reality related consumer hardware, software, and content. Family of Apps Reality Labs Total Year Ended December 31, Year Ended December 31, Year Ended December 31, 2025 2024 % change 2025 2024 % change 2025 2024 % change (in millions, except percentages) Revenue $ 198,759 $ 162,355 22% $ 2,207 $ 2,146 3% $ 200,966 $ 164,501 22% Costs and expenses 96,290 75,246 28% 21,400 19,875 8% 117,690 95,121 24% Income (loss) from operations $ 102,469 $ 87,109 18% $ (19,193) $ (17,729) (8)% $ 83,276 $ 69,380 20% Operating margin 52 % 54 % (870) % (826) % 41 % 42 % • Net income was $60.46 billion, with diluted earnings per share (EPS) of $23.49 for the year ended December 31, 2025. • Capital expenditures, including principal payments on finance leases, were $72.22 billion for the year ended December 31, 2025. • Share repurchases of our Class A common stock were $26.26 billion and total dividend and dividend equivalent payments were $5.32 billion for the year ended December 31, 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:3969-5059",
+      "excerpt": "business day of the registrant's most recently completed second fiscal quarter, was approximately $ 1.6 trillion based upon the closing price reported for such date on the Nasdaq Global Select Market. On January 23, 2026, the registrant had 2,187,177,748 shares of Class A common stock and 342,377,716 shares of Class B common stock outstanding. DOCUMENTS INCORPORATED BY REFERENCE Portions of the registrant's Proxy Statement for the 2026 Annual Meeting of Stockholders are incorporated herein by reference in Part III of this Annual Report on Form 10-K to the extent stated herein. Such proxy statement will be filed with the Securities and Exchange Commission within 120 days of the registrant's fiscal year ended December 31, 2025. Meta Platforms, Inc. Form 10-K TABLE OF CONTENTS Page Note About Forward-Looking Statements 3 Limitations of Key Metrics and Other Data 4 PART I Item 1. Business 6 Item 1A. Risk Factors 12 Item 1B. Unresolved Staff Comments 48 Item 1C. Cybersecurity 48 Item 2. Properties 51 Item 3. Legal Proceedings 51 Item 4. Mine Safety Disclosures 57 PART II Item 5.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:287617-288530",
+      "excerpt": "o the liabilities under that Section, and shall not be deemed to be incorporated by reference into any filing of Meta Platforms, Inc. under the Securities Act of 1933, as amended, or the Exchange Act. The following graph shows a comparison of the cumulative total return for our Class A common stock, the Dow Jones Internet Composite Index (DJINET), the Standard & Poor's 500 Stock Index (S&P 500) and the Nasdaq Composite Index (Nasdaq Composite) for the five years ended December 31, 2025. The annual changes for the five-year period shown in the graph assumes that $100 was invested in our common stock and each index at the market close on the last trading day for the fiscal year ended December 31, 2020, and that all dividends were reinvested. The stock price performance of the following graph is not necessarily indicative of future stock price performance. Item 6. [Reserved] 59 Table of Contents Item 7.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E4",
+      "quote": "Operating margin 52 % 54 % (870) % (826) % 41 % 42 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:292204-293330"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 3895,
+    "output": 377
+  },
+  "latency_ms": 3,
+  "estimated_cost_usd": 0.01734,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "conventional_rag",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

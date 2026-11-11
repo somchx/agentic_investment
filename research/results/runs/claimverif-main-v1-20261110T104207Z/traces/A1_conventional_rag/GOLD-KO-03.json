@@ -1,0 +1,346 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A1_conventional_rag:GOLD-KO-03:fe044927",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A1_conventional_rag",
+  "approach_kind": "conventional_rag",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": false,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A1_conventional_rag",
+    "kind": "conventional_rag",
+    "description": "claim -> retrieval -> LLM -> verdict"
+  },
+  "config_hash": "1ebada2c6046452b",
+  "claim": {
+    "claim_id": "GOLD-KO-03",
+    "company": "KO",
+    "claim": "Coca-Cola's net operating revenues for fiscal year 2025 grew by more than 5% compared with fiscal year 2024.",
+    "as_of_date": "2026-03-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.05,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Net operating revenues were $47,941 million in 2025, compared to $47,061 million in 2024, an increase of $880 million, or 2%."
+          }
+        ],
+        "reasoning_summary": "The claim states that Coca-Cola's net operating revenues for fiscal year 2025 grew by more than 5% compared with fiscal year 2024. Evidence E2, from the 10-K filing for the period ending December 31, 2025, explicitly states that net operating revenues were $47,941 million in 2025 compared to $47,061 million in 2024, representing an increase of $880 million, or 2%. This 2% growth rate is clearly less than the claimed \"more than 5%\" threshold. The evidence directly contradicts the claim.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "788235335917b0bb49c22e99bf847bf0cb8daa16b11f2622d1231824a933c652",
+      "source": "cache",
+      "input_tokens": 3853,
+      "output_tokens": 419,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.05,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Net operating revenues were $47,941 million in 2025, compared to $47,061 million in 2024, an increase of $880 million, or 2%."
+          }
+        ],
+        "reasoning_summary": "The claim states that Coca-Cola's net operating revenues for fiscal year 2025 grew by more than 5% compared with fiscal year 2024. Evidence E2, from the 10-K filing for the period ending December 31, 2025, explicitly states that net operating revenues were $47,941 million in 2025 compared to $47,061 million in 2024, representing an increase of $880 million, or 2%. This 2% growth rate is clearly less than the claimed \"more than 5%\" threshold. The evidence directly contradicts the claim.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Coca-Cola's net operating revenues for fiscal year 2025 grew by more than 5% compared with fiscal year 2024. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-010047",
+        "filed": "2026-02-20",
+        "report_date": "2025-12-31",
+        "primary_document": "ko-20251231.htm",
+        "sha256": "a091d2ed9db7e14f46e64111d3e2154b0e0c26ceb9b7200d9b613db2fe8f0dca"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-046054",
+        "filed": "2025-10-23",
+        "report_date": "2025-09-26",
+        "primary_document": "ko-20250926.htm",
+        "sha256": "94a26963837d00fbcfe420db71b1b6d91208498bb2682f244cff2e17a09c064a"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000021344-25-000061",
+        "filed": "2025-07-24",
+        "report_date": "2025-06-27",
+        "primary_document": "ko-20250627.htm",
+        "sha256": "3326ac76eab810fde30004981c1868e25afea6a8a810e074cb68c21e46a65368"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1187
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:134762-135587",
+      "excerpt": "to the differences between concentrate sales volume and unit case volume growth rates on a consolidated basis and for the individual operating segments during the nine months ended September 26, 2025. Additionally, the differences between concentrate sales volume and unit case volume growth rates for the operating segments were impacted by the timing of concentrate shipments. We expect the differences between concentrate sales volume and unit case volume growth rates to be minimal on a full year basis. 38 Net Operating Revenues Three Months Ended September 26, 2025 versus Three Months Ended September 27, 2024 During the three months ended September 26, 2025, net operating revenues were $12,455 million, compared to $11,854 million during the three months ended September 27, 2024, an increase of $601 million, or 5%.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:250033-251136",
+      "excerpt": "operations in the Philippines, Bangladesh and certain territories in India. Concentrate Sales Volume In 2025, worldwide concentrate sales volume grew 1% and unit case volume was even compared to 2024. The difference between concentrate sales volume and unit case volume growth rates for our Latin America operating segment was primarily due to the timing of concentrate shipments. Net Operating Revenues Net operating revenues were $47,941 million in 2025, compared to $47,061 million in 2024, an increase of $880 million, or 2%. The following table illustrates, on a percentage basis, the estimated impact of the factors resulting in the increase (decrease) in net operating revenues on a consolidated basis and for each of our operating segments: Percent Change 2025 versus 2024 Volume 1 Price/Mix Foreign Currency Exchange Rate Fluctuations Acquisitions & Divestitures 2 Total Consolidated 1 % 4 % (2) % (1) % 2 % EMEA 4 2 — (1) 5 Latin America (1) 11 (12) — (2) North America (1) 5 — — 4 Asia Pacific 1 4 (3) (1) 1 Bottling Investments — 2 (2) (7) (8) Note: Certain rows may not add due to rounding.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0000021344-25-000061",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134425000061/ko-20250627.htm",
+      "locator": "10-Q 0000021344-25-000061:122779-123824",
+      "excerpt": "rs or consumers and is not based on average daily sales. Each of our quarters, other than the fourth quarter, ends on the Friday closest to the last day of the corresponding quarterly calendar period. As a result, the first quarter of 2025 had two fewer days when compared to the first quarter of 2024, and the fourth quarter of 2025 will have one additional day when compared to the fourth quarter of 2024. 5 After considering the impact of structural changes, unit case volume for Bottling Investments for the three and six months ended June 27, 2025 decreased 2% and 1%, respectively. 6 After considering the impact of structural changes, concentrate sales volume for Asia Pacific for the six months ended June 27, 2025 grew 1%. Unit Case Volume Although a significant portion of our Company’s net operating revenues is not based directly on unit case volume, we believe unit case volume performance is one of the indicators of the underlying strength of the Coca-Cola system because it measures demand for our products at the consumer level.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:128652-129710",
+      "excerpt": "rs or consumers and is not based on average daily sales. Each of our quarters, other than the fourth quarter, ends on the Friday closest to the last day of the corresponding quarterly calendar period. As a result, the first quarter of 2025 had two fewer days when compared to the first quarter of 2024, and the fourth quarter of 2025 will have one additional day when compared to the fourth quarter of 2024. 5 After considering the impact of structural changes, unit case volume for Bottling Investments for the three and nine months ended September 26, 2025 increased 5% and 1%, respectively. 6 After considering the impact of structural changes, concentrate sales volume for Asia Pacific for the nine months ended September 26, 2025 was even. Unit Case Volume Although a significant portion of our Company’s net operating revenues is not based directly on unit case volume, we believe unit case volume performance is one of the indicators of the underlying strength of the Coca-Cola system because it measures demand for our products at the consumer level.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:135387-136455",
+      "excerpt": "he three months ended September 26, 2025, net operating revenues were $12,455 million, compared to $11,854 million during the three months ended September 27, 2024, an increase of $601 million, or 5%. The following table illustrates, on a percentage basis, the estimated impact of the factors resulting in the increase (decrease) in net operating revenues on a consolidated basis and for each of our operating segments: Percent Change 2025 versus 2024 Volume 1 Price, Product & Geographic Mix Foreign Currency Fluctuations Acquisitions & Divestitures 2 Total Consolidated — % 6 % — % — % 5 % Europe, Middle East & Africa 3 4 3 — 10 Latin America (3) 7 (8) — (4) North America (2) 6 — — 4 Asia Pacific (1) 8 4 — 11 Bottling Investments 5 1 (2) (2) 2 Note: Certain rows may not add due to rounding. 1 Represents the percent change in net operating revenues attributable to the increase (decrease) in concentrate sales volume for our geographic operating segments (expressed in unit case equivalents) after considering the impact of acquisitions and divestitures, if any.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:255598-256779",
+      "excerpt": "en evaluating the Company’s performance. Refer to the heading “Structural Changes, Acquired Brands and Newly Licensed Brands” above for additional information related to acquisitions and divestitures. Net operating revenue growth rates are impacted by sales volume; price/mix; foreign currency exchange rate fluctuations; and acquisitions and divestitures. The size and timing of acquisitions and divestitures are not consistent from period to period. Based on current spot rates and our hedging coverage in place, we expect foreign currency exchange rate fluctuations will have a favorable impact on our full year 2026 net operating revenues. 46 Information about our net operating revenues by operating segment and Corporate as a percentage of Company net operating revenues is as follows: Year Ended December 31, 2025 2024 EMEA 22.6 % 21.8 % Latin America 13.2 13.8 North America 40.8 40.1 Asia Pacific 11.1 10.9 Bottling Investments 12.0 13.2 Corporate 0.3 0.2 Total 100.0 % 100.0 % The percentage contribution of each operating segment fluctuates over time due to net operating revenues in some operating segments growing at a faster rate compared to other operating segments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E2",
+      "quote": "Net operating revenues were $47,941 million in 2025, compared to $47,061 million in 2024, an increase of $880 million, or 2%.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:250033-251136"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 3853,
+    "output": 419
+  },
+  "latency_ms": 4,
+  "estimated_cost_usd": 0.017844,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "conventional_rag",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 5,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

@@ -1,0 +1,988 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-NFLX-10:7f53f7af",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-NFLX-10",
+    "company": "NFLX",
+    "claim": "Netflix's operating margin in 2025 was reduced by a non-income tax expense related to Brazil.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "The cumulative loss recognized as an operating expense in the third quarter of the current year related to non-income tax assessments with the Brazilian tax authorities was approximately $ 619 million."
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "The cumulative loss recognized as an operating expense in the current period related to non-income tax assessments with the Brazilian tax authorities was approximately $ 619 million."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "The increase in cost of revenues was primarily due to an increase in other cost of revenues, driven primarily by the accrual of a loss of $619 million related to non-income tax assessments in Brazil"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Netflix's operating margin in 2025 was reduced by a non-income tax expense related to Brazil. This is a qualitative/interpretive claim about the impact of a specific expense on operating margin.\n\nThe evidence clearly supports this claim:\n1. E1 (from the 2025 10-K) confirms that a cumulative loss of approximately $619 million related to non-income tax assessments with Brazilian tax authorities was recognized as an operating expense in the third quarter of 2025.\n2. E4 (from Q3 2025 10-Q) provides the same information, confirming the $619 million operating expense.\n3. E5 (from Q3 2025 10-Q) explicitly states this expense increased cost of revenues, which would reduce operating margin.\n\nSince operating expenses reduce operating income and therefore operating margin, the recognition of this $619 million non-income tax expense related to Brazil would indeed reduce Netflix's operating margin in 2025. The claim is qualitative in nature (stating that margin was \"reduced\" without specifying by how much), and the evidence directly supports this assertion.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did Netflix's operating margin actually decrease in 2025 compared to 2024, or did it increase despite the Brazil tax expense?",
+          "search_query": "operating margin 2025 2024 operating income percentage",
+          "numeric_check": {
+            "metric": "OperatingMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Was the Brazil non-income tax expense classified as a non-operating or below-the-line item rather than an operating expense, which would mean it didn't affect operating margin?",
+          "search_query": "Brazil non-income tax 619 million operating expense non-operating other income expense",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Did Netflix state that the Brazil tax expense was offset by other factors such that operating margin was not materially impacted or actually improved in 2025?",
+          "search_query": "operating margin 2025 improved expansion offset Brazil tax impact",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "operating margin 2025 2024 operating income percentage",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "Brazil non-income tax 619 million operating expense non-operating other income expense",
+          "results": [
+            "E15",
+            "E16",
+            "E17"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "operating margin 2025 improved expansion offset Brazil tax impact",
+          "results": [
+            "E18",
+            "E19",
+            "E20"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E15",
+        "E16",
+        "E17",
+        "E18",
+        "E19",
+        "E20"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 0.29494704605507255,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 13326603000.0,
+                "filed": "2026-01-23",
+                "form": "10-K",
+                "accession_number": "0001065280-26-000034",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 45183036000.0,
+                "filed": "2026-01-23",
+                "form": "10-K",
+                "accession_number": "0001065280-26-000034",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.26711169154117875,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.027835354513893795,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E14",
+            "E10",
+            "E11",
+            "E12",
+            "E13"
+          ]
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "04fa0b4b5261a20c0e284c93bbf5a4ba2bdfcf35b7e5cd68497bdc1cea5c0797",
+      "source": "cache",
+      "input_tokens": 3792,
+      "output_tokens": 579,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "The cumulative loss recognized as an operating expense in the third quarter of the current year related to non-income tax assessments with the Brazilian tax authorities was approximately $ 619 million."
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "The cumulative loss recognized as an operating expense in the current period related to non-income tax assessments with the Brazilian tax authorities was approximately $ 619 million."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "The increase in cost of revenues was primarily due to an increase in other cost of revenues, driven primarily by the accrual of a loss of $619 million related to non-income tax assessments in Brazil"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Netflix's operating margin in 2025 was reduced by a non-income tax expense related to Brazil. This is a qualitative/interpretive claim about the impact of a specific expense on operating margin.\n\nThe evidence clearly supports this claim:\n1. E1 (from the 2025 10-K) confirms that a cumulative loss of approximately $619 million related to non-income tax assessments with Brazilian tax authorities was recognized as an operating expense in the third quarter of 2025.\n2. E4 (from Q3 2025 10-Q) provides the same information, confirming the $619 million operating expense.\n3. E5 (from Q3 2025 10-Q) explicitly states this expense increased cost of revenues, which would reduce operating margin.\n\nSince operating expenses reduce operating income and therefore operating margin, the recognition of this $619 million non-income tax expense related to Brazil would indeed reduce Netflix's operating margin in 2025. The claim is qualitative in nature (stating that margin was \"reduced\" without specifying by how much), and the evidence directly supports this assertion.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "2ce6f3c797dbd00b97056ab776fb7a9b705d9d4b924c0037930599ba66c360ca",
+      "source": "cache",
+      "input_tokens": 4863,
+      "output_tokens": 370,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did Netflix's operating margin actually decrease in 2025 compared to 2024, or did it increase despite the Brazil tax expense?",
+            "search_query": "operating margin 2025 2024 operating income percentage",
+            "numeric_check": {
+              "metric": "OperatingMargin",
+              "measure": "yoy_growth",
+              "period_basis": "annual",
+              "period_end": "2025-12-31",
+              "comparison": "decrease",
+              "threshold": null,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Was the Brazil non-income tax expense classified as a non-operating or below-the-line item rather than an operating expense, which would mean it didn't affect operating margin?",
+            "search_query": "Brazil non-income tax 619 million operating expense non-operating other income expense",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Did Netflix state that the Brazil tax expense was offset by other factors such that operating margin was not materially impacted or actually improved in 2025?",
+            "search_query": "operating margin 2025 improved expansion offset Brazil tax impact",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "7c43bf0809fc080ad007f80ed73e58abce00fdf392878810c08775037233fa2e",
+      "source": "cache",
+      "input_tokens": 8801,
+      "output_tokens": 1500,
+      "stop_reason": "max_tokens",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E9",
+                "quote": "Operating margin for the year ended December 31, 2025 increased by approximately three percentage points as compared to the prior comparative period"
+              },
+              {
+                "evidence_id": "E8",
+                "quote": "Operating margin for the three months ended September 30, 2025 decreased by approximately one percentage point as compared to the prior comparative period. The decrease in operating margin was primarily driven by the growth in cost of revenues and sales and marketing expenses outpacing the growth in revenues"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E16",
+                "quote": "The cumulative loss recognized as an operating expense in the third quarter of the current year related to non-income tax assessments with the Brazilian tax authorities was approximately $ 619 million."
+              },
+              {
+                "evidence_id": "E17",
+                "quote": "The increase in cost of revenues for the year ended December 31, 2025 as compared to the year ended December 31, 2024 was primarily due to a $1,121 million increase in content amortization relating to our existing and new content, coupled with a $1,116 million increase in other cost of revenues, primarily driven by non-income tax assessments in Brazil."
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E9",
+                "quote": "Operating margin for the year ended December 31, 2025 increased by approximately three percentage points as compared to the prior comparative period, primarily driven by the growth in revenues outpacing the growth in cost of revenues, sales and marketing, and general and administrative expenses."
+              },
+              {
+                "evidence_id": "E8",
+                "quote": "Operating margin for the three months ended September 30, 2025 decreased by approximately one percentage point as compared to the prior comparative period. The decrease in operating margin was primarily driven by the growth in cost of revenues and sales and marketing expenses outpacing the growth in revenues"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "The cumulative loss recognized as an operating expense in the third quarter of the current year related to non-income tax assessments with the Brazilian tax authorities was approximately $ 619 million."
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "The cumulative loss recognized as an operating expense in the current period related to non-income tax assessments with the Brazilian tax authorities was approximately $ 619 million."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "The increase in cost of revenues was primarily due to an increase in other cost of revenues, driven primarily by the accrual of a loss of $619 million related to non-income tax assessments in Brazil"
+          },
+          {
+            "evidence_id": "E8",
+            "quote": "Operating margin for the three months ended September 30, 2025 decreased by approximately one percentage point as compared to the prior comparative period. The decrease in operating margin was primarily driven by the growth in cost of revenues and sales and marketing expenses outpacing the growth in revenues"
+          },
+          {
+            "evidence_id": "E17",
+            "quote": "The increase in cost of revenues for the year ended December 31, 2025 as compared to the year ended December 31, 2024 was primarily due to a $1,121 million increase in content amortization relating to our existing and new content, coupled with a $1,116 million increase in other cost of revenues, primarily driven by non-income tax assessments in Brazil."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Netflix's operating margin in 2025 was reduced by a non-income tax expense related to Brazil. After investigating potential challenges, the verdict remains SUPPORTED.\n\nChallenge H1 (whether operating margin actually decreased) is REFUTED: While operating margin for the full year 2025 actually increased by 3 percentage points compared to 2024 (E9), the Q3 2025 operating margin decreased by approximately one percentage point (E8), and this decrease was \"primarily driven by the growth in cost of revenues...outpacing the growth in revenues.\" The claim does not state that operating margin decreased overall for the year, only that it was \"reduced by\" the Brazil expense - meaning the expense had a negative impact on the margin. This is confirmed by E8 showing Q3 margin declined due to cost of revenues growth (which included the Brazil expense per E5, E6).\n\nChallenge H2 (whether the expense was non-operating) is REFUTED: E16 and E17 explicitly confirm the $619 million Brazil non-income tax assessment was recognized as an \"operating expense\" and included in \"cost of revenues,\" not as a non-operating item.\n\nChallenge H3 (whether the impact was offset) is REFUTED: While the full-year margin did improve overall (E9), the Q3 margin specifically decreased (E8), showing the Brazil expense did have a reducing effect on operating margin in that period.\n\nThe claim is supported because: (1) the $619 million Brazil non-income tax expense was recognized as an operating expense (E1, E4, E16, E17); (2) it increased cost of revenues (E5, E17); and (3) it contributed to reducing operating margin in Q3 2025 (E8). The fact that full-year margin still increased overall does not contradict the claim that the Brazil expense \"reduced\" the margin - it simply means other factors more than offset this negative impact."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Netflix's operating margin in 2025 was reduced by a non-income tax expense related to Brazil. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "operating margin 2025 2024 operating income percentage",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "Brazil non-income tax 619 million operating expense non-operating other income expense",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E15",
+        "E16",
+        "E17"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "operating margin 2025 improved expansion offset Brazil tax impact",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E18",
+        "E19",
+        "E20"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 0.29494704605507255,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 13326603000.0,
+                "filed": "2026-01-23",
+                "form": "10-K",
+                "accession_number": "0001065280-26-000034",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 45183036000.0,
+                "filed": "2026-01-23",
+                "form": "10-K",
+                "accession_number": "0001065280-26-000034",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.26711169154117875,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.027835354513893795,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E14",
+            "E10",
+            "E11",
+            "E12",
+            "E13"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001065280-26-000034",
+        "filed": "2026-01-23",
+        "report_date": "2025-12-31",
+        "primary_document": "nflx-20251231.htm",
+        "sha256": "caec332c25a15511728cc54b55ed5479ee04a2c9d9fa77e7d2f81a52bac97678"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001065280-25-000406",
+        "filed": "2025-10-22",
+        "report_date": "2025-09-30",
+        "primary_document": "nflx-20250930.htm",
+        "sha256": "fa3a310cd89c0b545abdf83eff5ad2d137bbcfe3495349a866f4907ccb372f0c"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001065280-25-000323",
+        "filed": "2025-07-18",
+        "report_date": "2025-06-30",
+        "primary_document": "nflx-20250630.htm",
+        "sha256": "9a73c0293b9963bb70b403298d0f98879258e6f540ec1dc3f78b8eb8e27a1048"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 569
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:236088-237271",
+      "excerpt": "ies with regard to non-income tax matters. The subject matter of non-income tax audits primarily arises from disputes on the tax treatment and tax rate applied to our revenue in certain jurisdictions. We accrue, as operating expenses, non-income taxes that may result from examinations by, or any negotiated agreements with, these tax authorities when a loss is probable and reasonably estimable. Similar to other U.S. companies doing business in Brazil, the Company is involved in a number of matters with the local tax authorities as they pertain to non-income tax assessments. There is inherent complexity and uncertainty regarding these matters, and the final outcomes may be materially different from our expectations. During the year ended December 31, 2025, developments in another taxpayer’s judicial proceedings influenced our evaluation of the Company’s most significant non-income tax matter in Brazil and we now believe that it is probable that a loss will be incurred. The cumulative loss recognized as an operating expense in the third quarter of the current year related to non-income tax assessments with the Brazilian tax authorities was approximately $ 619 million.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:42415-43545",
+      "excerpt": "ed may change in the future as the litigation and events related thereto unfold. Non-Income Taxes The Company is routinely under audit by various tax authorities with regard to non-income tax matters. The subject matter of non-income tax audits primarily arises from disputes on the tax treatment and tax rate applied to our revenue in certain jurisdictions. We accrue, as operating expenses, non-income taxes that may result from examinations by, or any negotiated agreements with, these tax authorities when a loss is probable and reasonably estimable. Similar to other U.S. companies doing business in Brazil, the Company is involved in a number of matters with the local tax authorities as they pertain to non-income tax assessments. There is inherent complexity and uncertainty regarding these matters, and the final outcomes may be materially different from our expectations. During the current period, developments in another taxpayer’s judicial proceedings have influenced our evaluation of the Company’s most significant non-income tax matter in Brazil and we now believe that it is probable that a loss will be incurred.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:41824-42947",
+      "excerpt": "ed may change in the future as the litigation and events related thereto unfold. Non-Income Taxes The Company is routinely under audit by various tax authorities with regard to non-income tax matters. The subject matter of non-income tax audits primarily arises from disputes on the tax treatment and tax rate applied to our revenue in certain jurisdictions. We accrue, as operating expenses, non-income taxes that may result from examinations by, or any negotiated agreements with, these tax authorities when a loss is probable and reasonably estimable. Similar to other U.S. companies doing business in Brazil, the Company is involved in a number of matters with Brazilian tax authorities regarding non-income tax assessments. Although the Company believes it has meritorious defenses to these matters, and a loss is not probable, there is inherent complexity and uncertainty with respect to these matters, and the final outcome may be materially different from our expectations. The Company continues to monitor developments in similar court cases that may influence its evaluation of the likelihood of incurring a loss.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:43345-44539",
+      "excerpt": "er taxpayer’s judicial proceedings have influenced our evaluation of the Company’s most significant non-income tax matter in Brazil and we now believe that it is probable that a loss will be incurred. The cumulative loss recognized as an operating expense in the current period related to non-income tax assessments with the Brazilian tax authorities was approximately $ 619 million. 18 Table of Contents Guarantees— Indemnification Obligations In the ordinary course of business, the Company has entered into contractual arrangements under which it has agreed to provide indemnification of varying scope and terms to business partners and other parties with respect to certain matters, including, but not limited to, losses arising out of the Company’s breach of such agreements and out of intellectual property infringement claims made by third parties. In these circumstances, payment may be conditional on the other party making a claim pursuant to the procedures specified in the particular contract. The Company's obligations under these agreements may be limited in terms of time or amount, and in some instances, the Company may have recourse against third parties for certain payments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:75667-76815",
+      "excerpt": "il on our non-income tax matters. Nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024 Nine Months Ended Change September 30, 2025 September 30, 2024 YTD'25 vs. YTD'24 (in thousands, except percentages) Cost of revenues $ 16,752,708 $ 15,271,100 $ 1,481,608 10 % As a percentage of revenues 51 % 53 % The increase in cost of revenues was primarily due to an increase in other cost of revenues, driven primarily by the accrual of a loss of $619 million related to non-income tax assessments in Brazil, coupled with a $518 million increase in content amortization relating to our existing and new content. We do not expect that non-income taxes incurred in Brazil will materially impact our results of operations in future periods. See Note 8 Commitments and Contingencies in the accompanying notes to our consolidated financial statements for further detail on our non-income tax matters. Sales and Marketing Sales and marketing expenses consist primarily of expenses for promotional activities such as digital and television advertising, and certain payments made to marketing and advertising sales partners.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:74776-75867",
+      "excerpt": "r content available to members. Three months ended September 30, 2025 as compared to the three months ended September 30, 2024 Three Months Ended Change September 30, 2025 September 30, 2024 Q3'25 vs. Q3'24 (in thousands, except percentages) Cost of revenues $ 6,164,250 $ 5,119,884 $ 1,044,366 20 % As a percentage of revenues 54 % 52 % The increase in cost of revenues was primarily due to an increase in other cost of revenues, driven primarily by the accrual of a loss of $619 million related to non-income tax assessments in Brazil, coupled with a $303 million increase in content amortization relating to our existing and new content. We do not expect that non-income taxes incurred in Brazil will materially impact our results of operations in future periods. See Note 8 Commitments and Contingencies in the accompanying notes to our consolidated financial statements for further detail on our non-income tax matters. Nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024 Nine Months Ended Change September 30, 2025 September 30, 2024 YTD'25 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:64483-65621",
+      "excerpt": "paying memberships and average monthly revenue per paying membership. (2) See the “Non-GAAP Constant Currency Information” section below for additional details on our use of constant currency revenue. Operating margin for the three months ended June 30, 2025 increased by approximately seven percentage points as compared to the prior comparative period. The increase in operating margin was primarily driven by revenue growth outpacing the growth in cost of revenues, as well as by a slower rate of growth in sales and marketing and general and administrative expenses relative to revenue growth. Net income fo r the three months ended June 30, 2025 increased $978 million as compared to the prior comparative period, primarily due to a $1,172 million increase in operating income, driven by a $1,520 million increase in revenues and partially offset by a $151 million increase in cost of revenues primarily due to the increase in content amortization. The impact of higher operating income was partially offset by a $57 million decrease in foreign exchange gains and losses and a $140 million increase in the provision for income taxes.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:65795-66966",
+      "excerpt": "paying memberships and average monthly revenue per paying membership. (2) See the “Non-GAAP Constant Currency Information” section below for additional details on our use of constant currency revenue. Operating margin for the three months ended September 30, 2025 decreased by approximately one percentage point as compared to the prior comparative period. The decrease in operating margin was primarily driven by the growth in cost of revenues and sales and marketing expenses outpacing the growth in revenues, partially offset by a slower rate of growth in technology and development expenses and general and administrative expenses relative to revenue growth. Net income fo r the three months ended September 30, 2025 increased $183 million as compared to the prior comparative period, primarily due to a $339 million increase in operating income, driven by a $1,686 million increase in revenues and partially offset by a $1,044 million increase in cost of revenues primarily due to the increase in other cost of revenues and content amortization. The impact of higher operating income was partially offset by a $223 million increase in the provision for income taxes.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:104489-105621",
+      "excerpt": "s performance. (2) We discontinued our DVD-by-mail service in the year ended December 31, 2023. The discontinuance of our DVD business had an immaterial impact on our operations and financial results. (3) See the “ Non-GAAP Constant Currency Information” section below for additional details on our use of constant currency revenue. Operating margin for the year ended December 31, 2025 increased by approximately three percentage points as compared to the prior comparative period, primarily driven by the growth in revenues outpacing the growth in cost of revenues, sales and marketing, and general and administrative expenses. Net income for the year ended December 31, 2025 increased $2,270 million as compared to the prior comparative period, primarily due to a $2,909 million increase in operating income, driven by a $6,182 million increase in revenues and partially offset by a $2,237 million increase in cost of revenues primarily due to the increase in content amortization and other cost of revenues. The impact of higher operating income was partially offset by a $487 million increase in the provision for income taxes.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/0001065280-26-000034-index.htm",
+      "locator": "OperatingIncome 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        13326603000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/0001065280-26-000034-index.htm",
+      "locator": "Revenue 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        45183036000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/0001065280-26-000034-index.htm",
+      "locator": "OperatingIncome 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        10417614000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/0001065280-26-000034-index.htm",
+      "locator": "Revenue 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        39000966000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "NFLX",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "OperatingMargin yoy_growth annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        0.29494704605507255,
+        0.26711169154117875,
+        0.027835354513893795
+      ],
+      "unit": "ratio_points",
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:93002-94161",
+      "excerpt": "are comprised of operating lease liabilities included in \"Accrued expenses and other liabilities\" and \"Other non-current liabilities\" on the Consolidated Balance Sheets, inclusive of imputed interest. Operating lease obligations also include additional obligations that are not reflected on the Consolidated Balance Sheets as they did not meet the criteria for recognition. See Note 5 Balance Sheet Components in the accompanying notes to our consolidated financial statements for further details regarding leases. In addition to the material cash requirements summarized in the table above, we expect to pay deposits of $619 million related to non-income tax assessments in Brazil as described further in Note 8 Commitments and Contingencies . During the nine months ended September 30, 2025, we also paid tax deposits of approximately $200 million related to certain direct taxes that exceeded our regularly recurring obligations. Cash Flows The following tables summarize our cash flows: Three months ended September 30, 2025 as compared to the three months ended September 30, 2024 Three Months Ended Change September 30, 2025 September 30, 2024 Q3'25 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:237071-238169",
+      "excerpt": "he cumulative loss recognized as an operating expense in the third quarter of the current year related to non-income tax assessments with the Brazilian tax authorities was approximately $ 619 million. We continue to accrue incremental non-income taxes that the Company believes are probable of being assessed. Guarantees—Indemnification Obligations In the ordinary course of business, the Company has entered into contractual arrangements under which it has agreed to provide indemnification of varying scope and terms to business partners and other parties with respect to certain matters, including, but not limited to, losses arising out of the Company’s breach of such agreements and out of intellectual property infringement claims made by third parties. In these circumstances, payment may be conditional on the other party making a claim pursuant to the procedures specified in the particular contract. The Company’s obligations under these agreements may be limited in terms of time or amount, and in some instances, the Company may have recourse against third parties for certain payments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:111342-112337",
+      "excerpt": "sing fees, including those we pay to our integrated payment partners, as well as other costs incurred in making our content available to members. Year Ended December 31, Change 2025 2024 2023 2025 vs. 2024 (in thousands, except percentages) Cost of revenues $ 23,275,329 $ 21,038,464 $ 19,715,368 $ 2,236,865 11 % As a percentage of revenues 52 % 54 % 58 % The increase in cost of revenues for the year ended December 31, 2025 as compared to the year ended December 31, 2024 was primarily due to a $1,121 million increase in content amortization relating to our existing and new content, coupled with a $1,116 million increase in other cost of revenues, primarily driven by non-income tax assessments in Brazil. We do not expect that non-income taxes incurred in Brazil will materially impact our results of operations in future periods. See Note 9 Commitments and Contingencies in the accompanying notes to our consolidated financial statements for further detail on our non-income tax matters.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:57444-58237",
+      "excerpt": "5. The OBBBA does not materially impact the Company’s effective tax rate or cash flows in the current fiscal year. 11. Segment and Geographic Information The Company operates as one operating segment. The Company's chief operating decision maker (\"CODM\") is its co-chief executive officers, who review financial information presented on a consolidated basis. The CODM uses consolidated operating margin and net income to assess financial performance and allocate resources. These financial metrics are used by the CODM to make key operating decisions, such as the determination of the rate at which the Company seeks to grow global operating margin and the allocation of budget between cost of revenues, sales and marketing, technology and development, and general and administrative expenses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:59090-60290",
+      "excerpt": "continues to evaluate the impact on its financial position. The OBBBA is not currently expected to materially impact the Company’s effective tax rate or cash flows in the current fiscal year. Item 2. Management’s Discussion and Analysis of Financial Condition and Results of Operations Forward-Looking Statements This Quarterly Report on Form 10-Q contains forward-looking statements within the meaning of the federal securities laws. These forward-looking statements include, but are not limited to, statements regarding: our core strategy; our ability to improve our content offerings and service; our future financial performance, including expectations regarding revenues, deferred revenue, operating income and margin, net income, expenses, and profitability; liquidity, including the sufficiency of our capital resources, net cash provided by (used in) operating activities, access to financing sources and free cash flows; capital allocation strategies, including any stock repurchases or repurchase programs; 24 Table of Contents seasonality; stock price volatility; impact of foreign exchange rate fluctuations, including on net income, revenues; expectations regarding hedging activity; im",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E19"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:127873-129034",
+      "excerpt": "are comprised of operating lease liabilities included in “Accrued expenses and other liabilities” and “Other non-current liabilities” on the Consolidated Balance Sheets, inclusive of imputed interest. Operating lease obligations also include additional obligations that are not reflected on the Consolidated Balance Sheets as they did not meet the criteria for recognition. As of December 31, 2025, the Company has additional operating leases for real estate that have not yet commenced which has been included above. The lease obligations associated with these leases were not material. See Note 5 Balance Sheet Components in the accompanying notes to our consolidated financial statements for further details regarding leases. As of December 31, 2025, we had gross unrecognized tax benefits of $566 million, of which $409 million was classified in “Other non-current liabilities” in the Consolidated Balance Sheets. In addition to the material cash requirements summarized in the table above, we expect to pay deposits of approximately $700 million related to non-income tax assessments in Brazil as described further in Note 9 Commitments and Contingencie s.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E20"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "The cumulative loss recognized as an operating expense in the third quarter of the current year related to non-income tax assessments with the Brazilian tax authorities was approximately $ 619 million.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:236088-237271"
+    },
+    {
+      "evidence_id": "E4",
+      "quote": "The cumulative loss recognized as an operating expense in the current period related to non-income tax assessments with the Brazilian tax authorities was approximately $ 619 million.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:43345-44539"
+    },
+    {
+      "evidence_id": "E5",
+      "quote": "The increase in cost of revenues was primarily due to an increase in other cost of revenues, driven primarily by the accrual of a loss of $619 million related to non-income tax assessments in Brazil",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:75667-76815"
+    }
+  ],
+  "stop_reason": "NO_FINAL_VERDICT",
+  "error": "reconciliation: structured output cut off at max_output_tokens",
+  "token_usage": {
+    "input": 17456,
+    "output": 2449
+  },
+  "latency_ms": 6,
+  "estimated_cost_usd": 0.089103,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "failed",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "error": "reconciliation: structured output cut off at max_output_tokens"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "NO_FINAL_VERDICT"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "finalize"
+    ],
+    "failed_stage": "reconcile",
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

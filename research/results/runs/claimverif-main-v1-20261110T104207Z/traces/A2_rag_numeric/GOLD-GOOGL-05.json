@@ -1,0 +1,545 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A2_rag_numeric:GOLD-GOOGL-05:8c6a68b4",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A2_rag_numeric",
+  "approach_kind": "financial_verification",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A2_rag_numeric",
+    "kind": "financial_verification",
+    "description": "A1 + deterministic numeric verification"
+  },
+  "config_hash": "53b859cfe39ca3b0",
+  "claim": {
+    "claim_id": "GOLD-GOOGL-05",
+    "company": "GOOGL",
+    "claim": "YouTube advertising revenues for the quarter ended June 30, 2026 grew by more than 10% year over year.",
+    "as_of_date": "2026-08-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q2"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": ">",
+            "threshold": 0.1,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E4",
+            "quote": "YouTube ads 9,796 11,055 18,723 20,938"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "YouTube ads revenues increased $1.3 billion and $2.2 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that YouTube advertising revenues for Q2 2026 (quarter ended June 30, 2026) grew by more than 10% year over year.\n\nFrom evidence E4, the revenue table shows:\n- YouTube ads Q2 2025 (three months ended June 30, 2025): $9,796 million\n- YouTube ads Q2 2026 (three months ended June 30, 2026): $11,055 million\n\nThe year-over-year growth calculation:\n($11,055 - $9,796) / $9,796 = $1,259 / $9,796 = 0.1286 or 12.86%\n\nThis is confirmed by E1 which states \"YouTube ads revenues increased $1.3 billion...from the three...months ended June 30, 2025 to the three...months ended June 30, 2026\" (the $1.3 billion rounds from the actual $1,259 million increase).\n\nSince 12.86% > 10%, the claim is supported by the evidence.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_ALL_TRUE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": ">",
+            "threshold": 0.1,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-06-30",
+            "basis": "quarter",
+            "level": 119796000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 119796000000.0,
+                "filed": "2026-07-23",
+                "form": "10-Q",
+                "accession_number": "0001652044-26-000071",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 96428000000.0,
+            "prior_period_end": "2025-06-30",
+            "yoy_change": 0.2423362508814867,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "486694ef34646369f7d3a2221a4634e31318c5bd57bb1ca17966b6bfc00aa858",
+      "source": "cache",
+      "input_tokens": 3929,
+      "output_tokens": 582,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": ">",
+            "threshold": 0.1,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E4",
+            "quote": "YouTube ads 9,796 11,055 18,723 20,938"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "YouTube ads revenues increased $1.3 billion and $2.2 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that YouTube advertising revenues for Q2 2026 (quarter ended June 30, 2026) grew by more than 10% year over year.\n\nFrom evidence E4, the revenue table shows:\n- YouTube ads Q2 2025 (three months ended June 30, 2025): $9,796 million\n- YouTube ads Q2 2026 (three months ended June 30, 2026): $11,055 million\n\nThe year-over-year growth calculation:\n($11,055 - $9,796) / $9,796 = $1,259 / $9,796 = 0.1286 or 12.86%\n\nThis is confirmed by E1 which states \"YouTube ads revenues increased $1.3 billion...from the three...months ended June 30, 2025 to the three...months ended June 30, 2026\" (the $1.3 billion rounds from the actual $1,259 million increase).\n\nSince 12.86% > 10%, the claim is supported by the evidence.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "YouTube advertising revenues for the quarter ended June 30, 2026 grew by more than 10% year over year. 2026 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": ">",
+            "threshold": 0.1,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-06-30",
+            "basis": "quarter",
+            "level": 119796000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 119796000000.0,
+                "filed": "2026-07-23",
+                "form": "10-Q",
+                "accession_number": "0001652044-26-000071",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 96428000000.0,
+            "prior_period_end": "2025-06-30",
+            "yoy_change": 0.2423362508814867,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001652044-26-000071",
+        "filed": "2026-07-23",
+        "report_date": "2026-06-30",
+        "primary_document": "goog-20260630.htm",
+        "sha256": "96f56cc3c08ac0b48d07416c5f277cb1d5ba2547e08a54291932e935f81858d4"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001652044-26-000048",
+        "filed": "2026-04-30",
+        "report_date": "2026-03-31",
+        "primary_document": "goog-20260331.htm",
+        "sha256": "b5fbb89b7f18bba819e00eb99ae48c319a75f31a30e0715c35289bfea72ea4bc"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001652044-26-000018",
+        "filed": "2026-02-05",
+        "report_date": "2025-12-31",
+        "primary_document": "goog-20251231.htm",
+        "sha256": "bab3d2601c394c4b603fa4ae30165a65e123a37087a172c8e4146dba0c80ab82"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 802
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:137955-139031",
+      "excerpt": "rtising Google Search & other Google Search & other revenues increased $9.1 billion and $18.8 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026. The overall growth was driven by interrelated factors including increases in search queries resulting from growth in user adoption and usage on mobile devices; growth in advertiser spending; and improvements we have made in ad formats and delivery. YouTube ads YouTube ads revenues increased $1.3 billion and $2.2 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026. The growth was driven by our direct response advertising products followed by our brand advertising products, both of which benefited from increased spending by our advertisers. Google Network Google Network revenues decreased $51 million and $336 million from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026, primarily due to a decrease in AdSense revenues, partially offset by an increase in AdMob revenues.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:143128-143968",
+      "excerpt": "lected a slight increase from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026 due to a combination of factors, none of which were individually significant. 48 The increase in other cost of revenues from the three months ended June 30, 2025 to the three months ended June 30, 2026 was primarily due to increases in depreciation expense, inventory and other costs, content acquisition costs, largely for YouTube, and other technical infrastructure operations costs. The increase in other cost of revenues from the six months ended June 30, 2025 to the six months ended June 30, 2026 was primarily due to increases in depreciation expense, content acquisition costs, largely for YouTube, inventory and other costs, employee compensation expenses, and other technical infrastructure operation costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:140439-141549",
+      "excerpt": "growth was primarily driven by an increase in subscriptions revenues. This increase was primarily due to the contribution from growth in paid subscriptions across both YouTube services and Google One. Google Cloud Google Cloud revenues increased $11.1 billion and $18.9 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026 primarily driven by growth in Google Cloud Platform largely from infrastructure and platform services. In addition, in the second quarter of 2026, we began recognizing revenue from the sale of TPU systems. Revenues by Geography The following table presents revenues by geography as a percentage of revenues, determined based on the addresses of our customers: Three Months Ended Six Months Ended June 30, June 30, 2025 2026 2025 2026 United States 48 % 51 % 48 % 50 % EMEA 29 % 27 % 29 % 28 % APAC 17 % 16 % 17 % 16 % Other Americas 6 % 6 % 6 % 6 % Hedging gains (losses) 0 % 0 % 0 % 0 % For additional information, see Note 2 of the Notes to Consolidated Financial Statements included in Item 1 of this Quarterly Report on Form 10-Q.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:137084-138155",
+      "excerpt": "ct effects on our business, operations, and financial results. Our past results may not be indicative of our future performance, and our financial results may differ materially from historical trends. Financial Results 46 Revenues The following table presents revenues by type (in millions): Three Months Ended Six Months Ended June 30, June 30, 2025 2026 2025 2026 Google Search & other $ 54,190 $ 63,271 $ 104,892 $ 123,670 YouTube ads 9,796 11,055 18,723 20,938 Google Network 7,354 7,303 14,610 14,274 Google advertising 71,340 81,629 138,225 158,882 Google subscriptions, platforms, and devices 11,203 12,911 21,582 25,295 Google Services total 82,543 94,540 159,807 184,177 Google Cloud 13,624 24,768 25,884 44,796 Other Bets 373 382 823 793 Hedging gains (losses) (112) 106 148 (74) Total revenues $ 96,428 $ 119,796 $ 186,662 $ 229,692 Google Services Google Advertising Google Search & other Google Search & other revenues increased $9.1 billion and $18.8 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:239065-239958",
+      "excerpt": "or the revised disclosures consistent with the new standard. Prior Period Reclassifications Certain amounts in prior periods have been reclassified to conform with current period presentation. Note 2. Revenues Disaggregated Revenues The following table presents revenues disaggregated by type (in millions): Year Ended December 31, 2023 2024 2025 Google Search & other $ 175,033 $ 198,084 $ 224,532 YouTube ads 31,510 36,147 40,367 Google Network 31,312 30,359 29,792 Google advertising 237,855 264,590 294,691 Google subscriptions, platforms, and devices 34,688 40,340 48,030 Google Services total 272,543 304,930 342,721 Google Cloud 33,088 43,229 58,705 Other Bets 1,527 1,648 1,537 Hedging gains (losses) 236 211 ( 127 ) Total revenues $ 307,394 $ 350,018 $ 402,836 No in dividual customer or groups of affiliated customers represented more than 10% of our revenues in 2023, 2024, or 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:143768-144668",
+      "excerpt": "due to increases in depreciation expense, content acquisition costs, largely for YouTube, inventory and other costs, employee compensation expenses, and other technical infrastructure operation costs. Research and Development The following table presents research and development expenses (in millions, except percentages): Three Months Ended Six Months Ended June 30, June 30, 2025 2026 2025 2026 Research and development expenses $ 13,808 $ 18,219 $ 27,364 $ 35,251 Research and development expenses as a percentage of revenues 14 % 15 % 15 % 15 % Research and development expenses increased $4.4 billion and $7.9 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026, primarily driven by increases in employee compensation expenses of $2.9 billion and $5.3 billion, as well as depreciation expense of $592 million and $1.1 billion, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": "2026-04-01",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/0001652044-26-000071-index.htm",
+      "locator": "Revenue 2026-04-01..2026-06-30",
+      "excerpt": null,
+      "values": [
+        119796000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": "2025-04-01",
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/0001652044-26-000071-index.htm",
+      "locator": "Revenue 2025-04-01..2025-06-30",
+      "excerpt": null,
+      "values": [
+        96428000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "GOOGL",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2026-06-30",
+      "excerpt": null,
+      "values": [
+        119796000000.0,
+        96428000000.0,
+        0.2423362508814867
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E4",
+      "quote": "YouTube ads 9,796 11,055 18,723 20,938",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:137084-138155"
+    },
+    {
+      "evidence_id": "E1",
+      "quote": "YouTube ads revenues increased $1.3 billion and $2.2 billion from the three and six months ended June 30, 2025 to the three and six months ended June 30, 2026.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:137955-139031"
+    },
+    {
+      "evidence_id": "E9",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_end": "2026-06-30",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2026-06-30"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 3929,
+    "output": 582
+  },
+  "latency_ms": 3,
+  "estimated_cost_usd": 0.020517,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "financial_verification",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_ALL_TRUE",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

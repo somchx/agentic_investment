@@ -1,0 +1,924 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-AMZN-05:1cadb0dd",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-AMZN-05",
+    "company": "AMZN",
+    "claim": "Amazon's net sales for the quarter ended December 31, 2026 grew year over year.",
+    "as_of_date": "2026-11-01",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q4"
+  },
+  "initial_label": "INSUFFICIENT_EVIDENCE",
+  "final_label": "INSUFFICIENT_EVIDENCE",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Amazon's net sales for the quarter ended December 31, 2026 grew year over year. This would require comparing Q4 2026 net sales to Q4 2025 net sales.\n\nThe evidence provided includes:\n- E1-E5: From Amazon's 10-K filed 2026-02-06 for period ending 2025-12-31, which discusses Q4 2025 results and various charges but does not provide specific net sales figures for Q4 2025.\n- E6: From Amazon's 10-Q filed 2026-10-30 for period ending 2026-09-30 (Q3 2026), which provides forward-looking guidance for Q4 2026. It states \"Net sales are expected to be between $239.5 billion and $247.0 billion, or to grow between 12% and 16% compared with fourth quarter 2025.\"\n\nWhile E6 provides guidance that Q4 2026 net sales are expected to grow 12-16% year-over-year, this is forward-looking guidance issued before Q4 2026 ended, not actual reported results. The claim asks about actual growth for the quarter ended December 31, 2026, which would require actual reported financial results from a filing covering that period (such as a 10-K for year ending 2026-12-31 or a 10-Q for Q4 2026).\n\nAs of the evidence cutoff date of 2026-11-01, Q4 2026 had not yet ended (it ends December 31, 2026), so actual results would not yet be available. The evidence is insufficient to verify the actual year-over-year growth of net sales for Q4 2026.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-12-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did Amazon actually report Q4 2026 net sales results in a filing available by the evidence cutoff date, which I may have missed?",
+          "search_query": "net sales fourth quarter 2026 December 31 2026 three months ended",
+          "numeric_check": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-12-31",
+            "comparison": "increase",
+            "threshold": 0,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Does Amazon report on a fiscal year that differs from the calendar year, such that Q4 2026 might have already ended by the evidence cutoff date?",
+          "search_query": "fiscal year end fiscal quarter fiscal calendar reporting period",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Could the claim be referring to preliminary or unaudited results for Q4 2026 that were released early, before the quarter officially ended?",
+          "search_query": "preliminary results unaudited fourth quarter 2026 earnings release October November 2026",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "net sales fourth quarter 2026 December 31 2026 three months ended",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "fiscal year end fiscal quarter fiscal calendar reporting period",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "preliminary results unaudited fourth quarter 2026 earnings release October November 2026",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-12-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "Three Months Ended September 30, Nine Months Ended September 30, 2025 2026",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-26-000040",
+              "form": "10-Q",
+              "filed": "2026-10-30",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+              "locator": "10-Q 0001018724-26-000040:66832-68032"
+            },
+            {
+              "evidence_id": "E8",
+              "quote": "Three Months Ended December 31, Year Ended December 31, 2026 2027 2028 2029 2030",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-26-000040",
+              "form": "10-Q",
+              "filed": "2026-10-30",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+              "locator": "10-Q 0001018724-26-000040:67832-68470"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E12",
+              "quote": "For the Fiscal Year Ended December 31, 2025",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-26-000004",
+              "form": "10-K",
+              "filed": "2026-02-06",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+              "locator": "10-K 0001018724-26-000004:3620-4792"
+            },
+            {
+              "evidence_id": "E10",
+              "quote": "During the most recent fiscal quarter, there has not occurred any change in our internal control",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-26-000040",
+              "form": "10-Q",
+              "filed": "2026-10-30",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+              "locator": "10-Q 0001018724-26-000040:132906-134015"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E13",
+              "quote": "These forward-looking statements reflect Amazon.com's expectations as of October 29, 2026, and are subject to substantial uncertainty.",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-26-000040",
+              "form": "10-Q",
+              "filed": "2026-10-30",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+              "locator": "10-Q 0001018724-26-000040:125562-126663"
+            },
+            {
+              "evidence_id": "E13",
+              "quote": "Fourth Quarter 2026 Guidance • Net sales are expected to be between $240.0 billion and $247.0 billion",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-26-000040",
+              "form": "10-Q",
+              "filed": "2026-10-30",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+              "locator": "10-Q 0001018724-26-000040:125562-126663"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "ea4463c10066c97ad0c6d8eea22d9542566e5535556b00f9d2ba33b3ef518d34",
+      "source": "cache",
+      "input_tokens": 3835,
+      "output_tokens": 620,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Amazon's net sales for the quarter ended December 31, 2026 grew year over year. This would require comparing Q4 2026 net sales to Q4 2025 net sales.\n\nThe evidence provided includes:\n- E1-E5: From Amazon's 10-K filed 2026-02-06 for period ending 2025-12-31, which discusses Q4 2025 results and various charges but does not provide specific net sales figures for Q4 2025.\n- E6: From Amazon's 10-Q filed 2026-10-30 for period ending 2026-09-30 (Q3 2026), which provides forward-looking guidance for Q4 2026. It states \"Net sales are expected to be between $239.5 billion and $247.0 billion, or to grow between 12% and 16% compared with fourth quarter 2025.\"\n\nWhile E6 provides guidance that Q4 2026 net sales are expected to grow 12-16% year-over-year, this is forward-looking guidance issued before Q4 2026 ended, not actual reported results. The claim asks about actual growth for the quarter ended December 31, 2026, which would require actual reported financial results from a filing covering that period (such as a 10-K for year ending 2026-12-31 or a 10-Q for Q4 2026).\n\nAs of the evidence cutoff date of 2026-11-01, Q4 2026 had not yet ended (it ends December 31, 2026), so actual results would not yet be available. The evidence is insufficient to verify the actual year-over-year growth of net sales for Q4 2026.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "226a72c9f0a0500d0792b82d826887c452c7acb2e2eee46275bb254bf295b117",
+      "source": "live",
+      "input_tokens": 5061,
+      "output_tokens": 368,
+      "stop_reason": "tool_use",
+      "latency_ms": 6932,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did Amazon actually report Q4 2026 net sales results in a filing available by the evidence cutoff date, which I may have missed?",
+            "search_query": "net sales fourth quarter 2026 December 31 2026 three months ended",
+            "numeric_check": {
+              "metric": "Revenue",
+              "measure": "yoy_growth",
+              "period_basis": "quarter",
+              "period_end": "2026-12-31",
+              "comparison": "increase",
+              "threshold": 0,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Does Amazon report on a fiscal year that differs from the calendar year, such that Q4 2026 might have already ended by the evidence cutoff date?",
+            "search_query": "fiscal year end fiscal quarter fiscal calendar reporting period",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Could the claim be referring to preliminary or unaudited results for Q4 2026 that were released early, before the quarter officially ended?",
+            "search_query": "preliminary results unaudited fourth quarter 2026 earnings release October November 2026",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "6a98d12349a6eb18143c0fe0dc223bb3d42b08a6eb9a7132c97d910f22fbe7ac",
+      "source": "live",
+      "input_tokens": 9026,
+      "output_tokens": 1003,
+      "stop_reason": "tool_use",
+      "latency_ms": 16946,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "Three Months Ended September 30, Nine Months Ended September 30, 2025 2026"
+              },
+              {
+                "evidence_id": "E8",
+                "quote": "Three Months Ended December 31, Year Ended December 31, 2026 2027 2028 2029 2030"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E12",
+                "quote": "For the Fiscal Year Ended December 31, 2025"
+              },
+              {
+                "evidence_id": "E10",
+                "quote": "During the most recent fiscal quarter, there has not occurred any change in our internal control"
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E13",
+                "quote": "These forward-looking statements reflect Amazon.com's expectations as of October 29, 2026, and are subject to substantial uncertainty."
+              },
+              {
+                "evidence_id": "E13",
+                "quote": "Fourth Quarter 2026 Guidance • Net sales are expected to be between $240.0 billion and $247.0 billion"
+              }
+            ]
+          }
+        ],
+        "label": "INSUFFICIENT_EVIDENCE",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After investigating potential challenges to the initial verdict, all three hypotheses were refuted:\n\nH1 (Actual Q4 2026 results reported): REFUTED. The evidence shows only results through Q3 2026 (September 30, 2026) in the 10-Q filed October 30, 2026. E7 shows \"Three Months Ended September 30, 2025 2026\" and E8 references \"Three Months Ended December 31, 2026\" only in the context of future scheduled vesting, not actual reported results. No actual Q4 2026 financial results are present.\n\nH2 (Different fiscal year): REFUTED. E12 confirms Amazon's fiscal year ends December 31, stating \"For the Fiscal Year Ended December 31, 2025,\" which aligns with the calendar year. Amazon does not use a different fiscal year that would cause Q4 2026 to have ended before the evidence cutoff date.\n\nH3 (Preliminary results released early): REFUTED. E13 shows that as of October 29, 2026, Amazon only provided forward-looking guidance for Q4 2026, stating \"Net sales are expected to be between $240.0 billion and $247.0 billion\" with the caveat that \"These forward-looking statements reflect Amazon.com's expectations as of October 29, 2026, and are subject to substantial uncertainty.\" This is guidance, not preliminary actual results.\n\nThe initial verdict of INSUFFICIENT_EVIDENCE remains correct. The claim asks whether Amazon's net sales for Q4 2026 (quarter ended December 31, 2026) grew year-over-year. As of the evidence cutoff date of November 1, 2026, Q4 2026 had not yet ended, and no actual financial results for that quarter were available in the filings. Only forward-looking guidance exists, which cannot verify actual results.",
+        "change_reason": "No change. All challenges were refuted, confirming that actual Q4 2026 results are not available in the evidence."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Amazon's net sales for the quarter ended December 31, 2026 grew year over year. 2026 Q4",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "net sales fourth quarter 2026 December 31 2026 three months ended",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "fiscal year end fiscal quarter fiscal calendar reporting period",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "preliminary results unaudited fourth quarter 2026 earnings release October November 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-12-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-12-31",
+            "comparison": "increase",
+            "threshold": 0,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-12-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001018724-26-000040",
+        "filed": "2026-10-30",
+        "report_date": "2026-09-30",
+        "primary_document": "amzn-20260930.htm",
+        "sha256": "4860db2de7364f53ecf18f81a5c607c3d2ba957044ff09fb33f7128466f6e92e"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001018724-26-000026",
+        "filed": "2026-07-31",
+        "report_date": "2026-06-30",
+        "primary_document": "amzn-20260630.htm",
+        "sha256": "4a6bb6e27c4ef03a8d77118309163b73e7f15077b448bde2d1ebdd7a6c78d7e7"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001018724-26-000004",
+        "filed": "2026-02-06",
+        "report_date": "2025-12-31",
+        "primary_document": "amzn-20251231.htm",
+        "sha256": "3702599045ec83f3faca3186c42b62247d1ec0e3bdf47c7f8acc7305b858f139"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 791
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:156920-157851",
+      "excerpt": "income), net” and impacted our North America segment. During Q4 2025, we recorded $ 2.4 billion of expense related to settlements of a lawsuit and tax disputes, severance costs, and asset impairments. Of this total, $ 1.1 billion related to the resolution of tax disputes associated with our stores business in Italy, and the settlement of a lawsuit, recorded primarily in “Other operating expense (income), net” and “Fulfillment,” and primarily impacted our International segment. For the year ended December 31, 2025, we recorded approximately $ 2.7 billion of estimated severance costs primarily related to planned role eliminations, of which $ 1.8 billion was recorded in Q3 2025 and $ 730 million was recorded in the fourth quarter. These charges increased our payroll and related expenses, were recorded primarily in “Technology and infrastructure,” “Fulfillment,” and “Sales and marketing,” and impacted all of our segments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:157651-158263",
+      "excerpt": "arter. These charges increased our payroll and related expenses, were recorded primarily in “Technology and infrastructure,” “Fulfillment,” and “Sales and marketing,” and impacted all of our segments. For the year ended December 31, 2025, we recorded approximately $ 1.3 billion of asset impairments, of which $ 610 million was recorded in the fourth quarter, primarily consisting of property and equipment and operating leases related to 41 Table of Contents physical stores. These fourth quarter charges were recorded in “Other operating expense (income), net” and primarily impacted our North America segment.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:278057-279158",
+      "excerpt": "(amended and restated) (incorporated by reference to the Company’s Quarterly Report on Form 10-Q for the Quarter ended June 30, 2022). 10.3† Form of Indemnification Agreement between Amazon.com, Inc. and each of its Directors (incorporated by reference to Exhibit 10.1 to the Company’s Registration Statement on Form S-1 (Registration No. 333-23795) filed March 24, 1997, as amended on April 21, 1997). 10.4† Form of Restricted Stock Unit Agreement for Officers and Employees (incorporated by reference to the Company’s Annual Report on Form 10-K for the Year ended December 31, 2002). 10.5† Form of Restricted Stock Unit Agreement for Directors (incorporated by reference to the Company’s Annual Report on Form 10-K for the Year ended December 31, 2002). 10.6† Form of Restricted Stock Agreement (incorporated by reference to the Company’s Annual Report on Form 10-K for the Year ended December 31, 2001). 10.7† Form of Global Restricted Stock Unit Award Agreement for Executive Officers (incorporated by reference to the Company ’ s Annual Report on Form 10-K for the Year ended December 31, 2023).",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:155929-157120",
+      "excerpt": "useful lives of equipment on an ongoing basis. Effective January 1, 2025 we changed our estimate of the useful lives of a subset of our servers and networking equipment from six years to five years . The shorter useful lives are due to the increased pace of technology development, particularly in the area of artificial intelligence and machine learning. The effect of this change in estimate for the year ended December 31, 2025, based on servers and networking equipment that were included in “Property and equipment, net” as of December 31, 2024 and those acquired during the year ended December 31, 2025, was an increase in depreciation and amortization expense of $ 1.4 billion and a reduction in net income of $ 1.0 billion, or $ 0.10 per basic share and $ 0.10 per diluted share, which primarily impacted our AWS segment. During Q3 2025, we recorded $ 2.5 billion of expense related to the settlement of a lawsuit with the FTC. This charge was recorded in “Other operating expense (income), net” and impacted our North America segment. During Q4 2025, we recorded $ 2.4 billion of expense related to settlements of a lawsuit and tax disputes, severance costs, and asset impairments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:278958-280137",
+      "excerpt": "2001). 10.7† Form of Global Restricted Stock Unit Award Agreement for Executive Officers (incorporated by reference to the Company ’ s Annual Report on Form 10-K for the Year ended December 31, 2023). 10.8 Five-Year Revolving Credit Agreement, dated as of November 1, 2023, among Amazon.com, Inc., Citibank N.A., as administrative agent, and the lenders party thereto (incorporated by reference to the Company’s Current Report on Form 8-K, filed November 1, 2023). 10.9 364-Day Revolving Credit Agreement, dated as of October 29 , 202 5 , among Amazon.com, Inc., Citibank N.A., as administrative agent, and the lenders party thereto (incorporated by reference to the Company’s Quarterly Report on Form 10-Q for the Quarter ended September 30, 202 5 ). 19.1 Amazon.com, Inc. Insider Trading Policy (incorporated by reference to the Company ’ s Annual Report on Form 10-K for the Year ended December 31, 202 4). 21.1 List of Significant Subsidiaries. 23.1 Consent of Independent Registered Public Accounting Firm. 31.1 Certification of Andrew R. Jassy, President and Chief Executive Officer of Amazon.com, Inc., pursuant to Rule 13a-14(a) under the Securities Exchange Act of 1934.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000040",
+      "form": "10-Q",
+      "filed": "2026-10-30",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+      "locator": "10-Q 0001018724-26-000040:126463-127632",
+      "excerpt": "lion and $247.0 billion, or to grow between 12% and 16% compared with fourth quarter 2025. This guidance anticipates an unfavorable impact of approximately 60 basis points from foreign exchange rates. Advertising revenue grew 12% year-over-year excluding changes in foreign exchange rates in the third quarter 2026 impacted by timing anomalies primarily related to Prime Day (and a couple other timing factors). We expect year-over-year advertising revenue to grow in the high teens in fourth quarter 2026. • Operating income is expected to be between $28.5 billion and $33.5 billion, compared with $25.0 billion in fourth quarter 2025. • We continue to expect 2026 cash capital expenditures to be approximately $220 billion. • This guidance assumes, among other things, no impact from energy derivative contract remeasurements, and that no additional business acquisitions, restructurings, or legal settlements are concluded. 36 Table of Contents Item 3. Quantitative and Qualitative Disclosures About Market Risk We are exposed to market risk for the effect of interest rate changes, foreign currency fluctuations, and changes in the market values of our investments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000040",
+      "form": "10-Q",
+      "filed": "2026-10-30",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+      "locator": "10-Q 0001018724-26-000040:66832-68032",
+      "excerpt": "awards totaled 11.0 billion as of December 31, 2025 and September 30, 2026. These totals include all vested and unvested stock awards outstanding, including those awards we estimate will be forfeited. Stock-based compensation expense is as follows (in millions): Three Months Ended September 30, Nine Months Ended September 30, 2025 2026 2025 2026 Cost of sales $ 197 $ 170 $ 595 $ 549 Fulfillment 685 656 2,062 2,021 Technology and infrastructure 2,697 3,409 8,412 9,396 Sales and marketing 832 762 2,692 2,270 General and administrative 436 409 1,309 1,240 Total stock-based compensation expense $ 4,847 $ 5,406 $ 15,070 $ 15,476 The following table summarizes our restricted stock unit activity for the nine months ended September 30, 2026 (in millions): Number of Units Weighted-Average Grant-Date Fair Value Outstanding as of December 31, 2025 222.5 $ 178 Units granted 112.8 224 Units vested ( 79.5 ) 166 Units forfeited ( 32.5 ) 186 Outstanding as of September 30, 2026 223.3 204 Scheduled vesting for outstanding restricted stock units as of September 30, 2026, is as follows (in millions): Three Months Ended December 31, Year Ended December 31, 2026 2027 2028 2029 2030 Thereafter Total Sch",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000040",
+      "form": "10-Q",
+      "filed": "2026-10-30",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+      "locator": "10-Q 0001018724-26-000040:67832-68470",
+      "excerpt": "ting for outstanding restricted stock units as of September 30, 2026, is as follows (in millions): Three Months Ended December 31, Year Ended December 31, 2026 2027 2028 2029 2030 Thereafter Total Scheduled vesting — restricted stock units 26.1 99.4 62.8 25.2 7.5 2.3 223.3 As of September 30, 2026, there was $ 22.3 billion of net unrecognized compensation cost related to unvested stock-based compensation arrangements. This compensation is recognized on an accelerated basis with more than half of the compensation expected to be expensed in the next twelve months, and has a remaining weighted-average recognition period of one year .",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000026",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm",
+      "locator": "10-Q 0001018724-26-000026:61615-62815",
+      "excerpt": "tock awards totaled 11.0 billion as of December 31, 2025 and June 30, 2026. These totals include all vested and unvested stock awards outstanding, including those awards we estimate will be forfeited. Stock-based compensation expense is as follows (in millions): Three Months Ended June 30, Six Months Ended June 30, 2025 2026 2025 2026 Cost of sales $ 250 $ 208 $ 398 $ 379 Fulfillment 880 764 1,377 1,365 Technology and infrastructure 3,655 3,701 5,715 5,987 Sales and marketing 1,207 845 1,860 1,508 General and administrative 542 520 873 831 Total stock-based compensation expense $ 6,534 $ 6,038 $ 10,223 $ 10,070 The following table summarizes our restricted stock unit activity for the six months ended June 30, 2026 (in millions): Number of Units Weighted-Average Grant-Date Fair Value Outstanding as of December 31, 2025 222.5 $ 178 Units granted 98.4 218 Units vested ( 52.0 ) 162 Units forfeited ( 24.5 ) 181 Outstanding as of June 30, 2026 244.4 197 Scheduled vesting for outstanding restricted stock units as of June 30, 2026, is as follows (in millions): Six Months Ended December 31, Year Ended December 31, 2026 2027 2028 2029 2030 Thereafter Total Scheduled vesting — restricted stoc",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000040",
+      "form": "10-Q",
+      "filed": "2026-10-30",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+      "locator": "10-Q 0001018724-26-000040:132906-134015",
+      "excerpt": "l officer, of the effectiveness of the design and operation of our disclosure controls and procedures, as defined in Rule 13a-15(e) of the 1934 Act, as of the end of the period covered by this report. Based on this evaluation, our principal executive officer and principal financial officer concluded that our disclosure controls and procedures were effective to provide reasonable assurance that information required to be disclosed by us in the reports that we file or submit under the 1934 Act is recorded, processed, summarized, and reported within the time periods specified in the SEC’s rules and forms and to provide reasonable assurance that such information is accumulated and communicated to our management, including our principal executive officer and principal financial officer, as appropriate to allow timely decisions regarding required disclosure. During the most recent fiscal quarter, there has not occurred any change in our internal control over financial reporting that has materially affected, or is reasonably likely to materially affect, our internal control over financial reporting.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000026",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm",
+      "locator": "10-Q 0001018724-26-000026:127332-128441",
+      "excerpt": "l officer, of the effectiveness of the design and operation of our disclosure controls and procedures, as defined in Rule 13a-15(e) of the 1934 Act, as of the end of the period covered by this report. Based on this evaluation, our principal executive officer and principal financial officer concluded that our disclosure controls and procedures were effective to provide reasonable assurance that information required to be disclosed by us in the reports that we file or submit under the 1934 Act is recorded, processed, summarized, and reported within the time periods specified in the SEC’s rules and forms and to provide reasonable assurance that such information is accumulated and communicated to our management, including our principal executive officer and principal financial officer, as appropriate to allow timely decisions regarding required disclosure. During the most recent fiscal quarter, there has not occurred any change in our internal control over financial reporting that has materially affected, or is reasonably likely to materially affect, our internal control over financial reporting.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:3620-4792",
+      "excerpt": "t’s executive officers during the relevant recovery period pursuant to §240.10D-1(b). ☐ Indicate by check mark whether the registrant is a shell company (as defined in Rule 12b-2 of the Exchange Act). Yes ☐ No ☒ Aggregate market value of voting stock held by non-affiliates of the registrant as of June 30, 2025 $ 2,118,061,430,046 Number of shares of common stock outstanding as of January 28, 2026 10,734,920,870 ____________________________________ DOCUMENTS INCORPORATED BY REFERENCE The information required by Part III of this Report, to the extent not set forth herein, is incorporated herein by reference from the registrant’s definitive proxy statement relating to the Annual Meeting of Shareholders to be held in 2026, which definitive proxy statement shall be filed with the Securities and Exchange Commission within 120 days after the end of the fiscal year to which this Report relates. Table of Contents AMAZON.COM, INC. FORM 10-K For the Fiscal Year Ended December 31, 2025 INDEX Page PART I Item 1. Business 3 Item 1A. Risk Factors 6 Item 1B. Unresolved Staff Comments 17 Item 1C. Cybersecurity 17 Item 2. Properties 18 Item 3. Legal Proceedings 18 Item 4.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000040",
+      "form": "10-Q",
+      "filed": "2026-10-30",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+      "locator": "10-Q 0001018724-26-000040:125562-126663",
+      "excerpt": "in our earnings release furnished on Form 8-K as set forth below. These forward-looking statements reflect Amazon.com’s expectations as of October 29, 2026, and are subject to substantial uncertainty. Our results are inherently unpredictable and may be materially affected by many factors, such as fluctuations in foreign exchange rates and energy prices, changes in global economic and geopolitical conditions, tariff and trade policies, resource and supply volatility, including for memory chips, and customer demand and spending (including the impact of recessionary fears), inflation, interest rates, regional labor market constraints, world events, the rate of growth of the internet, online commerce, cloud services, and new and emerging technologies, as well as those outlined in Item 1A of Part II, “Risk Factors.” Fourth Quarter 2026 Guidance • Net sales are expected to be between $240.0 billion and $247.0 billion, or to grow between 12% and 16% compared with fourth quarter 2025. This guidance anticipates an unfavorable impact of approximately 60 basis points from foreign exchange rates.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000040",
+      "form": "10-Q",
+      "filed": "2026-10-30",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+      "locator": "10-Q 0001018724-26-000040:125077-125762",
+      "excerpt": "4,663 79,389 155 79,544 ___________________ (1) Represents the change in reported amounts resulting from changes in foreign exchange rates from those in effect in the comparable prior year period for operating results. (2) Represents the outcome that would have resulted had foreign exchange rates in the reported period been the same as those in effect in the comparable prior year period for operating results. 35 Table of Contents Guidance We provided guidance on October 29, 2026, in our earnings release furnished on Form 8-K as set forth below. These forward-looking statements reflect Amazon.com’s expectations as of October 29, 2026, and are subject to substantial uncertainty.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000026",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm",
+      "locator": "10-Q 0001018724-26-000026:120300-121427",
+      "excerpt": "6, in our earnings release furnished on Form 8-K as set forth below. These forward-looking statements reflect Amazon.com’s expectations as of July 30, 2026, and are subject to substantial uncertainty. Our results are inherently unpredictable and may be materially affected by many factors, such as fluctuations in foreign exchange rates and energy prices, changes in global economic and geopolitical conditions, tariff and trade policies, resource and supply volatility, including for memory chips, and customer demand and spending (including the impact of recessionary fears), inflation, interest rates, regional labor market constraints, world events, the rate of growth of the internet, online commerce, cloud services, and new and emerging technologies, as well as those outlined in Item 1A of Part II, “Risk Factors.” Third Quarter 2026 Guidance • Net sales are expected to be between $197.0 billion and $202.0 billion, or to grow between 9% and 12% compared with third quarter 2025. Excluding the impact of Prime Day in both 2025 and 2026, third quarter 2026 year-over-year growth would be nearly 400 basis points higher.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    }
+  ],
+  "citations": [],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 17922,
+    "output": 1991
+  },
+  "latency_ms": 23911,
+  "estimated_cost_usd": 0.083631,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+        "checks": [
+          "UNVERIFIABLE"
+        ]
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 6933,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 9,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 16950,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "INSUFFICIENT_EVIDENCE"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_PARTIALLY_UNVERIFIABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 10,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

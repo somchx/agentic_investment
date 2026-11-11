@@ -99,7 +99,7 @@ ALL_KNOWN_CIKS = {
 
 
 # Public demo cohort; retain the catalog to read historical holdings safely.
-DEMO_TICKERS = ("AAPL", "MSFT", "AMZN", "GOOGL", "NVDA")
+DEMO_TICKERS = ("AAPL", "MSFT", "AMZN", "GOOGL", "NVDA", "META", "TSLA", "NFLX", "WMT", "KO")
 KNOWN_CIKS = {ticker: ALL_KNOWN_CIKS[ticker] for ticker in DEMO_TICKERS}
 DEMO_LABEL = ", ".join(DEMO_TICKERS)
 

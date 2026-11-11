@@ -1,0 +1,901 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-MSFT-12:86ff7487",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-MSFT-12",
+    "company": "MSFT",
+    "claim": "Microsoft's rising purchases of property and equipment in the quarter ended September 30, 2026 put no pressure on its free cash flow.",
+    "as_of_date": "2026-11-01",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2027 Q1"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "INSUFFICIENT_EVIDENCE",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Cash used in investing increased $7.4 billion to $42.0 billion for the three months ended September 30, 2026, primarily due to a $20.0 billion increase in additions to property and equipment"
+          }
+        ],
+        "reasoning_summary": "The claim asserts that Microsoft's rising purchases of property and equipment in Q1 FY2027 (quarter ended September 30, 2026) put \"no pressure\" on its free cash flow. This is an interpretive claim about the impact of capital expenditures on free cash flow.\n\nEvidence E3 directly contradicts this claim. It states that \"Cash used in investing increased $7.4 billion to $42.0 billion for the three months ended September 30, 2026, primarily due to a $20.0 billion increase in additions to property and equipment.\" This shows that the increased property and equipment purchases were the primary driver of a $7.4 billion increase in cash used in investing activities.\n\nSince free cash flow is typically calculated as operating cash flow minus capital expenditures (property and equipment additions), a $20.0 billion increase in property and equipment purchases would directly reduce free cash flow by that amount, all else being equal. The filing explicitly identifies this increase as the primary cause of increased cash used in investing, which directly pressures free cash flow.\n\nThe claim that rising property and equipment purchases put \"no pressure\" on free cash flow is therefore contradicted by the evidence showing they were the primary driver of a substantial $7.4 billion increase in cash used in investing.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did operating cash flow increase enough in Q1 FY2027 to offset the increased capital expenditures, resulting in stable or improved free cash flow despite higher property and equipment purchases?",
+          "search_query": "operating cash flow three months ended September 30 2026 2025",
+          "numeric_check": {
+            "metric": "OperatingCashFlow",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Does the filing explicitly state that free cash flow increased or remained stable during the quarter ended September 30, 2026, which would support the claim that capex increases put no pressure on it?",
+          "search_query": "free cash flow September 30 2026 increased stable",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Were the property and equipment purchases funded through alternative means (such as debt proceeds or financing arrangements) that would isolate them from impacting free cash flow calculations?",
+          "search_query": "property equipment financing debt proceeds capital expenditures funded September 2026",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "operating cash flow three months ended September 30 2026 2025",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "free cash flow September 30 2026 increased stable",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "property equipment financing debt proceeds capital expenditures funded September 2026",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-09-30",
+            "basis": "quarter",
+            "level": 58000000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingCashFlow",
+                "period_start": "2026-07-01",
+                "period_end": "2026-09-30",
+                "value": 58000000000.0,
+                "filed": "2026-10-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-436133",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 45057000000.0,
+            "prior_period_end": "2025-09-30",
+            "yoy_change": 0.2872583616308232,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E12",
+            "E10",
+            "E11"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E13",
+              "quote": "Cash from operations increased $12.9 billion to $58.0 billion for the three months ended September 30, 2026",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-436133",
+              "form": "10-Q",
+              "filed": "2026-10-28",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+              "locator": "10-Q 0001193125-26-436133:94602-95450"
+            },
+            {
+              "evidence_id": "E10",
+              "quote": "Cash from operations $ 58,022 $ 45,057",
+              "valid": true,
+              "issues": [],
+              "kind": "xbrl_fact",
+              "accession_number": "0001193125-26-436133",
+              "form": "10-Q",
+              "filed": "2026-10-28",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/0001193125-26-436133-index.htm",
+              "locator": "OperatingCashFlow 2026-07-01..2026-09-30"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "8466ef81d50ecb7b3c7c22b656dc8732ee2c3b19b74ab6bf3a428afe8508fcae",
+      "source": "cache",
+      "input_tokens": 4366,
+      "output_tokens": 500,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Cash used in investing increased $7.4 billion to $42.0 billion for the three months ended September 30, 2026, primarily due to a $20.0 billion increase in additions to property and equipment"
+          }
+        ],
+        "reasoning_summary": "The claim asserts that Microsoft's rising purchases of property and equipment in Q1 FY2027 (quarter ended September 30, 2026) put \"no pressure\" on its free cash flow. This is an interpretive claim about the impact of capital expenditures on free cash flow.\n\nEvidence E3 directly contradicts this claim. It states that \"Cash used in investing increased $7.4 billion to $42.0 billion for the three months ended September 30, 2026, primarily due to a $20.0 billion increase in additions to property and equipment.\" This shows that the increased property and equipment purchases were the primary driver of a $7.4 billion increase in cash used in investing activities.\n\nSince free cash flow is typically calculated as operating cash flow minus capital expenditures (property and equipment additions), a $20.0 billion increase in property and equipment purchases would directly reduce free cash flow by that amount, all else being equal. The filing explicitly identifies this increase as the primary cause of increased cash used in investing, which directly pressures free cash flow.\n\nThe claim that rising property and equipment purchases put \"no pressure\" on free cash flow is therefore contradicted by the evidence showing they were the primary driver of a substantial $7.4 billion increase in cash used in investing.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "7d5163472d2665f6c62d8c37d17c4b4c3f17e14af90761111e6e19e6afafb444",
+      "source": "cache",
+      "input_tokens": 5320,
+      "output_tokens": 389,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did operating cash flow increase enough in Q1 FY2027 to offset the increased capital expenditures, resulting in stable or improved free cash flow despite higher property and equipment purchases?",
+            "search_query": "operating cash flow three months ended September 30 2026 2025",
+            "numeric_check": {
+              "metric": "OperatingCashFlow",
+              "measure": "yoy_growth",
+              "period_basis": "quarter",
+              "period_end": "2026-09-30",
+              "comparison": ">",
+              "threshold": 0.2,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Does the filing explicitly state that free cash flow increased or remained stable during the quarter ended September 30, 2026, which would support the claim that capex increases put no pressure on it?",
+            "search_query": "free cash flow September 30 2026 increased stable",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Were the property and equipment purchases funded through alternative means (such as debt proceeds or financing arrangements) that would isolate them from impacting free cash flow calculations?",
+            "search_query": "property equipment financing debt proceeds capital expenditures funded September 2026",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "002cc6b76fc4b46099141dadb72a8261e55865aafe064a23a41e9093148dbb0e",
+      "source": "cache",
+      "input_tokens": 9600,
+      "output_tokens": 818,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E13",
+                "quote": "Cash from operations increased $12.9 billion to $58.0 billion for the three months ended September 30, 2026"
+              },
+              {
+                "evidence_id": "E10",
+                "quote": "Cash from operations $ 58,022 $ 45,057"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "INSUFFICIENT_EVIDENCE",
+        "verdict_changed": true,
+        "change_reason": "The initial verdict of CONTRADICTED was based on evidence showing a $20.0 billion increase in property and equipment purchases that drove a $7.4 billion increase in cash used in investing. However, the counter-evidence reveals that operating cash flow increased by $12.9 billion to $58.0 billion for the quarter (a 28.7% YoY increase). This substantial increase in operating cash flow could potentially offset the increased capital expenditures when calculating free cash flow. Without explicit disclosure of free cash flow figures or the ability to determine the exact impact on free cash flow, the evidence is insufficient to definitively contradict the claim that rising property and equipment purchases put \"no pressure\" on free cash flow. The increased operating cash flow may have been sufficient to absorb the increased capex without pressuring free cash flow.",
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Microsoft's rising purchases of property and equipment in Q1 FY2027 (quarter ended September 30, 2026) put \"no pressure\" on its free cash flow.\n\nInitial analysis showed that property and equipment purchases increased by $20.0 billion, driving a $7.4 billion increase in cash used in investing (E3). This appeared to contradict the claim.\n\nHowever, the counter-evidence reveals critical context: operating cash flow increased by $12.9 billion to $58.0 billion for the three months ended September 30, 2026 (E13, E10), representing a 28.7% year-over-year increase. \n\nFree cash flow is typically calculated as operating cash flow minus capital expenditures. While capex increased by approximately $20.0 billion, operating cash flow increased by $12.9 billion. Without knowing the prior period's capex level or having explicit free cash flow disclosures, we cannot definitively determine whether free cash flow was under pressure or not. The substantial increase in operating cash flow could have partially or fully offset the increased capital expenditures.\n\nThe filings do not explicitly state free cash flow figures or provide sufficient detail to calculate the net impact on free cash flow with certainty. Therefore, the evidence is insufficient to either support or contradict the claim."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Microsoft's rising purchases of property and equipment in the quarter ended September 30, 2026 put no pressure on its free cash flow. FY2027 Q1",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "operating cash flow three months ended September 30 2026 2025",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "free cash flow September 30 2026 increased stable",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "property equipment financing debt proceeds capital expenditures funded September 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingCashFlow",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-09-30",
+            "basis": "quarter",
+            "level": 58000000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingCashFlow",
+                "period_start": "2026-07-01",
+                "period_end": "2026-09-30",
+                "value": 58000000000.0,
+                "filed": "2026-10-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-436133",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 45057000000.0,
+            "prior_period_end": "2025-09-30",
+            "yoy_change": 0.2872583616308232,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E12",
+            "E10",
+            "E11"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001193125-26-436133",
+        "filed": "2026-10-28",
+        "report_date": "2026-09-30",
+        "primary_document": "msft-20260930.htm",
+        "sha256": "43b6854cc1856c4f9af0f3a305b0ece274b4615e68e506f1a03f8e122282a359"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001193125-26-323660",
+        "filed": "2026-07-29",
+        "report_date": "2026-06-30",
+        "primary_document": "msft-20260630.htm",
+        "sha256": "a2e8af9a97a682ba3b408c9557ec6f0f3dbd4db6f600d310ae23ebe5b3c827a4"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001193125-26-191507",
+        "filed": "2026-04-29",
+        "report_date": "2026-03-31",
+        "primary_document": "msft-20260331.htm",
+        "sha256": "320b75a01f6ea0cf6cb1ccd46e1081de9e596c2a87f43a65412a159da12ad2d5"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 827
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:38094-39239",
+      "excerpt": "truments Foreign exchange contracts 262 381 Equity contracts 5 1,579 Other contracts ( 47 ) 0 Gains (losses), net of tax, on derivative instruments recognized in our consolidated comprehensive income statements were as follows: (In millions) Three Months Ended September 30, 2026 2025 Designated as Cash Flow Hedging Instruments Foreign exchange contracts Included in effectiveness assessment $ ( 10 ) $ ( 7 ) NOTE 6 — PROPERTY AND EQUIPMENT The components of property and equipment were as follows: (In millions) September 30, 2026 June 30, 2026 Land $ 10,665 $ 10,546 Buildings and improvements 194,619 182,749 Leasehold improvements 17,647 16,348 Servers, network equipment, and software 244,840 215,874 Furniture and equipment 6,281 6,250 Total, at cost 474,052 431,767 Accumulated depreciation ( 127,208 ) ( 118,691 ) Total, net $ 346,844 $ 313,076 Depreciation expense was $ 11.1 billion and $ 7.1 billion for the three months ended September 30, 2026 and 2025, respectively. As of September 30, 2026 and June 30, 2026, purchases of property and equipment remaining in accounts payable were $ 26.5 billion and $ 26.7 billion, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-323660",
+      "form": "10-K",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+      "locator": "10-K 0001193125-26-323660:246605-247795",
+      "excerpt": "gnated as Hedging Instruments Foreign exchange contracts 592 ( 938 ) 367 Equity contracts 1,864 ( 266 ) ( 177 ) Other contracts ( 1 ) 21 ( 15 ) Gains (losses), net of tax, on derivative instruments recognized in our consolidated comprehensive income statements were as follows: (In millions) Year Ended June 30, 2026 2025 2024 Designated as Cash Flow Hedging Instruments Foreign exchange contracts Included in effectiveness assessment $ ( 42 ) $ 77 $ ( 14 ) NOTE 6 — PROPERTY AND EQUIPMENT The components of property and equipment were as follows: (In millions) June 30, 2026 2025 Land $ 10,546 $ 9,338 Buildings and improvements 182,749 137,921 Leasehold improvements 16,348 12,117 Servers, network equipment, and software 215,874 132,836 Furniture and equipment 6,250 6,407 Total, at cost 431,767 298,619 Accumulated depreciation ( 118,691 ) ( 93,653 ) Total, net $ 313,076 $ 204,966 During fiscal years 2026, 2025, and 2024, depreciation expense was $ 34.3 billion, $ 22.0 billion, and $ 15.2 billion, respectively. As of June 30, 2026, 2025, and 2024, purchases of property and equipment remaining in accounts payable were $ 26.7 billion, $ 6.9 billion, and $ 4.3 billion, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:95250-96354",
+      "excerpt": "o suppliers. Cash used in financing increased $4.8 billion to $16.6 billion for the three months ended September 30, 2026, primarily due to a $4.9 billion increase in cash used for repayments of debt. Cash used in investing increased $7.4 billion to $42.0 billion for the three months ended September 30, 2026, primarily due to a $20.0 billion increase in additions to property and equipment and a $6.7 billion increase in cash used in other investing primarily to facilitate the purchase of components, offset in part by a $19.1 billion increase in cash from net investment purchases, sales, and maturities. 37 PART I Item 2 Debt Proceeds We issue debt to take advantage of favorable pricing and liquidity in the debt markets, reflecting our credit rating. The proceeds of these issuances were or will be used for general corporate purposes, which may include, among other things, funding for working capital, capital expenditures, repurchases of capital stock, acquisitions, and repayment of existing debt. Refer to Note 9 – Debt of the Notes to Financial Statements (Part I, Item 1 of this Form 10-Q).",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-191507",
+      "form": "10-Q",
+      "filed": "2026-04-29",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm",
+      "locator": "10-Q 0001193125-26-191507:39042-40242",
+      "excerpt": "r comprehensive loss ( 34 ) 50 ( 46 ) ( 7 ) Not Designated as Hedging Instruments Foreign exchange contracts ( 100 ) ( 372 ) 227 383 Equity contracts 133 176 1,743 ( 283 ) Other contracts ( 13 ) 18 ( 7 ) 16 Gains (losses), net of tax, on derivative instruments recognized in our consolidated comprehensive income statements were as follows: (In millions) Three Months Ended March 31, Nine Months Ended March 31, 2026 2025 2026 2025 Designated as Cash Flow Hedging Instruments Foreign exchange contracts Included in effectiveness assessment $ ( 27 ) $ 20 $ ( 43 ) $ ( 1 ) NOTE 6 — PROPERTY AND EQUIPMENT The components of property and equipment were as follows: (In millions) March 31, 2026 June 30, 2025 Land $ 9,813 $ 9,338 Buildings and improvements 172,260 137,921 Leasehold improvements 15,444 12,117 Servers, network equipment, and software 190,883 132,836 Furniture and equipment 6,551 6,407 Total, at cost 394,951 298,619 Accumulated depreciation ( 111,723 ) ( 93,653 ) Total, net $ 283,228 $ 204,966 Depreciation expense was $ 9.0 billion and $ 24.0 billion for the three and nine months ended March 31, 2026, respectively, and $ 5.8 billion and $ 15.7 billion for the three and nine months e",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:2504-3700",
+      "excerpt": "r 22, 2026 Common Stock, $ 0.00000625 par value per share 7,426,194,552 shares MICROSOFT CORPORATION FORM 10-Q For the Quarter Ended September 30, 2026 INDEX Page PART I. FINANCIAL INFORMATION Item 1. Financial Statements a) Income Statements for the Three Months Ended September 30, 2026 and 2025 3 b) Comprehensive Income Statements for the Three Months Ended September 30, 2026 and 2025 4 c) Balance Sheets as of September 30, 2026 and June 30, 2026 5 d) Cash Flows Statements for the Three Months Ended September 30, 2026 and 2025 6 e) Stockholders’ Equity Statements for the Three Months Ended September 30, 2026 and 2025 7 f) Notes to Financial Statements 8 g) Report of Independent Registered Public Accounting Firm 27 Item 2. Management’s Discussion and Analysis of Financial Condition and Results of Operations 28 Item 3. Quantitative and Qualitative Disclosures About Market Risk 42 Item 4. Controls and Procedures 42 PART II. OTHER INFORMATION Item 1. Legal Proceedings 43 Item 1A. Risk Factors 43 Item 2. Unregistered Sales of Equity Securities and Use of Proceeds 58 Item 5. Other Information 59 Item 6. Exhibits 60 SIGNATURE 61 2 PART I Item 1 PART I. FINANCI AL INFORMATION ITEM 1.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-191507",
+      "form": "10-Q",
+      "filed": "2026-04-29",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm",
+      "locator": "10-Q 0001193125-26-191507:112172-113176",
+      "excerpt": "nine months ended March 31, 2026, primarily due to an increase in cash received from customers and a decrease in cash used to pay income taxes, offset in part by an increase in cash paid to suppliers. Cash used in financing decreased $88 million to $40.8 billion for the nine months ended March 31, 2026, primarily due to a $6.0 billion decrease in cash used for repayments of debt, offset in part by a $3.8 billion increase in common stock repurchases and a $1.8 billion increase in dividends paid. Cash used in investing increased $42.6 billion to $84.7 billion for the nine months ended March 31, 2026, primarily due to a $32.7 billion increase in additions to property and equipment, a $9.1 billion increase in other investing primarily to facilitate the purchase of components, and a $3.8 billion decrease in cash from net investment purchases, sales, and maturities. Debt Proceeds We issue debt to take advantage of favorable pricing and liquidity in the debt markets, reflecting our credit rating.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:47375-48575",
+      "excerpt": "ve remaining lease terms of less than 1 year to 20 years, some of which include options to extend the leases for up to 5 years, and some of which include options to terminate the leases within 1 year. The components of lease expense were as follows: (In millions) Three Months Ended September 30, 2026 2025 Operating lease cost $ 1,894 $ 1,656 Finance lease cost: Amortization of right-of-use assets $ 1,702 $ 1,173 Interest on lease liabilities 769 546 Total finance lease cost $ 2,471 $ 1,719 21 PART I Item 1 Supplemental cash flow information related to leases was as follows: (In millions) Three Months Ended September 30, 2026 2025 Cash paid for amounts included in the measurement of lease liabilities: Operating cash flows from operating leases $ 1,547 $ 1,656 Operating cash flows from finance leases 769 546 Financing cash flows from finance leases 1,000 639 Right-of-use assets obtained in exchange for lease obligations: Operating leases 6,523 1,417 Finance leases 5,192 9,147 Supplemental balance sheet information related to leases was as follows: (In millions, except lease term and discount rate) September 30, 2026 June 30, 2026 Operating Leases Operating lease right-of-use assets $",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:85458-86319",
+      "excerpt": "shows, seminars, and other programs. 34 PART I Item 2 Three Months Ended September 30, 2026 Compared with Three Months Ended September 30, 2025 Sales and marketing expenses were relatively unchanged. General and Administrative (In millions, except percentages) Three Months Ended September 30, Percentage Change 2026 2025 General and administrative $ 1,881 $ 1,806 4% As a percent of revenue 2% 2% 0ppt General and administrative expenses include payroll, employee benefits, stock-based compensation expense, and other headcount-related expenses associated with finance, legal, facilities, certain human resources and other administrative personnel, certain taxes, and legal and other administrative fees. Three Months Ended September 30, 2026 Compared with Three Months Ended September 30, 2025 General and administrative expenses increased $75 million or 4%.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:84836-85658",
+      "excerpt": "d September 30, 2026 Compared with Three Months Ended September 30, 2025 Research and development expenses increased $901 million or 11% driven by continued investments in compute capacity and talent. Sales and Marketing (In millions, except percentages) Three Months Ended September 30, Percentage Change 2026 2025 Sales and marketing $ 5,716 $ 5,717 0% As a percent of revenue 6% 7% (1)ppt Sales and marketing expenses include payroll, stock-based compensation expense, employee benefits, and other headcount-related expenses associated with sales and marketing personnel, and the costs of advertising, promotions, trade shows, seminars, and other programs. 34 PART I Item 2 Three Months Ended September 30, 2026 Compared with Three Months Ended September 30, 2025 Sales and marketing expenses were relatively unchanged.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": "2026-07-01",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/0001193125-26-436133-index.htm",
+      "locator": "OperatingCashFlow 2026-07-01..2026-09-30",
+      "excerpt": null,
+      "values": [
+        58000000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": "2025-07-01",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/0001193125-26-436133-index.htm",
+      "locator": "OperatingCashFlow 2025-07-01..2025-09-30",
+      "excerpt": null,
+      "values": [
+        45057000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "MSFT",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": null,
+      "locator": "OperatingCashFlow yoy_growth quarter @ 2026-09-30",
+      "excerpt": null,
+      "values": [
+        58000000000.0,
+        45057000000.0,
+        0.2872583616308232
+      ],
+      "unit": "ratio",
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:94602-95450",
+      "excerpt": "ading volume to demonstrate that the fair values used are appropriate for these investments. Our fair value processes include controls that are designed to ensure appropriate fair values are recorded. These controls include model validation, review of key model inputs, analysis of period-over-period fluctuations, and independent recalculation of prices where appropriate. Cash Flows Cash from operations increased $12.9 billion to $58.0 billion for the three months ended September 30, 2026, primarily due to an increase in cash received from customers and a decrease in cash used to pay income taxes, offset in part by an increase in cash paid to suppliers. Cash used in financing increased $4.8 billion to $16.6 billion for the three months ended September 30, 2026, primarily due to a $4.9 billion increase in cash used for repayments of debt.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:21764-22885",
+      "excerpt": "d market prices, market comparables, and discounted cash flow projections. Our other current financial assets and current financial liabilities have fair values that approximate their carrying values. Contract Balances and Other Receivables As of September 30, 2026 and June 30, 2026, long-term accounts receivable, net of allowance for doubtful accounts, was $ 5.6 billion and $ 5.5 billion, respectively, and is included in other long-term assets in our consolidated balance sheets. As of September 30, 2026 and June 30, 2026, the current portion of other receivables related to activities to facilitate the purchase of server components was $ 35.7 billion and $ 27.8 billion, respectively, and are included in other current assets in our consolidated balance sheets. Additionally, as of September 30, 2026 and June 30, 2026, restricted investments pursuant to a supplier agreement were $ 12.6 billion and $ 11.3 billion, respectively, with $ 4.0 billion and $ 3.8 billion included in short-term investments and $ 8.6 billion and $ 7.5 billion included in equity and other investments in our consolidated balance sheet.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:37094-38294",
+      "excerpt": "ing agreements for which we have elected to offset were $ 696 million and $ 578 million, respectively, as of September 30, 2026, and $ 2.2 billion and $ 1.4 billion, respectively, as of June 30, 2026. The following table presents the fair value of our derivatives instruments on a gross basis: (In millions) Level 1 Level 2 Level 3 Total September 30, 2026 Derivative assets $ 0 $ 705 $ 5 $ 710 Derivative liabilities 0 ( 594 ) 0 ( 594 ) June 30, 2026 Derivative assets 0 2,168 8 2,176 Derivative liabilities 0 ( 1,430 ) 0 ( 1,430 ) 17 PART I Item 1 Gains (losses) on derivative instruments recognized in other income (expense), net were as follows: (In millions) Three Months Ended September 30, 2026 2025 Designated as Fair Value Hedging Instruments Interest rate contracts Derivatives $ 1 $ ( 1 ) Hedged items ( 7 ) ( 8 ) Designated as Cash Flow Hedging Instruments Foreign exchange contracts Amount reclassified from accumulated other comprehensive loss ( 16 ) ( 5 ) Not Designated as Hedging Instruments Foreign exchange contracts 262 381 Equity contracts 5 1,579 Other contracts ( 47 ) 0 Gains (losses), net of tax, on derivative instruments recognized in our consolidated comprehensive income",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-323660",
+      "form": "10-K",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+      "locator": "10-K 0001193125-26-323660:173753-174882",
+      "excerpt": "2026, primarily due to a $6.0 billion decrease in cash used for repayments of debt, offset in part by a $3.9 billion increase in common stock repurchases and a $2.4 billion increase in dividends paid. Cash used in investing increased $66.9 billion to $139.5 billion for fiscal year 2026, primarily due to a $51.4 billion increase in additions to property and equipment and a $22.2 billion increase in cash used in other investing primarily to facilitate the purchase of components, offset in part by a $4.2 billion decrease in cash used in the acquisition of companies, net of cash acquired and divestitures, and purchases of intangible and other assets and a $2.4 billion decrease in cash used in net investment purchases, sales, and maturities. Debt Proceeds We issue debt to take advantage of favorable pricing and liquidity in the debt markets, reflecting our credit rating. The proceeds of these issuances were or will be used for general corporate purposes, which may include, among other things, funding for working capital, capital expenditures, repurchases of capital stock, acquisitions, and repayment of existing debt.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-191507",
+      "form": "10-Q",
+      "filed": "2026-04-29",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm",
+      "locator": "10-Q 0001193125-26-191507:112976-114029",
+      "excerpt": "crease in cash from net investment purchases, sales, and maturities. Debt Proceeds We issue debt to take advantage of favorable pricing and liquidity in the debt markets, reflecting our credit rating. The proceeds of these issuances were or will be used for general corporate purposes, which may include, among other things, funding for working capital, capital expenditures, repurchases of capital stock, acquisitions, and repayment of existing debt. Refer to Note 9 – Debt of the Notes to Financial Statements (Part I, Item 1 of this Form 10-Q). Unearned Revenue Unearned revenue comprises mainly unearned revenue related to volume licensing programs, which may include cloud services and Software Assurance (“SA”). Unearned revenue is generally invoiced annually at the beginning of each contract period for multi-year agreements and recognized ratably over the coverage period. Unearned revenue also includes payments for other offerings for which we have been paid in advance and earn the revenue when we transfer control of the product or service.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:90902-92079",
+      "excerpt": "m investments in OpenAI, net of tax of $65 and $(975) (207 ) 3,086 (107)% Adjusted net income (non-GAAP) $ 36,422 $ 30,833 18% Diluted earnings per share $ 4.92 $ 3.72 32% Net (gains) losses from investments in OpenAI (0.03 ) 0.41 (107)% Adjusted diluted earnings per share (non-GAAP) $ 4.89 $ 4.13 18% 36 PART I Item 2 LIQUIDITY AND CAPITAL RESOURCES We expect existing cash, cash equivalents, short-term investments, cash flows from operations, and access to capital markets to continue to be sufficient to fund our operating activities and cash commitments for investing and financing activities, such as dividends, share repurchases, debt maturities, and material capital expenditures, for at least the next 12 months and thereafter for the foreseeable future. Cash, Cash Equivalents, and Investments Cash, cash equivalents, and short-term investments totaled $64.5 billion and $76.8 billion as of September 30, 2026 and June 30, 2026, respectively. Equity and other investments were $37.8 billion and $36.3 billion as of September 30, 2026 and June 30, 2026, respectively. Our short-term investments are primarily intended to facilitate liquidity and capital preservation.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 19286,
+    "output": 1707
+  },
+  "latency_ms": 7,
+  "estimated_cost_usd": 0.083463,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "INSUFFICIENT_EVIDENCE"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 12,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

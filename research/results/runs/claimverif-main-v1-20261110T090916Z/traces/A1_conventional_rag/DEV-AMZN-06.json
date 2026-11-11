@@ -1,0 +1,411 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T090916Z:A1_conventional_rag:DEV-AMZN-06:f3b61d8c",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A1_conventional_rag",
+  "approach_kind": "conventional_rag",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": false,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A1_conventional_rag",
+    "kind": "conventional_rag",
+    "description": "claim -> retrieval -> LLM -> verdict"
+  },
+  "config_hash": "1ebada2c6046452b",
+  "claim": {
+    "claim_id": "DEV-AMZN-06",
+    "company": "AMZN",
+    "claim": "Amazon's results for the quarter ended June 30, 2026 show improving profitability without an offsetting rise in operating costs.",
+    "as_of_date": "2026-08-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q2"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingIncome",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Operating income increased from $19.2 billion in Q2 2025 to $27.5 billion in Q2 2026"
+          }
+        ],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "The increase in North America operating income in Q2 2026 and for the six months ended June 30, 2026, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased shipping, fulfillment, and technology and infrastructure costs."
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "The increase in AWS operating income in Q2 2026 and for the six months ended June 30, 2026, compared to the comparable prior year periods, is primarily due to increased sales, partially offset by spending on technology infrastructure that was primarily driven by additional investments to support AWS business growth."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "Shipping costs were $23.4 billion and $27.9 billion in Q2 2025 and Q2 2026"
+          }
+        ],
+        "reasoning_summary": "The claim has two components: (1) improving profitability and (2) without an offsetting rise in operating costs.\n\nThe first component is SUPPORTED: Operating income increased from $19.2 billion in Q2 2025 to $27.5 billion in Q2 2026 (E3), demonstrating improved profitability.\n\nHowever, the second component is CONTRADICTED by multiple pieces of evidence:\n1. E1 explicitly states that North America operating income increases were \"partially offset by increased shipping, fulfillment, and technology and infrastructure costs\"\n2. E2 states that AWS operating income increases were \"partially offset by spending on technology infrastructure\"\n3. E5 shows shipping costs increased from $23.4 billion in Q2 2025 to $27.9 billion in Q2 2026, a rise of $4.5 billion\n\nThe evidence clearly shows that operating costs did rise during Q2 2026, contradicting the claim's assertion that profitability improved \"without an offsetting rise in operating costs.\" While profitability did improve overall, this was achieved despite rising operating costs, not without them.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "2abc81d8999f6aeaa0607578c2174447ededdcd03172bf34167dfeff435386cb",
+      "source": "live",
+      "input_tokens": 3780,
+      "output_tokens": 757,
+      "stop_reason": "tool_use",
+      "latency_ms": 12598,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingIncome",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Operating income increased from $19.2 billion in Q2 2025 to $27.5 billion in Q2 2026"
+          }
+        ],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "The increase in North America operating income in Q2 2026 and for the six months ended June 30, 2026, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased shipping, fulfillment, and technology and infrastructure costs."
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "The increase in AWS operating income in Q2 2026 and for the six months ended June 30, 2026, compared to the comparable prior year periods, is primarily due to increased sales, partially offset by spending on technology infrastructure that was primarily driven by additional investments to support AWS business growth."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "Shipping costs were $23.4 billion and $27.9 billion in Q2 2025 and Q2 2026"
+          }
+        ],
+        "reasoning_summary": "The claim has two components: (1) improving profitability and (2) without an offsetting rise in operating costs.\n\nThe first component is SUPPORTED: Operating income increased from $19.2 billion in Q2 2025 to $27.5 billion in Q2 2026 (E3), demonstrating improved profitability.\n\nHowever, the second component is CONTRADICTED by multiple pieces of evidence:\n1. E1 explicitly states that North America operating income increases were \"partially offset by increased shipping, fulfillment, and technology and infrastructure costs\"\n2. E2 states that AWS operating income increases were \"partially offset by spending on technology infrastructure\"\n3. E5 shows shipping costs increased from $23.4 billion in Q2 2025 to $27.9 billion in Q2 2026, a rise of $4.5 billion\n\nThe evidence clearly shows that operating costs did rise during Q2 2026, contradicting the claim's assertion that profitability improved \"without an offsetting rise in operating costs.\" While profitability did improve overall, this was achieved despite rising operating costs, not without them.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Amazon's results for the quarter ended June 30, 2026 show improving profitability without an offsetting rise in operating costs. 2026 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001018724-26-000026",
+        "filed": "2026-07-31",
+        "report_date": "2026-06-30",
+        "primary_document": "amzn-20260630.htm",
+        "sha256": "4a6bb6e27c4ef03a8d77118309163b73e7f15077b448bde2d1ebdd7a6c78d7e7"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001018724-26-000014",
+        "filed": "2026-04-30",
+        "report_date": "2026-03-31",
+        "primary_document": "amzn-20260331.htm",
+        "sha256": "906026d28ea366d9d6b33bef35e7856ce10732b1f92f14e4be8cea92e943cd21"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001018724-26-000004",
+        "filed": "2026-02-06",
+        "report_date": "2025-12-31",
+        "primary_document": "amzn-20251231.htm",
+        "sha256": "3702599045ec83f3faca3186c42b62247d1ec0e3bdf47c7f8acc7305b858f139"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 760
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000026",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm",
+      "locator": "10-Q 0001018724-26-000026:112321-113313",
+      "excerpt": "ng expenses that impact segment operating income, see “Operating Expenses” and the descriptions of operating expense line item changes on pages 30 to 32, and “Note 8 — Segment Information” on page 22. The increase in North America operating income in Q2 2026 and for the six months ended June 30, 2026, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased shipping, fulfillment, and technology and infrastructure costs. The increase in International operating income in Q2 2026 and for the six months ended June 30, 2026, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased shipping and fulfillment costs. Changes in foreign exchange rates did not significantly impact operating income for Q2 2026, but positively impacted operating income by $304 million for the six months ended June 30, 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000026",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm",
+      "locator": "10-Q 0001018724-26-000026:113113-114283",
+      "excerpt": "ent costs. Changes in foreign exchange rates did not significantly impact operating income for Q2 2026, but positively impacted operating income by $304 million for the six months ended June 30, 2026. The increase in AWS operating income in Q2 2026 and for the six months ended June 30, 2026, compared to the comparable prior year periods, is primarily due to increased sales, partially offset by spending on technology infrastructure that was primarily driven by additional investments to support AWS business growth. Changes in foreign exchange rates did not significantly impact operating income for Q2 2026, but negatively impacted operating income by $395 million for the six months ended June 30, 2026. 32 Table of Contents Interest Income and Expense Our interest income was $1.1 billion and $1.3 billion during Q2 2025 and Q2 2026, and $2.2 billion and $2.4 billion for the six months ended June 30, 2025 and 2026, primarily due to a higher average balance of invested funds, offset by a decrease in prevailing rates. We generally invest our excess cash in investment grade short- to intermediate-term marketable debt securities and AAA-rated money market funds.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000026",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm",
+      "locator": "10-Q 0001018724-26-000026:111380-112521",
+      "excerpt": "on for Q2 2025 and Q2 2026, and $507 million and $537 million for the six months ended June 30, 2025 and 2026, and was primarily related to asset impairments and the amortization of intangible assets. Operating Income Operating income by segment is as follows (in millions): Three Months Ended June 30, Six Months Ended June 30, 2025 2026 2025 2026 Operating Income North America $ 7,517 $ 9,123 $ 13,358 $ 17,390 International 1,494 1,717 2,511 3,141 AWS 10,160 16,621 21,707 30,782 Consolidated $ 19,171 $ 27,461 $ 37,576 $ 51,313 Operating income increased from $19.2 billion in Q2 2025 to $27.5 billion in Q2 2026, and increased from $37.6 billion for the six months ended June 30, 2025 to $51.3 billion for the six months ended June 30, 2026. We believe that operating income is a more meaningful measure than gross profit and gross margin due to the diversity of our product categories and services. For more information on the operating expenses that impact segment operating income, see “Operating Expenses” and the descriptions of operating expense line item changes on pages 30 to 32, and “Note 8 — Segment Information” on page 22.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000026",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm",
+      "locator": "10-Q 0001018724-26-000026:110831-111580",
+      "excerpt": "ship benefits and other shipping offers are not included in sales and marketing expense, we view these offers as effective worldwide marketing tools, and intend to continue offering them indefinitely. General and Administrative The decrease in general and administrative costs in Q2 2026 and for the six months ended June 30, 2026, compared to the comparable prior year periods, is primarily due to a decrease in payroll and related expenses. Other Operating Expense (Income), Net Other operating expense (income), net was $199 million and $90 million for Q2 2025 and Q2 2026, and $507 million and $537 million for the six months ended June 30, 2025 and 2026, and was primarily related to asset impairments and the amortization of intangible assets.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000026",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm",
+      "locator": "10-Q 0001018724-26-000026:102870-103872",
+      "excerpt": "ded June 30, 2026, compared to the comparable prior year periods, is primarily due to increased product and shipping costs resulting from increased sales, partially offset by operational efficiencies. Cost of sales in Q2 2026 includes tariff refunds received under the IEEPA. Changes in foreign exchange rates did not significantly impact cost of sales for Q2 2026, but increased cost of sales by $1.8 billion for the six months ended June 30, 2026. Shipping costs were $23.4 billion and $27.9 billion in Q2 2025 and Q2 2026, and $45.9 billion and $53.6 billion for the six months ended June 30, 2025 and 2026. Shipping costs to receive products from our suppliers are included in our inventory and recognized as cost of sales upon sale of products to our customers. We expect our cost of shipping to continue to increase to the 30 Table of Contents extent our customers accept and use our shipping offers at an increasing rate, we use more expensive shipping methods, and we offer additional services.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000026",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm",
+      "locator": "10-Q 0001018724-26-000026:110023-111031",
+      "excerpt": "omer referrals, sponsored search, social and online advertising, television advertising, and other initiatives. Our marketing costs are largely variable, based on growth in sales and changes in rates. To the extent there is increased or decreased competition for these traffic sources, or to the extent our mix of these channels shifts, we would expect to see a corresponding change in our marketing costs. Sales and marketing costs in Q2 2026 and for the six months ended June 30, 2026 did not significantly change compared to the comparable prior year periods. Changes in foreign exchange rates did not significantly impact sales and marketing costs for Q2 2026, but increased sales and marketing costs by $293 million for the six months ended June 30, 2026. While costs associated with Amazon Prime membership benefits and other shipping offers are not included in sales and marketing expense, we view these offers as effective worldwide marketing tools, and intend to continue offering them indefinitely.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E3",
+      "quote": "Operating income increased from $19.2 billion in Q2 2025 to $27.5 billion in Q2 2026",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001018724-26-000026",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm",
+      "locator": "10-Q 0001018724-26-000026:111380-112521"
+    },
+    {
+      "evidence_id": "E1",
+      "quote": "The increase in North America operating income in Q2 2026 and for the six months ended June 30, 2026, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased shipping, fulfillment, and technology and infrastructure costs.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001018724-26-000026",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm",
+      "locator": "10-Q 0001018724-26-000026:112321-113313"
+    },
+    {
+      "evidence_id": "E2",
+      "quote": "The increase in AWS operating income in Q2 2026 and for the six months ended June 30, 2026, compared to the comparable prior year periods, is primarily due to increased sales, partially offset by spending on technology infrastructure that was primarily driven by additional investments to support AWS business growth.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001018724-26-000026",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm",
+      "locator": "10-Q 0001018724-26-000026:113113-114283"
+    },
+    {
+      "evidence_id": "E5",
+      "quote": "Shipping costs were $23.4 billion and $27.9 billion in Q2 2025 and Q2 2026",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001018724-26-000026",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm",
+      "locator": "10-Q 0001018724-26-000026:102870-103872"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 3780,
+    "output": 757
+  },
+  "latency_ms": 12607,
+  "estimated_cost_usd": 0.022695,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "conventional_rag",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 12600,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "mixed"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 13,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

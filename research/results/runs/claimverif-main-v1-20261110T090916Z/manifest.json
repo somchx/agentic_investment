@@ -1,0 +1,310 @@
+{
+  "run_id": "claimverif-main-v1-20261110T090916Z",
+  "created_at": "2026-11-10T09:09:17+00:00",
+  "experiment_id": "claimverif-main-v1",
+  "description": "Main comparison: A1 conventional RAG, A2 RAG + deterministic numeric verification, A3 contradiction-aware, SR self-reflection control. Same claims, corpus, cutoffs, model, retrieval and per-claim budget.",
+  "config_path": "configs/main_comparison.json",
+  "approaches": [
+    "A1_conventional_rag",
+    "A2_rag_numeric",
+    "A3_contradiction_aware"
+  ],
+  "approach_configs": {
+    "A1_conventional_rag": {
+      "llm": {
+        "model": "claude-sonnet-4-5-20250929",
+        "temperature": 0,
+        "max_output_tokens": 1500
+      },
+      "retrieval": {
+        "top_k": 6,
+        "chunk_chars": 1200,
+        "chunk_overlap": 200,
+        "max_filings_per_form": {
+          "10-K": 1,
+          "10-Q": 2,
+          "8-K": 2
+        },
+        "passage_chars_in_prompt": 1200
+      },
+      "numeric": {
+        "enabled": false,
+        "max_assertions": 6,
+        "override_final_label": true
+      },
+      "contradiction": {
+        "enabled": false,
+        "max_hypotheses": 3,
+        "top_k_per_query": 3,
+        "counter_retrieval": true,
+        "counter_numeric_checks": true
+      },
+      "reflection": {
+        "enabled": false,
+        "max_items": 3
+      },
+      "budget": {
+        "max_llm_calls_per_claim": 3,
+        "max_input_tokens_per_claim": 60000,
+        "max_retrieval_queries_per_claim": 4
+      },
+      "name": "A1_conventional_rag",
+      "kind": "conventional_rag",
+      "description": "claim -> retrieval -> LLM -> verdict"
+    },
+    "A2_rag_numeric": {
+      "llm": {
+        "model": "claude-sonnet-4-5-20250929",
+        "temperature": 0,
+        "max_output_tokens": 1500
+      },
+      "retrieval": {
+        "top_k": 6,
+        "chunk_chars": 1200,
+        "chunk_overlap": 200,
+        "max_filings_per_form": {
+          "10-K": 1,
+          "10-Q": 2,
+          "8-K": 2
+        },
+        "passage_chars_in_prompt": 1200
+      },
+      "numeric": {
+        "enabled": true,
+        "max_assertions": 6,
+        "override_final_label": true
+      },
+      "contradiction": {
+        "enabled": false,
+        "max_hypotheses": 3,
+        "top_k_per_query": 3,
+        "counter_retrieval": true,
+        "counter_numeric_checks": true
+      },
+      "reflection": {
+        "enabled": false,
+        "max_items": 3
+      },
+      "budget": {
+        "max_llm_calls_per_claim": 3,
+        "max_input_tokens_per_claim": 60000,
+        "max_retrieval_queries_per_claim": 4
+      },
+      "name": "A2_rag_numeric",
+      "kind": "financial_verification",
+      "description": "A1 + deterministic numeric verification"
+    },
+    "A3_contradiction_aware": {
+      "llm": {
+        "model": "claude-sonnet-4-5-20250929",
+        "temperature": 0,
+        "max_output_tokens": 1500
+      },
+      "retrieval": {
+        "top_k": 6,
+        "chunk_chars": 1200,
+        "chunk_overlap": 200,
+        "max_filings_per_form": {
+          "10-K": 1,
+          "10-Q": 2,
+          "8-K": 2
+        },
+        "passage_chars_in_prompt": 1200
+      },
+      "numeric": {
+        "enabled": true,
+        "max_assertions": 6,
+        "override_final_label": true
+      },
+      "contradiction": {
+        "enabled": true,
+        "max_hypotheses": 3,
+        "top_k_per_query": 3,
+        "counter_retrieval": true,
+        "counter_numeric_checks": true
+      },
+      "reflection": {
+        "enabled": false,
+        "max_items": 3
+      },
+      "budget": {
+        "max_llm_calls_per_claim": 3,
+        "max_input_tokens_per_claim": 60000,
+        "max_retrieval_queries_per_claim": 4
+      },
+      "name": "A3_contradiction_aware",
+      "kind": "contradiction_aware",
+      "description": "A2 + contradiction investigation + reconciliation"
+    }
+  },
+  "approach_config_hashes": {
+    "A1_conventional_rag": "1ebada2c6046452b",
+    "A2_rag_numeric": "53b859cfe39ca3b0",
+    "A3_contradiction_aware": "06b9eff7658d5e71"
+  },
+  "comparisons": [
+    {
+      "name": "main",
+      "a": "A2_rag_numeric",
+      "b": "A3_contradiction_aware"
+    },
+    {
+      "name": "second_look_control",
+      "a": "SR_self_reflection",
+      "b": "A3_contradiction_aware"
+    },
+    {
+      "name": "numeric_stage",
+      "a": "A1_conventional_rag",
+      "b": "A2_rag_numeric"
+    }
+  ],
+  "fairness_problems": [],
+  "dataset": {
+    "split": "development",
+    "path": "datasets/development_cases.jsonl",
+    "sha256": "e5ef3168388ebd6608c45909d6d9f45442fde991888eb67473fb056d4774bc1a",
+    "claim_ids": [
+      "DEV-AAPL-04",
+      "DEV-MSFT-02",
+      "DEV-AMZN-06"
+    ]
+  },
+  "llm": {
+    "mode": "live",
+    "model": "claude-sonnet-4-5-20250929",
+    "temperature": 0,
+    "pricing": {
+      "input_per_m": 3.0,
+      "output_per_m": 15.0,
+      "version": "anthropic-2025-09:sonnet-4.5"
+    },
+    "mock_version": null
+  },
+  "is_mock": false,
+  "versions": {
+    "engine": "rc-research-1.0",
+    "prompt_version": "claim-prompts-1.0",
+    "system_prompt_hash": "7831e3cbd7d2fe76",
+    "instructions_hash": "a24d1e475c32ceb1",
+    "tools_hash": "eb1ad0fb93d76970",
+    "numeric": "numeric-1.0",
+    "reconcile": "numeric-reconcile-1.0",
+    "retrieval": "bm25-1.0",
+    "cleaning": "clean-1.0",
+    "graph": "langgraph-claims-1.0",
+    "langgraph": "1.2.20",
+    "app_agent_workflow": "2.1",
+    "app_evidence_gate": "2.0"
+  },
+  "evidence_cutoff_rule": "per claim: SEC filings with filed <= as_of_date and form in allowed_sources",
+  "xbrl_facts_sha256": {
+    "AAPL": "6b4380f07cf6045408be419cf7d78a5d90d08c28cb86fef6c78c7105622fd784",
+    "AMZN": "482eadc95e576752c2e192a03e192f4158b81216df5ca29db6b93e08b0abbf9b",
+    "MSFT": "04060c9a85b75d96529720dd231113959bfbd23465a2a28ca0e3789912f01f70"
+  },
+  "code": {
+    "git": {
+      "commit": "634e45871dd8fc4c048727351450449c3d179b40",
+      "dirty": true,
+      "dirty_research_files": [
+        "research/METHODOLOGY.md",
+        "research/README.md",
+        "research/datasets/annotation_guidelines.md",
+        "research/datasets/annotations/README.md",
+        "research/datasets/corpus_manifest.json",
+        "research/datasets/gold_claims.jsonl",
+        "research/datasets/llm_annotations/",
+        "research/datasets/workbooks/",
+        "research/docs/",
+        "research/engine/corpus.py",
+        "research/engine/datasets.py",
+        "research/engine/llm.py",
+        "research/engine/metrics.py",
+        "research/engine/notebook.py",
+        "research/engine/reference.py",
+        "research/engine/runner.py",
+        "research/experiments/contradiction_aware.py",
+        "research/experiments/conventional_rag.py",
+        "research/experiments/financial_verification.py",
+        "research/experiments/pipeline.py",
+        "research/experiments/self_reflection.py",
+        "research/graphs/",
+        "research/notebooks/01_dataset_exploration.ipynb",
+        "research/notebooks/01_gold_dataset_validation.ipynb",
+        "research/notebooks/02_gold_dataset_review.ipynb",
+        "research/notebooks/02_langgraph_pilot.ipynb",
+        "research/notebooks/03_baseline_comparison.ipynb",
+        "research/notebooks/04_contradiction_analysis.ipynb",
+        "research/notebooks/05_evaluation_metrics.ipynb",
+        "research/notebooks/06_statistical_analysis.ipynb",
+        "research/notebooks/06_statistical_tests.ipynb",
+        "research/notebooks/07_llm_annotator_comparison.ipynb",
+        "research/requirements.txt",
+        "research/results/figures/01_dataset_distribution.png",
+        "research/results/figures/07_accuracy_by_category.png",
+        "research/results/figures/07_accuracy_vs_final.png",
+        "research/results/figures/07_agreement_by_category.png",
+        "research/results/figures/07_confusion.png",
+        "research/results/figures/07_evidence_verification.png",
+        "research/results/figures/07_inter_rater_reliability.png",
+        "research/results/figures/07_label_distribution.png",
+        "research/results/figures/07_pairwise_cohen_kappa.png",
+        "research/results/figures/07_vote_pattern.png",
+        "research/results/metrics/gold_validation.json",
+        "research/scripts/annotation_workbook.py",
+        "research/scripts/build_notebooks.py",
+        "research/scripts/run_experiment.py",
+        "research/scripts/validate_gold.py",
+        "research/tests/test_annotation_workbook.py",
+        "research/tests/test_corpus_numeric.py",
+        "research/tests/test_graphs.py",
+        "research/tests/test_metrics_stats.py",
+        "research/tests/test_notebooks.py",
+        "research/tests/test_reference.py",
+        "research/tests/test_runner.py",
+        "research/tests/test_schema_datasets.py"
+      ]
+    },
+    "files_sha256": {
+      "engine/__init__.py": "019a8ab7d3451c1289d233779411d90a4640afb830350ab5a976e3e1d280dc7d",
+      "engine/config.py": "53f059a1cc643d498f7ae53a7b29d335184b1313ac684b37fbb259f0ba09b650",
+      "engine/corpus.py": "3c6902d41d8e322ad4c68e006c6d5ca0b1e5608f93e6ac126d3f169bd3dca51a",
+      "engine/datasets.py": "2d7d983cf1ff840f87100bcad82eccba6ed9660255d6186e55b77ac2dc3f4818",
+      "engine/llm.py": "8020f28cb970be87ad9246c6786366fe45423906f7e6c16614e4f844e6efe102",
+      "engine/metrics.py": "12dd1d1be9852e79e9df3fbbd1e8ec50bd904c4ad3932445c4342fdc4a8f97fe",
+      "engine/notebook.py": "6c95777be6631b920703219160bb16a7dbd7ece3810f831d1cfff801b4073c74",
+      "engine/numeric.py": "9ad39fc24066330ccc43044d825b0a7a5025d2796011e361bd04c901b4809c32",
+      "engine/prompts.py": "00903fc3f6aa86e3bb6b85c13d94c7cb922d93396469da881b8fcd1061e2ef07",
+      "engine/reference.py": "89c5e18a3120e2cc6baecb0bde487f438ff1864a45cccc2b3516e38064519d92",
+      "engine/runner.py": "edcaab6afbcfc0d66c66ef5aaa69dd737e4121035791b0e1084f6e0480cd71e5",
+      "engine/schema.py": "37404f79dd9c7ee488710316a9535d507cc703925646568dd913c28a84afd6fd",
+      "engine/stats.py": "7794403335914d558b8974fec3af25791bed3626528475be85f27f3de0af6e21",
+      "engine/synthetic.py": "18cab906c20b71814db2dc9653d2c1397c766963678a706f5f52621958889a43",
+      "experiments/__init__.py": "2182b5fb1cdb792bfec9bf215b690bfb864bf4dc2b534f2208cfe8b77bd29dba",
+      "experiments/contradiction_aware.py": "ba90e156a7665e836d1c3b68d2d00bbe6b8e5712ac0db6976eee88f2d2672ec0",
+      "experiments/conventional_rag.py": "47e48ed3c7f5170c1883bfa0a894556ef0b6cbcc55f03a930e22c5aeaf187527",
+      "experiments/financial_verification.py": "408e118254e58080ff6b8984b709321eef4366008db903bda9622a297692713b",
+      "experiments/pipeline.py": "4cbac54f46dd4cc5b5387ee078d4cc4b6e4fbfa509eac5d3c03325210baa317f",
+      "experiments/self_reflection.py": "7aa81a08dd629d3d94c4d92851e8ebd809449bf51756916da727418fac7d1222",
+      "graphs/__init__.py": "f211372ffc80ced026a987a45d7f20d74afd72602e9000c2b5ead26479cc287f",
+      "graphs/build.py": "a3230953cfac004843fc930332c61cd5156c195b49e1b3c3247f0d78e3f5dfaf",
+      "graphs/nodes.py": "993c60c1f0be352e10cf4462db2227339fe5429ffa50439694abf747c02785c8",
+      "graphs/state.py": "22b6eed505a839572a8f47320b0a6e6d134cf58c1efc519ec46ad7d5d3accb4b",
+      "backend/app/core/evidence_ledger.py": "95cbb57a542b991f152342e3fea1790f14fddd438819050325970d12b32a6630",
+      "backend/app/core/xbrl_extract.py": "11c9f914bf04251562fdd659f093d5e3871d7abd48cbb4ad9908f04f25e957b2",
+      "backend/app/core/sec_client.py": "348edaf40c0dde87afb7705e64254b3c4c8992d119dac125b588eb858af9c000",
+      "backend/app/core/agent_config.py": "b490feb669d695effd370d673cfd02c5357d164209eef6e7fae3f80c2d175b0e",
+      "backend/app/core/investigation_engine.py": "51cc96ed68b22e2a79f25e44343d23a23c7059413491648f2105411b2d0eed04"
+    }
+  },
+  "environment": {
+    "python": "3.11.4",
+    "platform": "macOS-26.5.1-arm64-arm-64bit"
+  },
+  "approval": {
+    "max_cost_usd": 1.96,
+    "max_calls": 15,
+    "phrase": "I approve up to 15 paid Claude API calls costing at most $1.96"
+  }
+}

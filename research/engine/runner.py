@@ -31,7 +31,7 @@ from . import ENGINE_VERSION, REPO_ROOT, RESEARCH_ROOT
 from .config import config_hash, thaw
 from .corpus import CLEANING_VERSION, RETRIEVAL_VERSION, document_sha256, facts_path
 from .datasets import DEV_PATH, GOLD_PATH, check_split_separation, file_sha256, load_split
-from .llm import BudgetExceeded, CachedLLM, CacheMiss, PaidCallNotApproved, Pricing, confirmation_phrase
+from .llm import BudgetExceeded, CachedLLM, CacheMiss, PaidCallNotApproved, Pricing, confirmation_phrase, is_fatal_api_error
 from .numeric import NUMERIC_VERSION, RECONCILE_VERSION
 from .prompts import prompt_manifest
 
@@ -61,7 +61,7 @@ def _code_hashes() -> dict:
     """sha256 of every research engine/experiment source file, so a run is
     tied to the exact code even when the working tree is uncommitted."""
     out = {}
-    for sub in ("engine", "experiments"):
+    for sub in ("engine", "experiments", "graphs"):
         d = os.path.join(RESEARCH_ROOT, sub)
         for name in sorted(os.listdir(d)):
             if name.endswith(".py"):
@@ -97,11 +97,16 @@ def select_claims(cfg: dict, split: str | None = None, claim_ids: list[str] | No
 
 # ------------------------------------------------------------------- plan
 
-def plan_run(cfg: dict, claims, approaches: list[str] | None = None, pricing: Pricing | None = None) -> dict:
+def plan_run(cfg: dict, claims, approaches: list[str] | None = None, pricing: Pricing | None = None,
+             cost_cap_usd: float | None = None) -> dict:
     """Upper bound on calls and cost before anything runs. The bound assumes
     every call uses the full per-claim input budget share and the full
     output cap; the typical estimate assumes ~2.5k input tokens for the
-    initial call (passages + instructions) and ~4k for later calls."""
+    initial call (passages + instructions) and ~4k for later calls.
+
+    `cost_cap_usd` lowers the approved dollar cap below that bound (e.g. to
+    the account balance). The BudgetGuard then stops the run before a call
+    that could exceed it; the run stays incomplete and can be resumed."""
     pricing = pricing or Pricing()
     names = approaches or list(cfg["approaches"])
     rows, max_calls, max_cost, typical = [], 0, 0.0, 0.0
@@ -118,7 +123,13 @@ def plan_run(cfg: dict, claims, approaches: list[str] | None = None, pricing: Pr
         max_cost += worst
         typical += typ
     max_cost = round(max_cost + 0.005, 2)
+    bound = max_cost
+    if cost_cap_usd is not None:
+        if cost_cap_usd <= 0:
+            raise ValueError("cost_cap_usd must be positive")
+        max_cost = min(max_cost, round(cost_cap_usd, 2))
     return {"claims": len(claims), "approaches": rows, "max_llm_calls": max_calls, "max_cost_usd": max_cost,
+            "upper_bound_usd": bound, "capped": max_cost < bound,
             "typical_cost_usd": round(typical, 2),
             "note": ("Initial-stage requests are byte-identical across approaches, so the response cache serves them once; "
                      "already-cached requests cost nothing. Figures are bounds, not quotes."),
@@ -217,6 +228,9 @@ def run_experiment(cfg: dict, claims, dataset_info: dict, *, llm_mode: str = "of
         run_dir = os.path.join(runs_dir, run_id)
         os.makedirs(os.path.join(run_dir, "traces"), exist_ok=False)
         from agent_config import AGENT_WORKFLOW_VERSION, EVIDENCE_GATE_VERSION
+        from importlib.metadata import version as pkg_version
+
+        from graphs import GRAPH_VERSION
         manifest = {
             "run_id": run_id, "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
             "experiment_id": cfg["experiment_id"], "description": cfg.get("description"), "config_path": cfg.get("source_path"),
@@ -226,6 +240,7 @@ def run_experiment(cfg: dict, claims, dataset_info: dict, *, llm_mode: str = "of
             "dataset": dataset_info, "llm": llm.describe(), "is_mock": llm_mode == "mock",
             "versions": {"engine": ENGINE_VERSION, **prompt_manifest(), "numeric": NUMERIC_VERSION, "reconcile": RECONCILE_VERSION,
                          "retrieval": RETRIEVAL_VERSION, "cleaning": CLEANING_VERSION,
+                         "graph": GRAPH_VERSION, "langgraph": pkg_version("langgraph"),
                          "app_agent_workflow": AGENT_WORKFLOW_VERSION, "app_evidence_gate": EVIDENCE_GATE_VERSION},
             "evidence_cutoff_rule": "per claim: SEC filings with filed <= as_of_date and form in allowed_sources",
             "xbrl_facts_sha256": {t: file_sha256(facts_path(t)) for t in sorted({c.company for c in claims})},
@@ -272,6 +287,8 @@ def run_experiment(cfg: dict, claims, dataset_info: dict, *, llm_mode: str = "of
                 except (PaidCallNotApproved, BudgetExceeded, KeyboardInterrupt):
                     raise
                 except Exception as e:  # noqa: BLE001 -- recorded as a failed prediction, never hidden
+                    if is_fatal_api_error(e):
+                        raise
                     counters["errors"] += 1
                     pred = {"claim_id": c.claim_id, "approach": name, "approach_kind": a_cfg["kind"], "predicted_label": None,
                             "stop_reason": "ERROR", "error": f"{type(e).__name__}: {e}"[:500],
@@ -287,7 +304,9 @@ def run_experiment(cfg: dict, claims, dataset_info: dict, *, llm_mode: str = "of
                 _append_jsonl(pred_path, pred)
                 counters["completed"] += 1
                 progress(f"  {name} {c.claim_id}: {pred.get('predicted_label')} ({pred.get('stop_reason')})")
-    except (PaidCallNotApproved, BudgetExceeded, KeyboardInterrupt) as e:
+    except Exception as e:  # noqa: BLE001 -- stop reasons that apply to every remaining claim
+        if not isinstance(e, (PaidCallNotApproved, BudgetExceeded)) and not is_fatal_api_error(e):
+            raise
         save_status("incomplete", f"stopped: {type(e).__name__}: {e}")
         _merge_corpus(run_dir, corpus)
         raise

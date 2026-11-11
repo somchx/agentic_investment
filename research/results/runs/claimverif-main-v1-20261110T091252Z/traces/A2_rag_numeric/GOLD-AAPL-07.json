@@ -1,0 +1,594 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A2_rag_numeric:GOLD-AAPL-07:725175ad",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A2_rag_numeric",
+  "approach_kind": "financial_verification",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A2_rag_numeric",
+    "kind": "financial_verification",
+    "description": "A1 + deterministic numeric verification"
+  },
+  "config_hash": "53b859cfe39ca3b0",
+  "claim": {
+    "claim_id": "GOLD-AAPL-07",
+    "company": "AAPL",
+    "claim": "Apple's products gross margin percentage declined in fiscal 2025 because of tariff-related costs.",
+    "as_of_date": "2025-11-30",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "GrossMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-09-27",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Products gross margin percentage decreased during 2025 compared to 2024 primarily due to a different mix of products and tariff costs"
+          }
+        ],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Products gross margin percentage decreased during 2025 compared to 2024 primarily due to a different mix of products and tariff costs, partially offset by other favorable costs."
+          }
+        ],
+        "reasoning_summary": "The claim states that Apple's products gross margin percentage declined in fiscal 2025 \"because of\" tariff-related costs, implying tariffs were the primary or sole cause. However, evidence E1 from the FY2025 10-K explicitly states that the products gross margin percentage decreased \"primarily due to a different mix of products and tariff costs\" - listing product mix first and tariff costs as a co-equal factor, not the sole or primary driver. The filing indicates that both factors contributed to the decline, with product mix mentioned first in the causal explanation. Since the claim attributes the decline solely to tariff costs when the filing clearly identifies product mix as the primary factor (or at minimum a co-equal primary factor), the claim's causal attribution is contradicted by the evidence.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NUMERIC_FALSE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "GrossMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-09-27",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-09-27",
+            "basis": "annual",
+            "level": 0.4690516410716045,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "GrossProfit",
+                "period_start": "2024-09-29",
+                "period_end": "2025-09-27",
+                "value": 195201000000.0,
+                "filed": "2025-10-31",
+                "form": "10-K",
+                "accession_number": "0000320193-25-000079",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2024-09-29",
+                "period_end": "2025-09-27",
+                "value": 416161000000.0,
+                "filed": "2025-10-31",
+                "form": "10-K",
+                "accession_number": "0000320193-25-000079",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.4620634981523393,
+            "prior_period_end": "2024-09-28",
+            "yoy_change": 0.0069881429192651945,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "f7a50323ab9fb71c13312e6ae01d4988d00a4ec5156789bf82b182e34f4a0a42",
+      "source": "cache",
+      "input_tokens": 4056,
+      "output_tokens": 507,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "GrossMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-09-27",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Products gross margin percentage decreased during 2025 compared to 2024 primarily due to a different mix of products and tariff costs"
+          }
+        ],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Products gross margin percentage decreased during 2025 compared to 2024 primarily due to a different mix of products and tariff costs, partially offset by other favorable costs."
+          }
+        ],
+        "reasoning_summary": "The claim states that Apple's products gross margin percentage declined in fiscal 2025 \"because of\" tariff-related costs, implying tariffs were the primary or sole cause. However, evidence E1 from the FY2025 10-K explicitly states that the products gross margin percentage decreased \"primarily due to a different mix of products and tariff costs\" - listing product mix first and tariff costs as a co-equal factor, not the sole or primary driver. The filing indicates that both factors contributed to the decline, with product mix mentioned first in the causal explanation. Since the claim attributes the decline solely to tariff costs when the filing clearly identifies product mix as the primary factor (or at minimum a co-equal primary factor), the claim's causal attribution is contradicted by the evidence.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Apple's products gross margin percentage declined in fiscal 2025 because of tariff-related costs. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "GrossMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-09-27",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-09-27",
+            "basis": "annual",
+            "level": 0.4690516410716045,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "GrossProfit",
+                "period_start": "2024-09-29",
+                "period_end": "2025-09-27",
+                "value": 195201000000.0,
+                "filed": "2025-10-31",
+                "form": "10-K",
+                "accession_number": "0000320193-25-000079",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2024-09-29",
+                "period_end": "2025-09-27",
+                "value": 416161000000.0,
+                "filed": "2025-10-31",
+                "form": "10-K",
+                "accession_number": "0000320193-25-000079",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.4620634981523393,
+            "prior_period_end": "2024-09-28",
+            "yoy_change": 0.0069881429192651945,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0000320193-25-000079",
+        "filed": "2025-10-31",
+        "report_date": "2025-09-27",
+        "primary_document": "aapl-20250927.htm",
+        "sha256": "056f733f13ff7407e64dc81fb96da3c3c55a6ba429bf094f57cb6bd472231f82"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-25-000073",
+        "filed": "2025-08-01",
+        "report_date": "2025-06-28",
+        "primary_document": "aapl-20250628.htm",
+        "sha256": "ba858d7226fd3b1b96e238909897dbe1b98b47250453a71b090ccb45fc4a7534"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-25-000057",
+        "filed": "2025-05-02",
+        "report_date": "2025-03-29",
+        "primary_document": "aapl-20250329.htm",
+        "sha256": "c6c09321ddffdb609f38d2b56925dba3fe0e0484cbcfaabc0a4689fe045f4214"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 387
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:110982-111945",
+      "excerpt": "9 % 46.2 % 44.1 % Products Gross Margin Products gross margin increased during 2025 compared to 2024 primarily due to favorable costs and a different mix of products, partially offset by tariff costs. Products gross margin percentage decreased during 2025 compared to 2024 primarily due to a different mix of products and tariff costs, partially offset by other favorable costs. Services Gross Margin Services gross margin increased during 2025 compared to 2024 primarily due to higher Services net sales and a different mix of services. Services gross margin percentage increased during 2025 compared to 2024 primarily due to a different mix of services, partially offset by higher costs. The Company’s future gross margins can be impacted by a variety of factors, as discussed in Part I, Item 1A of this Form 10-K under the heading “Risk Factors.” As a result, the Company believes, in general, gross margins will be subject to volatility and downward pressure.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:110015-111182",
+      "excerpt": "of laptops and desktops. iPad iPad net sales increased during 2025 compared to 2024 primarily due to higher net sales of iPad Air, iPad mini and iPad, partially offset by lower net sales of iPad Pro. Wearables, Home and Accessories Wearables, Home and Accessories net sales decreased during 2025 compared to 2024 primarily due to lower net sales of Accessories and Wearables. Services Services net sales increased during 2025 compared to 2024 primarily due to higher net sales from advertising, the App Store and cloud services. Apple Inc. | 2025 Form 10-K | 23 Gross Margin Products and Services gross margin and gross margin percentage for 2025, 2024 and 2023 were as follows (dollars in millions): 2025 2024 2023 Gross margin: Products $ 112,887 $ 109,633 $ 108,803 Services 82,314 71,050 60,345 Total gross margin $ 195,201 $ 180,683 $ 169,148 Gross margin percentage: Products 36.8 % 37.2 % 36.5 % Services 75.4 % 73.9 % 70.8 % Total gross margin percentage 46.9 % 46.2 % 44.1 % Products Gross Margin Products gross margin increased during 2025 compared to 2024 primarily due to favorable costs and a different mix of products, partially offset by tariff costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000073",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628.htm",
+      "locator": "10-Q 0000320193-25-000073:39018-40127",
+      "excerpt": "in Products gross margin increased during the third quarter of 2025 compared to the third quarter of 2024 due primarily to a different mix of products and favorable costs, partially offset by tariffs. Products gross margin increased during the first nine months of 2025 compared to the same period in 2024 due primarily to favorable costs and a different mix of products, partially offset by tariffs and the weakness in foreign currencies relative to the U.S. dollar. Products gross margin percentage decreased during the third quarter of 2025 compared to the third quarter of 2024 due primarily to tariffs and a different mix of products, partially offset by favorable costs. Products gross margin percentage decreased during the first nine months of 2025 compared to the same period in 2024 due primarily to a different mix of products and tariffs, partially offset by favorable costs. Services Gross Margin Services gross margin increased during the third quarter and first nine months of 2025 compared to the same periods in 2024 due primarily to higher Services net sales and a different mix of services.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000073",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628.htm",
+      "locator": "10-Q 0000320193-25-000073:38167-39218",
+      "excerpt": "net sales increased during the third quarter and first nine months of 2025 compared to the same periods in 2024 due primarily to higher net sales from advertising, the App Store ® and cloud services. Apple Inc. | Q3 2025 Form 10-Q | 15 Gross Margin Products and Services gross margin and gross margin percentage for the three- and nine-month periods ended June 28, 2025 and June 29, 2024, were as follows (dollars in millions): Three Months Ended Nine Months Ended June 28, 2025 June 29, 2024 June 28, 2025 June 29, 2024 Gross margin: Products $ 22,993 $ 21,761 $ 86,190 $ 84,241 Services 20,725 17,917 60,670 52,563 Total gross margin $ 43,718 $ 39,678 $ 146,860 $ 136,804 Gross margin percentage: Products 34.5 % 35.3 % 36.9 % 37.5 % Services 75.6 % 74.0 % 75.5 % 73.8 % Total gross margin percentage 46.5 % 46.3 % 46.8 % 46.2 % Products Gross Margin Products gross margin increased during the third quarter of 2025 compared to the third quarter of 2024 due primarily to a different mix of products and favorable costs, partially offset by tariffs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000057",
+      "form": "10-Q",
+      "filed": "2025-05-02",
+      "period_start": null,
+      "period_end": "2025-03-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000057/aapl-20250329.htm",
+      "locator": "10-Q 0000320193-25-000057:38111-39300",
+      "excerpt": "increased during the second quarter and first six months of 2025 compared to the same periods in 2024 due primarily to higher net sales from advertising, the App Store ® and cloud services. Apple Inc. | Q2 2025 Form 10-Q | 14 Gross Margin Products and Services gross margin and gross margin percentage for the three- and six-month periods ended March 29, 2025 and March 30, 2024 were as follows (dollars in millions): Three Months Ended Six Months Ended March 29, 2025 March 30, 2024 March 29, 2025 March 30, 2024 Gross margin: Products $ 24,684 $ 24,462 $ 63,197 $ 62,480 Services 20,183 17,809 39,945 34,646 Total gross margin $ 44,867 $ 42,271 $ 103,142 $ 97,126 Gross margin percentage: Products 35.9 % 36.6 % 37.9 % 38.3 % Services 75.7 % 74.6 % 75.4 % 73.7 % Total gross margin percentage 47.1 % 46.6 % 47.0 % 46.2 % Products Gross Margin Products gross margin was relatively flat during the second quarter of 2025 compared to the second quarter of 2024. Year-over-year Products gross margin increased during the first six months of 2025 due primarily to favorable costs, partially offset by a different mix of products and weakness in foreign currencies relative to the U.S. dollar.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000057",
+      "form": "10-Q",
+      "filed": "2025-05-02",
+      "period_start": null,
+      "period_end": "2025-03-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000057/aapl-20250329.htm",
+      "locator": "10-Q 0000320193-25-000057:39100-40058",
+      "excerpt": "s margin increased during the first six months of 2025 due primarily to favorable costs, partially offset by a different mix of products and weakness in foreign currencies relative to the U.S. dollar. Products gross margin percentage decreased during the second quarter and first six months of 2025 compared to the same periods in 2024 due primarily to a different mix of products and weakness in foreign currencies relative to the U.S. dollar, partially offset by favorable costs. Services Gross Margin Services gross margin increased during the second quarter and first six months of 2025 compared to the same periods in 2024 due primarily to higher Services net sales. Services gross margin percentage increased during the second quarter and first six months of 2025 compared to the same periods in 2024 due primarily to a different mix of services, partially offset by higher Services costs and weakness in foreign currencies relative to the U.S. dollar.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": "2024-09-29",
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079-index.htm",
+      "locator": "GrossProfit 2024-09-29..2025-09-27",
+      "excerpt": null,
+      "values": [
+        195201000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": "2024-09-29",
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079-index.htm",
+      "locator": "Revenue 2024-09-29..2025-09-27",
+      "excerpt": null,
+      "values": [
+        416161000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": "2023-10-01",
+      "period_end": "2024-09-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079-index.htm",
+      "locator": "GrossProfit 2023-10-01..2024-09-28",
+      "excerpt": null,
+      "values": [
+        180683000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": "2023-10-01",
+      "period_end": "2024-09-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079-index.htm",
+      "locator": "Revenue 2023-10-01..2024-09-28",
+      "excerpt": null,
+      "values": [
+        391035000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "AAPL",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": null,
+      "locator": "GrossMargin yoy_growth annual @ 2025-09-27",
+      "excerpt": null,
+      "values": [
+        0.4690516410716045,
+        0.4620634981523393,
+        0.0069881429192651945
+      ],
+      "unit": "ratio_points",
+      "evidence_id": "E11"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "Products gross margin percentage decreased during 2025 compared to 2024 primarily due to a different mix of products and tariff costs",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:110982-111945"
+    },
+    {
+      "evidence_id": "E11",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_end": "2025-09-27",
+      "source_url": null,
+      "locator": "GrossMargin yoy_growth annual @ 2025-09-27"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 4056,
+    "output": 507
+  },
+  "latency_ms": 3,
+  "estimated_cost_usd": 0.019773,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "financial_verification",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "mixed"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_FALSE",
+        "checks": [
+          "FALSE"
+        ]
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

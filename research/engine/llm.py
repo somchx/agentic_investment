@@ -48,6 +48,20 @@ class BudgetExceeded(RuntimeError):
     pass
 
 
+def is_fatal_api_error(e: Exception) -> bool:
+    """Errors that would repeat for every claim (bad key, no access, no
+    credit, unknown model): the run must stop, not record each claim as
+    ERROR."""
+    import requests
+    if not isinstance(e, requests.HTTPError) or e.response is None:
+        return False
+    code = e.response.status_code
+    if code in (401, 403, 404):
+        return True
+    body = (getattr(e.response, "text", "") or "").lower()
+    return code == 400 and ("credit balance" in body or "billing" in body)
+
+
 def request_key(model: str, temperature: float, system: str, messages: list, tools: list, max_tokens: int, tool_choice) -> str:
     body = {"model": model, "temperature": temperature, "system": system, "messages": messages, "tools": tools,
             "max_tokens": max_tokens, "tool_choice": tool_choice}

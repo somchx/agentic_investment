@@ -8,6 +8,7 @@ the conversation with the model, usage counters and the trace. Nothing is
 shared between runs, so approaches cannot influence each other.
 """
 
+import json
 import time
 import uuid
 
@@ -29,6 +30,45 @@ class StageBudgetExhausted(RuntimeError):
 
 class NoStructuredOutput(RuntimeError):
     pass
+
+
+def coerce_tool_input(args: dict, schema: dict) -> tuple[dict, list[str]]:
+    """The model sometimes returns an array / object field as a JSON-encoded
+    string. Decode such top-level fields when the decoded value has the
+    declared type; content is unchanged, only its encoding. Returns
+    (copy of args, names of fields decoded). Anything else is left as is
+    for the guards to reject."""
+    props = (schema or {}).get("properties", {})
+    out, fixed = dict(args), []
+    for k, v in args.items():
+        want = props.get(k, {}).get("type")
+        if not isinstance(v, str) or want not in ("array", "object"):
+            continue
+        try:
+            parsed = json.loads(v)
+        except ValueError:
+            continue
+        if isinstance(parsed, list if want == "array" else dict):
+            out[k] = parsed
+            fixed.append(k)
+    return out, fixed
+
+
+def evidence_items(x) -> list:
+    """A cited-evidence field as a list. A JSON-encoded list is decoded; any
+    other non-list value (e.g. a truncated JSON string) becomes ONE item, which
+    validation then rejects as MALFORMED_ITEM -- never split into characters."""
+    if x is None:
+        return []
+    if isinstance(x, list):
+        return x
+    if isinstance(x, str):
+        try:
+            parsed = json.loads(x)
+        except ValueError:
+            return [x]
+        return parsed if isinstance(parsed, list) else [x]
+    return [x]
 
 
 class ClaimRun:
@@ -63,10 +103,13 @@ class ClaimRun:
 
     def ask(self, stage: str, instruction: str, packet: dict, tool: dict) -> dict:
         self._check_budget()
-        self.messages.append({"role": "user", "content": [*self._pending, {"type": "text", "text": packet_text(instruction, packet)}]})
+        # the conversation is extended only once the call returns, so a
+        # retried call (transient API error) sends exactly the same request
+        user = {"role": "user", "content": [*self._pending, {"type": "text", "text": packet_text(instruction, packet)}]}
         t0 = time.monotonic()
-        payload = self.llm.create(SYSTEM_PROMPT, self.messages, [tool], self.cfg["llm"]["max_output_tokens"],
+        payload = self.llm.create(SYSTEM_PROMPT, [*self.messages, user], [tool], self.cfg["llm"]["max_output_tokens"],
                                   {"type": "tool", "name": tool["name"]})
+        self.messages.append(user)
         usage = payload.get("usage") or {}
         self.input_tokens += usage.get("input_tokens", 0)
         self.output_tokens += usage.get("output_tokens", 0)
@@ -83,7 +126,11 @@ class ClaimRun:
         if payload.get("stop_reason") == "max_tokens":
             raise NoStructuredOutput(f"{stage}: structured output cut off at max_output_tokens")
         self._pending = [{"type": "tool_result", "tool_use_id": use["id"], "content": "recorded"}]
-        return use["input"]
+        # the conversation keeps the raw output (so later requests stay byte-identical); stages get the decoded copy
+        args, fixed = coerce_tool_input(use["input"], tool.get("input_schema"))
+        if fixed:
+            self.llm_calls[-1]["coerced_fields"] = fixed
+        return args
 
     # ----------------------------------------------------------- numeric
 
@@ -100,7 +147,10 @@ class ClaimRun:
         was issued in this run, the source is the claim's company, it was
         filed on or before the cutoff, and a passage quote is verbatim."""
         out = []
-        for it in items or []:
+        for it in evidence_items(items):
+            if not isinstance(it, dict):
+                out.append({"evidence_id": "", "quote": str(it)[:200], "valid": False, "issues": ["MALFORMED_ITEM"]})
+                continue
             eid, quote = str(it.get("evidence_id") or ""), it.get("quote") or ""
             unit = self.ledger.get(eid)
             issues = []
@@ -134,9 +184,12 @@ class ClaimRun:
 
 # ------------------------------------------------------------------ stages
 
-def initial_stage(run: ClaimRun) -> dict:
+def initial_retrieval(run: ClaimRun) -> list[dict]:
     query = run.claim.claim + (f" {run.claim.reporting_period}" if run.claim.reporting_period else "")
-    passages = run.search(query, purpose="initial")
+    return run.search(query, purpose="initial")
+
+
+def initial_verdict(run: ClaimRun, passages: list[dict]) -> dict:
     packet = {"claim": run.claim.to_dict(), "evidence_cutoff": run.claim.as_of_date, "evidence": passages,
               "unavailable_filings": [f["accession_number"] for f in run.retriever.unavailable]}
     out = run.ask("initial", INITIAL_INSTRUCTION, packet, VERDICT_TOOL)
@@ -144,6 +197,7 @@ def initial_stage(run: ClaimRun) -> dict:
         raise NoStructuredOutput(f"initial: invalid label {out.get('label')!r}")
     run.stages.append({"stage": "initial", "retrieved": [p["evidence_id"] for p in passages], "verdict": out})
     return out
+
 
 
 def numeric_stage(run: ClaimRun, verdict: dict) -> tuple[str, str, list[dict]]:
@@ -158,6 +212,28 @@ def numeric_stage(run: ClaimRun, verdict: dict) -> tuple[str, str, list[dict]]:
 
 def numeric_evidence(checks: list[dict], status: str) -> list[dict]:
     return [{"evidence_id": c["evidence_ids"][0], "quote": ""} for c in checks if c["status"] == status and c["evidence_ids"]]
+
+
+def verified_from(run: ClaimRun, v: dict) -> dict:
+    """A2's stage on the model's initial verdict `v`; also the initial stage
+    of A3 and SR."""
+    label, rule, checks = numeric_stage(run, v)
+    sup, con = list(evidence_items(v.get("supporting_evidence"))), list(evidence_items(v.get("contradicting_evidence")))
+    if rule == "NUMERIC_FALSE":
+        con += numeric_evidence(checks, "FALSE")
+    elif rule == "NUMERIC_ALL_TRUE":
+        sup += numeric_evidence(checks, "TRUE")
+    return {"verdict": v, "label": label, "rule": rule, "checks": checks, "supporting": sup, "contradicting": con}
+
+
+def initial_summary(s: dict) -> dict:
+    """What the second look (A3 plan / SR critique) is shown of the initial verdict."""
+    v = s["verdict"]
+    return {"label": s["label"], "model_label": v["label"], "claim_type": v.get("claim_type"),
+            "reasoning_summary": v.get("reasoning_summary"), "supporting_evidence": v.get("supporting_evidence") or [],
+            "contradicting_evidence": v.get("contradicting_evidence") or [], "numeric_rule": s["rule"],
+            "numeric_checks": [{"assertion": c["assertion"], "status": c["status"], "issues": c["issues"],
+                                "computed": c["computed"], "evidence_ids": c["evidence_ids"]} for c in s["checks"]]}
 
 
 def apply_numeric_override(run: ClaimRun, label: str, claim_type: str | None, checks: list[dict], sup: list, con: list) -> tuple[str, str, list, list]:
@@ -180,7 +256,12 @@ def guard_change(run: ClaimRun, initial_label: str, final: dict, scope: set[str]
     allowed without one). Otherwise the initial verdict is kept and the
     attempted change is recorded."""
     assessments = []
-    for a in final.get("assessments") or []:
+    raw = final.get("assessments") or []
+    for a in raw if isinstance(raw, list) else [raw]:
+        if not isinstance(a, dict):
+            assessments.append({"item_id": None, "declared": None, "assessment": "MALFORMED", "evidence": [],
+                                "flag": "MALFORMED_ASSESSMENT"})
+            continue
         ev = run.validate(a.get("evidence") or [], scope)
         status = a.get("assessment")
         flag = None
@@ -210,7 +291,7 @@ def finish_revision(run: ClaimRun, s: dict, final: dict) -> tuple[dict, str, str
         return g, s["label"], "KEPT_INITIAL", s["supporting"], s["contradicting"]
     label, rule, sup, con = apply_numeric_override(
         run, g["label"], s["verdict"].get("claim_type"), s["checks"],
-        list(final.get("supporting_evidence") or []), list(final.get("contradicting_evidence") or []))
+        list(evidence_items(final.get("supporting_evidence"))), list(evidence_items(final.get("contradicting_evidence"))))
     return g, label, rule, sup, con
 
 

@@ -1,0 +1,1055 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-TSLA-09:733c1911",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-TSLA-09",
+    "company": "TSLA",
+    "claim": "The increase in Tesla's operating expenses in 2025 was driven primarily by AI-related research and development.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "R&D expense increased $1.87 billion, or 41%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, primarily due to increases in costs related to AI and other programs"
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "R&D expenses increased $1.36 billion, or 42%, in the nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024. These increases were primarily due to increases in costs related to AI and other programs"
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "SG&A expenses increased $684 million, or 13%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that the increase in Tesla's operating expenses in 2025 was driven primarily by AI-related research and development. Operating expenses consist of R&D and SG&A expenses. Evidence E2 shows R&D expense increased $1.87 billion (41%) in 2025 vs 2024, \"primarily due to increases in costs related to AI and other programs.\" Evidence E5 shows SG&A increased $684 million (13%) in the same period. The R&D increase ($1.87B) is significantly larger than the SG&A increase ($684M), and the filing explicitly attributes the R&D increase primarily to AI-related costs. This supports the claim that AI-related R&D was the primary driver of the overall operating expense increase. Evidence E4 provides corroborating information for the nine-month period showing the same pattern and attribution to AI.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 4355000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 4355000000.0,
+                "filed": "2026-01-29",
+                "form": "10-K",
+                "accession_number": "0001628280-26-003952",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 7076000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": -0.3845392877331826,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Was the increase in R&D expenses primarily driven by stock-based compensation rather than AI-related costs?",
+          "search_query": "R&D research development stock-based compensation expense 2025 2024",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Did restructuring charges or other one-time expenses contribute more significantly to the operating expense increase than AI-related R&D?",
+          "search_query": "restructuring charges operating expenses 2025 2024 total",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Does the filing indicate that other programs (non-AI) contributed equally or more to the R&D increase than AI-related costs?",
+          "search_query": "AI artificial intelligence R&D research development costs programs product roadmap 2025",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "R&D research development stock-based compensation expense 2025 2024",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "restructuring charges operating expenses 2025 2024 total",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "AI artificial intelligence R&D research development costs programs product roadmap 2025",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E2",
+              "quote": "R&D expense increased $1.87 billion, or 41%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, primarily due to increases in costs related to AI and other programs as we continue to expand our product roadmap and technologies and an increase in stock-based compensation of $500 million.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003952",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+              "locator": "10-K 0001628280-26-003952:188757-189933"
+            },
+            {
+              "evidence_id": "E10",
+              "quote": "Year Ended December 31, 2025 2024 2023 Cost of revenues $ 870 $ 776 $ 741 Research and development 1,332 832 689",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003952",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+              "locator": "10-K 0001628280-26-003952:339609-340758"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E14",
+              "quote": "In 2025, we initiated certain actions in order to reduce costs and improve efficiency through convergence of AI chip design efforts. As a result, we recognized $ 390 million of expenses, within our automotive segment, related to charges for supercomputer assets, contract terminations and employee terminations.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003952",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+              "locator": "10-K 0001628280-26-003952:375261-376323"
+            },
+            {
+              "evidence_id": "E2",
+              "quote": "R&D expense increased $1.87 billion, or 41%, in the year ended December 31, 2025",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003952",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+              "locator": "10-K 0001628280-26-003952:188757-189933"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E2",
+              "quote": "R&D expense increased $1.87 billion, or 41%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, primarily due to increases in costs related to AI and other programs",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003952",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+              "locator": "10-K 0001628280-26-003952:188757-189933"
+            },
+            {
+              "evidence_id": "E4",
+              "quote": "These increases were primarily due to increases in costs related to AI and other programs as we continue to expand our product roadmap and technologies.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-25-045968",
+              "form": "10-Q",
+              "filed": "2025-10-23",
+              "period_end": "2025-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045968/tsla-20250930.htm",
+              "locator": "10-Q 0001628280-25-045968:105264-106388"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "a9ab8dfe14a341c9427dd522d0acf746d013c188d90435434fea2782273bda79",
+      "source": "cache",
+      "input_tokens": 4046,
+      "output_tokens": 646,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "R&D expense increased $1.87 billion, or 41%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, primarily due to increases in costs related to AI and other programs"
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "R&D expenses increased $1.36 billion, or 42%, in the nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024. These increases were primarily due to increases in costs related to AI and other programs"
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "SG&A expenses increased $684 million, or 13%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that the increase in Tesla's operating expenses in 2025 was driven primarily by AI-related research and development. Operating expenses consist of R&D and SG&A expenses. Evidence E2 shows R&D expense increased $1.87 billion (41%) in 2025 vs 2024, \"primarily due to increases in costs related to AI and other programs.\" Evidence E5 shows SG&A increased $684 million (13%) in the same period. The R&D increase ($1.87B) is significantly larger than the SG&A increase ($684M), and the filing explicitly attributes the R&D increase primarily to AI-related costs. This supports the claim that AI-related R&D was the primary driver of the overall operating expense increase. Evidence E4 provides corroborating information for the nine-month period showing the same pattern and attribution to AI.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "edfc299df29f01d52235edc47c64decb4c26eb8dd7e933b55137d0a47c2ffe0e",
+      "source": "live",
+      "input_tokens": 5441,
+      "output_tokens": 280,
+      "stop_reason": "tool_use",
+      "latency_ms": 4905,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Was the increase in R&D expenses primarily driven by stock-based compensation rather than AI-related costs?",
+            "search_query": "R&D research development stock-based compensation expense 2025 2024",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Did restructuring charges or other one-time expenses contribute more significantly to the operating expense increase than AI-related R&D?",
+            "search_query": "restructuring charges operating expenses 2025 2024 total",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Does the filing indicate that other programs (non-AI) contributed equally or more to the R&D increase than AI-related costs?",
+            "search_query": "AI artificial intelligence R&D research development costs programs product roadmap 2025",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "b0f95bcc88a119dd6de7545b0b1c16b0b22e15c0194aa79bdd5bc167e5d86e99",
+      "source": "live",
+      "input_tokens": 9054,
+      "output_tokens": 1086,
+      "stop_reason": "tool_use",
+      "latency_ms": 18481,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E2",
+                "quote": "R&D expense increased $1.87 billion, or 41%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, primarily due to increases in costs related to AI and other programs as we continue to expand our product roadmap and technologies and an increase in stock-based compensation of $500 million."
+              },
+              {
+                "evidence_id": "E10",
+                "quote": "Year Ended December 31, 2025 2024 2023 Cost of revenues $ 870 $ 776 $ 741 Research and development 1,332 832 689"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E14",
+                "quote": "In 2025, we initiated certain actions in order to reduce costs and improve efficiency through convergence of AI chip design efforts. As a result, we recognized $ 390 million of expenses, within our automotive segment, related to charges for supercomputer assets, contract terminations and employee terminations."
+              },
+              {
+                "evidence_id": "E2",
+                "quote": "R&D expense increased $1.87 billion, or 41%, in the year ended December 31, 2025"
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E2",
+                "quote": "R&D expense increased $1.87 billion, or 41%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, primarily due to increases in costs related to AI and other programs"
+              },
+              {
+                "evidence_id": "E4",
+                "quote": "These increases were primarily due to increases in costs related to AI and other programs as we continue to expand our product roadmap and technologies."
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "R&D expense increased $1.87 billion, or 41%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, primarily due to increases in costs related to AI and other programs"
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "R&D expenses increased $1.36 billion, or 42%, in the nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024. These increases were primarily due to increases in costs related to AI and other programs"
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "SG&A expenses increased $684 million, or 13%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "All three challenges were refuted by the evidence. H1: Stock-based compensation in R&D increased by $500 million (from $832M to $1,332M per E10), which is only about 27% of the total $1.87B R&D increase. E2 explicitly states the increase was \"primarily due to increases in costs related to AI and other programs\" with stock-based compensation mentioned separately as an additional factor. H2: Restructuring charges totaled $390 million in 2025 (E14), which is significantly less than the $1.87B R&D increase driven by AI. H3: The filing consistently states AI was a primary driver, using the phrase \"primarily due to increases in costs related to AI and other programs\" (E2, E4), indicating AI was the leading factor. The R&D increase of $1.87B far exceeds the SG&A increase of $684M, confirming that AI-related R&D was indeed the primary driver of operating expense increases in 2025. The initial verdict remains SUPPORTED."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "The increase in Tesla's operating expenses in 2025 was driven primarily by AI-related research and development. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "R&D research development stock-based compensation expense 2025 2024",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "restructuring charges operating expenses 2025 2024 total",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "AI artificial intelligence R&D research development costs programs product roadmap 2025",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 4355000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 4355000000.0,
+                "filed": "2026-01-29",
+                "form": "10-K",
+                "accession_number": "0001628280-26-003952",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 7076000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": -0.3845392877331826,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-003952",
+        "filed": "2026-01-29",
+        "report_date": "2025-12-31",
+        "primary_document": "tsla-20251231.htm",
+        "sha256": "6613b0ffabe8e9b2668eef50f40540756bd4ef03e2f633d489ca83aa58b99729"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-045968",
+        "filed": "2025-10-23",
+        "report_date": "2025-09-30",
+        "primary_document": "tsla-20250930.htm",
+        "sha256": "36ef4e77a2f8bb37a7c36d9d51d663f92656eb28e2774c84bada0289f74bd197"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-035806",
+        "filed": "2025-07-24",
+        "report_date": "2025-06-30",
+        "primary_document": "tsla-20250630.htm",
+        "sha256": "1865da0a1289e4c312b8955ad6be6450e4fdceb03e6c4d3a0b52bcde0a0e06cc"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 732
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-045968",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045968/tsla-20250930.htm",
+      "locator": "10-Q 0001628280-25-045968:106922-107885",
+      "excerpt": "to 7% in the nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024, primarily due to higher R&D expenses and a decrease in total revenues in the current period. Selling, General and Administrative Expense Three Months Ended September 30, Change Nine Months Ended September 30, Change (Dollars in millions) 2025 2024 $ % 2025 2024 $ % Selling, general and administrative $ 1,562 $ 1,186 $ 376 32 % $ 4,179 $ 3,837 $ 342 9 % As a percentage of revenues 6 % 5 % 6 % 5 % Selling, general and administrative (“SG&A”) expenses increased $376 million, or 32%, in the three months ended September 30, 2025 as compared to the three months ended September 30, 2024, driven by a $168 million increase in operating expenses including legal charges, a $151 million increase in employee and labor costs, including professional services, a $38 million increase in stock-based compensation and a $25 million increase in marketing expenses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:188757-189933",
+      "excerpt": "s in energy generation and storage revenue and cost of energy generation and storage revenue, as discussed above. Research and Development Expense Year Ended December 31, 2025 vs. 2024 Change 2024 vs. 2023 Change (Dollars in millions) 2025 2024 2023 $ % $ % Research and development $ 6,411 $ 4,540 $ 3,969 $ 1,871 41 % $ 571 14 % As a percentage of revenues 7 % 5 % 4 % Research and development (“R&D”) expense consists primarily of personnel costs for our teams in engineering and research, facilities costs such as data center depreciation, prototyping expense, and professional and contract services. 39 R&D expense increased $1.87 billion, or 41%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, primarily due to increases in costs related to AI and other programs as we continue to expand our product roadmap and technologies and an increase in stock-based compensation of $500 million. R&D expense as a percentage of revenue increased from 5% to 7% in the year ended December 31, 2025 as compared to the year ended December 31, 2024, primarily due to higher R&D expense and a decrease in total revenue as compared to the prior year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-045968",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045968/tsla-20250930.htm",
+      "locator": "10-Q 0001628280-25-045968:107685-108728",
+      "excerpt": "egal charges, a $151 million increase in employee and labor costs, including professional services, a $38 million increase in stock-based compensation and a $25 million increase in marketing expenses. 34 Table of Contents SG&A expenses increased $342 million, or 9%, in the nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024, driven by a $237 million increase in operating expenses including legal charges, a $126 million increase in employee and labor costs, including professional services, a $52 million increase in stock-based compensation, partially offset by an $82 million decrease in facilities related expenses. Restructuring and Other Three Months Ended September 30, Change Nine Months Ended September 30, Change (Dollars in millions) 2025 2024 $ % 2025 2024 $ % Restructuring and other $ 238 $ 55 $ 183 333 % $ 332 $ 677 $ (345) (51) % In the third quarter of 2025, we initiated certain actions in order to reduce costs and improve efficiency through convergence of AI chip design efforts.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-045968",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045968/tsla-20250930.htm",
+      "locator": "10-Q 0001628280-25-045968:105264-106388",
+      "excerpt": "ed September 30, 2024. Gross margin for energy generation and storage increased from 26.6% to 30.3% in the nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024. The increases were primarily due to the changes in energy generation and storage revenue and cost of energy generation and storage revenue, as discussed above. Research and Development Expense Three Months Ended September 30, Change Nine Months Ended September 30, Change (Dollars in millions) 2025 2024 $ % 2025 2024 $ % Research and development $ 1,630 $ 1,039 $ 591 57 % $ 4,628 $ 3,264 $ 1,364 42 % As a percentage of revenues 6 % 4 % 7 % 5 % Research and development (“R&D”) expenses increased $591 million, or 57%, in the three months ended September 30, 2025 as compared to the three months ended September 30, 2024. R&D expenses increased $1.36 billion, or 42%, in the nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024. These increases were primarily due to increases in costs related to AI and other programs as we continue to expand our product roadmap and technologies.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:190353-191525",
+      "excerpt": "s, executive, finance, human resources, information technology and legal organizations, as well as fees for professional and contract services, litigation settlements, bank charges and marketing fees. SG&A expenses increased $684 million, or 13%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024 driven by a $354 million increase in operating expenses including legal charges, a $256 million increase in employee and labor costs, including professional services, a $235 million increase in stock-based compensation, partially offset by an $83 million decrease in marketing expenses and a $78 million decrease in facilities related expenses. Restructuring and Other Year Ended December 31, 2025 vs. 2024 Change 2024 vs. 2023 Change (Dollars in millions) 2025 2024 2023 $ % $ % Restructuring and other $ 494 $ 684 $ — $ (190) (28)% $ 684 Not meaningful In the second quarter of 2024, we initiated and substantially completed certain restructuring actions to reduce costs and improve efficiency. As a result, we recognized $583 million of employee termination expenses in Restructuring and other in our consolidated statement of operations.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-045968",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045968/tsla-20250930.htm",
+      "locator": "10-Q 0001628280-25-045968:117183-118368",
+      "excerpt": "primarily due to favorable changes in net operating assets and liabilities of $1.81 billion, partially offset by a decrease in net income excluding non-cash expenses, gains and losses of $980 million. Cash Flows from Investing Activities Net cash flows from investing activities and their variability across each period related primarily to capital expenditures, which were $6.13 billion and $8.56 billion for the nine months ended September 30, 2025 and 2024, respectively, mainly for AI-related capital expenditures, global factory expansion, machinery and equipment as we expand and enhance our product roadmap. We also purchased $2.82 billion and $2.62 billion of short-term investments, net of proceeds from maturities and sales, for the nine months ended September 30, 2025 and 2024, respectively. Cash Flows from Financing Activities Net cash flows from financing activities decreased by $2.44 billion to $429 million during the nine months ended September 30, 2025 from $2.87 billion during the nine months ended September 30, 2024. The decrease was primarily due to a $3.02 billion increase in repayments of debt and a $128 million decrease in proceeds from issuances of debt.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/0001628280-26-003952-index.htm",
+      "locator": "OperatingIncome 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        4355000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/0001628280-26-003952-index.htm",
+      "locator": "OperatingIncome 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        7076000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "TSLA",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "OperatingIncome yoy_growth annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        4355000000.0,
+        7076000000.0,
+        -0.3845392877331826
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:339609-340758",
+      "excerpt": "recognized over a weighted-average period of 3.3 years. For the year ended December 31, 2025, we recorded $ 323 million of stock-based compensation expense related to these grants, net of forfeitures. For the years ended December 31, 2024 and 2023, stock-based compensation expense related to these grants, net of forfeitures, were immaterial . Summary Stock-Based Compensation Information The following table summarizes our stock-based compensation expense by line item in the consolidated statements of operations (in millions): Year Ended December 31, 2025 2024 2023 Cost of revenues $ 870 $ 776 $ 741 Research and development 1,332 832 689 Selling, general and administrative 623 389 382 Restructuring and other — 2 — Total $ 2,825 $ 1,999 $ 1,812 83 Income tax benefits recognized from stock-based compensation expense during the years ended December 31, 2025, 2024 and 2023 were $ 517 million, $ 371 million and $ 326 million, respectively. During the years ended December 31, 2025, 2024 and 2023, stock-based compensation expense capitalized to our consolidated balance sheets was $ 238 million, $ 198 million and $ 199 million, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-045968",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045968/tsla-20250930.htm",
+      "locator": "10-Q 0001628280-25-045968:57345-58265",
+      "excerpt": "nse related to these grants, net of forfeitures. For the three and nine months ended September 30, 2024, stock-based compensation expense related to these grants, net of forfeitures, were immaterial . Summary Stock-Based Compensation Information The following table summarizes our stock-based compensation expense by line item in the consolidated statements of operations (in millions): Three Months Ended September 30, Nine Months Ended September 30, 2025 2024 2025 2024 Cost of revenues $ 207 $ 184 $ 629 $ 566 Research and development 335 191 910 572 Selling, general and administrative 121 82 332 280 Restructuring and other — — — 2 Total $ 663 $ 457 $ 1,871 $ 1,420 21 Table of Contents Note 9 – Income Taxes Our effective tax rate was 29 % and 27 % for the three and nine months ended September 30, 2025, respectively, compared to 22 % and 23 % for the three and nine months ended September 30, 2024, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-035806",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025035806/tsla-20250630.htm",
+      "locator": "10-Q 0001628280-25-035806:48462-49549",
+      "excerpt": "n expense related to these grants, net of forfeitures. For the three and six months ended June 30, 2024, stock-based compensation expense related to these grants, net of forfeitures, were immaterial . Summary Stock-Based Compensation Information The following table summarizes our stock-based compensation expense by line item in the consolidated statements of operations (in millions): Three Months Ended June 30, Six Months Ended June 30, 2025 2024 2025 2024 Cost of revenues $ 213 $ 180 $ 422 $ 382 Research and development 298 169 575 381 Selling, general and administrative 124 88 211 198 Restructuring and other — 2 — 2 Total $ 635 $ 439 $ 1,208 $ 963 Note 9 – Income Taxes Our effective tax rate was 23 % and 25 % for the three and six months ended June 30, 2025, respectively, compared to 21 % and 23 % for the three and six months ended June 30, 2024, respectively. The change in our effective tax rate was primarily due to the changes in the mix of our jurisdictional earnings. Our effective tax rates for the first three and six months of 2025 and 2024 as compared to the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-045968",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045968/tsla-20250930.htm",
+      "locator": "10-Q 0001628280-25-045968:79538-80600",
+      "excerpt": "Total $ 12,276 $ 12,017 Note 13 – Restructuring and Other In the third quarter of 2025, we initiated certain actions in order to reduce costs and improve efficiency through convergence of AI chip design efforts. As a result, we recognized $ 238 million of expenses, within our automotive segment, related to charges for supercomputer assets, contract terminations and employee terminations. In the second quarter of 2024, we initiated and substantially completed certain restructuring actions to reduce costs and improve efficiency. As a result, we recognized $ 583 million of employee termination expenses in Restructuring and other in our consolidated income statement. 27 Table of Contents ITEM 2. MANAGEMENT’S DISCUSSION AND ANALYSIS OF FINANCIAL CONDITION AND RESULTS OF OPERATIONS The following discussion and analysis should be read in conjunction with the consolidated financial statements and the related notes included elsewhere in this Quarterly Report on Form 10-Q. Overview Our mission is to accelerate the world’s transition to sustainable energy.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:375261-376323",
+      "excerpt": "714 2,029 Total $ 12,392 $ 12,017 Note 17 – Restructuring and Other In 2025, we initiated certain actions in order to reduce costs and improve efficiency through convergence of AI chip design efforts. As a result, we recognized $ 390 million of expenses, within our automotive segment, related to charges for supercomputer assets, contract terminations and employee terminations. In the second quarter of 2024, we initiated and substantially completed certain restructuring actions to reduce costs and improve efficiency. As a result, we recognized $ 583 million of employee termination expenses in Restructuring and other in our consolidated income statement. ITEM 9. CHANGES IN AND DISAGREEMENTS WITH ACCOUNTANTS ON ACCOUNTING AND FINANCIAL DISCLOSURE None. ITEM 9A. CONTROLS AND PROCEDURES Evaluation of Disclosure Controls and Procedures Our management, with the participation of our Chief Executive Officer and our Chief Financial Officer, evaluated the effectiveness of our disclosure controls and procedures pursuant to Rule 13a-15 under the Exchange Act.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-045968",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045968/tsla-20250930.htm",
+      "locator": "10-Q 0001628280-25-045968:108528-109652",
+      "excerpt": "38 $ 55 $ 183 333 % $ 332 $ 677 $ (345) (51) % In the third quarter of 2025, we initiated certain actions in order to reduce costs and improve efficiency through convergence of AI chip design efforts. As a result, we recognized $238 million of expenses, within our automotive segment, related to charges for supercomputer assets, contract terminations and employee terminations. In the second quarter of 2024, we initiated and substantially completed certain restructuring actions to reduce costs and improve efficiency. As a result, we recognized $583 million of employee termination expenses in Restructuring and other in our consolidated statement of operations. Interest Income Three Months Ended September 30, Change Nine Months Ended September 30, Change (Dollars in millions) 2025 2024 $ % 2025 2024 $ % Interest income $ 439 $ 429 $ 10 2 % $ 1,231 $ 1,127 $ 104 9 % Interest income increased $10 million, or 2%, in the three months ended September 30, 2025 and increased $104 million, or 9%, in the nine months ended September 30, 2025 as compared to the three and nine months ended September 30, 2024, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:13529-14501",
+      "excerpt": "hannel partners. We design and manufacture certain components for our energy generation products, including solar panels and Solar Roof, which combines premium glass roof tiles with energy generation. We also purchase many components for our energy generation systems from various third-party manufacturers to provide for competitive pricing and adequate supply. Technology Automotive Self-Driving Development and Artificial Intelligence We use AI to develop real-world applications, such as autonomous driving solutions and robots. We utilize vision-based technologies, systems and software to train our artificial neural networks, which are accelerated by our own in-house, custom designed inference chips. We are also applying our artificial intelligence learnings from self-driving technology to Bots, such as Optimus, a general purpose, autonomous humanoid robot in development. Currently, we offer in our customer vehicles certain advanced driver assistance systems.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-035806",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025035806/tsla-20250630.htm",
+      "locator": "10-Q 0001628280-25-035806:98962-99932",
+      "excerpt": "s included elsewhere in this Quarterly Report on Form 10-Q for further details. 32 Table of Contents Liquidity and Capital Resources We expect to continue to generate net positive operating cash flow. The cash we generate from our core operations enables us to fund ongoing operations and production, our research and development projects for new products and technologies including our proprietary battery cells, additional manufacturing ramps at existing manufacturing facilities, the construction of future factories, and the continued expansion of our retail and service locations, body shops, Mobile Service fleet, Supercharger, including to support NACS, energy product installation capabilities and autonomy and other artificial intelligence enabled products. In addition, because a large portion of our future expenditures will be to fund our growth, we expect that if needed we will be able to adjust our capital and operating expenditures by operating segment.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:153502-154650",
+      "excerpt": "n, but also facility expansions. Moreover, we have set ambitious technological targets with our plans for battery cells as well as for iterative manufacturing and design improvements for our vehicles. Automotive and AI Enabled Products—Demand, Sales, Deliveries and Infrastructure Our cost reduction efforts, cost innovation strategies, and additional localized procurement and manufacturing are key to our vehicles’ affordability and have allowed us to competitively price our vehicles. We will also continue to generate demand by improving our vehicles’ performance and functionality, including through product offerings and features utilizing artificial intelligence such as FSD (Supervised) and other software, and delivering new vehicles and vehicle options. In addition, we believe the launch of our Robotaxi service unlocks the potential for significant business growth to advance a service-driven business model. We will continue to improve safety and profitability while scaling the network. In addition, we have been increasing awareness, and expanding our vehicle financing programs, including attractive leasing terms for our customers.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E2",
+      "quote": "R&D expense increased $1.87 billion, or 41%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, primarily due to increases in costs related to AI and other programs",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:188757-189933"
+    },
+    {
+      "evidence_id": "E4",
+      "quote": "R&D expenses increased $1.36 billion, or 42%, in the nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024. These increases were primarily due to increases in costs related to AI and other programs",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-25-045968",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045968/tsla-20250930.htm",
+      "locator": "10-Q 0001628280-25-045968:105264-106388"
+    },
+    {
+      "evidence_id": "E5",
+      "quote": "SG&A expenses increased $684 million, or 13%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:190353-191525"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 18541,
+    "output": 2012
+  },
+  "latency_ms": 23411,
+  "estimated_cost_usd": 0.085803,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "mixed"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 4908,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 12,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 18483,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 8,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

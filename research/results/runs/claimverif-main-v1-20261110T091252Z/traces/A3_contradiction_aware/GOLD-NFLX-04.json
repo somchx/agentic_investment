@@ -1,0 +1,1113 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-NFLX-04:01a2f392",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-NFLX-04",
+    "company": "NFLX",
+    "claim": "Netflix's long-term debt was lower as of December 31, 2025 than at December 31, 2024.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "LongTermDebt",
+            "measure": "level",
+            "period_basis": "instant",
+            "period_end": "2025-12-31",
+            "comparison": "<",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Long-term debt 13,463,971 13,798,351"
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "Debt, net of debt issuance costs and discounts, decreased $1,120 million primarily due to approximately $1,833 million in repayments of debt"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Netflix's long-term debt was lower as of December 31, 2025 than at December 31, 2024. Evidence E3 provides the consolidated balance sheet showing long-term debt of $13,463,971 thousand as of December 31, 2025 compared to $13,798,351 thousand as of December 31, 2024. This represents a decrease of $334,380 thousand. Evidence E4 corroborates this, stating that \"Debt, net of debt issuance costs and discounts, decreased $1,120 million primarily due to approximately $1,833 million in repayments of debt, partially offset by the remeasurement of our Euro-denominated notes in the year ended December 31, 2025.\" Since $13,463,971 < $13,798,351, the claim is supported by the evidence.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "LongTermDebt",
+            "measure": "level",
+            "period_basis": "instant",
+            "period_end": "2025-12-31",
+            "comparison": "<",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "THRESHOLD_MISSING"
+          ],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "instant",
+            "level": 13463971000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "LongTermDebt",
+                "period_start": null,
+                "period_end": "2025-12-31",
+                "value": 13463971000.0,
+                "filed": "2026-01-23",
+                "form": "10-K",
+                "accession_number": "0001065280-26-000034",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 13798351000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": -0.024233330489998407,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Does the filing show any reclassification of long-term debt to short-term debt that would artificially reduce the long-term debt balance without actually reducing total debt?",
+          "search_query": "short-term debt current portion long-term debt reclassification maturity twelve months",
+          "numeric_check": {
+            "metric": "LongTermDebt",
+            "measure": "level",
+            "period_basis": "instant",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Are there any restatements or adjustments to the December 31, 2024 long-term debt figure that would change the comparison basis?",
+          "search_query": "restatement adjustment prior period December 2024 long-term debt restated",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Does the filing indicate that the decrease in long-term debt includes significant non-cash adjustments (like foreign exchange remeasurement) that might offset actual debt repayments in a way that changes the interpretation?",
+          "search_query": "long-term debt foreign exchange remeasurement Euro-denominated fair value adjustment non-cash",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "short-term debt current portion long-term debt reclassification maturity twelve months",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "restatement adjustment prior period December 2024 long-term debt restated",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "long-term debt foreign exchange remeasurement Euro-denominated fair value adjustment non-cash",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "instant",
+            "level": 13463971000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "LongTermDebt",
+                "period_start": null,
+                "period_end": "2025-12-31",
+                "value": 13463971000.0,
+                "filed": "2026-01-23",
+                "form": "10-K",
+                "accession_number": "0001065280-26-000034",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 13798351000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": -0.024233330489998407,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E11",
+              "quote": "Short-term debt — 1,784,453",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-25-000406",
+              "form": "10-Q",
+              "filed": "2025-10-22",
+              "period_end": "2025-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+              "locator": "10-Q 0001065280-25-000406:8920-10120"
+            },
+            {
+              "evidence_id": "E12",
+              "quote": "Short-term debt — 1,784,453",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-25-000323",
+              "form": "10-Q",
+              "filed": "2025-07-18",
+              "period_end": "2025-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+              "locator": "10-Q 0001065280-25-000323:8741-9941"
+            },
+            {
+              "evidence_id": "E3",
+              "quote": "Long-term debt 13,463,971 13,798,351",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-26-000034",
+              "form": "10-K",
+              "filed": "2026-01-23",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+              "locator": "10-K 0001065280-26-000034:173158-174280"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E4",
+              "quote": "Debt, net of debt issuance costs and discounts, decreased $1,120 million primarily due to approximately $1,833 million in repayments of debt, partially offset by the remeasurement of our Euro-denominated notes",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-26-000034",
+              "form": "10-K",
+              "filed": "2026-01-23",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+              "locator": "10-K 0001065280-26-000034:118542-119642"
+            },
+            {
+              "evidence_id": "E16",
+              "quote": "the carrying amount of the Company's euro-denominated Senior Notes (included in \"Long-term debt\" on the Company's Consolidated Balance Sheets), which were designated as the hedged items in fair value hedges, was approximately $ 3.5 billion and $ 3.6 billion, respectively",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-25-000323",
+              "form": "10-Q",
+              "filed": "2025-07-18",
+              "period_end": "2025-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+              "locator": "10-Q 0001065280-25-000323:31225-32425"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "2f5171c1f07c9e32847f8b0f56ded2e2b47810bc12e8cd3fc4d14747a37838d4",
+      "source": "cache",
+      "input_tokens": 3992,
+      "output_tokens": 521,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "LongTermDebt",
+            "measure": "level",
+            "period_basis": "instant",
+            "period_end": "2025-12-31",
+            "comparison": "<",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Long-term debt 13,463,971 13,798,351"
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "Debt, net of debt issuance costs and discounts, decreased $1,120 million primarily due to approximately $1,833 million in repayments of debt"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Netflix's long-term debt was lower as of December 31, 2025 than at December 31, 2024. Evidence E3 provides the consolidated balance sheet showing long-term debt of $13,463,971 thousand as of December 31, 2025 compared to $13,798,351 thousand as of December 31, 2024. This represents a decrease of $334,380 thousand. Evidence E4 corroborates this, stating that \"Debt, net of debt issuance costs and discounts, decreased $1,120 million primarily due to approximately $1,833 million in repayments of debt, partially offset by the remeasurement of our Euro-denominated notes in the year ended December 31, 2025.\" Since $13,463,971 < $13,798,351, the claim is supported by the evidence.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "24a35e5f39485738f1c6dd7b08648fd51b75b1c7b9d418204d375209dfe072c8",
+      "source": "live",
+      "input_tokens": 5157,
+      "output_tokens": 394,
+      "stop_reason": "tool_use",
+      "latency_ms": 7266,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Does the filing show any reclassification of long-term debt to short-term debt that would artificially reduce the long-term debt balance without actually reducing total debt?",
+            "search_query": "short-term debt current portion long-term debt reclassification maturity twelve months",
+            "numeric_check": {
+              "metric": "LongTermDebt",
+              "measure": "level",
+              "period_basis": "instant",
+              "period_end": "2025-12-31",
+              "comparison": "decrease",
+              "threshold": null,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Are there any restatements or adjustments to the December 31, 2024 long-term debt figure that would change the comparison basis?",
+            "search_query": "restatement adjustment prior period December 2024 long-term debt restated",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Does the filing indicate that the decrease in long-term debt includes significant non-cash adjustments (like foreign exchange remeasurement) that might offset actual debt repayments in a way that changes the interpretation?",
+            "search_query": "long-term debt foreign exchange remeasurement Euro-denominated fair value adjustment non-cash",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "0503da664300f55c1fb2471937c4dbbf0a2b1da1044c34ddc808bae98535b67b",
+      "source": "live",
+      "input_tokens": 9724,
+      "output_tokens": 971,
+      "stop_reason": "tool_use",
+      "latency_ms": 17941,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E11",
+                "quote": "Short-term debt — 1,784,453"
+              },
+              {
+                "evidence_id": "E12",
+                "quote": "Short-term debt — 1,784,453"
+              },
+              {
+                "evidence_id": "E3",
+                "quote": "Long-term debt 13,463,971 13,798,351"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E4",
+                "quote": "Debt, net of debt issuance costs and discounts, decreased $1,120 million primarily due to approximately $1,833 million in repayments of debt, partially offset by the remeasurement of our Euro-denominated notes"
+              },
+              {
+                "evidence_id": "E16",
+                "quote": "the carrying amount of the Company's euro-denominated Senior Notes (included in \"Long-term debt\" on the Company's Consolidated Balance Sheets), which were designated as the hedged items in fair value hedges, was approximately $ 3.5 billion and $ 3.6 billion, respectively"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Long-term debt 13,463,971 13,798,351"
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "Debt, net of debt issuance costs and discounts, decreased $1,120 million primarily due to approximately $1,833 million in repayments of debt"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim that Netflix's long-term debt was lower as of December 31, 2025 than at December 31, 2024 is SUPPORTED by the evidence. E3 shows long-term debt decreased from $13,798,351 thousand (Dec 31, 2024) to $13,463,971 thousand (Dec 31, 2025), a decrease of $334,380 thousand.\n\nChallenge H1 (reclassification to short-term debt) is REFUTED: E11 and E12 show short-term debt was $1,784,453 thousand at Dec 31, 2024 and $0 at both June 30, 2025 and Sept 30, 2025, indicating short-term debt was paid off rather than long-term debt being reclassified to it. The numeric check confirms long-term debt decreased.\n\nChallenge H2 (restatements) found NO_RELEVANT_EVIDENCE: The retrieved evidence discusses the WBD acquisition but contains no information about restatements or adjustments to the December 31, 2024 long-term debt figure.\n\nChallenge H3 (non-cash adjustments changing interpretation) is REFUTED: While E4 acknowledges that Euro-denominated note remeasurement partially offset debt repayments, it explicitly states the decrease was \"primarily due to approximately $1,833 million in repayments of debt, partially offset by the remeasurement.\" This confirms actual debt reduction occurred. E16 shows Euro-denominated notes decreased only slightly from $3.6B to $3.5B during mid-2025, indicating remeasurement effects were not the primary driver.\n\nThe verdict remains SUPPORTED as all challenges were either refuted or lacked relevant evidence.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Netflix's long-term debt was lower as of December 31, 2025 than at December 31, 2024. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "short-term debt current portion long-term debt reclassification maturity twelve months",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "restatement adjustment prior period December 2024 long-term debt restated",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "long-term debt foreign exchange remeasurement Euro-denominated fair value adjustment non-cash",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "LongTermDebt",
+            "measure": "level",
+            "period_basis": "instant",
+            "period_end": "2025-12-31",
+            "comparison": "<",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "THRESHOLD_MISSING"
+          ],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "instant",
+            "level": 13463971000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "LongTermDebt",
+                "period_start": null,
+                "period_end": "2025-12-31",
+                "value": 13463971000.0,
+                "filed": "2026-01-23",
+                "form": "10-K",
+                "accession_number": "0001065280-26-000034",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 13798351000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": -0.024233330489998407,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "LongTermDebt",
+            "measure": "level",
+            "period_basis": "instant",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "instant",
+            "level": 13463971000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "LongTermDebt",
+                "period_start": null,
+                "period_end": "2025-12-31",
+                "value": 13463971000.0,
+                "filed": "2026-01-23",
+                "form": "10-K",
+                "accession_number": "0001065280-26-000034",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 13798351000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": -0.024233330489998407,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001065280-26-000034",
+        "filed": "2026-01-23",
+        "report_date": "2025-12-31",
+        "primary_document": "nflx-20251231.htm",
+        "sha256": "caec332c25a15511728cc54b55ed5479ee04a2c9d9fa77e7d2f81a52bac97678"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001065280-25-000406",
+        "filed": "2025-10-22",
+        "report_date": "2025-09-30",
+        "primary_document": "nflx-20250930.htm",
+        "sha256": "fa3a310cd89c0b545abdf83eff5ad2d137bbcfe3495349a866f4907ccb372f0c"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001065280-25-000323",
+        "filed": "2025-07-18",
+        "report_date": "2025-06-30",
+        "primary_document": "nflx-20250630.htm",
+        "sha256": "9a73c0293b9963bb70b403298d0f98879258e6f540ec1dc3f78b8eb8e27a1048"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 569
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:223975-224627",
+      "excerpt": ", 2025 and December 31, 2024, approximately $ 1.9 billion and $ 1.0 billion, respectively, of the Company’s Euro–denominated Senior Notes were designated as hedges of the foreign exchange risk of the Company’s net investment in certain foreign subsidiaries. As of December 31, 2025 and December 31, 2024, the carrying amount of the Company's Euro-denominated Senior Notes (included in “Long-term debt” on the Company's Consolidated Balance Sheets), which were designated as the hedged items in fair value hedges, was approximately $ 2.9 billion and $ 3.6 billion, respectively. See Note 7 Debt for further information on the Company’s debt obligations.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:31625-32289",
+      "excerpt": "of September 30, 2025 and December 31, 2024, approximately $ 1.7 billion and $ 1.0 billion, respectively, of the Company’s euro–denominated Senior Notes were designated as hedges of the foreign exchange risk of the Company’s net investment in certain foreign subsidiaries. As of September 30, 2025 and December 31, 2024, the carrying amount of the Company's euro-denominated Senior Notes (included in \"Long-term debt\" on the Company's Consolidated Balance Sheets), which were designated as the hedged items in fair value hedges, was approximately $ 3.0 billion and $ 3.6 billion, respectively. Note 6 Debt for further information on the Company’s debt obligations.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:173158-174280",
+      "excerpt": "n-current content liabilities 1,579,476 1,780,806 Long-term debt 13,463,971 13,798,351 Other non-current liabilities 2,957,128 2,552,250 Total liabilities 28,981,505 28,886,807 Commitments and contingencies (Note 9) Stockholders’ equity: Preferred stock, $ 0.001 par value; 10,000,000 shares authorized at December 31, 2025 and December 31, 2024; no shares issued and outstanding at December 31, 2025 and December 31, 2024 — — Common stock, $ 0.001 par value; 49,900,000,000 shares authorized at December 31, 2025 and December 31, 2024; 4,222,162,150 and 4,277,571,000 issued and outstanding at December 31, 2025 and December 31, 2024, respectively 7,286,410 6,252,126 Treasury stock at cost ( 346,541,145 and 259,534,600 shares at December 31, 2025 and December 31, 2024) ( 22,372,658 ) ( 13,171,638 ) Accumulated other comprehensive income (loss) ( 580,382 ) 362,162 Retained earnings 42,282,118 31,300,917 Total stockholders’ equity 26,615,488 24,743,567 Total liabilities and stockholders’ equity $ 55,596,993 $ 53,630,374 See accompanying notes to consolidated financial statements. 42 Table of Contents NETFLIX, INC.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:118542-119642",
+      "excerpt": "Income Taxes to the consolidated financial statements for further information regarding income taxes. 24 Table of Contents Liquidity and Capital Resources As of December 31, Change 2025 2024 2025 vs. 2024 (in thousands, except percentages) Cash, cash equivalents, restricted cash and short-term investments $ 9,067,872 $ 9,586,343 $ (518,471) (5) % Short-term and long-term debt 14,462,836 15,582,804 (1,119,968) (7) % Cash, cash equivalents, restricted cash and short-term investments decreased $518 million in the year ended December 31, 2025 primarily due to the repurchase of stock and repayment of debt, partially offset by cash provided by operations. Debt, net of debt issuance costs and discounts, decreased $1,120 million primarily due to approximately $1,833 million in repayments of debt, partially offset by the remeasurement of our Euro-denominated notes in the year ended December 31, 2025. The amount of principal and interest on our outstanding notes due in the next twelve months is $1,690 million. See Note 7 Debt in the accompanying notes to our consolidated financial statements.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:9741-10687",
+      "excerpt": "5 10,755,400 Non-current content liabilities 1,606,404 1,780,806 Long-term debt 14,453,206 13,798,351 Other non-current liabilities 3,145,820 2,552,250 Total liabilities 28,147,765 28,886,807 Commitments and contingencies (Note 8) Stockholders’ equity: Common stock, $ 0.001 par value; 4,990,000,000 shares authorized at June 30, 2025 and December 31, 2024; 424,926,346 and 427,757,100 issued and outstanding at June 30, 2025 and December 31, 2024, respectively 6,932,828 6,252,126 Treasury stock at cost ( 31,228,532 and 25,953,460 shares at June 30, 2025 and December 31, 2024, respectively) ( 18,392,942 ) ( 13,171,638 ) Accumulated other comprehensive income (loss) ( 904,668 ) 362,162 Retained earnings 37,316,681 31,300,917 Total stockholders’ equity 24,951,899 24,743,567 Total liabilities and stockholders’ equity $ 53,099,664 $ 53,630,374 See accompanying notes to the consolidated financial statements. 6 Table of Contents NETFLIX, INC.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:86733-87819",
+      "excerpt": "ble income deduction relative to the growth in income before income taxes. 31 Table of Contents Liquidity and Capital Resources As of Change September 30, 2025 December 31, 2024 September 30, 2025 vs. December 31, 2024 (in thousands, except percentages) Cash, cash equivalents, restricted cash and short-term investments $ 9,327,973 $ 9,586,343 $ (258,370) (3) % Short-term and long-term debt 14,463,020 15,582,804 (1,119,784) (7) % Cash, cash equivalents, restricted cash and short-term investments decreased $258 million in the nine months ended September 30, 2025 primarily due to the repurchase of stock and repayment of debt, partially offset by cash provided by operations and proceeds from issuance of common stock. Debt, net of debt issuance costs and discounts, decreased $1,120 million primarily due to approximately $1,833 million in repayments of debt, partially offset by the remeasurement of our euro-denominated notes in the nine months ended September 30, 2025. The amount of principal and interest on our outstanding notes due in the next twelve months is $690 million.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/0001065280-26-000034-index.htm",
+      "locator": "LongTermDebt ..2025-12-31",
+      "excerpt": null,
+      "values": [
+        13463971000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/0001065280-26-000034-index.htm",
+      "locator": "LongTermDebt ..2024-12-31",
+      "excerpt": null,
+      "values": [
+        13798351000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "NFLX",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "LongTermDebt level instant @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        13463971000.0,
+        13798351000.0,
+        -0.024233330489998407
+      ],
+      "unit": "USD",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:83300-84478",
+      "excerpt": "62 $ 366,550 $ 139,712 38 % Effective tax rate 14 % 15 % Six months ended June 30, 2025 as compared to the six months ended June 30, 2024 Six Months Ended Change June 30, 2025 June 30, 2024 YTD'25 vs. YTD'24 (in thousands, except percentages) Provision for income taxes $ 829,637 $ 648,920 $ 180,717 28 % Effective tax rate 12 % 13 % The decrease in the effective tax rates for the three and six months ended June 30, 2025, as compared to the same periods in 2024, was primarily due to higher excess tax benefits on stock-based compensation. 32 Table of Contents Liquidity and Capital Resources As of Change June 30, 2025 December 31, 2024 June 30, 2025 vs. December 31, 2024 (in thousands, except percentages) Cash, cash equivalents, restricted cash and short-term investments $ 8,393,688 $ 9,586,343 $ (1,192,655) (12) % Short-term and long-term debt 14,453,206 15,582,804 (1,129,598) (7) % Cash, cash equivalents, restricted cash and short-term investments decreased $1,193 million in the six months ended June 30, 2025 primarily due to the repurchase of stock and repayment of debt, partially offset by cash provided by operations and proceeds from issuance of common stock.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:8920-10120",
+      "excerpt": "cash equivalents and restricted cash at end of period $ 9,290,868 $ 7,459,085 $ 9,290,868 $ 7,459,085 See accompanying notes to the consolidated financial statements. 5 Table of Contents NETFLIX, INC. Consolidated Balance Sheets (in thousands, except share and par value data) As of September 30, 2025 December 31, 2024 (unaudited) Assets Current assets: Cash and cash equivalents $ 9,287,287 $ 7,804,733 Short-term investments 37,105 1,779,006 Other current assets 3,638,543 3,516,640 Total current assets 12,962,935 13,100,379 Content assets, net 32,639,879 32,452,462 Property and equipment, net 1,837,889 1,593,756 Other non-current assets 7,494,132 6,483,777 Total assets $ 54,934,835 $ 53,630,374 Liabilities and Stockholders’ Equity Current liabilities: Current content liabilities $ 4,102,640 $ 4,393,681 Accounts payable 793,233 899,909 Accrued expenses and other liabilities 3,111,311 2,156,544 Deferred revenue 1,724,675 1,520,813 Short-term debt — 1,784,453 Total current liabilities 9,731,859 10,755,400 Non-current content liabilities 1,591,973 1,780,806 Long-term debt 14,463,020 13,798,351 Other non-current liabilities 3,193,948 2,552,250 Total liabilities 28,980,800 28,886,807 Comm",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:8741-9941",
+      "excerpt": "cash equivalents and restricted cash at end of period $ 8,180,573 $ 6,627,045 $ 8,180,573 $ 6,627,045 See accompanying notes to the consolidated financial statements. 5 Table of Contents NETFLIX, INC. Consolidated Balance Sheets (in thousands, except share and par value data) As of June 30, 2025 December 31, 2024 (unaudited) Assets Current assets: Cash and cash equivalents $ 8,177,405 $ 7,804,733 Short-term investments 213,115 1,779,006 Other current assets 3,602,586 3,516,640 Total current assets 11,993,106 13,100,379 Content assets, net 32,089,394 32,452,462 Property and equipment, net 1,743,566 1,593,756 Other non-current assets 7,273,598 6,483,777 Total assets $ 53,099,664 $ 53,630,374 Liabilities and Stockholders’ Equity Current liabilities: Current content liabilities $ 4,091,770 $ 4,393,681 Accounts payable 632,718 899,909 Accrued expenses and other liabilities 2,489,486 2,156,544 Deferred revenue 1,728,361 1,520,813 Short-term debt — 1,784,453 Total current liabilities 8,942,335 10,755,400 Non-current content liabilities 1,606,404 1,780,806 Long-term debt 14,453,206 13,798,351 Other non-current liabilities 3,145,820 2,552,250 Total liabilities 28,147,765 28,886,807 Commitme",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:128834-129836",
+      "excerpt": "ts summarized in the table above, we expect to pay deposits of approximately $700 million related to non-income tax assessments in Brazil as described further in Note 9 Commitments and Contingencie s. During the year ended December 31, 2025, we also paid tax deposits of approximately $200 million related to certain direct taxes that exceeded our regularly recurring obligations. 26 Table of Contents Other Planned Uses of Cash and Debt Capital On December 4, 2025, we entered into a definitive agreement and plan of merger with WBD to acquire WBD's streaming and studios businesses, including its film and television studios, HBO Max and HBO, which was amended and restated by the parties thereto on January 19, 2026 (as so amended and restated, the “Amended and Restated Merger Agreement”). WBD is a leading global media and entertainment company and will separate its Global Linear Networks business, Discovery Global, into a new publicly-traded company prior to the closing of the WBD transaction.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:212118-213189",
+      "excerpt": "HBO Max and HBO (such transaction, the \"WBD transaction\"), which was then amended by the parties thereto on January 19, 2026 (as so amended and restated, the \"Amended and Restated Merger Agreement\"). WBD is a leading global media and entertainment company and will separate its Global Linear Networks business, Discovery Global, into a new publicly-traded company prior to the closing of the WBD transaction. See Note 9 Commitments and Contingencies for further details. 53 Table of Contents 7. Debt As of December 31, 2025, the Company had aggregate outstanding notes of $ 14,463 million, net of $ 56 million of issuance costs and discounts, with varying maturities (the “Notes”). As of December 31, 2024, the Company had aggregate outstanding notes of $ 15,583 million, net of $ 70 million of issuance costs and discounts. Each of the Notes are senior unsecured obligations of the Company. Interest is payable semi-annually at fixed rates. A portion of the outstanding Notes is denominated in foreign currency (comprised of € 4,700 million) and is remeasured into U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:129636-130819",
+      "excerpt": "leading global media and entertainment company and will separate its Global Linear Networks business, Discovery Global, into a new publicly-traded company prior to the closing of the WBD transaction. Under the terms of the Amended and Restated Merger Agreement, each WBD stockholder will receive $27.75 in cash (as may be adjusted in accordance with the terms of the Amended and Restated Merger Agreement) for each share of WBD common stock outstanding as of immediately prior to the closing of the WBD transaction, for a total equity value of approximately $72.0 billion and an enterprise value of approximately $82.7 billion (in each case, as of December 4, 2025). The total equity value and enterprise value of the WBD transaction may fluctuate based on WBD's capitalization as of the closing of the WBD transaction. We expect the WBD transaction to close in 12-18 months from December 4, 2025, subject to receipt of required regulatory approvals, approval of WBD stockholders, the consummation of the separation and distribution of Discovery Global and other customary closing conditions. See Note 6 Acquisitions and Note 9 Commitments and Contingencies for further information.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:31225-32425",
+      "excerpt": "and $ 1.0 billion, respectively, of the Company’s euro–denominated Senior Notes were designated as hedges of the foreign exchange risk of the Company’s net investment in certain foreign subsidiaries. As of June 30, 2025 and December 31, 2024, the carrying amount of the Company's euro-denominated Senior Notes (included in \"Long-term debt\" on the Company's Consolidated Balance Sheets), which were designated as the hedged items in fair value hedges, was approximately $ 3.5 billion and $ 3.6 billion, respectively. Note 6 Debt for further information on the Company’s debt obligations. Fair Value of Derivative Contracts The fair value of the Company’s outstanding derivative instruments was as follows: 14 Table of Contents As of June 30, 2025 Derivative Assets Derivative Liabilities Other current assets Other non-current assets Accrued expenses and other liabilities Other non-current liabilities (in thousands) Derivatives designated as hedging instruments: Foreign exchange contracts $ 310,320 $ 25,566 $ 591,529 $ 467,961 Derivatives not designated as hedging instruments: Foreign exchange contracts 11,136 — 9,641 — Total $ 321,456 $ 25,566 $ 601,170 $ 467,961 As of December 31, 2024 Deriv",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:104327-105307",
+      "excerpt": "fluctuations in our net income as a result of gains (losses) on the settlement and the remeasurement of monetary assets and liabilities denominated in currencies that are not the functional currency. We enter into foreign exchange forward contracts to mitigate the foreign exchange risk on intercompany transactions and monetary assets and liabilities that are not denominated in the functional currencies of the Company and its subsidiaries. These contracts may reduce, but do not entirely eliminate, the effect of foreign currency exchange fluctuations, and we may choose not to hedge certain exposures. Certain contracts are not designated as hedging instruments and the gains or losses on these derivative instruments are recorded in “Interest and other income (expense)” in the Consolidated Statements of Operations. We also designate certain contracts as fair value hedges to mitigate the foreign exchange risk on the remeasurement of our foreign-currency denominated debt.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:145565-146566",
+      "excerpt": "fluctuations in our net income as a result of gains (losses) on the settlement and the remeasurement of monetary assets and liabilities denominated in currencies that are not the functional currency. We enter into foreign exchange forward contracts to mitigate the foreign exchange risk on intercompany transactions and monetary assets and liabilities that are not denominated in the functional currencies of the Company and its subsidiaries. These contracts may reduce, but do not entirely eliminate, the effect of foreign currency exchange fluctuations, and we may choose not to hedge certain exposures. Certain contracts are not designated as hedging instruments and the gains or losses on these derivative instruments are recorded in “Interest and other income (expense)” in the 29 Table of Contents Consolidated Statements of Operations. We also designate certain contracts as fair value hedges to mitigate the foreign exchange risk on the remeasurement of our foreign-currency denominated debt.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E3",
+      "quote": "Long-term debt 13,463,971 13,798,351",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:173158-174280"
+    },
+    {
+      "evidence_id": "E4",
+      "quote": "Debt, net of debt issuance costs and discounts, decreased $1,120 million primarily due to approximately $1,833 million in repayments of debt",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:118542-119642"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 18873,
+    "output": 1886
+  },
+  "latency_ms": 25231,
+  "estimated_cost_usd": 0.084909,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+        "checks": [
+          "UNVERIFIABLE"
+        ]
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 7267,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 6,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 17944,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_PARTIALLY_UNVERIFIABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 15,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

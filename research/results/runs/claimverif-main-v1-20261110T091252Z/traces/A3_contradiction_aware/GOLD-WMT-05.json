@@ -1,0 +1,1035 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-WMT-05:27747a13",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-WMT-05",
+    "company": "WMT",
+    "claim": "Walmart's total revenues for the quarter ended October 31, 2026 increased year over year.",
+    "as_of_date": "2026-10-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2027 Q3"
+  },
+  "initial_label": "INSUFFICIENT_EVIDENCE",
+  "final_label": "INSUFFICIENT_EVIDENCE",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Walmart's total revenues for the quarter ended October 31, 2026 increased year over year. This would require comparing Q3 FY2027 (ended October 31, 2026) to Q3 FY2026 (ended October 31, 2025).\n\nThe evidence provided does not contain financial data for the quarter ended October 31, 2026. The most recent quarterly filing in the evidence is the 10-Q filed on August 28, 2026 for the period ended July 31, 2026 (Q2 FY2027). The 10-K filed on March 13, 2026 covers the fiscal year ended January 31, 2026.\n\nEvidence E6 shows revenues for quarters ended July 31, 2026 and July 31, 2025, but this is for Q2, not Q3. There is no evidence showing revenues for the quarter ended October 31, 2026 or comparing it to the quarter ended October 31, 2025.\n\nSince the evidence does not cover the specific reporting period (Q3 FY2027 ended October 31, 2026) mentioned in the claim, there is insufficient evidence to verify whether total revenues increased year over year for that quarter.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-10-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Does the filing actually contain total revenue data for the quarter ended October 31, 2026 that I missed in the initial evidence?",
+          "search_query": "total revenues three months ended October 31 2026 2025",
+          "numeric_check": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Does the filing report Q3 fiscal 2027 revenue data using different terminology or presentation that would show the quarter ended October 31, 2026?",
+          "search_query": "Q3 fiscal 2027 third quarter October 2026 revenue net sales",
+          "numeric_check": {
+            "metric": "Revenue",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-10-31",
+            "comparison": ">",
+            "threshold": null,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Did total revenues actually decrease year over year for the quarter ended October 31, 2026, contradicting the claim?",
+          "search_query": "quarter ended October 31 2026 compared prior year decrease decline",
+          "numeric_check": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "total revenues three months ended October 31 2026 2025",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "Q3 fiscal 2027 third quarter October 2026 revenue net sales",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "quarter ended October 31 2026 compared prior year decrease decline",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-10-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        },
+        {
+          "hypothesis_id": "H2",
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-10-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        },
+        {
+          "hypothesis_id": "H3",
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-10-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "Three Months Ended July 31, Six Months Ended July 31, Walmart International net sales by market 2026 2025",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000154",
+              "form": "10-Q",
+              "filed": "2026-08-28",
+              "period_end": "2026-07-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+              "locator": "10-Q 0000104169-26-000154:49058-50023"
+            },
+            {
+              "evidence_id": "E8",
+              "quote": "Three Months Ended July 31, Six Months Ended July 31, Sam's Club U.S. net sales by merchandise category 2026 2025",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000154",
+              "form": "10-Q",
+              "filed": "2026-08-28",
+              "period_end": "2026-07-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+              "locator": "10-Q 0000104169-26-000154:49823-50623"
+            },
+            {
+              "evidence_id": "E9",
+              "quote": "Three Months Ended July 31, Six Months Ended July 31, Walmart U.S. net sales by merchandise category 2026 2025",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000154",
+              "form": "10-Q",
+              "filed": "2026-08-28",
+              "period_end": "2026-07-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+              "locator": "10-Q 0000104169-26-000154:48470-49258"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [
+            {
+              "evidence_id": "E10",
+              "quote": "Redeemable noncontrolling interests are initially recorded at fair value",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:271616-272700"
+            },
+            {
+              "evidence_id": "E11",
+              "quote": "Membership fee revenue was $ 4.4 billion, $ 3.8 billion and $ 3.1 billion for fiscal 2026, 2025 and 2024",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:272500-273562"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [
+            {
+              "evidence_id": "E13",
+              "quote": "Six Months Ended July 31, (Amounts in millions, except per share data) 2026 2025",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000154",
+              "form": "10-Q",
+              "filed": "2026-08-28",
+              "period_end": "2026-07-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+              "locator": "10-Q 0000104169-26-000154:90602-91778"
+            },
+            {
+              "evidence_id": "E14",
+              "quote": "Three Months Ended April 30, (Amounts in millions, except per share data) 2026 2025",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000102",
+              "form": "10-Q",
+              "filed": "2026-05-29",
+              "period_end": "2026-04-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+              "locator": "10-Q 0000104169-26-000102:80996-81931"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "b46ae12abdc4653f315b1ab1367667d8ead086efa1db5760c02aecf09092e41f",
+      "source": "cache",
+      "input_tokens": 4141,
+      "output_tokens": 506,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Walmart's total revenues for the quarter ended October 31, 2026 increased year over year. This would require comparing Q3 FY2027 (ended October 31, 2026) to Q3 FY2026 (ended October 31, 2025).\n\nThe evidence provided does not contain financial data for the quarter ended October 31, 2026. The most recent quarterly filing in the evidence is the 10-Q filed on August 28, 2026 for the period ended July 31, 2026 (Q2 FY2027). The 10-K filed on March 13, 2026 covers the fiscal year ended January 31, 2026.\n\nEvidence E6 shows revenues for quarters ended July 31, 2026 and July 31, 2025, but this is for Q2, not Q3. There is no evidence showing revenues for the quarter ended October 31, 2026 or comparing it to the quarter ended October 31, 2025.\n\nSince the evidence does not cover the specific reporting period (Q3 FY2027 ended October 31, 2026) mentioned in the claim, there is insufficient evidence to verify whether total revenues increased year over year for that quarter.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "a5f1c8b266360f0f026baf745b53d927b50a15b6aaed444f040ab3c291f5eca9",
+      "source": "live",
+      "input_tokens": 5139,
+      "output_tokens": 498,
+      "stop_reason": "tool_use",
+      "latency_ms": 7255,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Does the filing actually contain total revenue data for the quarter ended October 31, 2026 that I missed in the initial evidence?",
+            "search_query": "total revenues three months ended October 31 2026 2025",
+            "numeric_check": {
+              "metric": "Revenue",
+              "measure": "yoy_growth",
+              "period_basis": "quarter",
+              "period_end": "2026-10-31",
+              "comparison": "increase",
+              "threshold": null,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Does the filing report Q3 fiscal 2027 revenue data using different terminology or presentation that would show the quarter ended October 31, 2026?",
+            "search_query": "Q3 fiscal 2027 third quarter October 2026 revenue net sales",
+            "numeric_check": {
+              "metric": "Revenue",
+              "measure": "level",
+              "period_basis": "quarter",
+              "period_end": "2026-10-31",
+              "comparison": ">",
+              "threshold": null,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Did total revenues actually decrease year over year for the quarter ended October 31, 2026, contradicting the claim?",
+            "search_query": "quarter ended October 31 2026 compared prior year decrease decline",
+            "numeric_check": {
+              "metric": "Revenue",
+              "measure": "yoy_growth",
+              "period_basis": "quarter",
+              "period_end": "2026-10-31",
+              "comparison": "decrease",
+              "threshold": null,
+              "stated_value": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "8774bce0300b896468badf7517e5bcb2967606a26d7c0ec094158d4236a0e7a5",
+      "source": "live",
+      "input_tokens": 9388,
+      "output_tokens": 1029,
+      "stop_reason": "tool_use",
+      "latency_ms": 16813,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "Three Months Ended July 31, Six Months Ended July 31, Walmart International net sales by market 2026 2025"
+              },
+              {
+                "evidence_id": "E8",
+                "quote": "Three Months Ended July 31, Six Months Ended July 31, Sam's Club U.S. net sales by merchandise category 2026 2025"
+              },
+              {
+                "evidence_id": "E9",
+                "quote": "Three Months Ended July 31, Six Months Ended July 31, Walmart U.S. net sales by merchandise category 2026 2025"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": [
+              {
+                "evidence_id": "E10",
+                "quote": "Redeemable noncontrolling interests are initially recorded at fair value"
+              },
+              {
+                "evidence_id": "E11",
+                "quote": "Membership fee revenue was $ 4.4 billion, $ 3.8 billion and $ 3.1 billion for fiscal 2026, 2025 and 2024"
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": [
+              {
+                "evidence_id": "E13",
+                "quote": "Six Months Ended July 31, (Amounts in millions, except per share data) 2026 2025"
+              },
+              {
+                "evidence_id": "E14",
+                "quote": "Three Months Ended April 30, (Amounts in millions, except per share data) 2026 2025"
+              }
+            ]
+          }
+        ],
+        "label": "INSUFFICIENT_EVIDENCE",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After investigating potential challenges to the initial INSUFFICIENT_EVIDENCE verdict, all three hypotheses returned NO_RELEVANT_EVIDENCE:\n\nH1 (Did I miss revenue data for Q3 ended October 31, 2026?): The retrieved evidence (E7-E9) only contains data for quarters ended July 31, 2026 and 2025, not October 31, 2026. The numeric check confirms PERIOD_NOT_AVAILABLE for 2026-10-31.\n\nH2 (Is Q3 fiscal 2027 data reported using different terminology?): The retrieved evidence (E10-E12) discusses accounting policies and executive appointments but contains no financial data for the quarter ended October 31, 2026. The numeric check again confirms PERIOD_NOT_AVAILABLE.\n\nH3 (Did revenues actually decrease?): The retrieved evidence (E13-E15) discusses share repurchases and cash flows for periods ended July 31, 2026 and April 30, 2026, but contains no data for October 31, 2026. The numeric check confirms PERIOD_NOT_AVAILABLE.\n\nThe claim requires data from the 10-Q for the quarter ended October 31, 2026 (Q3 FY2027), which would typically be filed in early December 2026. Since the evidence cutoff date is October 15, 2026, this filing would not yet be available. The most recent quarterly data available is for the quarter ended July 31, 2026 (Q2 FY2027).\n\nThe verdict remains INSUFFICIENT_EVIDENCE because no filing in the evidence packet covers the specific reporting period (quarter ended October 31, 2026) referenced in the claim.",
+        "change_reason": "N/A"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Walmart's total revenues for the quarter ended October 31, 2026 increased year over year. FY2027 Q3",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "total revenues three months ended October 31 2026 2025",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "Q3 fiscal 2027 third quarter October 2026 revenue net sales",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "quarter ended October 31 2026 compared prior year decrease decline",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-10-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-10-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H2",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-10-31",
+            "comparison": ">",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-10-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H3",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-10-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-26-000154",
+        "filed": "2026-08-28",
+        "report_date": "2026-07-31",
+        "primary_document": "wmt-20260731.htm",
+        "sha256": "094d3090d77d8229676fa0b0b1e91c9fd7be8eb00abcd59468c95b4d9e0045d8"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-26-000102",
+        "filed": "2026-05-29",
+        "report_date": "2026-04-30",
+        "primary_document": "wmt-20260430.htm",
+        "sha256": "852d4b1f25a8587899243ce13ea032f74a393cbefc941de3625cc5779b252ff4"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0000104169-26-000055",
+        "filed": "2026-03-13",
+        "report_date": "2026-01-31",
+        "primary_document": "wmt-20260131.htm",
+        "sha256": "81bc136de8961e00236b4d1c299b17de840b9ff49c278f0addf442cee8e909cf"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 687
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:353043-354196",
+      "excerpt": "Award is incorporated by reference to Exhibit 10.2 of the Quarterly Report on Form 10-Q of the Company for the quarter ended October 31, 2025 , filed on December 3, 2025 (C) 10.12 Form of Walmart Inc. Stock Incentive Plan of 2025 Global Share-Settled Performance Based Restricted Stock Unit Notification and Terms and Conditions is incorporated by reference to Exhibit 10.3 of the Quarterly Report on Form 10-Q of the Company for the quarter end October 31, 2025 , filed on December 3, 2025 (C) 10.13 Walmart Inc. Officer Deferred Compensation Plan, as amended and restated effective February 1, 2023 is incorporated by reference to Exhibit 10.10 to the Annual Report on Form 10-K of the Company for the fiscal year ended January 31, 2023 filed on March 17, 2023 (C) 10.14 Post Termination Agreement and Covenant Not to Compete by and between the Company and Suresh Kumar dated June 6, 2019 is incorporated herein by reference to Exhibit 10.16 to the Annual Report on Form 10-K for the fiscal year ended January 31, 2020 filed on March 20, 2020 (C) 10.15 Share Issuance and Acquisition Agreement by and b etween Flipkart Private Limited and Walmart Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:352126-353243",
+      "excerpt": "ation Agreement and Covenant Not to Compete in the form filed as Exhibit 10(p) to the Annual Report on Form 10-K of the Company for the fiscal year ended January 31, 2011 (C) 10.9 Form of Walmart Inc. Stock Incentive Plan of 2015 Restricted Stock Notification of Award and Terms and Conditions of Award is incorporated by reference to Exhibit 10.8 to the Annual Report on Form 10-K of the Company for the fiscal year ended January 31, 2022, filed March 18, 2022 (C) 10.10 Form of Walmart Inc. Stock Incentive Plan of 2015 Global Share-Settled Performance-Based Restricted Stock Unit Notification and Terms and Conditions is incorporated by reference to Exhibit 10.9 to the Annual Report on Form 10-K of the Company for the fiscal year ended January 31, 2022, filed on March 18, 2022 (C) 10.11 Form of Walmart Inc. Stock Incentive Plan of 2025 Global Restricted Stock Notification of Award and Terms and Conditions of Award is incorporated by reference to Exhibit 10.2 of the Quarterly Report on Form 10-Q of the Company for the quarter ended October 31, 2025 , filed on December 3, 2025 (C) 10.12 Form of Walmart Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:16461-17599",
+      "excerpt": "ience to save our customers time. By leading on price, we earn the trust of our customers every day by providing a broad assortment of quality merchandise and services at everyday low prices (\"EDLP\"). EDLP is our pricing philosophy under which we price items at a low price every day so our customers trust that our prices will not change under frequent promotional activity. Everyday low cost (\"EDLC\") is our commitment to control expenses so our cost savings can be passed along to our customers. Our operations comprise three reportable segments: Walmart U.S., Walmart International and Sam's Club U.S. Our fiscal year ends on January 31 for our United States (\"U.S.\") and Canadian operations. We consolidate all other operations generally using a one-month lag and on a calendar year basis. Our discussion is as of, and for the fiscal years ended, January 31, 2026 (\"fiscal 2026\"), January 31, 2025 (\"fiscal 2025\") and January 31, 2024 (\"fiscal 2024\"). During fiscal 2026, we generated total revenues of $713.2 billion, which primarily comprised net sales of $706.4 billion. We maintain our principal offices in Bentonville, Arkansas.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:87003-88148",
+      "excerpt": "sting activities $ (14,264) $ (11,199) Net cash used in investing activities for the six months ended July 31, 2026 increased $3.1 billion when compared to the same period in the previous fiscal year. The increase was primarily due to increased payments for property and equipment and change in net proceeds received from sales of certain strategic investments in the previous fiscal year. Net Cash Used in Financing Activities Six Months Ended July 31, (Amounts in millions) 2026 2025 Net cash used in financing activities $ (4,842) $ (6,993) Net cash used in financing activities decreased $2.2 billion for the six months ended July 31, 2026, when compared to the same period in the previous fiscal year. The decrease was primarily due to higher short-term borrowings and lower share repurchases, primarily offset by increased debt repayments in the current fiscal year. In April 2026, the Company renewed and extended its existing 364-day revolving credit facility of $10.0 billion as well as its five-year credit facility of $5.0 billion. In total, we had committed lines of credit in the U.S. of $15.0 billion at July 31, 2026, all undrawn.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:76399-77548",
+      "excerpt": "nded July 31, 2026, respectively. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, which was primarily driven by store-fulfilled delivery. Membership and other income increased 15.6% and 30.4% for the three and six months ended July 31, 2026, respectively, primarily driven by double-digit percentage growth in membership fee revenue from Walmart+. Growth during the six months ended July 31, 2026 also reflects increases in certain miscellaneous items. Gross profit rate increased 158 and 95 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily driven by tariff refunds, partially offset by price investments and higher fuel costs within our supply chain. Gross profit rate also benefited from continued growth in higher margin businesses, including advertising. Operating expenses as a percentage of net sales increased 72 and 64 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:44363-45231",
+      "excerpt": "upport, including the reconciliation to income before income taxes, is provided as follows: Three Months Ended July 31, Six Months Ended July 31, (Amounts in millions) 2026 2025 2026 2025 Walmart U.S. Net sales $ 125,189 $ 120,911 $ 242,358 $ 233,074 Membership and other income 750 649 1,676 1,285 Total revenues 125,939 121,560 244,034 234,359 Cost of sales 88,351 87,237 172,991 168,589 Operating, selling, general and administrative expenses 29,468 27,591 57,026 53,342 Operating income $ 8,120 $ 6,732 $ 14,017 $ 12,428 Walmart International Net sales $ 35,198 $ 31,201 $ 70,308 $ 60,955 Membership and other income 426 381 851 760 Total revenues 35,624 31,582 71,159 61,715 Cost of sales 27,659 24,472 55,346 47,936 Operating, selling, general and administrative expenses 6,526 5,876 12,772 11,252 Operating income $ 1,439 $ 1,234 $ 3,041 $ 2,527 Sam's Club U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:49058-50023",
+      "excerpt": "for the three months ended July 31, 2026 and 2025, respectively, and approximately $ 56.4 billion and $ 45.1 billion related to eCommerce for the six months ended July 31, 2026 and 2025, respectively. 15 Table of Contents (Amounts in millions) Three Months Ended July 31, Six Months Ended July 31, Walmart International net sales by market 2026 2025 2026 2025 Mexico and Central America $ 14,331 $ 12,546 $ 28,178 $ 24,260 China 7,416 5,786 15,870 12,365 Canada 6,379 6,114 12,106 11,259 Other 7,072 6,755 14,153 13,071 Total $ 35,198 $ 31,201 $ 70,307 $ 60,955 Of Walmart International's total net sales, approximately $ 9.9 billion and $ 8.3 billion related to eCommerce for the three months ended July 31, 2026 and 2025, respectively, and approximately $ 19.6 billion and $ 16.0 billion related to eCommerce for the six months ended July 31, 2026 and 2025, respectively. (Amounts in millions) Three Months Ended July 31, Six Months Ended July 31, Sam's Club U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:49823-50623",
+      "excerpt": "llion and $ 16.0 billion related to eCommerce for the six months ended July 31, 2026 and 2025, respectively. (Amounts in millions) Three Months Ended July 31, Six Months Ended July 31, Sam's Club U.S. net sales by merchandise category 2026 2025 2026 2025 Grocery $ 17,223 $ 16,417 $ 33,325 $ 31,860 Fuel and other 4,192 3,064 7,635 5,915 General merchandise 3,042 2,877 5,691 5,413 Health and wellness 1,256 1,280 2,467 2,514 Total $ 25,713 $ 23,638 $ 49,118 $ 45,702 Of Sam's Club U.S.'s total net sales, approximately $ 4.7 billion and $ 3.7 billion related to eCommerce for the three months ended July 31, 2026 and 2025, respectively, and approximately $ 8.8 billion and $ 7.1 billion related to eCommerce for the six months ended July 31, 2026 and 2025, respectively. 16 Table of Contents Item 2.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:48470-49258",
+      "excerpt": "gnment changes, previous period amounts are reclassified to be comparable to the current period's presentation. (Amounts in millions) Three Months Ended July 31, Six Months Ended July 31, Walmart U.S. net sales by merchandise category 2026 2025 2026 2025 Grocery $ 74,130 $ 71,092 $ 144,826 $ 138,923 General merchandise 29,728 29,458 56,148 54,734 Health and wellness 16,942 17,248 33,297 33,492 Other categories 4,389 3,113 8,087 5,925 Total $ 125,189 $ 120,911 $ 242,358 $ 233,074 Of Walmart U.S.'s total net sales, approximately $ 29.4 billion and $ 23.7 billion related to eCommerce for the three months ended July 31, 2026 and 2025, respectively, and approximately $ 56.4 billion and $ 45.1 billion related to eCommerce for the six months ended July 31, 2026 and 2025, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:271616-272700",
+      "excerpt": "he minority interest owner holds a put option which, if exercised, would require the Company to purchase the underlying shares at fair value beginning in December 2027, with annual options thereafter. Redeemable noncontrolling interests are initially recorded at fair value and adjusted each reporting period for income, loss and any distributions made, and are then generally remeasured to the greater of the redemption value or the carrying value of the noncontrolling interest. Remeasurements to the redemption value of the redeemable noncontrolling interest are recognized in capital in excess of par. Revenue Recognition Net Sales The Company recognizes sales revenue, net of sales taxes and estimated sales returns, at the time it sells merchandise or provides services to the customer. eCommerce sales include shipping revenue and are recorded upon delivery to the customer. Estimated sales returns are calculated based on expected returns. Financial, Advertising and Other Services The Company recognizes revenue from service transactions at the time the service is performed.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:272500-273562",
+      "excerpt": "timated sales returns are calculated based on expected returns. Financial, Advertising and Other Services The Company recognizes revenue from service transactions at the time the service is performed. Generally, revenue from services is classified as a component of net sales in the Company's Consolidated Statements of Income. Membership and Other Income Membership and other income primarily includes membership fee revenue associated with the Company's various membership offerings for customers and members across each reportable segment. Membership fee revenue is recognized over the term of the membership, which are generally one year, although certain offerings are month-to month. Membership fee revenue was $ 4.4 billion, $ 3.8 billion and $ 3.1 billion for fiscal 2026, 2025 and 2024, respectively. Deferred membership fee revenue is included in accrued liabilities in the Company's Consolidated Balance Sheets. Additionally, membership and other income includes items such as rental and tenant income, recycling income, and gift card breakage income.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:48867-49965",
+      "excerpt": "experience shown for each officer has been his or her principal occupation for at least the past five years, unless otherwise noted. Name Business Experience Current Position Held Since Age Daniel J. Bartlett Executive Vice President, Corporate Affairs, effective June 2013. From November 2007 to June 2013, he served as Chief Executive Officer and President of U.S. Operations at Hill & Knowlton, Inc., a public relations company. 2013 54 Seth Dallaire Executive Vice President and Chief Growth Officer, effective February 2026. From October 2024 to February 2026, he served as Executive Vice President and Chief Growth Officer, Walmart U.S. From November 2021 to October 2024, he served as Executive Vice President and Chief Revenue Officer, Walmart U.S. From November 2019 to November 2021 he served as Chief Revenue Officer at Instacart. 2026 55 Daniel Danker Executive Vice President, AI Acceleration, Product and Design, effective August 2025. From March 2021 to August 2025, he worked at Instacart in various roles, including most recently, Chief Product Officer and Head of Online Grocery.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:90602-91778",
+      "excerpt": "rrowings, our results of operations and the market price of our common stock. We anticipate that a majority of the ongoing share repurchase program will be funded through the Company's free cash flow. The following table provides, on a settlement date basis, share repurchase information for the six months ended July 31, 2026 and 2025: Six Months Ended July 31, (Amounts in millions, except per share data) 2026 2025 Total number of shares repurchased 42.3 67.4 Average price paid per share $ 120.71 $ 92.03 Total amount paid for share repurchases $ 5,104 $ 6,200 During the six months ended July 31, 2026, the Company repurchased $5.1 billion in shares of its common stock, a decrease of $1.1 billion as compared to the same period in the previous fiscal year. The decrease was primarily driven by opportunistic prices during the first quarter of fiscal 2026 as part of the Company's long-term strategy. Material Cash Requirements Material cash requirements from operating activities primarily consist of inventory purchases, employee related costs, taxes, interest and other general operating expenses, which we expect to be primarily satisfied by our cash from operations.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:80996-81931",
+      "excerpt": "rrowings, our results of operations and the market price of our common stock. We anticipate that a majority of the ongoing share repurchase program will be funded through the Company's free cash flow. The following table provides, on a settlement date basis, share repurchase information for the three months ended April 30, 2026 and 2025: Three Months Ended April 30, (Amounts in millions, except per share data) 2026 2025 Total number of shares repurchased 16.6 50.4 Average price paid per share $ 125.51 $ 90.35 Total amount paid for share repurchases $ 2,080 $ 4,555 25 Table of Contents During the three months ended April 30, 2026, the Company repurchased $2.1 billion in shares of its common stock, a decrease of $2.5 billion as compared to the same period in the previous fiscal year. The decrease was primarily driven by opportunistic prices during the first quarter of fiscal 2026 as part of the Company's long-term strategy.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:61600-62589",
+      "excerpt": ") Net cash provided by financing activities 2,328 8 (1) Net cash used in investing activities includes payments for property and equipment, which is also included in our computation of free cash flow. Net cash provided by operating activities was $4.7 billion for the three months ended April 30, 2026, which represents a decrease of $0.7 billion when compared to the same period in the previous fiscal year. The decrease was primarily due to timing of inventory receipts, partially offset by timing of certain payments and an increase in cash provided by operating income. Free cash flow for the three months ended April 30, 2026 was negative $1.9 billion, which represents a decrease of $2.4 billion when compared to the same period in the previous fiscal year. The decrease in free cash flow was due to an increase of $1.7 billion in capital expenditures to support our omnichannel growth strategy combined with the decrease in net cash provided by operating activities described above.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    }
+  ],
+  "citations": [],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 18668,
+    "output": 2033
+  },
+  "latency_ms": 24088,
+  "estimated_cost_usd": 0.086499,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+        "checks": [
+          "UNVERIFIABLE"
+        ]
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 7256,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 9,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 3,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 16816,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "INSUFFICIENT_EVIDENCE"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_PARTIALLY_UNVERIFIABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 11,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

@@ -1,0 +1,989 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-WMT-08:fc6811be",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-WMT-08",
+    "company": "WMT",
+    "claim": "Walmart's gross profit rate improved in fiscal 2026 because of a more favorable business mix, including advertising and membership income.",
+    "as_of_date": "2026-03-31",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "GrossMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2026-01-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Gross profit rate increased 8 and 40 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "Our gross profit rate increased 8 and 40 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year."
+          }
+        ],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "The increase in fiscal 2026 was primarily driven by the Walmart U.S. segment, due to disciplined inventory management, as well as growth in higher margin businesses globally."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "The increase in fiscal 2026 was primarily driven by the Walmart U.S. segment, due to disciplined inventory management, as well as growth in higher margin businesses globally."
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "The increase for fiscal 2026 was primarily driven by disciplined inventory management and growth in higher margin businesses, partially offset by mix shifts into lower margin merchandise categories."
+          }
+        ],
+        "reasoning_summary": "The claim makes both a numeric assertion (that gross profit rate improved in fiscal 2026) and an interpretive assertion about the cause (a more favorable business mix, including advertising and membership income).\n\nThe numeric part is SUPPORTED: Evidence E3 and E5 confirm that gross profit rate increased 8 basis points for fiscal 2026 compared to the previous fiscal year.\n\nHowever, the causal attribution is CONTRADICTED: The claim attributes the improvement to \"a more favorable business mix, including advertising and membership income.\" The filing evidence (E3, E4, E5) consistently states that the increase in fiscal 2026 was \"primarily driven by disciplined inventory management, as well as growth in higher margin businesses globally\" (E3, E5) or \"primarily driven by disciplined inventory management and growth in higher margin businesses\" (E4). While \"growth in higher margin businesses\" could include advertising and membership income, the filing explicitly identifies \"disciplined inventory management\" as a primary driver, which is not mentioned in the claim. The claim's specific attribution to \"business mix, including advertising and membership income\" does not match the filing's stated primary drivers of \"disciplined inventory management\" and \"growth in higher margin businesses globally.\"",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "GrossMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2026-01-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-01-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Does the filing explicitly mention advertising and/or membership income as contributing factors to the gross profit rate improvement in fiscal 2026, which would support the claim's attribution?",
+          "search_query": "advertising membership income gross profit margin fiscal 2026 higher margin businesses"
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Does 'growth in higher margin businesses globally' specifically include or refer to advertising and membership income, making the claim's attribution accurate even if worded differently?",
+          "search_query": "higher margin businesses advertising digital membership Walmart+ fiscal 2026"
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Does the filing describe 'business mix' improvements in fiscal 2026 that would align with the claim's language about 'more favorable business mix'?",
+          "search_query": "business mix favorable mix fiscal 2026 gross profit advertising membership"
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "advertising membership income gross profit margin fiscal 2026 higher margin businesses",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "higher margin businesses advertising digital membership Walmart+ fiscal 2026",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "business mix favorable mix fiscal 2026 gross profit advertising membership",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "Gross profit rate increased 19 and 24 basis points for the three and nine months ended October 31, 2025, when compared to the same periods in the previous fiscal year. The increases were primarily driven by disciplined inventory management and growth in higher margin businesses",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-25-000191",
+              "form": "10-Q",
+              "filed": "2025-12-03",
+              "period_end": "2025-10-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+              "locator": "10-Q 0000104169-25-000191:79836-80812"
+            },
+            {
+              "evidence_id": "E8",
+              "quote": "Gross profit rate increased 26 basis points for both the three and six months ended July 31, 2025, when compared to the same periods in the previous fiscal year. The increases were primarily driven by disciplined inventory management and growth in higher margin businesses",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-25-000137",
+              "form": "10-Q",
+              "filed": "2025-08-29",
+              "period_end": "2025-07-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000137/wmt-20250731.htm",
+              "locator": "10-Q 0000104169-25-000137:79177-80139"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E10",
+              "quote": "Additionally, we focus on our mix of businesses, including expanding our ecosystem in higher margin areas, such as digital advertising.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:174105-175167"
+            },
+            {
+              "evidence_id": "E11",
+              "quote": "Additionally, we focus on our mix of businesses, including expanding our ecosystem in higher margin areas, such as digital advertising and marketplace.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-25-000191",
+              "form": "10-Q",
+              "filed": "2025-12-03",
+              "period_end": "2025-10-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+              "locator": "10-Q 0000104169-25-000191:61326-62398"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [
+            {
+              "evidence_id": "E13",
+              "quote": "Advertising costs are expensed as incurred, and consist primarily of digital, television and print advertisements that are recorded in operating, selling, general and administrative expenses",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:275913-277073"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "1587a4e62f5ccd87cc3cdaed6aff6828680cc2c21d5ba67ce84a88153e2a5d57",
+      "source": "cache",
+      "input_tokens": 3878,
+      "output_tokens": 785,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "GrossMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2026-01-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Gross profit rate increased 8 and 40 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "Our gross profit rate increased 8 and 40 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year."
+          }
+        ],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "The increase in fiscal 2026 was primarily driven by the Walmart U.S. segment, due to disciplined inventory management, as well as growth in higher margin businesses globally."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "The increase in fiscal 2026 was primarily driven by the Walmart U.S. segment, due to disciplined inventory management, as well as growth in higher margin businesses globally."
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "The increase for fiscal 2026 was primarily driven by disciplined inventory management and growth in higher margin businesses, partially offset by mix shifts into lower margin merchandise categories."
+          }
+        ],
+        "reasoning_summary": "The claim makes both a numeric assertion (that gross profit rate improved in fiscal 2026) and an interpretive assertion about the cause (a more favorable business mix, including advertising and membership income).\n\nThe numeric part is SUPPORTED: Evidence E3 and E5 confirm that gross profit rate increased 8 basis points for fiscal 2026 compared to the previous fiscal year.\n\nHowever, the causal attribution is CONTRADICTED: The claim attributes the improvement to \"a more favorable business mix, including advertising and membership income.\" The filing evidence (E3, E4, E5) consistently states that the increase in fiscal 2026 was \"primarily driven by disciplined inventory management, as well as growth in higher margin businesses globally\" (E3, E5) or \"primarily driven by disciplined inventory management and growth in higher margin businesses\" (E4). While \"growth in higher margin businesses\" could include advertising and membership income, the filing explicitly identifies \"disciplined inventory management\" as a primary driver, which is not mentioned in the claim. The claim's specific attribution to \"business mix, including advertising and membership income\" does not match the filing's stated primary drivers of \"disciplined inventory management\" and \"growth in higher margin businesses globally.\"",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "bc8bb7a90513e2fb12f0932807585253b5f78e775659d486d2f11172a6aba600",
+      "source": "live",
+      "input_tokens": 5338,
+      "output_tokens": 274,
+      "stop_reason": "tool_use",
+      "latency_ms": 5402,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Does the filing explicitly mention advertising and/or membership income as contributing factors to the gross profit rate improvement in fiscal 2026, which would support the claim's attribution?",
+            "search_query": "advertising membership income gross profit margin fiscal 2026 higher margin businesses"
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Does 'growth in higher margin businesses globally' specifically include or refer to advertising and membership income, making the claim's attribution accurate even if worded differently?",
+            "search_query": "higher margin businesses advertising digital membership Walmart+ fiscal 2026"
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Does the filing describe 'business mix' improvements in fiscal 2026 that would align with the claim's language about 'more favorable business mix'?",
+            "search_query": "business mix favorable mix fiscal 2026 gross profit advertising membership"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "9c84383fde7147b8ed8604b8480739209a8cf280792ed371a93b904675d433da",
+      "source": "live",
+      "input_tokens": 9064,
+      "output_tokens": 1412,
+      "stop_reason": "tool_use",
+      "latency_ms": 24607,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "Gross profit rate increased 19 and 24 basis points for the three and nine months ended October 31, 2025, when compared to the same periods in the previous fiscal year. The increases were primarily driven by disciplined inventory management and growth in higher margin businesses"
+              },
+              {
+                "evidence_id": "E8",
+                "quote": "Gross profit rate increased 26 basis points for both the three and six months ended July 31, 2025, when compared to the same periods in the previous fiscal year. The increases were primarily driven by disciplined inventory management and growth in higher margin businesses"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E10",
+                "quote": "Additionally, we focus on our mix of businesses, including expanding our ecosystem in higher margin areas, such as digital advertising."
+              },
+              {
+                "evidence_id": "E11",
+                "quote": "Additionally, we focus on our mix of businesses, including expanding our ecosystem in higher margin areas, such as digital advertising and marketplace."
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": [
+              {
+                "evidence_id": "E13",
+                "quote": "Advertising costs are expensed as incurred, and consist primarily of digital, television and print advertisements that are recorded in operating, selling, general and administrative expenses"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": true,
+        "change_reason": "The initial verdict of CONTRADICTED is overturned to SUPPORTED based on evidence from H2. Evidence E10 and E11 explicitly state that Walmart focuses on \"expanding our ecosystem in higher margin areas, such as digital advertising\" (and marketplace). This directly connects \"growth in higher margin businesses\" mentioned in the fiscal 2026 gross profit rate explanation to advertising. Additionally, evidence E2 and E4 show that membership income grew significantly in fiscal 2026, and E4 specifically mentions \"growth in higher margin businesses\" as a driver of gross profit rate improvement for Walmart U.S. in fiscal 2026. The claim's attribution to \"a more favorable business mix, including advertising and membership income\" is therefore supported by the filing's explanation that gross profit rate improvement was driven by \"growth in higher margin businesses,\" where the filing explicitly identifies advertising as a higher margin business area and membership income is documented as growing. The claim does not contradict the filing's mention of \"disciplined inventory management\" - it simply emphasizes different contributing factors that are also supported by the evidence.",
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Gross profit rate increased 8 and 40 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year."
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "The increase in fiscal 2026 was primarily driven by the Walmart U.S. segment, due to disciplined inventory management, as well as growth in higher margin businesses globally."
+          },
+          {
+            "evidence_id": "E10",
+            "quote": "Additionally, we focus on our mix of businesses, including expanding our ecosystem in higher margin areas, such as digital advertising."
+          },
+          {
+            "evidence_id": "E11",
+            "quote": "Additionally, we focus on our mix of businesses, including expanding our ecosystem in higher margin areas, such as digital advertising and marketplace."
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Membership and other income increased $0.3 billion and $1.0 billion for fiscal 2026 and 2025, respectively, primarily driven by growth in membership fee revenue globally"
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "Membership and other income increased 6.9% and 6.3% for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year, primarily driven by double-digit growth in membership fee revenue from Walmart+."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Walmart's gross profit rate improved in fiscal 2026 because of a more favorable business mix, including advertising and membership income.\n\nNUMERIC ASSERTION: The gross profit rate did improve in fiscal 2026 - confirmed by E3 and E5 showing an 8 basis point increase.\n\nCAUSAL ATTRIBUTION: Initially, I found this contradicted because the filing stated the improvement was \"primarily driven by disciplined inventory management, as well as growth in higher margin businesses globally\" without explicitly mentioning advertising or membership. However, the counter-evidence reveals:\n\n1. E10 and E11 explicitly define what \"higher margin businesses\" includes: \"expanding our ecosystem in higher margin areas, such as digital advertising\" (and marketplace).\n\n2. E2 and E4 confirm that membership income grew significantly in fiscal 2026, with E4 noting \"double-digit growth in membership fee revenue from Walmart+.\"\n\n3. The filing's explanation that gross profit improvement was driven by \"growth in higher margin businesses\" therefore encompasses advertising and membership income, as these are explicitly identified as higher margin business areas.\n\nThe claim's attribution to \"business mix, including advertising and membership income\" aligns with the filing's \"growth in higher margin businesses globally\" when we understand that advertising and membership are specifically identified as higher margin businesses. The claim does not deny other factors like inventory management; it emphasizes the business mix aspect, which is supported."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Walmart's gross profit rate improved in fiscal 2026 because of a more favorable business mix, including advertising and membership income. FY2026",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "advertising membership income gross profit margin fiscal 2026 higher margin businesses",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "higher margin businesses advertising digital membership Walmart+ fiscal 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "business mix favorable mix fiscal 2026 gross profit advertising membership",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "GrossMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2026-01-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-01-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0000104169-26-000055",
+        "filed": "2026-03-13",
+        "report_date": "2026-01-31",
+        "primary_document": "wmt-20260131.htm",
+        "sha256": "81bc136de8961e00236b4d1c299b17de840b9ff49c278f0addf442cee8e909cf"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-25-000191",
+        "filed": "2025-12-03",
+        "report_date": "2025-10-31",
+        "primary_document": "wmt-20251031.htm",
+        "sha256": "163791c139267742812a96517575b3118c5549be0b2984c8d4e9aa0914e2b6f8"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-25-000137",
+        "filed": "2025-08-29",
+        "report_date": "2025-07-31",
+        "primary_document": "wmt-20250731.htm",
+        "sha256": "05974418e411cea9e0bc4acbaeb3ba6400348a940d109fbeac294723401f34b5"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 708
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:200063-201168",
+      "excerpt": ".3% for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. For fiscal 2026 and 2025, the increases were primarily due to growth in the membership base and Plus penetration. Fiscal 2026 was also positively impacted by additional breakage income related to unredeemed Sam's Cash rewards, while fiscal 2025 was positively impacted by the expiration of a promotional offering offsetting membership fee increases during the fourth quarter of fiscal 2024. Gross profit rate increased 4 and 37 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase for fiscal 2026 was primarily due to operational efficiencies and higher margins in fuel, partially offset by higher eCommerce fulfillment costs and the impact of reorganization charges related to strategic supply chain decisions. The increase for fiscal 2025 was primarily due to improved operational efficiencies related to merchandise flow and increased margins in fuel, partially offset by higher eCommerce fulfillment costs and product mix shifts into lower margin categories.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:187146-188328",
+      "excerpt": "fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increases were primarily due to strong positive comparable sales across our U.S. segments and international markets. In fiscal 2026, growth was primarily driven by increases in average ticket and transactions, and also reflected growth in unit volumes, while fiscal 2025 growth was primarily driven by higher transactions and unit volumes. Both years include strength in eCommerce as well as strong sales in grocery and health and wellness, with fiscal 2026 also benefiting from improved sales in general merchandise. Net sales were negatively impacted by $2.8 billion and $3.2 billion of fluctuations in currency exchange rates during fiscal 2026 and 2025, respectively. Membership and other income increased $0.3 billion and $1.0 billion for fiscal 2026 and 2025, respectively, primarily driven by growth in membership fee revenue globally, partially offset by decreases in certain other income items, including a reduction in recycling income in fiscal 2026. Our gross profit rate increased 8 and 40 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:174967-176165",
+      "excerpt": "g our ecosystem in higher margin areas, such as digital advertising. Our objective is to achieve operating income leverage, which we define as growing operating income at a faster rate than net sales. Fiscal Years Ended January 31, (Amounts in millions, except unit counts) 2026 2025 Net sales $ 706,413 $ 674,538 Percentage change from comparable period 4.7 % 5.0 % Gross profit (1) as a percentage of net sales 24.2 % 24.1 % Operating expenses as a percentage of net sales 20.9 % 20.7 % Operating income $ 29,825 $ 29,348 Operating income as a percentage of net sales 4.2 % 4.4 % (1) Gross profit defined as net sales less cost of sales. Gross profit as a percentage of net sales (\"gross profit rate\") increased 8 and 40 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase in fiscal 2026 was primarily driven by the Walmart U.S. segment, due to disciplined inventory management, as well as growth in higher margin businesses globally. The increase in fiscal 2025 was primarily driven by the Walmart U.S. segment, due to managing prices aligned to our competitive historic price gaps, as well as growth in higher margin businesses globally.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:193534-194721",
+      "excerpt": "y double-digit growth in membership fee revenue from Walmart+. For fiscal 2026, the increase was partially offset by decreases in certain other income items, including a reduction in recycling income. Fiscal 2025 also benefited from higher recycling income compared to the previous fiscal year. Gross profit rate increased 22 and 47 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase for fiscal 2026 was primarily driven by disciplined inventory management and growth in higher margin businesses, partially offset by mix shifts into lower margin merchandise categories. The increase for fiscal 2025 was primarily due to managing prices aligned to our competitive historic price gaps and growth in higher margin businesses, partially offset by product mix shifts into lower margin categories. Operating expenses as a percentage of segment net sales increased 15 and 44 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase for fiscal 2026 was primarily due to higher self-insured general liability claims expense and increased depreciation related to our capital investments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:188128-189201",
+      "excerpt": "tems, including a reduction in recycling income in fiscal 2026. Our gross profit rate increased 8 and 40 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase in fiscal 2026 was primarily driven by the Walmart U.S. segment, due to disciplined inventory management, as well as growth in higher margin businesses globally. The increase in fiscal 2025 was primarily driven by the Walmart U.S. segment, due to managing prices aligned to our competitive historic price gaps, as well as growth in higher margin businesses globally. In both years, the increases were partially offset by mix shifts into lower margin merchandise categories across segments, as well as ongoing channel and format mix shifts in the Walmart International segment. Our operating expenses as a percentage of net sales increased 20 and 36 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase for fiscal 2026 was primarily due to higher self-insured general liability claims expense in the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000137",
+      "form": "10-Q",
+      "filed": "2025-08-29",
+      "period_start": null,
+      "period_end": "2025-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000137/wmt-20250731.htm",
+      "locator": "10-Q 0000104169-25-000137:74041-75203",
+      "excerpt": "s driven by growth in average ticket and transactions, with strength in eCommerce. Net sales growth across channels also reflected strong sales in grocery and health and wellness in our U.S. segments. Net sales for the three and six months ended July 31, 2025 were negatively affected by $1.5 billion and $3.9 billion, respectively, in currency exchange rate fluctuations. Membership and other income increased $0.1 billion or 5.4% and $0.1 billion or 4.5% for the three and six months ended July 31, 2025, respectively, primarily due to strong growth in membership fee income globally, partially offset by decreases in other income items. Gross profit rate increased 4 and 8 basis points for the three and six months ended July 31, 2025, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily due to the Walmart U.S. segment, driven by disciplined inventory management and growth in higher margin businesses, partially offset by mix shifts into lower margin merchandise categories. Additionally, the increases were partially offset by ongoing channel and format mix shifts in the Walmart International segment.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_start": null,
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:79836-80812",
+      "excerpt": "1, 2025, respectively. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, which was primarily driven by store-fulfilled pickup and delivery. Membership and other income increased 7.6% and 6.3% for the three and nine months ended October 31, 2025, respectively, primarily driven by double-digit percentage growth in membership fee income from Walmart+. Gross profit rate increased 19 and 24 basis points for the three and nine months ended October 31, 2025, when compared to the same periods in the previous fiscal year. The increases were primarily driven by disciplined inventory management and growth in higher margin businesses, partially offset by mix shifts into lower margin merchandise categories. Operating expenses as a percentage of net sales increased 15 and 22 basis points for the three and nine months ended October 31, 2025, respectively, when compared to the same periods in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000137",
+      "form": "10-Q",
+      "filed": "2025-08-29",
+      "period_start": null,
+      "period_end": "2025-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000137/wmt-20250731.htm",
+      "locator": "10-Q 0000104169-25-000137:79177-80139",
+      "excerpt": "1, 2025, respectively. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, which was primarily driven by store-fulfilled pickup and delivery. Membership and other income increased 7.5% and 5.6% for the three and six months ended July 31, 2025, respectively, primarily driven by double-digit percentage growth in membership fee income from Walmart+. Gross profit rate increased 26 basis points for both the three and six months ended July 31, 2025, when compared to the same periods in the previous fiscal year. The increases were primarily driven by disciplined inventory management and growth in higher margin businesses, partially offset by mix shifts into lower margin merchandise categories. Operating expenses as a percentage of net sales increased 43 and 26 basis points for the three and six months ended July 31, 2025, respectively, when compared to the same periods in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000137",
+      "form": "10-Q",
+      "filed": "2025-08-29",
+      "period_start": null,
+      "period_end": "2025-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000137/wmt-20250731.htm",
+      "locator": "10-Q 0000104169-25-000137:62965-64164",
+      "excerpt": "net sales Gross profit (1) 24.5 % 24.4 % 24.3 % 24.2 % Operating expenses 21.2 % 20.6 % 21.1 % 20.7 % Operating income 4.1 % 4.7 % 4.2 % 4.5 % (1) Gross profit defined as net sales less cost of sales. Gross profit as a percentage of net sales (\"gross profit rate\") increased 4 and 8 basis points for the three and six months ended July 31, 2025, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily due to the Walmart U.S. segment, driven by disciplined inventory management and growth in higher margin businesses, partially offset by mix shifts into lower margin merchandise categories. Additionally, the increases were partially offset by ongoing channel and format mix shifts in the Walmart International segment. Operating expenses as a percentage of net sales increased 64 and 35 basis points for the three and six months ended July 31, 2025, respectively, when compared to the same periods in the previous fiscal year, which reflect charges of $0.4 billion related to certain legal matters. The increases for the three and six months ended July 31, 2025 were also impacted by higher self-insured general liability claims expense in the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:174105-175167",
+      "excerpt": "sales positively contributed approximately 3.3% and 2.3% to comparable sales for fiscal 2026 and 2025, respectively, which reflects continued strength in member engagement with omnichannel offerings. 34 Margin Our objective of prioritizing margin focuses on growth with a focus on incremental margin accretion through a combination of productivity improvements as well as category and business mix. We invest in technology and process improvements to increase productivity, manage inventory and reduce costs and we operate with discipline by managing expenses and optimizing the efficiency of how we work. We measure operating discipline through expense leverage, which we define as net sales growing at a faster rate than operating, selling, general and administrative (\"operating\") expenses. Additionally, we focus on our mix of businesses, including expanding our ecosystem in higher margin areas, such as digital advertising. Our objective is to achieve operating income leverage, which we define as growing operating income at a faster rate than net sales.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_start": null,
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:61326-62398",
+      "excerpt": "pectively, which outpaced the total segment growth as a result of lower fuel sales driven by lower fuel prices. This growth reflects continued strength in member engagement with omnichannel offerings. Margin Our objective of prioritizing margin focuses on growth by driving incremental margin accretion through a combination of productivity improvements, as well as category and business mix. We invest in technology and process improvements to increase productivity, manage inventory and reduce costs, and we operate with discipline by managing expenses and optimizing the efficiency of how we work. We measure operating discipline through expense leverage, which we define as net sales growing at a faster rate than operating, selling, general and administrative (\"operating\") expenses. Additionally, we focus on our mix of businesses, including expanding our ecosystem in higher margin areas, such as digital advertising and marketplace. Our objective is to achieve operating income leverage, which we define as growing operating income at a faster rate than net sales.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:175965-177126",
+      "excerpt": "increase in fiscal 2025 was primarily driven by the Walmart U.S. segment, due to managing prices aligned to our competitive historic price gaps, as well as growth in higher margin businesses globally. In both years, the increases were partially offset by mix shifts into lower margin merchandise categories across segments, as well as ongoing channel and format mix shifts in the Walmart International segment. Operating expenses as a percentage of net sales increased 20 and 36 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase for fiscal 2026 was primarily due to higher self-insured general liability claims expense in the U.S. of approximately $0.9 billion, influenced by rising costs to resolve claims across retail and related industries, a charge of $0.7 billion related to modification of certain share-based compensation arrangements for our PhonePe subsidiary and increased depreciation related to our capital investments. The increase for fiscal 2025 was primarily due to higher variable pay as a result of exceeding planned performance, increased marketing and higher depreciation expenses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:275913-277073",
+      "excerpt": "jority of the cost of warehousing and occupancy for the Walmart U.S. and Walmart International segments' distribution facilities is included in operating, selling, general and administrative expenses. Because the Company only includes a portion of the cost of its Walmart U.S. and Walmart International segments' distribution facilities in cost of sales, its gross profit and gross profit as a percentage of net sales may not be comparable to those of other retailers that may include all costs related to their distribution facilities in cost of sales and in the calculation of gross profit. 62 As a result, the Company’s cost of sales and operating, selling, general and administrative expenses for each of its reportable segments may not be comparable to those of other retailers. Advertising Costs Advertising costs are expensed as incurred, and consist primarily of digital, television and print advertisements that are recorded in operating, selling, general and administrative expenses in the Company's Consolidated Statements of Income. Advertising costs were $ 5.4 billion, $ 5.1 billion and $ 4.4 billion for fiscal 2026, 2025 and 2024, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:186156-187346",
+      "excerpt": "Other (gains) and losses (2,075) 794 3,027 Consolidated net income $ 22,270 $ 20,157 $ 16,270 Percentage of net sales Gross profit 24.2 % 24.1 % 23.7 % Operating expenses 20.9 % 20.7 % 20.4 % Operating income 4.2 % 4.4 % 4.2 % Retail unit counts at period end 10,955 10,771 10,616 Retail square feet at period end 1,057 1,053 1,053 (1) Membership and other income includes membership fees and other items such as rental and tenant income, recycling income, gift card breakage income, as well as other income from corporate campus facilities. (2) Gross profit is defined as net sales less cost of sales. Operating expenses refers to operating, selling, general and administrative expenses. Our total revenues increased $32.2 billion or 4.7% and $32.9 billion or 5.1% for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. These increases in revenues were primarily due to increases in net sales, which increased $31.9 billion or 4.7% and $31.9 billion or 5.0% for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increases were primarily due to strong positive comparable sales across our U.S. segments and international markets.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_start": null,
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:62198-63230",
+      "excerpt": "in higher margin areas, such as digital advertising and marketplace. Our objective is to achieve operating income leverage, which we define as growing operating income at a faster rate than net sales. Three Months Ended October 31, Nine Months Ended October 31, (Amounts in millions) 2025 2024 2025 2024 Net sales $ 177,769 $ 168,003 $ 517,500 $ 495,708 Percentage change from comparable period 5.8 % 5.4 % 4.4 % 5.3 % Operating income $ 6,696 $ 6,708 $ 21,117 $ 21,489 Percentage change from comparable period (0.2) % 8.2 % (1.7) % 8.8 % Percentage of net sales Gross profit (1) 24.2 % 24.2 % 24.3 % 24.2 % Operating expenses 21.4 % 21.2 % 21.2 % 20.9 % Operating income 3.8 % 4.0 % 4.1 % 4.3 % (1) Gross profit defined as net sales less cost of sales. Gross profit as a percentage of net sales (\"gross profit rate\") increased 2 and 6 basis points for the three and nine months ended October 31, 2025, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily due to the Walmart U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E3",
+      "quote": "Gross profit rate increased 8 and 40 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year.",
+      "valid": false,
+      "issues": [
+        "QUOTE_NOT_IN_PASSAGE"
+      ],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:174967-176165"
+    },
+    {
+      "evidence_id": "E10",
+      "quote": "Additionally, we focus on our mix of businesses, including expanding our ecosystem in higher margin areas, such as digital advertising.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:174105-175167"
+    },
+    {
+      "evidence_id": "E11",
+      "quote": "Additionally, we focus on our mix of businesses, including expanding our ecosystem in higher margin areas, such as digital advertising and marketplace.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:61326-62398"
+    },
+    {
+      "evidence_id": "E2",
+      "quote": "Membership and other income increased $0.3 billion and $1.0 billion for fiscal 2026 and 2025, respectively, primarily driven by growth in membership fee revenue globally",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:187146-188328"
+    },
+    {
+      "evidence_id": "E4",
+      "quote": "Membership and other income increased 6.9% and 6.3% for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year, primarily driven by double-digit growth in membership fee revenue from Walmart+.",
+      "valid": false,
+      "issues": [
+        "QUOTE_NOT_IN_PASSAGE"
+      ],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:193534-194721"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 18280,
+    "output": 2471
+  },
+  "latency_ms": 30030,
+  "estimated_cost_usd": 0.091905,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "mixed"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+        "checks": [
+          "UNVERIFIABLE"
+        ]
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 5403,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 7,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 24610,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_PARTIALLY_UNVERIFIABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 7,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

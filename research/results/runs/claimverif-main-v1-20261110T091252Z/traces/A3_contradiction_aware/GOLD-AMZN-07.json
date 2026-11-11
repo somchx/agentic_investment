@@ -1,0 +1,1071 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-AMZN-07:e0127dc4",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-AMZN-07",
+    "company": "AMZN",
+    "claim": "AWS sales growth in 2025 was driven primarily by increased customer usage.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "AWS sales increased 20% in 2025, compared to the prior year. The sales growth primarily reflects increased customer usage, partially offset by pricing changes primarily driven by long-term customer contracts."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that AWS sales growth in 2025 was driven primarily by increased customer usage. Evidence E1, from Amazon's 10-K filing for the period ending 2025-12-31, directly supports this claim. It states: \"AWS sales increased 20% in 2025, compared to the prior year. The sales growth primarily reflects increased customer usage, partially offset by pricing changes primarily driven by long-term customer contracts.\" This passage confirms both that AWS sales grew in 2025 and that the primary driver was increased customer usage. The claim is both numeric (asserting sales growth occurred) and interpretive (attributing the cause to customer usage), making it a mixed claim. The filing explicitly states the causal attribution, which is required for supporting such a claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 716924000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 716924000000.0,
+                "filed": "2026-02-06",
+                "form": "10-K",
+                "accession_number": "0001018724-26-000004",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 637959000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.12377754683294695,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did AWS sales actually grow 20% in 2025, or was the growth rate different than stated in the evidence?",
+          "search_query": "AWS sales revenue 2025 2024 growth percentage year-over-year",
+          "numeric_check": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "approximately",
+            "threshold": 0.2,
+            "stated_value": 0.2
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Were there other significant drivers of AWS sales growth in 2025 besides customer usage that might contradict the 'primarily' attribution?",
+          "search_query": "AWS sales growth drivers 2025 new customers pricing migration generative AI services product mix",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Did pricing changes or other factors offset customer usage growth to such an extent that customer usage was not actually the primary driver?",
+          "search_query": "AWS pricing changes discounts credits customer contracts 2025 impact revenue",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "AWS sales revenue 2025 2024 growth percentage year-over-year",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "AWS sales growth drivers 2025 new customers pricing migration generative AI services product mix",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "AWS pricing changes discounts credits customer contracts 2025 impact revenue",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "FALSE",
+          "issues": [
+            "STATED_VALUE_MISMATCH:stated 0.2 vs computed 0.123778"
+          ],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 716924000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 716924000000.0,
+                "filed": "2026-02-06",
+                "form": "10-K",
+                "accession_number": "0001018724-26-000004",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 637959000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.12377754683294695,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E10",
+              "quote": "AWS 107,556 128,725 Consolidated $ 637,959 $ 716,924 Year-over-year Percentage Growth: North America 10 % 10 % International 9 13 AWS 19 20",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-26-000004",
+              "form": "10-K",
+              "filed": "2026-02-06",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+              "locator": "10-K 0001018724-26-000004:110773-111973"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "AWS sales increased 20% in 2025, compared to the prior year. The sales growth primarily reflects increased customer usage, partially offset by pricing changes primarily driven by long-term customer contracts.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-26-000004",
+              "form": "10-K",
+              "filed": "2026-02-06",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+              "locator": "10-K 0001018724-26-000004:112665-113349"
+            },
+            {
+              "evidence_id": "E17",
+              "quote": "The amount and timing of revenue recognition will be driven by customer usage and our performance in accordance with contractual obligations",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-26-000004",
+              "form": "10-K",
+              "filed": "2026-02-06",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+              "locator": "10-K 0001018724-26-000004:201227-202269"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "21f319a46fe62b162f24e87aa59216447c97ab58dcac94640ffcd157e496706c",
+      "source": "cache",
+      "input_tokens": 3614,
+      "output_tokens": 449,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "AWS sales increased 20% in 2025, compared to the prior year. The sales growth primarily reflects increased customer usage, partially offset by pricing changes primarily driven by long-term customer contracts."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that AWS sales growth in 2025 was driven primarily by increased customer usage. Evidence E1, from Amazon's 10-K filing for the period ending 2025-12-31, directly supports this claim. It states: \"AWS sales increased 20% in 2025, compared to the prior year. The sales growth primarily reflects increased customer usage, partially offset by pricing changes primarily driven by long-term customer contracts.\" This passage confirms both that AWS sales grew in 2025 and that the primary driver was increased customer usage. The claim is both numeric (asserting sales growth occurred) and interpretive (attributing the cause to customer usage), making it a mixed claim. The filing explicitly states the causal attribution, which is required for supporting such a claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "fb956c25856a05fcd77b8e503a5ef2da049cadd2a816ea285264f983d05a6b72",
+      "source": "live",
+      "input_tokens": 4649,
+      "output_tokens": 361,
+      "stop_reason": "tool_use",
+      "latency_ms": 7088,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did AWS sales actually grow 20% in 2025, or was the growth rate different than stated in the evidence?",
+            "search_query": "AWS sales revenue 2025 2024 growth percentage year-over-year",
+            "numeric_check": {
+              "metric": "Revenue",
+              "measure": "yoy_growth",
+              "period_basis": "annual",
+              "period_end": "2025-12-31",
+              "comparison": "approximately",
+              "threshold": 0.2,
+              "stated_value": 0.2
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Were there other significant drivers of AWS sales growth in 2025 besides customer usage that might contradict the 'primarily' attribution?",
+            "search_query": "AWS sales growth drivers 2025 new customers pricing migration generative AI services product mix",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Did pricing changes or other factors offset customer usage growth to such an extent that customer usage was not actually the primary driver?",
+            "search_query": "AWS pricing changes discounts credits customer contracts 2025 impact revenue",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "282c757449879f027ff41f6f8380ea40d00bdf8f26111d327de0c143f7019316",
+      "source": "live",
+      "input_tokens": 8883,
+      "output_tokens": 869,
+      "stop_reason": "tool_use",
+      "latency_ms": 16311,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E10",
+                "quote": "AWS 107,556 128,725 Consolidated $ 637,959 $ 716,924 Year-over-year Percentage Growth: North America 10 % 10 % International 9 13 AWS 19 20"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E1",
+                "quote": "AWS sales increased 20% in 2025, compared to the prior year. The sales growth primarily reflects increased customer usage, partially offset by pricing changes primarily driven by long-term customer contracts."
+              },
+              {
+                "evidence_id": "E17",
+                "quote": "The amount and timing of revenue recognition will be driven by customer usage and our performance in accordance with contractual obligations"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "AWS sales increased 20% in 2025, compared to the prior year. The sales growth primarily reflects increased customer usage, partially offset by pricing changes primarily driven by long-term customer contracts."
+          },
+          {
+            "evidence_id": "E10",
+            "quote": "AWS 107,556 128,725 Consolidated $ 637,959 $ 716,924 Year-over-year Percentage Growth: North America 10 % 10 % International 9 13 AWS 19 20"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After investigating potential challenges, the initial SUPPORTED verdict remains correct. \n\nH1 challenged whether AWS actually grew 20% in 2025. The numeric check flagged a mismatch because it was checking consolidated revenue (12.4% growth) rather than AWS-specific revenue. Evidence E10 confirms AWS sales grew from $107,556M in 2024 to $128,725M in 2025, which is 19.66% growth, rounding to the stated 20%. This challenge is REFUTED.\n\nH2 sought other significant drivers of AWS growth besides customer usage. The retrieved evidence (E13-E15) discusses general Amazon infrastructure investments and business mix factors but provides no specific information about alternative drivers of AWS sales growth in 2025. This is NO_RELEVANT_EVIDENCE.\n\nH3 challenged whether pricing changes offset customer usage to such an extent that usage wasn't the primary driver. Evidence E1 explicitly states the growth \"primarily reflects increased customer usage, partially offset by pricing changes\" - confirming that while pricing had a negative effect, customer usage remained the primary driver. Evidence E17 reinforces that revenue recognition is \"driven by customer usage.\" This challenge is REFUTED.\n\nThe claim is fully supported: AWS sales grew in 2025, and the filing explicitly attributes this growth primarily to increased customer usage.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "AWS sales growth in 2025 was driven primarily by increased customer usage. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "AWS sales revenue 2025 2024 growth percentage year-over-year",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "AWS sales growth drivers 2025 new customers pricing migration generative AI services product mix",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "AWS pricing changes discounts credits customer contracts 2025 impact revenue",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 716924000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 716924000000.0,
+                "filed": "2026-02-06",
+                "form": "10-K",
+                "accession_number": "0001018724-26-000004",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 637959000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.12377754683294695,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "approximately",
+            "threshold": 0.2,
+            "stated_value": 0.2
+          },
+          "status": "FALSE",
+          "issues": [
+            "STATED_VALUE_MISMATCH:stated 0.2 vs computed 0.123778"
+          ],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 716924000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 716924000000.0,
+                "filed": "2026-02-06",
+                "form": "10-K",
+                "accession_number": "0001018724-26-000004",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 637959000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.12377754683294695,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001018724-26-000004",
+        "filed": "2026-02-06",
+        "report_date": "2025-12-31",
+        "primary_document": "amzn-20251231.htm",
+        "sha256": "3702599045ec83f3faca3186c42b62247d1ec0e3bdf47c7f8acc7305b858f139"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001018724-25-000123",
+        "filed": "2025-10-31",
+        "report_date": "2025-09-30",
+        "primary_document": "amzn-20250930.htm",
+        "sha256": "e47779b6d5dcd4239bb9e92b7756092f499d6a14c4feaf247bdd4f0fb365402f"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001018724-25-000086",
+        "filed": "2025-08-01",
+        "report_date": "2025-06-30",
+        "primary_document": "amzn-20250630.htm",
+        "sha256": "c19773c80b3553e653a3d4cc223ce95646f4685c901a05bfae1577c2bd5d4e4b"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 734
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:112665-113349",
+      "excerpt": "sales increased 13% in 2025, compared to the prior year. The sales growth primarily reflects increased unit sales, including sales by third-party sellers, advertising sales, and subscription services. Increased unit sales were driven largely 24 Table of Contents by our continued focus on price, selection, and convenience for our customers, including from our fast shipping offers. Changes in foreign exchange rates increased International net sales by $4.9 billion in 2025. AWS sales increased 20% in 2025, compared to the prior year. The sales growth primarily reflects increased customer usage, partially offset by pricing changes primarily driven by long-term customer contracts.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:81596-82698",
+      "excerpt": "ers, including from our fast shipping offers. Changes in foreign exchange rates reduced North America net sales by $169 million for Q2 2025, and by $582 million for the six months ended June 30, 2025. 25 Table of Contents International sales increased 16% in Q2 2025, and 10% for the six months ended June 30, 2025 compared to the comparable prior year periods. The sales growth primarily reflects increased unit sales, including sales by third-party sellers, advertising sales, and subscription services. Increased unit sales were driven largely by our continued focus on price, selection, and convenience for our customers, including from our fast shipping offers. Changes in foreign exchange rates increased International net sales by $1.7 billion for Q2 2025, and by $696 million for the six months ended June 30, 2025 . AWS sales increased 17% in Q2 2025, and 17% for the six months ended June 30, 2025 compared to the comparable prior year periods. The sales growth primarily reflects increased customer usage, partially offset by pricing changes primarily driven by long-term customer contracts.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:94307-95472",
+      "excerpt": "ed June 30, 2025, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs. Changes in foreign exchange rates positively impacted operating income by $338 million for Q2 2025, and by $282 million for six months ended June 30, 2025. The increase in AWS operating income in Q2 2025, compared to the comparable prior year period, is primarily due to increased sales, partially offset by spending on technology infrastructure that was primarily driven by additional investments to support AWS business growth. The increase in AWS operating income for the six months ended June 30, 2025, compared to the comparable prior year period, is primarily due to increased sales and decreased payroll and related expenses, partially offset by spending on technology infrastructure that was primarily driven by additional investments to support AWS business growth. Changes in foreign exchange rates negatively impacted operating income by $139 million for Q2 2025, but did not significantly impact operating income for the six months ended June 30, 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000123",
+      "form": "10-Q",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/amzn-20250930.htm",
+      "locator": "10-Q 0001018724-25-000123:100553-101673",
+      "excerpt": ", is primarily due to increased sales, partially offset by spending on technology infrastructure that was primarily driven by additional investments to support AWS business growth and severance costs. The increase in AWS operating income for the nine months ended September 29 Table of Contents 30, 2025, compared to the comparable prior year period, is primarily due to increased sales, partially offset by spending on technology infrastructure that was primarily driven by additional investments to support AWS business growth. Changes in foreign exchange rates negatively impacted operating income by $120 million for Q3 2025, and by $118 million for the nine months ended September 30, 2025. Interest Income and Expense Our interest income was $1.3 billion and $1.1 billion during Q3 2024 and Q3 2025, and $3.4 billion and $3.3 billion for the nine months ended September 30, 2024 and 2025, primarily due to a higher average balance of invested funds at prevailing rates. We generally invest our excess cash in investment grade short- to intermediate-term marketable debt securities and AAA-rated money market funds.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:111773-112865",
+      "excerpt": "a 10 % 10 % International 10 10 AWS 19 20 Consolidated 11 12 Net Sales Mix: North America 61 % 59 % International 22 23 AWS 17 18 Consolidated 100 % 100 % Sales increased 12% in 2025, compared to the prior year. Changes in foreign exchange rates increased net sales by $4.4 billion in 2025. For a discussion of the effect of foreign exchange rates on sales growth, see “Effect of Foreign Exchange Rates” below. North America sales increased 10% in 2025, compared to the prior year. The sales growth primarily reflects increased unit sales, including sales by third-party sellers, advertising sales, and subscription services. Increased unit sales were driven largely by our continued focus on price, selection, and convenience for our customers, including from our fast shipping offers. Changes in foreign exchange rates reduced North America net sales by $454 million in 2025. International sales increased 13% in 2025, compared to the prior year. The sales growth primarily reflects increased unit sales, including sales by third-party sellers, advertising sales, and subscription services.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000123",
+      "form": "10-Q",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/amzn-20250930.htm",
+      "locator": "10-Q 0001018724-25-000123:99822-100753",
+      "excerpt": "the comparable prior year period, is primarily due to increased shipping and fulfillment costs, inclusive of severance costs, partially offset by increased unit sales and increased advertising sales. The increase in International operating income for the nine months ended September 30, 2025, compared to the comparable prior year period, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs. Changes in foreign exchange rates positively impacted operating income by $302 million for Q3 2025, and by $584 million for nine months ended September 30, 2025. The increase in AWS operating income in Q3 2025, compared to the comparable prior year period, is primarily due to increased sales, partially offset by spending on technology infrastructure that was primarily driven by additional investments to support AWS business growth and severance costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/0001018724-26-000004-index.htm",
+      "locator": "Revenue 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        716924000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/0001018724-26-000004-index.htm",
+      "locator": "Revenue 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        637959000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "AMZN",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "Revenue yoy_growth annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        716924000000.0,
+        637959000000.0,
+        0.12377754683294695
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:110773-111973",
+      "excerpt": "in our artificial intelligence initiatives. We expect some or all of these factors to continue to impact our results of operations into Q1 2026. Net Sales Net sales include product and service sales. Product sales represent revenue from the sale of products and related shipping fees and digital media content where we record revenue gross. Service sales primarily represent third-party seller fees, which includes commissions and any related fulfillment and shipping fees, AWS sales, advertising services, Amazon Prime membership fees, and certain digital media content subscriptions. Net sales information is as follows (in millions): Year Ended December 31, 2024 2025 Net Sales: North America $ 387,497 $ 426,305 International 142,906 161,894 AWS 107,556 128,725 Consolidated $ 637,959 $ 716,924 Year-over-year Percentage Growth: North America 10 % 10 % International 9 13 AWS 19 20 Consolidated 11 12 Year-over-year Percentage Growth, excluding the effect of foreign exchange rates: North America 10 % 10 % International 10 10 AWS 19 20 Consolidated 11 12 Net Sales Mix: North America 61 % 59 % International 22 23 AWS 17 18 Consolidated 100 % 100 % Sales increased 12% in 2025, compared to the",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000123",
+      "form": "10-Q",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/amzn-20250930.htm",
+      "locator": "10-Q 0001018724-25-000123:84705-85905",
+      "excerpt": "025. Net Sales Net sales include product and service sales. Product sales represent revenue from the sale of products and related shipping fees and digital media content where we record revenue gross. Service sales primarily represent third-party seller fees, which includes commissions and any related fulfillment and shipping fees, AWS sales, advertising services, Amazon Prime membership fees, and certain digital media content subscriptions. Net sales information is as follows (in millions): Three Months Ended September 30, Nine Months Ended September 30, 2024 2025 2024 2025 Net Sales: North America $ 95,537 $ 106,267 $ 271,911 $ 299,222 International 35,888 40,896 99,486 111,170 AWS 27,452 33,006 78,770 93,146 Consolidated $ 158,877 $ 180,169 $ 450,167 $ 503,538 Year-over-year Percentage Growth: North America 9 % 11 % 10 % 10 % International 12 14 9 12 AWS 19 20 18 18 Consolidated 11 13 11 12 Year-over-year Percentage Growth, excluding the effect of foreign exchange rates: North America 9 % 11 % 10 % 10 % International 12 10 11 10 AWS 19 20 18 18 Consolidated 11 12 12 12 Net Sales Mix: North America 60 % 59 % 60 % 59 % International 23 23 22 22 AWS 17 18 18 19 Consolidated 100 % 1",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:79829-80911",
+      "excerpt": "y seller fees, which includes commissions and any related fulfillment and shipping fees, AWS sales, advertising services, Amazon Prime membership fees, and certain digital media content subscriptions. Net sales information is as follows (in millions): Three Months Ended June 30, Six Months Ended June 30, 2024 2025 2024 2025 Net Sales: North America $ 90,033 $ 100,068 $ 176,374 $ 192,955 International 31,663 36,761 63,598 70,274 AWS 26,281 30,873 51,318 60,140 Consolidated $ 147,977 $ 167,702 $ 291,290 $ 323,369 Year-over-year Percentage Growth: North America 9 % 11 % 11 % 9 % International 7 16 8 10 AWS 19 17 18 17 Consolidated 10 13 11 11 Year-over-year Percentage Growth, excluding the effect of foreign exchange rates: North America 9 % 11 % 11 % 10 % International 10 11 10 9 AWS 19 17 18 17 Consolidated 11 12 12 11 Net Sales Mix: North America 61 % 60 % 60 % 60 % International 21 22 22 22 AWS 18 18 18 18 Consolidated 100 % 100 % 100 % 100 % Sales increased 13% in Q2 2025, and 11% for the six months ended June 30, 2025 compared to the comparable prior year periods.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:92755-93732",
+      "excerpt": "sales by third-party sellers, the mix of suppliers, seasonality, and changes in payment and other terms over time, including the effect of balancing pricing and timing of payment terms with suppliers. We expect spending in technology and infrastructure will increase over time, which can negatively impact short-term free cash flow, as we add infrastructure and employees, including to support our artificial intelligence and machine learning initiatives, to support long-term growth. Our technology and infrastructure investment and capital spending projects often support a variety of product and service offerings due to geographic expansion and the cross-functionality of our systems and operations. We seek to invest efficiently in several areas of technology and infrastructure, including AWS, and expansion of new and existing product categories and service offerings, as well as in infrastructure to enhance the customer experience and improve our process efficiencies.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:91918-92955",
+      "excerpt": "ory quickly and collect from consumers before our payments to vendors and sellers become due. Because consumers primarily use credit cards in our stores, our receivables from consumers settle quickly. We expect variability in inventory turnover over time since it is affected by numerous factors, including our product mix, the mix of sales by us and by third-party sellers, our continuing focus on in-stock inventory availability and selection of product offerings, supply chain disruptions and resulting vendor lead times, our investment in new geographies and product lines, and the extent to which we choose to utilize third-party fulfillment providers. We also expect some variability in accounts payable days over 20 Table of Contents time since they are affected by several factors, including the mix of product sales, the mix of sales by third-party sellers, the mix of suppliers, seasonality, and changes in payment and other terms over time, including the effect of balancing pricing and timing of payment terms with suppliers.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:86887-88087",
+      "excerpt": ", believes, expects, future, intends, and similar expressions to identify forward-looking statements. Forward-looking statements reflect management’s current expectations and are inherently uncertain. Actual results and outcomes could differ materially for a variety of reasons, including, among others, fluctuations in foreign exchange rates and energy prices, changes in global economic conditions, tariff and trade policies, resource and supply volatility, including for memory chips, and customer demand and spending, inflation, interest rates, regional labor market constraints, world events, the rate of growth of the internet, online commerce, cloud services, and new and emerging technologies, the amount that Amazon.com invests in new business opportunities and the timing of those investments, the mix of products and services sold to customers, the mix of net sales derived from products as compared with services, the extent to which we owe income or other taxes, competition, management of growth, potential fluctuations in operating results, international growth and expansion, the outcomes of claims, litigation, government investigations, and other proceedings, fulfillment, sortation",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000123",
+      "form": "10-Q",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/amzn-20250930.htm",
+      "locator": "10-Q 0001018724-25-000123:21366-22511",
+      "excerpt": "eived or due in advance of performing our service obligations and is recognized over the service period. Unearned revenue primarily relates to prepayments of AWS services and Amazon Prime memberships. Our total unearned revenue as of December 31, 2024 was $ 24.6 billion, of which $ 15.0 billion was recognized as revenue during the nine months ended September 30, 2025. Included in “Other long-term liabilities” on our consolidated balance sheets was $ 6.5 billion and $ 4.1 billion of unearned revenue as of December 31, 2024 and September 30, 2025. Additionally, we have performance obligations, primarily related to AWS, associated with commitments in customer contracts for future services that have not yet been recognized in our consolidated financial statements. For contracts with original terms that exceed one year, those commitments not yet recognized were approximately $ 200 billion as of September 30, 2025. The weighted-average remaining life of our long-term contracts is 3.8 years. However, the amount and timing of revenue recognition is largely driven by customer usage, which can extend beyond the original contractual term.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:201227-202269",
+      "excerpt": "cember 31, 2024 was $ 24.6 billion, of which $ 17.4 billion was recognized as revenue during the year ended December 31, 2025 and our total unearned revenue as of December 31, 2025 was $ 25.0 billion. Included in “Other long-term liabilities” on our consolidated balance sheets was $ 6.5 billion and $ 4.4 billion of unearned revenue as of December 31, 2024 and 2025. Additionally, we have performance obligations, primarily related to AWS, associated with commitments in customer contracts for future services that we expect to fulfill but have not yet been recognized in our financial statements. For contracts with original terms that exceed one year, those commitments not yet recognized were approximately $ 244 billion as of December 31, 2025. The weighted average remaining life of our long-term contracts is 4.1 years. The amount and timing of revenue recognition will be driven by customer usage and our performance in accordance with contractual obligations, which can extend beyond the original contractual duration and commitment.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:20548-21653",
+      "excerpt": "ths ended June 30, 2025. Included in “Other long-term liabilities” on our consolidated balance sheets was $ 6.5 billion and $ 4.3 billion of unearned revenue as of December 31, 2024 and June 30, 2025. Additionally, we have performance obligations, primarily related to AWS, associated with commitments in customer contracts for future services that have not yet been recognized in our consolidated financial statements. For contracts with original terms that exceed one year, those commitments not yet recognized were approximately $ 195 billion as of June 30, 2025. The weighted-average remaining life of our long-term contracts is 4.0 years. However, the amount and timing of revenue recognition is largely driven by customer usage, which can extend beyond the original contractual term. Accounting Pronouncements Not Yet Adopted In December 2023, the Financial Accounting Standards Board (“FASB”) issued an Accounting Standards Update (“ASU”) amending existing income tax disclosure guidance, primarily requiring more detailed disclosure for income taxes paid and the effective tax rate reconciliation.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "AWS sales increased 20% in 2025, compared to the prior year. The sales growth primarily reflects increased customer usage, partially offset by pricing changes primarily driven by long-term customer contracts.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:112665-113349"
+    },
+    {
+      "evidence_id": "E10",
+      "quote": "AWS 107,556 128,725 Consolidated $ 637,959 $ 716,924 Year-over-year Percentage Growth: North America 10 % 10 % International 9 13 AWS 19 20",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:110773-111973"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 17146,
+    "output": 1679
+  },
+  "latency_ms": 23423,
+  "estimated_cost_usd": 0.076623,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "mixed"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 7090,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 12,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 16314,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 8,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

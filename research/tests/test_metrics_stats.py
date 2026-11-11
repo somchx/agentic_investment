@@ -3,8 +3,9 @@ import math
 
 import pytest
 
-from engine.metrics import citation_matches_ref, classification_metrics, efficiency, evaluate, evidence_scores, unsupported_rate
-from engine.stats import bootstrap_diff, compare, mcnemar
+from engine.metrics import (citation_matches_ref, classification_metrics, efficiency, evaluate, evidence_scores, integrity_metrics,
+                            second_look_metrics, transition, unsupported_rate)
+from engine.stats import bootstrap_ci, bootstrap_diff, compare, mcnemar
 
 S, C, I = "SUPPORTED", "CONTRADICTED", "INSUFFICIENT_EVIDENCE"
 
@@ -100,3 +101,56 @@ def test_compare_pairs_on_claim_ids():
     r = compare(pa, pb, gold, n_boot=100)
     assert r["n"] == 2 and r["pairing"]["dropped_unpaired"] == 1 and r["pairing"]["dropped_no_gold"] == 1
     assert r["mcnemar"]["b_right_a_wrong"] == 1
+
+
+def _p(cid, initial, final, approach="A3", kind="contradiction_aware", rec=None):
+    return {"claim_id": cid, "approach": approach, "approach_kind": kind, "initial_label": initial, "predicted_label": final,
+            "verdict_changed": initial != final, "second_look_record": rec}
+
+
+def test_transitions_hand_computed():
+    assert transition(S, C, C) == "incorrect_to_correct" and transition(C, S, C) == "correct_to_incorrect"
+    assert transition(S, S, S) == "correct_to_correct" and transition(I, C, S) == "incorrect_to_incorrect"
+    gold = {k: {"label": v} for k, v in {"1": C, "2": S, "3": S, "4": I, "5": S}.items()}
+    rec = lambda n: {"counterevidence_found": n, "no_counterevidence_found": n == 0, "completed": True}  # noqa: E731
+    preds = [_p("1", S, C, rec=rec(2)), _p("2", S, C, rec=rec(1)), _p("3", S, S, rec=rec(0)), _p("4", S, S, rec=rec(0)),
+             _p("5", None, I, rec=None)]  # 5: no initial verdict -> excluded from transitions
+    r = second_look_metrics(preds, gold)[0]
+    assert r["n_labelled"] == 4
+    assert (r["incorrect_to_correct"], r["correct_to_incorrect"], r["correct_to_correct"], r["incorrect_to_incorrect"]) == (1, 1, 1, 1)
+    assert r["initial_accuracy"] == pytest.approx(2 / 4) and r["final_accuracy"] == pytest.approx(2 / 4)
+    assert r["verdict_change_rate"] == pytest.approx(2 / 4) and r["change_precision"] == pytest.approx(1 / 2)
+    assert r["net_gain"] == 0 and r["counterevidence_retrieval_success"] == pytest.approx(2 / 4)
+    assert r["no_counterevidence_found"] == 2
+
+
+def test_second_look_metrics_for_single_pass_approaches():
+    gold = {"1": {"label": S}}
+    r = second_look_metrics([_p("1", S, S, "A2", "financial_verification")], gold)[0]
+    assert r["verdict_change_rate"] == 0 and r["counterevidence_retrieval_success"] is None and r["change_precision"] is None
+
+
+def test_integrity_metrics_detect_leakage_period_issues_and_reference_hits():
+    trace_ok = {"claim": {"as_of_date": "2026-05-01"}, "corpus": {"filings": [{"filed": "2026-04-30"}]},
+                "evidence": [{"filed": "2026-04-30"}],
+                "tool_calls": [{"tool": "verify_numbers", "checks": [{"issues": ["PERIOD_NOT_AVAILABLE:2026-06-30"], "computed": None}]}]}
+    trace_leak = {"claim": {"as_of_date": "2026-05-01"}, "corpus": {"filings": [{"filed": "2026-04-30"}]},
+                  "evidence": [{"filed": "2026-05-02"}], "tool_calls": []}
+    preds = [{"claim_id": "1", "approach": "A", "citations": [{"valid": True, "accession_number": "X"}, {"valid": False}]},
+             {"claim_id": "2", "approach": "A", "citations": [{"valid": True, "accession_number": "Y"}]}]
+    traces = {("A", "1"): trace_ok, ("A", "2"): trace_leak}
+    gold = {"1": {"reference_accessions": ["X"]}, "2": {"reference_accessions": ["Z"]}}
+    r = integrity_metrics(preds, traces, gold)[0]
+    assert r["citation_validity"] == pytest.approx(2 / 3) and r["future_data_leakage_rate"] == pytest.approx(1 / 2)
+    assert r["runs_with_numeric_checks"] == 1 and r["incorrect_fiscal_period_rate"] == 1.0
+    assert r["reference_filing_scored"] == 2 and r["reference_filing_hit_rate"] == pytest.approx(1 / 2)
+    assert integrity_metrics(preds, None)[0]["future_data_leakage_rate"] is None  # not measured -> not reported
+
+
+def test_bootstrap_ci_brackets_the_point_estimate():
+    y = [S, C, I] * 20
+    p = [S, C, S] * 20
+    r = bootstrap_ci(y, p, n_boot=500)
+    assert r["accuracy"]["point"] == pytest.approx(2 / 3)
+    assert r["accuracy"]["ci_low"] <= 2 / 3 <= r["accuracy"]["ci_high"] and r["accuracy"]["ci_high"] - r["accuracy"]["ci_low"] > 0
+    assert bootstrap_ci([], [])["n"] == 0

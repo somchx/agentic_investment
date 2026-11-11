@@ -1,0 +1,344 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A2_rag_numeric:GOLD-WMT-14:fcad8087",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A2_rag_numeric",
+  "approach_kind": "financial_verification",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A2_rag_numeric",
+    "kind": "financial_verification",
+    "description": "A1 + deterministic numeric verification"
+  },
+  "config_hash": "53b859cfe39ca3b0",
+  "claim": {
+    "claim_id": "GOLD-WMT-14",
+    "company": "WMT",
+    "claim": "Walmart's results for the quarter ended April 30, 2026 show that its international business is a drag on overall profitability.",
+    "as_of_date": "2026-06-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2027 Q1"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E4",
+            "quote": "Operating income $ 1,602 $ 1,293 Percentage of net sales Gross profit 21.1 % 21.1 % Operating expenses 17.8 % 18.1 % Operating income 4.6 % 4.3 %"
+          }
+        ],
+        "reasoning_summary": "The claim asserts that Walmart's international business is \"a drag on overall profitability\" for the quarter ended April 30, 2026. This is an interpretive claim about the quality/impact of the international segment on profitability.\n\nEvidence E4 shows that for the three months ended April 30, 2026, Walmart International had:\n- Operating income of $1,602 million (up from $1,293 million in the prior year)\n- Operating margin of 4.6% (up from 4.3% in the prior year)\n\nThe international segment was profitable with an operating margin of 4.6%, and this margin actually improved year-over-year by 30 basis points. A segment that generates positive operating income and improving margins cannot reasonably be characterized as \"a drag on overall profitability.\" While the 4.6% operating margin may be lower than other segments, the segment is still contributing positively to overall profitability rather than dragging it down.\n\nThe evidence directly contradicts the claim's characterization of the international business as a drag on profitability.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "dc1f360593423f47666fe24c06d73980e7a5b81955516f565a6b274651e15cfe",
+      "source": "cache",
+      "input_tokens": 4105,
+      "output_tokens": 476,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E4",
+            "quote": "Operating income $ 1,602 $ 1,293 Percentage of net sales Gross profit 21.1 % 21.1 % Operating expenses 17.8 % 18.1 % Operating income 4.6 % 4.3 %"
+          }
+        ],
+        "reasoning_summary": "The claim asserts that Walmart's international business is \"a drag on overall profitability\" for the quarter ended April 30, 2026. This is an interpretive claim about the quality/impact of the international segment on profitability.\n\nEvidence E4 shows that for the three months ended April 30, 2026, Walmart International had:\n- Operating income of $1,602 million (up from $1,293 million in the prior year)\n- Operating margin of 4.6% (up from 4.3% in the prior year)\n\nThe international segment was profitable with an operating margin of 4.6%, and this margin actually improved year-over-year by 30 basis points. A segment that generates positive operating income and improving margins cannot reasonably be characterized as \"a drag on overall profitability.\" While the 4.6% operating margin may be lower than other segments, the segment is still contributing positively to overall profitability rather than dragging it down.\n\nThe evidence directly contradicts the claim's characterization of the international business as a drag on profitability.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Walmart's results for the quarter ended April 30, 2026 show that its international business is a drag on overall profitability. FY2027 Q1",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-26-000102",
+        "filed": "2026-05-29",
+        "report_date": "2026-04-30",
+        "primary_document": "wmt-20260430.htm",
+        "sha256": "852d4b1f25a8587899243ce13ea032f74a393cbefc941de3625cc5779b252ff4"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0000104169-26-000055",
+        "filed": "2026-03-13",
+        "report_date": "2026-01-31",
+        "primary_document": "wmt-20260131.htm",
+        "sha256": "81bc136de8961e00236b4d1c299b17de840b9ff49c278f0addf442cee8e909cf"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-25-000191",
+        "filed": "2025-12-03",
+        "report_date": "2025-10-31",
+        "primary_document": "wmt-20251031.htm",
+        "sha256": "163791c139267742812a96517575b3118c5549be0b2984c8d4e9aa0914e2b6f8"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 692
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:44267-45322",
+      "excerpt": "e category. When the assignment changes, previous period amounts are reclassified to be comparable to the current period's presentation. (Amounts in millions) Three Months Ended April 30, Walmart U.S. net sales by merchandise category 2026 2025 Grocery $ 70,696 $ 67,831 General merchandise 26,420 25,276 Health and wellness 16,355 16,244 Other categories 3,698 2,812 Total $ 117,169 $ 112,163 Of Walmart U.S.'s total net sales, approximately $ 27.1 billion and $ 21.4 billion related to eCommerce for the three months ended April 30, 2026 and 2025, respectively. (Amounts in millions) Three Months Ended April 30, Walmart International net sales by market 2026 2025 Mexico and Central America $ 13,847 $ 11,714 China 8,454 6,579 Canada 5,727 5,145 Other 7,082 6,316 Total $ 35,110 $ 29,754 Of Walmart International's total net sales, approximately $ 9.7 billion and $ 7.7 billion related to eCommerce for the three months ended April 30, 2026 and 2025, respectively. 15 Table of Contents (Amounts in millions) Three Months Ended April 30, Sam's Club U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:80996-81931",
+      "excerpt": "rrowings, our results of operations and the market price of our common stock. We anticipate that a majority of the ongoing share repurchase program will be funded through the Company's free cash flow. The following table provides, on a settlement date basis, share repurchase information for the three months ended April 30, 2026 and 2025: Three Months Ended April 30, (Amounts in millions, except per share data) 2026 2025 Total number of shares repurchased 16.6 50.4 Average price paid per share $ 125.51 $ 90.35 Total amount paid for share repurchases $ 2,080 $ 4,555 25 Table of Contents During the three months ended April 30, 2026, the Company repurchased $2.1 billion in shares of its common stock, a decrease of $2.5 billion as compared to the same period in the previous fiscal year. The decrease was primarily driven by opportunistic prices during the first quarter of fiscal 2026 as part of the Company's long-term strategy.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:45122-46322",
+      "excerpt": "billion and $ 7.7 billion related to eCommerce for the three months ended April 30, 2026 and 2025, respectively. 15 Table of Contents (Amounts in millions) Three Months Ended April 30, Sam's Club U.S. net sales by merchandise category 2026 2025 Grocery $ 16,102 $ 15,443 Fuel and other 3,443 2,851 General merchandise 2,649 2,536 Health and wellness 1,211 1,234 Total $ 23,405 $ 22,064 Of Sam's Club U.S.'s total net sales, approximately $ 4.1 billion and $ 3.3 billion related to eCommerce for the three months ended April 30, 2026 and 2025, respectively. 16 Table of Contents Item 2. Management's Discussion and Analysis of Financial Condition and Results of Operations Overview This discussion, which presents Walmart Inc.'s (\"Walmart,\" the \"Company,\" \"our,\" \"us\" or \"we\") results for periods occurring in the fiscal year ending January 31, 2027 (\"fiscal 2027\") and the fiscal year ended January 31, 2026 (\"fiscal 2026\"), should be read in conjunction with our Condensed Consolidated Financial Statements as of and for the three months ended April 30, 2026, and the accompanying notes included in Part I, Item 1 of this Quarterly Report on Form 10-Q, as well as our Consolidated Financial Statemen",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:69679-70822",
+      "excerpt": "on charges. As a result of the factors discussed above, operating income increased $0.2 billion for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. 22 Table of Contents Walmart International Segment Three Months Ended April 30, (Dollar amounts and retail square feet in millions) 2026 2025 Net sales $ 35,110 $ 29,754 Percentage change from comparable period 18.0 % (0.3) % Membership and other income 425 379 Gross profit 7,423 6,290 Operating expenses 6,246 5,376 Operating income $ 1,602 $ 1,293 Percentage of net sales Gross profit 21.1 % 21.1 % Operating expenses 17.8 % 18.1 % Operating income 4.6 % 4.3 % Unit counts at period end 5,759 5,578 Retail square feet at period end 278 274 Net sales for the Walmart International segment increased $5.4 billion or 18.0% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. The increase was primarily due to positive comparable sales across our international markets, including strong eCommerce growth of $2.0 billion, and positive fluctuations in currency exchange rates of $2.3 billion.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:64337-65456",
+      "excerpt": "bership and other income increased $0.4 billion or 27.0% for the three months ended April 30, 2026, reflecting 17.4% growth in membership fee revenue with strength across membership programs globally. Additionally, other income for the three months ended April 30, 2026 benefited from certain miscellaneous income items, none of which are individually material. Gross profit rate increased 6 basis points for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year, primarily due to the Walmart U.S. segment, driven by merchandise mix shifts and growth in higher margin businesses, including advertising, partially offset by higher fuel costs within our supply chain and increased eCommerce fulfillment costs in the Sam's Club U.S. segment. Operating expenses as a percentage of net sales increased 33 basis points for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year, primarily driven by higher depreciation related to our capital investments, certain business reorganization charges of $0.2 billion within the Walmart U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:67960-69068",
+      "excerpt": "eet at period end 699 698 Net sales for the Walmart U.S. segment increased $5.0 billion or 4.5% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. The increase was due to comparable sales of 4.3% for the three months ended April 30, 2026, driven by growth in transactions and average ticket, reflecting strength in grocery and general merchandise. The Walmart U.S. segment's eCommerce net sales positively contributed approximately 5.2% to comparable sales for the three months ended April 30, 2026. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, which was primarily driven by store-fulfilled delivery. Membership and other income increased 45.6% for the three months ended April 30, 2026, primarily driven by increases in certain miscellaneous income items, as well as double-digit percentage growth in membership fee revenue from Walmart+. Gross profit rate increased 29 basis points for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E4",
+      "quote": "Operating income $ 1,602 $ 1,293 Percentage of net sales Gross profit 21.1 % 21.1 % Operating expenses 17.8 % 18.1 % Operating income 4.6 % 4.3 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:69679-70822"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 4105,
+    "output": 476
+  },
+  "latency_ms": 3,
+  "estimated_cost_usd": 0.019455,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "financial_verification",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

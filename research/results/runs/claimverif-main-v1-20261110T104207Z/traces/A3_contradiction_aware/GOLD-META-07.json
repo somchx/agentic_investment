@@ -1,0 +1,834 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-META-07:b1eff2d1",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-META-07",
+    "company": "META",
+    "claim": "The increase in Meta's costs and expenses in 2025 was driven primarily by employee compensation and infrastructure costs.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "The increase in costs and expenses was primarily due to increases in employee compensation, infrastructure costs, costs associated with partner arrangements, and legal-related costs."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "The increase in costs and expenses was mainly due to increases in employee compensation and infrastructure costs."
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "The increase in costs and expenses in the nine months ended September 30, 2025 was primarily due to increases in employee compensation and infrastructure costs"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that the increase in Meta's costs and expenses in 2025 was driven primarily by employee compensation and infrastructure costs. This is an interpretive claim about the drivers of cost increases, with no specific numeric assertions.\n\nEvidence E2 is from the 10-K filed 2026-01-29 covering the full year 2025 (period ending 2025-12-31), which states: \"The increase in costs and expenses was primarily due to increases in employee compensation, infrastructure costs, costs associated with partner arrangements, and legal-related costs.\" This directly supports the claim, identifying employee compensation and infrastructure costs as primary drivers (listed first among the drivers).\n\nEvidence E5, also from the same 10-K, reinforces this: \"The increase in costs and expenses was mainly due to increases in employee compensation and infrastructure costs.\"\n\nEvidence E1 from the Q3 2025 10-Q (covering nine months ended September 30, 2025) states: \"The increase in costs and expenses in the nine months ended September 30, 2025 was primarily due to increases in employee compensation and infrastructure costs, partially offset by lower legal-related costs.\"\n\nAll three pieces of evidence consistently identify employee compensation and infrastructure costs as the primary drivers of the increase in costs and expenses in 2025, directly supporting the claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did other cost categories (such as partner arrangements, legal costs, marketing, or R&D) actually represent a larger portion of the cost increase than employee compensation or infrastructure costs?",
+          "search_query": "costs and expenses breakdown partner arrangements legal marketing research development 2025 2024 increase",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Were there significant one-time charges, restructuring costs, or impairments in 2025 that actually drove the majority of the cost increase rather than ongoing employee compensation and infrastructure?",
+          "search_query": "restructuring charges impairment one-time special items non-recurring costs 2025",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Does the filing provide specific dollar amounts or percentages showing that employee compensation and infrastructure costs combined represented less than half of the total cost increase in 2025?",
+          "search_query": "employee compensation infrastructure costs expenses 2025 2024 dollar amount percentage breakdown",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "costs and expenses breakdown partner arrangements legal marketing research development 2025 2024 increase",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "restructuring charges impairment one-time special items non-recurring costs 2025",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "employee compensation infrastructure costs expenses 2025 2024 dollar amount percentage breakdown",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "Research and development expenses in 2025 increased $13.50 billion, or 31%, compared to 2024. The increase was mostly due to higher employee compensation and infrastructure costs related to research and development, including our AI initiatives.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003942",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+              "locator": "10-K 0001628280-26-003942:329709-330725"
+            },
+            {
+              "evidence_id": "E9",
+              "quote": "Research and development expenses in the three and nine months ended September 30, 2025 increased $3.97 billion, or 35%, and $8.54 billion, or 27%, respectively, compared to the same periods in 2024. The increases were mainly due to higher employee compensation and infrastructure costs for research and development to support our AI initiatives.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-25-047240",
+              "form": "10-Q",
+              "filed": "2025-10-30",
+              "period_end": "2025-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+              "locator": "10-Q 0001628280-25-047240:125795-126912"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "15b078e4f6fae95c50dc06d9267e6be6ae938e0391f2f940a230d1ab540ebbdb",
+      "source": "cache",
+      "input_tokens": 3695,
+      "output_tokens": 581,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "The increase in costs and expenses was primarily due to increases in employee compensation, infrastructure costs, costs associated with partner arrangements, and legal-related costs."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "The increase in costs and expenses was mainly due to increases in employee compensation and infrastructure costs."
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "The increase in costs and expenses in the nine months ended September 30, 2025 was primarily due to increases in employee compensation and infrastructure costs"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that the increase in Meta's costs and expenses in 2025 was driven primarily by employee compensation and infrastructure costs. This is an interpretive claim about the drivers of cost increases, with no specific numeric assertions.\n\nEvidence E2 is from the 10-K filed 2026-01-29 covering the full year 2025 (period ending 2025-12-31), which states: \"The increase in costs and expenses was primarily due to increases in employee compensation, infrastructure costs, costs associated with partner arrangements, and legal-related costs.\" This directly supports the claim, identifying employee compensation and infrastructure costs as primary drivers (listed first among the drivers).\n\nEvidence E5, also from the same 10-K, reinforces this: \"The increase in costs and expenses was mainly due to increases in employee compensation and infrastructure costs.\"\n\nEvidence E1 from the Q3 2025 10-Q (covering nine months ended September 30, 2025) states: \"The increase in costs and expenses in the nine months ended September 30, 2025 was primarily due to increases in employee compensation and infrastructure costs, partially offset by lower legal-related costs.\"\n\nAll three pieces of evidence consistently identify employee compensation and infrastructure costs as the primary drivers of the increase in costs and expenses in 2025, directly supporting the claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "209f48d862a27278e6ae5651de02047aff15860824daf8f9929826c0728907a3",
+      "source": "cache",
+      "input_tokens": 4780,
+      "output_tokens": 317,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did other cost categories (such as partner arrangements, legal costs, marketing, or R&D) actually represent a larger portion of the cost increase than employee compensation or infrastructure costs?",
+            "search_query": "costs and expenses breakdown partner arrangements legal marketing research development 2025 2024 increase",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Were there significant one-time charges, restructuring costs, or impairments in 2025 that actually drove the majority of the cost increase rather than ongoing employee compensation and infrastructure?",
+            "search_query": "restructuring charges impairment one-time special items non-recurring costs 2025",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Does the filing provide specific dollar amounts or percentages showing that employee compensation and infrastructure costs combined represented less than half of the total cost increase in 2025?",
+            "search_query": "employee compensation infrastructure costs expenses 2025 2024 dollar amount percentage breakdown",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "01276397e7a486e58ce347f3ff150e65da8b8fe016b2e0f80ae3750ee91f43a8",
+      "source": "cache",
+      "input_tokens": 8487,
+      "output_tokens": 1001,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "Research and development expenses in 2025 increased $13.50 billion, or 31%, compared to 2024. The increase was mostly due to higher employee compensation and infrastructure costs related to research and development, including our AI initiatives."
+              },
+              {
+                "evidence_id": "E9",
+                "quote": "Research and development expenses in the three and nine months ended September 30, 2025 increased $3.97 billion, or 35%, and $8.54 billion, or 27%, respectively, compared to the same periods in 2024. The increases were mainly due to higher employee compensation and infrastructure costs for research and development to support our AI initiatives."
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "The increase in costs and expenses was primarily due to increases in employee compensation, infrastructure costs, costs associated with partner arrangements, and legal-related costs."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "The increase in costs and expenses was mainly due to increases in employee compensation and infrastructure costs."
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "The increase in costs and expenses in the nine months ended September 30, 2025 was primarily due to increases in employee compensation and infrastructure costs"
+          },
+          {
+            "evidence_id": "E7",
+            "quote": "Research and development expenses in 2025 increased $13.50 billion, or 31%, compared to 2024. The increase was mostly due to higher employee compensation and infrastructure costs related to research and development, including our AI initiatives."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After investigating potential challenges to the initial verdict, the SUPPORTED label remains appropriate.\n\nH1 challenged whether other cost categories represented a larger portion of the increase than employee compensation and infrastructure costs. This challenge is REFUTED. The new evidence (E7, E9) consistently confirms that across different cost categories (R&D in particular), employee compensation and infrastructure costs were the primary drivers. E7 states R&D expenses increased $13.50 billion with the increase \"mostly due to higher employee compensation and infrastructure costs.\" E9 similarly describes increases as \"mainly due to higher employee compensation and infrastructure costs.\" While partner arrangements and legal costs are mentioned in some passages, they are described as secondary factors (\"to a lesser extent\" in E7, E9).\n\nH2 challenged whether one-time charges or restructuring costs drove the majority of the increase. NO_RELEVANT_EVIDENCE was found. The retrieved evidence (E10, E11, E12) discusses potential future risks and general accounting policies but provides no evidence of significant one-time charges, restructuring costs, or impairments that actually occurred in 2025 and drove the cost increases.\n\nH3 challenged whether specific breakdowns show employee compensation and infrastructure represented less than half of the increase. NO_RELEVANT_EVIDENCE was found. While E13, E14, E15 provide dollar amounts for specific expense categories, they do not provide a comprehensive breakdown showing what percentage of the total cost increase came from employee compensation and infrastructure versus other sources.\n\nThe original evidence (E1, E2, E5) from the 10-K and 10-Q filings explicitly and consistently states that employee compensation and infrastructure costs were the \"primary\" or \"main\" drivers of the cost increase in 2025. The new evidence reinforces rather than contradicts this conclusion.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "The increase in Meta's costs and expenses in 2025 was driven primarily by employee compensation and infrastructure costs. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "costs and expenses breakdown partner arrangements legal marketing research development 2025 2024 increase",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "restructuring charges impairment one-time special items non-recurring costs 2025",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "employee compensation infrastructure costs expenses 2025 2024 dollar amount percentage breakdown",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-003942",
+        "filed": "2026-01-29",
+        "report_date": "2025-12-31",
+        "primary_document": "meta-20251231.htm",
+        "sha256": "5c4096ceb780d0fb52f3e3da5164ead16c58030223b453b0386ef2eb1bad8011"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-047240",
+        "filed": "2025-10-30",
+        "report_date": "2025-09-30",
+        "primary_document": "meta-20250930.htm",
+        "sha256": "f39bcd7a00c56aa48b4345190175554d892cdf0c2306ba77158bd09c8edaa6ea"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-036791",
+        "filed": "2025-07-31",
+        "report_date": "2025-06-30",
+        "primary_document": "meta-20250630.htm",
+        "sha256": "7b6a13ec0a671ca273fc0f7757071c664ae7b73fd87ab4f55615e88a52c6f3e3"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1460
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+      "locator": "10-Q 0001628280-25-047240:129475-130611",
+      "excerpt": "ts and expenses. The increase in costs and expenses in the three months ended September 30, 2025 was primarily due to increases in employee compensation, infrastructure costs, and legal-related costs. The increase in costs and expenses in the nine months ended September 30, 2025 was primarily due to increases in employee compensation and infrastructure costs, partially offset by lower legal-related costs. 45 Table of Contents Reality Labs RL loss from operations in the three months ended September 30, 2025 was flat compared to the same period in 2024, driven by an increase in RL revenue, offset by an increase in RL costs and expenses. The increase in RL costs and expenses was primarily due to increases in RL inventory costs and technology development costs, partially offset by a decrease in employee compensation. RL loss from operations in the nine months ended September 30, 2025 increased $409 million, or 3%, compared to the same period in 2024, driven by an increase in RL costs and expenses. The increase in RL costs and expenses was mainly due to increases in RL technology development costs and employee compensation.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:332453-333593",
+      "excerpt": ") (17,729) (16,120) (8) % (10) % Total income from operations $ 83,276 $ 69,380 $ 46,751 20 % 48 % Family of Apps FoA income from operations in 2025 increased $15.36 billion, or 18%, compared to 2024. The increase in FoA income from operations was driven by higher advertising revenue which was partially offset by an increase in costs and expenses. The increase in costs and expenses was primarily due to increases in employee compensation, infrastructure costs, costs associated with partner arrangements, and legal-related costs. Reality Labs RL loss from operations in 2025 increased $1.46 billion, or 8%, compared to 2024, driven by higher RL costs and expenses. RL costs and expenses increased primarily due to increases in employee compensation and other personnel related expenses, estimated losses on non-cancelable purchase commitments for RL inventory, and technology development costs. See Note 15 — Segment and Geographical Information in the notes to the consolidated financial statements included in Part II, Item 8, \"Financial Statements and Supplementary Data\" of this Annual Report on Form 10-K for additional information.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:119509-120621",
+      "excerpt": "t by increases in costs and expenses. The increases in costs and expenses were mainly due to increases in employee compensation and infrastructure costs, partially offset by lower legal-related costs. Reality Labs RL loss from operations in the three months ended June 30, 2025 increased $42 million, or 1%, compared to the same period in 2024, driven by an increase in RL costs and expenses. The increase in RL costs and expenses was driven by an increase in RL technology development costs. RL loss from operations in the six months ended June 30, 2025 increased $405 million, or 5%, compared to the same period in 2024, driven by an increase in RL costs and expenses. The increase in RL costs and expenses was mostly due to increases in employee compensation and RL technology development costs. See Note 8 — Commitments and Contingencies, and Note 11 — Segment Information in the notes to the condensed consolidated financial statements included in Part I, Item 1, of this Quarterly Report on Form 10-Q for additional information regarding legal-related costs and segment employee compensation, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+      "locator": "10-Q 0001628280-25-047240:96606-97736",
+      "excerpt": "n increase of 26% compared to the third quarter of 2024, due to an increase in advertising revenue. Revenue on a constant currency basis would have increased 25% compared to the third quarter of 2024. Ad impressions delivered across our Family of Apps in the third quarter of 2025 increased 14% year-over-year, and our average price per ad in the third quarter of 2025 increased 10% year-over-year. Income from operations for the third quarter of 2025 was $20.53 billion, an increase of $3.18 billion, or 18%, compared to the third quarter of 2024, driven by an increase in advertising revenue, partially offset by an increase in costs and expenses. The increase in costs and expenses was primarily due to increases in employee compensation, infrastructure costs, and legal-related costs. 32 Table of Contents Consolidated and Segment Results We report our financial results for our two reportable segments: Family of Apps (FoA) and Reality Labs (RL). FoA includes Facebook, Instagram, Messenger, WhatsApp, and other services. RL includes our virtual, augmented, and mixed reality related consumer hardware, software, and content.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:291546-292404",
+      "excerpt": "d to 2024, due to an increase in advertising revenue. Ad impressions delivered across our Family of Apps in 2025 increased 12% year-over-year, and our average price per ad increased 9% year-over-year. Income from operations for 2025 was $83.28 billion, an increase of $13.90 billion, or 20%, compared to 2024, driven by an increase in advertising revenue, partially offset by an increase in costs and expenses. The increase in costs and expenses was mainly due to increases in employee compensation and infrastructure costs. 60 Table of Contents Consolidated and Segment Results We report our financial results for our two reportable segments: Family of Apps (FoA) and Reality Labs (RL). FoA includes Facebook, Instagram, Messenger, WhatsApp, and other services. RL includes our virtual and augmented reality related consumer hardware, software, and content.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:87670-88373",
+      "excerpt": "5 was $20.44 billion, an increase of $5.59 billion, or 38%, compared to the second quarter of 2024, driven by an increase in advertising revenue, partially offset by an increase in costs and expenses. The increase in costs and expenses was mainly due to increases in infrastructure costs and employee compensation, partially offset by lower legal-related costs. 28 Table of Contents Consolidated and Segment Results We report our financial results for our two reportable segments: Family of Apps (FoA) and Reality Labs (RL). FoA includes Facebook, Instagram, Messenger, WhatsApp, and other services. RL includes our virtual, augmented, and mixed reality related consumer hardware, software, and content.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:329709-330725",
+      "excerpt": "ue to an extension in the useful lives of servers and network assets, effective January 1, 2025. To a lesser extent, higher costs associated with partner arrangements also contributed to the increase. See Note 1 — Summary of Significant Accounting Policies in the notes to the consolidated financial statements included in Part II, Item 8, \"Financial Statements and Supplementary Data\" of this Annual Report on Form 10-K for additional information regarding changes in the estimated useful life of our servers and network assets. Research and development Year Ended December 31, 2025 2024 2023 2025 vs 2024 % change 2024 vs 2023 % change (in millions, except percentages) Research and development $ 57,372 $ 43,873 $ 38,483 31 % 14 % Percentage of revenue 29 % 27 % 29 % Research and development expenses in 2025 increased $13.50 billion, or 31%, compared to 2024. The increase was mostly due to higher employee compensation and infrastructure costs related to research and development, including our AI initiatives.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:107803-108725",
+      "excerpt": "ervers, network infrastructure and buildings, employee compensation which includes payroll, share-based compensation and benefits for employees on our operations teams, and energy and bandwidth costs. Cost of revenue also consists of costs associated with partner arrangements, including traffic acquisition costs and credit card and other fees related to processing customer transactions; RL inventory costs, which consist of cost of products sold and estimated losses on non-cancelable contractual commitments; and content costs. Research and development. Research and development expenses consist mostly of employee compensation which includes payroll, share-based compensation and benefits for our employees on our engineering and technical teams who are responsible for developing new technologies and products; RL technology development costs; infrastructure costs; and facilities-related costs. Marketing and sales.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+      "locator": "10-Q 0001628280-25-047240:125795-126912",
+      "excerpt": "etwork assets, effective January 1, 2025. To a lesser extent, higher costs associated with partner arrangements also contributed to the increases in the three and nine months ended September 30, 2025. See Note 1 — Summary of Significant Accounting Policies in the notes to the condensed consolidated financial statements included in Part I, Item 1, of this Quarterly Report on Form 10-Q for additional information regarding changes in the estimated useful life of our servers and network assets. Research and development Three Months Ended September 30, Nine Months Ended September 30, 2025 2024 % change 2025 2024 % change (in millions, except percentages) Research and development $ 15,144 $ 11,177 35 % $ 40,237 $ 31,693 27 % Percentage of revenue 30 % 28 % 29 % 27 % Research and development expenses in the three and nine months ended September 30, 2025 increased $3.97 billion, or 35%, and $8.54 billion, or 27%, respectively, compared to the same periods in 2024. The increases were mainly due to higher employee compensation and infrastructure costs for research and development to support our AI initiatives.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:395905-396918",
+      "excerpt": "observable market inputs. Certain other assets are classified within Level 3 because factors used to develop the estimated fair value are unobservable inputs that are not supported by market activity. 97 Table of Contents Our non-marketable equity investments accounted for using the measurement alternative are recorded at fair value on a non-recurring basis. When an impairment loss or upward adjustment from observable price changes of qualified transactions occur, the respective non-marketable equity investment would be classified within Level 3 of the fair value hierarchy because the valuation methods include a combination of the observable transaction price at the transaction date and other unobservable inputs including volatility, rights, and obligations of the securities we hold. For the years ended December 31, 2025 and 2024, changes in the fair value recorded for our non-marketable equity securities were not material. For additional information, see Note 5 — Non-Marketable Equity Investments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:103931-105131",
+      "excerpt": "es, as well as capital expenditures, that we will incur to grow and expand our business and to remain competitive, including costs related to our data centers and technical infrastructure as well as other costs relating to our AI initiatives; • costs related to our privacy, safety, security, and content and advertising review and enforcement efforts, including as a result of implementing changes to our practices, whether voluntarily, in connection with laws, regulations, regulatory actions, or decisions or recommendations from the independent Oversight Board, or otherwise; • costs and expenses related to the development, manufacturing, and delivery of our consumer hardware products; • our ability to maintain gross margins and operating margins; • costs related to acquisitions or other strategic transactions, including costs associated with amortization and additional investments to develop acquired technologies; • charges associated with impairment or abandonment of any assets on our balance sheet, including as a result of changes to our real property lease arrangements and data center and infrastructure assets; • our ability to obtain equipment, components, and labor for our data",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+      "locator": "10-Q 0001628280-25-047240:245980-247180",
+      "excerpt": "es, as well as capital expenditures, that we will incur to grow and expand our business and to remain competitive, including costs related to our data centers and technical infrastructure as well as other costs relating to our AI initiatives; • costs related to our privacy, safety, security, and content and advertising review and enforcement efforts, including as a result of implementing changes to our practices, whether voluntarily, in connection with laws, regulations, regulatory actions, or decisions or recommendations from the independent Oversight Board, or otherwise; • costs and expenses related to the development, manufacturing, and delivery of our consumer hardware products; • our ability to maintain gross margins and operating margins; • costs related to acquisitions or other strategic transactions, including costs associated with amortization and additional investments to develop acquired technologies; • charges associated with impairment or abandonment of any assets on our balance sheet, including as a result of changes to our real property lease arrangements and data center and infrastructure assets; • our ability to obtain equipment, components, and labor for our data",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:330525-331712",
+      "excerpt": "reased $13.50 billion, or 31%, compared to 2024. The increase was mostly due to higher employee compensation and infrastructure costs related to research and development, including our AI initiatives. The higher employee compensation was primarily from an 8% growth in employee headcount from 2024 to 2025 in engineering and other technical functions and an increase in share-based compensation expense. Marketing and sales Year Ended December 31, 2025 2024 2023 2025 vs 2024 % change 2024 vs 2023 % change (in millions, except percentages) Marketing and sales $ 11,991 $ 11,347 $ 12,301 6 % (8) % Percentage of revenue 6 % 7 % 9 % Marketing and sales expenses in 2025 increased $644 million, or 6%, compared to 2024. The increase was mainly due to higher professional services related to our ongoing platform integrity efforts. 74 Table of Contents General and administrative Year Ended December 31, 2025 2024 2023 2025 vs 2024 % change 2024 vs 2023 % change (in millions, except percentages) General and administrative $ 12,152 $ 9,740 $ 11,408 25 % (15) % Percentage of revenue 6 % 6 % 8 % General and administrative expenses in 2025 increased $2.41 billion, or 25%, compared to 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+      "locator": "10-Q 0001628280-25-047240:126712-127789",
+      "excerpt": ", respectively, compared to the same periods in 2024. The increases were mainly due to higher employee compensation and infrastructure costs for research and development to support our AI initiatives. The higher employee compensation was primarily from an increase in share-based compensation expense and an 11% growth in employee headcount from September 30, 2024 to September 30, 2025 in engineering and other technical functions. 44 Table of Contents Marketing and sales Three Months Ended September 30, Nine Months Ended September 30, 2025 2024 % change 2025 2024 % change (in millions, except percentages) Marketing and sales $ 2,845 $ 2,822 1 % $ 8,581 $ 8,107 6 % Percentage of revenue 6 % 7 % 6 % 7 % Marketing and sales expenses in the three months ended September 30, 2025 were flat compared to the same period in 2024. Marketing and sales expenses in the nine months ended September 30, 2025 increased $474 million, or 6%, compared to the same period in 2024. The increase was mainly due to higher professional services related to ongoing platform integrity efforts.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:116172-117192",
+      "excerpt": "ated financial statements included in Part I, Item 1, of this Quarterly Report on Form 10-Q for additional information regarding changes in the estimated useful life of our servers and network assets. Research and development Three Months Ended June 30, Six Months Ended June 30, 2025 2024 % change 2025 2024 % change (in millions, except percentages) Research and development $ 12,942 $ 10,537 23 % $ 25,092 $ 20,515 22 % Percentage of revenue 27 % 27 % 28 % 27 % Research and development expenses in the three and six months ended June 30, 2025 increased $2.40 billion, or 23%, and $4.58 billion, or 22%, respectively, compared to the same periods in 2024. The increases were mostly due to higher employee compensation and infrastructure costs for research and development. The higher employee compensation was mainly from a 10% growth in employee headcount from June 30, 2024 to June 30, 2025 in engineering and other technical functions supporting our continued investment in our family of products and Reality Labs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E2",
+      "quote": "The increase in costs and expenses was primarily due to increases in employee compensation, infrastructure costs, costs associated with partner arrangements, and legal-related costs.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:332453-333593"
+    },
+    {
+      "evidence_id": "E5",
+      "quote": "The increase in costs and expenses was mainly due to increases in employee compensation and infrastructure costs.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:291546-292404"
+    },
+    {
+      "evidence_id": "E1",
+      "quote": "The increase in costs and expenses in the nine months ended September 30, 2025 was primarily due to increases in employee compensation and infrastructure costs",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+      "locator": "10-Q 0001628280-25-047240:129475-130611"
+    },
+    {
+      "evidence_id": "E7",
+      "quote": "Research and development expenses in 2025 increased $13.50 billion, or 31%, compared to 2024. The increase was mostly due to higher employee compensation and infrastructure costs related to research and development, including our AI initiatives.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:329709-330725"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 16962,
+    "output": 1899
+  },
+  "latency_ms": 11,
+  "estimated_cost_usd": 0.079371,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 5,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

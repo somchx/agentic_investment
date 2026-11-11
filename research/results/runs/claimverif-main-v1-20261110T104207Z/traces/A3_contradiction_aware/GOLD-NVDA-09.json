@@ -1,0 +1,827 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-NVDA-09:31ddf4de",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-NVDA-09",
+    "company": "NVDA",
+    "claim": "The growth in NVIDIA's operating expenses in the quarter ended April 26, 2026 was primarily due to higher compensation and benefits.",
+    "as_of_date": "2026-06-10",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2027 Q1"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "The increase in research and development expenses for the first quarter of fiscal year 2027 was primarily driven by a 112% increase in compute and infrastructure, a 31% increase in compensation and benefits, including stock-based compensation, reflecting employee growth and compensation increases, and a 204% increase in engineering development materials for new product introductions."
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "The increase in sales, general and administrative expenses for the first quarter of fiscal year 2027 was primarily driven by compensation and benefits, including stock-based compensation, reflecting employee growth and compensation increases."
+          },
+          {
+            "evidence_id": "E6",
+            "quote": "Operating expenses were up 52% from a year ago and up 12% sequentially. The increases were primarily driven by higher compensation and benefits expense due to employee growth and compensation increases, compute and infrastructure costs, and engineering development materials for new product developments."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that the growth in NVIDIA's operating expenses in the quarter ended April 26, 2026 was primarily due to higher compensation and benefits. This is an interpretive claim about the primary driver of operating expense growth.\n\nEvidence E3 and E4 are from the 10-Q filed 2026-05-20 for the period ending 2026-04-26, which is exactly the quarter in question (Q1 FY2027). E3 shows that R&D expenses increased, with the primary driver being a 112% increase in compute and infrastructure, followed by a 31% increase in compensation and benefits, and a 204% increase in engineering development materials. E4 shows that SG&A expenses increased primarily due to compensation and benefits.\n\nHowever, E6 from the same filing provides a summary statement that \"Operating expenses were up 52% from a year ago and up 12% sequentially. The increases were primarily driven by higher compensation and benefits expense due to employee growth and compensation increases, compute and infrastructure costs, and engineering development materials for new product developments.\"\n\nWhile E3 shows that for R&D specifically, compute and infrastructure had the largest percentage increase (112%), the overall operating expenses summary in E6 lists compensation and benefits first as the primary driver, followed by compute and infrastructure and engineering materials. E4 confirms that SG&A (the other component of operating expenses) was primarily driven by compensation and benefits.\n\nThe claim is supported because the filing explicitly states that operating expenses increases were \"primarily driven by higher compensation and benefits expense\" in E6, even though multiple factors contributed.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did compute and infrastructure costs actually contribute more in absolute dollar terms to the operating expense increase than compensation and benefits, making it the primary driver despite the filing's characterization?",
+          "search_query": "operating expenses compute infrastructure compensation benefits dollar amount increase first quarter fiscal 2027 April 2026"
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Was the R&D expense increase driven primarily by compute and infrastructure (112% increase) and engineering materials (204% increase) rather than compensation (31% increase), and since R&D is the larger component of operating expenses, would this make the claim incorrect?",
+          "search_query": "research development expenses breakdown compute infrastructure engineering materials compensation first quarter 2027 April 2026 percentage dollar"
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Does the filing provide a different primary driver for total operating expenses when discussing the components in detail, contradicting the summary statement in E6?",
+          "search_query": "total operating expenses primary driver main reason increase Q1 2027 April 26 2026 fiscal year"
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "operating expenses compute infrastructure compensation benefits dollar amount increase first quarter fiscal 2027 April 2026",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "research development expenses breakdown compute infrastructure engineering materials compensation first quarter 2027 April 2026 percentage dollar",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "total operating expenses primary driver main reason increase Q1 2027 April 26 2026 fiscal year",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E3",
+              "quote": "The increase in research and development expenses for the first quarter of fiscal year 2027 was primarily driven by a 112% increase in compute and infrastructure, a 31% increase in compensation and benefits",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000052",
+              "form": "10-Q",
+              "filed": "2026-05-20",
+              "period_end": "2026-04-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+              "locator": "10-Q 0001045810-26-000052:71537-72530"
+            },
+            {
+              "evidence_id": "E4",
+              "quote": "The increase in sales, general and administrative expenses for the first quarter of fiscal year 2027 was primarily driven by compensation and benefits",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000052",
+              "form": "10-Q",
+              "filed": "2026-05-20",
+              "period_end": "2026-04-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+              "locator": "10-Q 0001045810-26-000052:72330-73456"
+            },
+            {
+              "evidence_id": "E6",
+              "quote": "Operating expenses were up 52% from a year ago and up 12% sequentially. The increases were primarily driven by higher compensation and benefits expense due to employee growth and compensation increases, compute and infrastructure costs, and engineering development materials",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000052",
+              "form": "10-Q",
+              "filed": "2026-05-20",
+              "period_end": "2026-04-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+              "locator": "10-Q 0001045810-26-000052:65099-66259"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "bb6a43febaab4a286c067c5b7d2822bfd988510448ac0a67f488c263b027548d",
+      "source": "cache",
+      "input_tokens": 3932,
+      "output_tokens": 729,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "The increase in research and development expenses for the first quarter of fiscal year 2027 was primarily driven by a 112% increase in compute and infrastructure, a 31% increase in compensation and benefits, including stock-based compensation, reflecting employee growth and compensation increases, and a 204% increase in engineering development materials for new product introductions."
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "The increase in sales, general and administrative expenses for the first quarter of fiscal year 2027 was primarily driven by compensation and benefits, including stock-based compensation, reflecting employee growth and compensation increases."
+          },
+          {
+            "evidence_id": "E6",
+            "quote": "Operating expenses were up 52% from a year ago and up 12% sequentially. The increases were primarily driven by higher compensation and benefits expense due to employee growth and compensation increases, compute and infrastructure costs, and engineering development materials for new product developments."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that the growth in NVIDIA's operating expenses in the quarter ended April 26, 2026 was primarily due to higher compensation and benefits. This is an interpretive claim about the primary driver of operating expense growth.\n\nEvidence E3 and E4 are from the 10-Q filed 2026-05-20 for the period ending 2026-04-26, which is exactly the quarter in question (Q1 FY2027). E3 shows that R&D expenses increased, with the primary driver being a 112% increase in compute and infrastructure, followed by a 31% increase in compensation and benefits, and a 204% increase in engineering development materials. E4 shows that SG&A expenses increased primarily due to compensation and benefits.\n\nHowever, E6 from the same filing provides a summary statement that \"Operating expenses were up 52% from a year ago and up 12% sequentially. The increases were primarily driven by higher compensation and benefits expense due to employee growth and compensation increases, compute and infrastructure costs, and engineering development materials for new product developments.\"\n\nWhile E3 shows that for R&D specifically, compute and infrastructure had the largest percentage increase (112%), the overall operating expenses summary in E6 lists compensation and benefits first as the primary driver, followed by compute and infrastructure and engineering materials. E4 confirms that SG&A (the other component of operating expenses) was primarily driven by compensation and benefits.\n\nThe claim is supported because the filing explicitly states that operating expenses increases were \"primarily driven by higher compensation and benefits expense\" in E6, even though multiple factors contributed.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "66e8ba429d552a2668d69bcd241b5236ee3d115a665d2de89e53472c0fc640b5",
+      "source": "cache",
+      "input_tokens": 5313,
+      "output_tokens": 316,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did compute and infrastructure costs actually contribute more in absolute dollar terms to the operating expense increase than compensation and benefits, making it the primary driver despite the filing's characterization?",
+            "search_query": "operating expenses compute infrastructure compensation benefits dollar amount increase first quarter fiscal 2027 April 2026"
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Was the R&D expense increase driven primarily by compute and infrastructure (112% increase) and engineering materials (204% increase) rather than compensation (31% increase), and since R&D is the larger component of operating expenses, would this make the claim incorrect?",
+            "search_query": "research development expenses breakdown compute infrastructure engineering materials compensation first quarter 2027 April 2026 percentage dollar"
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Does the filing provide a different primary driver for total operating expenses when discussing the components in detail, contradicting the summary statement in E6?",
+            "search_query": "total operating expenses primary driver main reason increase Q1 2027 April 26 2026 fiscal year"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "05e94ca938ddd8bbb3ebbe6da13f526214185b7e034bf225bd12c8b18409bec3",
+      "source": "cache",
+      "input_tokens": 9343,
+      "output_tokens": 1079,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E3",
+                "quote": "The increase in research and development expenses for the first quarter of fiscal year 2027 was primarily driven by a 112% increase in compute and infrastructure, a 31% increase in compensation and benefits"
+              },
+              {
+                "evidence_id": "E4",
+                "quote": "The increase in sales, general and administrative expenses for the first quarter of fiscal year 2027 was primarily driven by compensation and benefits"
+              },
+              {
+                "evidence_id": "E6",
+                "quote": "Operating expenses were up 52% from a year ago and up 12% sequentially. The increases were primarily driven by higher compensation and benefits expense due to employee growth and compensation increases, compute and infrastructure costs, and engineering development materials"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "The increase in research and development expenses for the first quarter of fiscal year 2027 was primarily driven by a 112% increase in compute and infrastructure, a 31% increase in compensation and benefits, including stock-based compensation, reflecting employee growth and compensation increases, and a 204% increase in engineering development materials for new product introductions."
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "The increase in sales, general and administrative expenses for the first quarter of fiscal year 2027 was primarily driven by compensation and benefits, including stock-based compensation, reflecting employee growth and compensation increases."
+          },
+          {
+            "evidence_id": "E6",
+            "quote": "Operating expenses were up 52% from a year ago and up 12% sequentially. The increases were primarily driven by higher compensation and benefits expense due to employee growth and compensation increases, compute and infrastructure costs, and engineering development materials for new product developments."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After investigating potential challenges to the initial verdict, the conclusion remains SUPPORTED.\n\nH1 (absolute dollar amounts): The counter-evidence (E7, E8, E9) does not provide a breakdown of the absolute dollar amounts for compensation vs. compute/infrastructure costs within operating expenses. E8 shows segment information but \"Other segment items\" is an aggregate that includes \"product costs and inventory provisions, compensation and benefits excluding stock-based compensation expense, computing infrastructure expenses, and engineering development costs\" without separating them. Therefore, there is NO_RELEVANT_EVIDENCE to support this challenge.\n\nH2 (R&D as larger component): While E3 confirms that R&D expenses had a 112% increase in compute/infrastructure and 204% increase in engineering materials versus 31% in compensation, the counter-evidence does not provide the absolute dollar breakdown needed to determine which factor contributed more in dollar terms. The filing's explicit statement in E6 that total operating expenses were \"primarily driven by higher compensation and benefits expense\" takes precedence as the authoritative summary. Additionally, E4 shows SG&A was primarily driven by compensation. There is NO_RELEVANT_EVIDENCE in the counter-evidence that would overturn the filing's own characterization.\n\nH3 (contradictory statements): This challenge is REFUTED. The evidence is consistent: E3 discusses R&D in detail (showing compute/infrastructure had the highest percentage increase), E4 states SG&A was primarily driven by compensation, and E6 provides the summary for total operating expenses stating they were \"primarily driven by higher compensation and benefits expense.\" There is no contradiction - the filing consistently identifies compensation and benefits as the primary driver for total operating expenses, even though individual components had different drivers.\n\nThe claim is SUPPORTED because the filing explicitly states in E6 that operating expenses increases for Q1 FY2027 (quarter ended April 26, 2026) were \"primarily driven by higher compensation and benefits expense.\""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "The growth in NVIDIA's operating expenses in the quarter ended April 26, 2026 was primarily due to higher compensation and benefits. FY2027 Q1",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "operating expenses compute infrastructure compensation benefits dollar amount increase first quarter fiscal 2027 April 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "research development expenses breakdown compute infrastructure engineering materials compensation first quarter 2027 April 2026 percentage dollar",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "total operating expenses primary driver main reason increase Q1 2027 April 26 2026 fiscal year",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001045810-26-000052",
+        "filed": "2026-05-20",
+        "report_date": "2026-04-26",
+        "primary_document": "nvda-20260426.htm",
+        "sha256": "fb0363d34160d2cb9c1fcbbbda62c592a8e585a14e416cf8c70fba6fb7cb17cd"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001045810-26-000021",
+        "filed": "2026-02-25",
+        "report_date": "2026-01-25",
+        "primary_document": "nvda-20260125.htm",
+        "sha256": "d9135ae2801ec96e80398e2ddf0daa523b3a500ccf939ecf2ff150bdd13ab0dc"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001045810-25-000230",
+        "filed": "2025-11-19",
+        "report_date": "2025-10-26",
+        "primary_document": "nvda-20251026.htm",
+        "sha256": "2717bff8ccce5de703742a3c1293d63f23651eba4179601bdf80d9efb5591332"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 724
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-25-000230",
+      "form": "10-Q",
+      "filed": "2025-11-19",
+      "period_start": null,
+      "period_end": "2025-10-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000230/nvda-20251026.htm",
+      "locator": "10-Q 0001045810-25-000230:81780-82961",
+      "excerpt": ",716 $ 4,566 39 % The increases in research and development expenses for the third quarter and first nine months of fiscal year 2026 were primarily driven by a 27% and 30% increase in compensation and benefits, including stock-based compensation, reflecting employee growth and compensation increases, and an 83% and 75% increase in compute and infrastructure, respectively. The increases in sales, general and administrative expenses for the third quarter and first nine months of fiscal year 2026 were primarily driven by compensation and benefits, including stock-based compensation, reflecting employee growth and compensation increases. 29 Total Other Income, Net Three Months Ended Nine Months Ended Oct 26, 2025 Oct 27, 2024 $ Change Oct 26, 2025 Oct 27, 2024 $ Change ($ in millions) Interest income $ 624 $ 472 $ 152 $ 1,732 $ 1,275 $ 457 Interest expense (61) (61) — (186) (186) — Other income, net 1,363 36 1,327 3,418 301 3,117 Total other income, net $ 1,926 $ 447 $ 1,479 $ 4,964 $ 1,390 $ 3,574 The increase in interest income for the third quarter and first nine months of fiscal year 2026 was primarily due to growth in cash, cash equivalents, and debt securities.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:207164-208156",
+      "excerpt": "f $1.5 billion and $689 million for fiscal years 2026 and 2025, respectively. The net effect on our gross margin was an unfavorable impact of 2.6% and 2.3% in fiscal years 2026 and 2025, respectively. Operating Expenses Year Ended Jan 25, 2026 Jan 26, 2025 $ Change % Change ($ in millions) Research and development $ 18,497 $ 12,914 $ 5,583 43 % Sales, general and administrative 4,579 3,491 1,088 31 % Total operating expenses $ 23,076 $ 16,405 $ 6,671 41 % The increases in research and development expenses for fiscal year 2026 were driven by a 29% increase in compensation and benefits expense, including stock-based compensation, reflecting employee growth and compensation increases and a 79% increase in compute and infrastructure. 41 Table of Contents The increases in sales, general and administrative expenses for fiscal year 2026 were primarily driven by compensation and benefits expense, including stock-based compensation, reflecting employee growth and compensation increases.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:71537-72530",
+      "excerpt": "d inventory and settlements of excess inventory purchase obligations resulted in a provision release of $103 million and $436 million for the first quarter of fiscal years 2027 and 2026, respectively. The net effect on our gross margin was an unfavorable impact of 1.2% and 11.0% in the first quarter of fiscal years 2027 and 2026, respectively. Operating Expenses Three Months Ended Apr 26, 2026 Apr 27, 2025 $ Change % Change ($ in millions) Research and development $ 6,321 $ 3,989 $ 2,332 58 % Sales, general and administrative 1,300 1,041 259 25 % Total operating expenses $ 7,621 $ 5,030 $ 2,591 52 % The increase in research and development expenses for the first quarter of fiscal year 2027 was primarily driven by a 112% increase in compute and infrastructure, a 31% increase in compensation and benefits, including stock-based compensation, reflecting employee growth and compensation increases, and a 204% increase in engineering development materials for new product introductions.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:72330-73456",
+      "excerpt": "nsation and benefits, including stock-based compensation, reflecting employee growth and compensation increases, and a 204% increase in engineering development materials for new product introductions. 27 The increase in sales, general and administrative expenses for the first quarter of fiscal year 2027 was primarily driven by compensation and benefits, including stock-based compensation, reflecting employee growth and compensation increases. Total Other Income, Net Three Months Ended Apr 26, 2026 Apr 27, 2025 $ Change ($ in millions) Interest income $ 540 $ 515 $ 25 Interest expense (102) (63) (39) Other income (expense), net 15,929 (180) 16,109 Total other income, net $ 16,367 $ 272 $ 16,095 Total other income, net primarily consists of realized or unrealized gains and losses from investments in non-marketable securities and publicly-held equity securities. The change in Other income (expense), net compared to the first quarter of fiscal year 2026, was primarily driven by unrealized gains on investments in publicly-held equity securities of $13.4 billion and non-marketable equity securities of $2.6 billion.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:207956-209080",
+      "excerpt": "and administrative expenses for fiscal year 2026 were primarily driven by compensation and benefits expense, including stock-based compensation, reflecting employee growth and compensation increases. Total Other Income, Net Year Ended Jan 25, 2026 Jan 26, 2025 $ Change ($ in millions) Interest income $ 2,300 $ 1,786 $ 514 Interest expense (259) (247) (12) Other income, net 9,022 1,034 7,988 Total other income, net $ 11,063 $ 2,573 $ 8,490 The increase in interest income was primarily due to growth in cash, cash equivalents, and debt securities. Interest expense is primarily comprised of coupon interest and debt discount amortization related to our notes. Other income, net primarily consists of realized or unrealized gains and losses from investments in non-marketable equity securities, publicly-held equity securities, and the impact of changes in foreign currency rates. The change in Other income, net, compared to fiscal year 2025, was primarily driven by unrealized gains in non-marketable and publicly-held equity securities, including gains from our previously announced investment in Intel’s common stock.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:65099-66259",
+      "excerpt": "s $4.5 billion charge associated with H20 excess inventory and purchase obligations. Gross margin was approximately flat sequentially as our Blackwell architecture remains the majority of our revenue. Operating expenses were up 52% from a year ago and up 12% sequentially. The increases were primarily driven by higher compensation and benefits expense due to employee growth and compensation increases, compute and infrastructure costs, and engineering development materials for new product developments. Financial Information by Business Segment and Geographic Data Refer to Note 13 of the Notes to the Condensed Consolidated Financial Statements for disclosure regarding segment information. Critical Accounting Policies and Estimates Refer to Part II, Item 7, \"Critical Accounting Policies and Estimates\" of our Annual Report on Form 10-K for the fiscal year ended January 25, 2026. There have been no material changes to our Critical Accounting Policies and Estimates. 25 Results of Operations The following table sets forth, for the periods indicated, certain items in our Condensed Consolidated Statements of Income expressed as a percentage of revenue.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-25-000230",
+      "form": "10-Q",
+      "filed": "2025-11-19",
+      "period_start": null,
+      "period_end": "2025-10-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000230/nvda-20251026.htm",
+      "locator": "10-Q 0001045810-25-000230:53246-54134",
+      "excerpt": "ms primarily include product costs and inventory provisions, compensation and benefits excluding stock-based compensation expense, computing infrastructure expenses, and engineering development costs. Depreciation and amortization expense attributable to our Compute and Networking segment was $ 439 million and $ 187 million for the third quarter, and $ 1.1 billion and $ 495 million for the first nine months, of fiscal years 2026 and 2025, respectively. Depreciation and amortization expense attributable to our Graphics segment was $ 175 million and $ 97 million for the third quarter, and $ 426 million and $ 268 million for the first nine months, of fiscal years 2026 and 2025, respectively. Acquisition-related intangible amortization expense is not allocated to either Compute & Networking or Graphics for purposes of making operating decisions or assessing financial performance.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:47155-48301",
+      "excerpt": "are no intersegment transactions. The accounting policies for segment reporting are the same as for our consolidated financial statements. The table below presents details of our reportable segments. Compute & Networking Graphics Total (In millions) Three Months Ended Apr 26, 2026 Revenue $ 74,550 $ 7,065 $ 81,615 Other segment items (1) 21,215 4,124 25,339 Operating income $ 53,335 $ 2,941 $ 56,276 Three Months Ended Apr 27, 2025 Revenue $ 39,589 $ 4,473 $ 44,062 Other segment items (1) 17,535 2,833 20,368 Operating income $ 22,054 $ 1,640 $ 23,694 (1) Other segment items primarily include product costs and inventory provisions, compensation and benefits excluding stock-based compensation expense, computing infrastructure expenses, and engineering development costs. Depreciation and amortization expense attributable to our Compute & Networking segment was $ 526 million and $ 296 million for the first quarter of fiscal years 2027 and 2026, respectively. Depreciation and amortization expense attributable to our Graphics segment was $ 194 million and $ 109 million for the first quarter of fiscal years 2027 and 2026, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:67059-68129",
+      "excerpt": "pr 26, 2026 Apr 27, 2025 $ Change % Change ($ in millions) Compute & Networking $ 53,335 $ 22,054 $ 31,281 142 % Graphics 2,941 1,640 1,301 79 % Total $ 56,276 $ 23,694 $ 32,582 138 % Compute & Networking revenue – The year-over-year increase in the first quarter of fiscal year 2027 was due to growth in Data Center products, driven by the ramp of our Blackwell systems and demand for our InfiniBand, Spectrum-X Ethernet, and NVLink solutions. Graphics revenue – The year-over-year increase in the first quarter of fiscal year 2027 was driven by sales of our Blackwell architecture. Reportable segment operating income – The year-over-year increase in Compute & Networking segment operating income in the first quarter of fiscal year 2027 was driven by the growth in revenue and the non-recurrence of a $4.5 billion charge associated with H20 excess inventory and purchase obligations in the first quarter of fiscal year 2026. The year-over-year increase in Graphics segment operating income in the first quarter of fiscal year 2027 was driven by the growth in revenue.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:42752-43803",
+      "excerpt": "te outcome is unfavorable, there exists the possibility of a material adverse impact on our operating results, liquidity or financial position in the period the outcome becomes estimable and probable. Note 11 - Income Taxes Income tax expense was $ 11.6 billion and $ 3.1 billion for the first quarter of fiscal years 2027 and 2026, respectively. Income tax as a percentage of income before income tax was 16.6 % and 14.3 % for the first quarter of fiscal years 2027 and 2026, respectively. The effective tax rate increased primarily due to a lower percentage of tax benefits from stock-based compensation relative to the increase in income before income tax. Our effective tax rates for the first quarter of fiscal years 2027 and 2026 were lower than the U.S. federal statutory rate of 21% primarily due to tax benefits from foreign-derived deduction eligible income, income earned in jurisdictions that were subject to taxes at rates lower than the U.S. federal statutory tax rate, stock-based compensation, and the U.S. federal research tax credit.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:73256-74454",
+      "excerpt": "the first quarter of fiscal year 2026, was primarily driven by unrealized gains on investments in publicly-held equity securities of $13.4 billion and non-marketable equity securities of $2.6 billion. Income Taxes Income tax expense was $11.6 billion and $3.1 billion for the first quarter of fiscal years 2027 and 2026, respectively. Income tax as a percentage of income before income tax was 16.6% and 14.3% for the first quarter of fiscal years 2027 and 2026, respectively. The effective tax rate increased primarily due to a lower percentage of tax benefits from stock-based compensation relative to the increase in income before income tax. Our effective tax rates for the first quarter of fiscal years 2027 and 2026 were lower than the U.S. federal statutory rate of 21% primarily due to tax benefits from foreign-derived deduction eligible income, income earned in jurisdictions that were subject to taxes at rates lower than the U.S. federal statutory tax rate, stock-based compensation, and the U.S. federal research tax credit. Refer to Note 11 of the Notes to Condensed Consolidated Financial Statements in Part I, Item 1 of this Quarterly Report on Form 10-Q for additional information.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-25-000230",
+      "form": "10-Q",
+      "filed": "2025-11-19",
+      "period_start": null,
+      "period_end": "2025-10-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000230/nvda-20251026.htm",
+      "locator": "10-Q 0001045810-25-000230:83758-84874",
+      "excerpt": "ies. Income Taxes Income tax expense was $6.0 billion and $3.0 billion for the third quarter, and $13.9 billion and $8.0 billion for the first nine months, of fiscal years 2026 and 2025, respectively. Income tax as a percentage of income before income tax was an expense of 15.9% and 13.5% for the third quarter, and 15.3% and 13.6% for the first nine months, of fiscal years 2026 and 2025, respectively. The effective tax rate increased primarily due to a lower percentage of tax benefits from stock-based compensation and U.S. federal research tax credit relative to the increase in income before income tax. Our effective tax rates for the first nine months of fiscal years 2026 and 2025 were lower than the U.S. federal statutory rate of 21% primarily due to tax benefits from foreign-derived deduction eligible income, stock-based compensation, income earned in jurisdictions that are subject to taxes at rates lower than the U.S. federal statutory tax rate, and the U.S. federal research tax credit. In July 2025, the OBBBA was enacted into law and contains several changes to key U.S. federal income tax laws.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:75225-76376",
+      "excerpt": "used in investing activities increased in the first quarter of fiscal year 2027 compared to the first quarter of fiscal year 2026, primarily driven by higher purchases of equity investment securities. 28 Cash used in financing activities increased in the first quarter of fiscal year 2027 compared to the first quarter of fiscal year 2026, mainly due to higher share repurchases. Liquidity Our primary sources of liquidity include cash, cash equivalents, marketable debt and equity securities, and cash generated by our operations. As of April 26, 2026, we had $50.3 billion in cash, cash equivalents, and marketable debt securities as well as $30.2 billion of marketable equity securities. We believe that we have sufficient liquidity to meet our operating requirements for at least the next twelve months and for the foreseeable future, including our future obligations. We continuously evaluate our liquidity and capital resources, including our access to external capital, to ensure we can finance future capital requirements and commitments. Our marketable securities consist of publicly-held equity securities, debt securities issued by the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:51306-52487",
+      "excerpt": "revenue $ 81,615 $ 44,062 Note 14 - Leases Our lease obligations primarily consist of operating leases for our data centers and offices, with lease periods expiring between fiscal years 2027 and 2075. Future minimum lease obligations under our non-cancelable lease agreements as of April 26, 2026 were as follows: Operating Lease Obligations (In millions) Fiscal Year: 2027 (excluding the first quarter of fiscal 2027) $ 460 2028 626 2029 602 2030 530 2031 462 2032 and thereafter 2,924 Total 5,604 Less imputed interest 1,260 Present value of net future minimum lease payments 4,344 Less short-term operating lease liabilities 466 Long-term operating lease liabilities $ 3,878 Between the second quarter of fiscal year 2027 and fiscal year 2033, we expect to commence leases with future obligations of $ 32.4 billion, primarily for data center leases to support our research and development efforts, with lease terms of 3 to 20 years. Operating lease costs were $ 171 million and $ 101 million for the first quarter of fiscal years 2027 and 2026, respectively. Short-term, variable, and finance lease costs for the first quarter of fiscal years 2027 and 2026 were not significant.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-25-000230",
+      "form": "10-Q",
+      "filed": "2025-11-19",
+      "period_start": null,
+      "period_end": "2025-10-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000230/nvda-20251026.htm",
+      "locator": "10-Q 0001045810-25-000230:80780-81980",
+      "excerpt": "6, respectively. Provisions for inventory and excess inventory purchase obligations totaled $865 million and $2.2 billion for the third quarter and first nine months of fiscal year 2025, respectively. Sales of previously reserved inventory and settlements of excess inventory purchase obligations resulted in a provision release of $106 million and $305 million for the third quarter and first nine months of fiscal year 2025, respectively. The net effect on our gross margin was an unfavorable impact of 2.2% and 2.0% in the third quarter and first nine months of fiscal year 2025, respectively. Operating Expenses Three Months Ended Nine Months Ended Oct 26, 2025 Oct 27, 2024 $ Change % Change Oct 26, 2025 Oct 27, 2024 $ Change % Change ($ in millions) Research and development expenses $ 4,705 $ 3,390 $ 1,315 39 % $ 12,985 $ 9,200 $ 3,785 41 % Sales, general and administrative expenses 1,134 897 237 26 % 3,297 2,516 781 31 % Total operating expenses $ 5,839 $ 4,287 $ 1,552 36 % $ 16,282 $ 11,716 $ 4,566 39 % The increases in research and development expenses for the third quarter and first nine months of fiscal year 2026 were primarily driven by a 27% and 30% increase in compensation and",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E3",
+      "quote": "The increase in research and development expenses for the first quarter of fiscal year 2027 was primarily driven by a 112% increase in compute and infrastructure, a 31% increase in compensation and benefits, including stock-based compensation, reflecting employee growth and compensation increases, and a 204% increase in engineering development materials for new product introductions.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:71537-72530"
+    },
+    {
+      "evidence_id": "E4",
+      "quote": "The increase in sales, general and administrative expenses for the first quarter of fiscal year 2027 was primarily driven by compensation and benefits, including stock-based compensation, reflecting employee growth and compensation increases.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:72330-73456"
+    },
+    {
+      "evidence_id": "E6",
+      "quote": "Operating expenses were up 52% from a year ago and up 12% sequentially. The increases were primarily driven by higher compensation and benefits expense due to employee growth and compensation increases, compute and infrastructure costs, and engineering development materials for new product developments.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:65099-66259"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 18588,
+    "output": 2124
+  },
+  "latency_ms": 7,
+  "estimated_cost_usd": 0.087624,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

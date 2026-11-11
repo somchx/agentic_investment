@@ -1,0 +1,1190 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-MSFT-02:1c8ed7bc",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-MSFT-02",
+    "company": "MSFT",
+    "claim": "Microsoft's operating margin for the quarter ended December 31, 2025 exceeded 45%.",
+    "as_of_date": "2026-02-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026 Q2"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.45,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Microsoft's operating margin for the quarter ended December 31, 2025 exceeded 45%. While the evidence provided includes the 10-Q filing for this period (filed 2026-01-28), none of the evidence passages contain the actual operating margin figure or the specific revenue and operating income figures needed to calculate it. \n\nEvidence E2 mentions \"As a percent of revenue 10% 11% (1)ppt\" but this refers to Research and Development expenses as a percent of revenue, not operating margin. Evidence E3 discusses gross margin percentage changes but does not provide the specific operating margin figure. The other evidence passages discuss revenue changes, cost changes, and various business metrics, but none state or allow calculation of the operating margin for Q2 FY2026.\n\nWithout the actual operating income and revenue figures from the income statement, or a direct statement of the operating margin percentage, I cannot verify whether the operating margin exceeded 45% for the quarter ended December 31, 2025.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_ALL_TRUE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.45,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "quarter",
+            "level": 0.47094360980891564,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-10-01",
+                "period_end": "2025-12-31",
+                "value": 38275000000.0,
+                "filed": "2026-01-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-027207",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-10-01",
+                "period_end": "2025-12-31",
+                "value": 81273000000.0,
+                "filed": "2026-01-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-027207",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.4545754825367647,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.016368127272150923,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "The operating margin for Q2 FY2026 (quarter ended December 31, 2025) may have been below 45% rather than exceeding it.",
+          "search_query": "operating income operating margin quarter ended December 31 2025",
+          "numeric_check": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2025-12-31",
+            "comparison": "<=",
+            "threshold": 0.45,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "One-time charges, impairments, or restructuring costs in Q2 FY2026 may have significantly reduced operating income and margin below 45%.",
+          "search_query": "impairment charges restructuring Gaming business quarter December 2025 operating income impact",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "The income statement may show that total operating expenses as a percentage of revenue were high enough to result in an operating margin at or below 45%.",
+          "search_query": "total operating expenses income statement three months December 31 2025 revenue",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "operating income operating margin quarter ended December 31 2025",
+          "results": [
+            "E12",
+            "E13",
+            "E14"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "impairment charges restructuring Gaming business quarter December 2025 operating income impact",
+          "results": [
+            "E15",
+            "E16",
+            "E17"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "total operating expenses income statement three months December 31 2025 revenue",
+          "results": [
+            "E18",
+            "E19",
+            "E20"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18",
+        "E19",
+        "E20"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "quarter",
+            "level": 0.47094360980891564,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-10-01",
+                "period_end": "2025-12-31",
+                "value": 38275000000.0,
+                "filed": "2026-01-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-027207",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-10-01",
+                "period_end": "2025-12-31",
+                "value": 81273000000.0,
+                "filed": "2026-01-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-027207",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.4545754825367647,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.016368127272150923,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_ALL_TRUE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E13",
+              "quote": "Total Revenue $ 81,273 $ 69,632 $ 158,946 $ 135,217 Cost of revenue 25,978 21,799 50,021 41,898 Operating expenses 17,020 16,180 32,689 31,114 Operating income $ 38,275 $ 31,653 $ 76,236 $ 62,205",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-027207",
+              "form": "10-Q",
+              "filed": "2026-01-28",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+              "locator": "10-Q 0001193125-26-027207:62774-63904"
+            },
+            {
+              "evidence_id": "E14",
+              "quote": "Three Months Ended December 31, Percentage Change Six Months Ended December 31, Percentage Change 2025 2024 2025 2024 Revenue $ 81,273 $ 69,632 17% $ 158,946 $ 135,217 18% Gross margin 55,295 47,833 16% 108,925 93,319 17% Operating income 38,275 31,653 21%",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-027207",
+              "form": "10-Q",
+              "filed": "2026-01-28",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+              "locator": "10-Q 0001193125-26-027207:80893-82046"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E15",
+              "quote": "Research and development expenses increased $587 million or 7% driven by investments in compute capacity and AI talent and impairment charges in our Gaming business.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-027207",
+              "form": "10-Q",
+              "filed": "2026-01-28",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+              "locator": "10-Q 0001193125-26-027207:96965-97982"
+            },
+            {
+              "evidence_id": "E16",
+              "quote": "Operating expenses increased $840 million or 5% driven by research and development investments in compute capacity and AI talent, as well as impairment charges in our Gaming business.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-027207",
+              "form": "10-Q",
+              "filed": "2026-01-28",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+              "locator": "10-Q 0001193125-26-027207:82770-83810"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E19",
+              "quote": "Total Revenue $ 81,273 $ 69,632 17% $ 158,946 $ 135,217 18% Cost of revenue 25,978 21,799 19% 50,021 41,898 19% Operating expenses 17,020 16,180 5% 32,689 31,114 5% Operating income $ 38,275 $ 31,653 21%",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-027207",
+              "form": "10-Q",
+              "filed": "2026-01-28",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+              "locator": "10-Q 0001193125-26-027207:86716-87849"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "f393923a055cdf69e0e7faaebe1a287310590521c345ed55f4440cf7db01157c",
+      "source": "cache",
+      "input_tokens": 4043,
+      "output_tokens": 444,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.45,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Microsoft's operating margin for the quarter ended December 31, 2025 exceeded 45%. While the evidence provided includes the 10-Q filing for this period (filed 2026-01-28), none of the evidence passages contain the actual operating margin figure or the specific revenue and operating income figures needed to calculate it. \n\nEvidence E2 mentions \"As a percent of revenue 10% 11% (1)ppt\" but this refers to Research and Development expenses as a percent of revenue, not operating margin. Evidence E3 discusses gross margin percentage changes but does not provide the specific operating margin figure. The other evidence passages discuss revenue changes, cost changes, and various business metrics, but none state or allow calculation of the operating margin for Q2 FY2026.\n\nWithout the actual operating income and revenue figures from the income statement, or a direct statement of the operating margin percentage, I cannot verify whether the operating margin exceeded 45% for the quarter ended December 31, 2025.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "7eefaa94d58290f7d1366c04062731ec5c8945b16e2fad2bfe6f400e5473645b",
+      "source": "cache",
+      "input_tokens": 5190,
+      "output_tokens": 375,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "The operating margin for Q2 FY2026 (quarter ended December 31, 2025) may have been below 45% rather than exceeding it.",
+            "search_query": "operating income operating margin quarter ended December 31 2025",
+            "numeric_check": {
+              "metric": "OperatingMargin",
+              "measure": "level",
+              "period_basis": "quarter",
+              "period_end": "2025-12-31",
+              "comparison": "<=",
+              "threshold": 0.45,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "One-time charges, impairments, or restructuring costs in Q2 FY2026 may have significantly reduced operating income and margin below 45%.",
+            "search_query": "impairment charges restructuring Gaming business quarter December 2025 operating income impact",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "The income statement may show that total operating expenses as a percentage of revenue were high enough to result in an operating margin at or below 45%.",
+            "search_query": "total operating expenses income statement three months December 31 2025 revenue",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "c7fac7488296aa4d4b4ab0772869e0d2de767271d1946fc7d4f73b0a74c4185a",
+      "source": "cache",
+      "input_tokens": 10027,
+      "output_tokens": 1380,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E13",
+                "quote": "Total Revenue $ 81,273 $ 69,632 $ 158,946 $ 135,217 Cost of revenue 25,978 21,799 50,021 41,898 Operating expenses 17,020 16,180 32,689 31,114 Operating income $ 38,275 $ 31,653 $ 76,236 $ 62,205"
+              },
+              {
+                "evidence_id": "E14",
+                "quote": "Three Months Ended December 31, Percentage Change Six Months Ended December 31, Percentage Change 2025 2024 2025 2024 Revenue $ 81,273 $ 69,632 17% $ 158,946 $ 135,217 18% Gross margin 55,295 47,833 16% 108,925 93,319 17% Operating income 38,275 31,653 21%"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E15",
+                "quote": "Research and development expenses increased $587 million or 7% driven by investments in compute capacity and AI talent and impairment charges in our Gaming business."
+              },
+              {
+                "evidence_id": "E16",
+                "quote": "Operating expenses increased $840 million or 5% driven by research and development investments in compute capacity and AI talent, as well as impairment charges in our Gaming business."
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E19",
+                "quote": "Total Revenue $ 81,273 $ 69,632 17% $ 158,946 $ 135,217 18% Cost of revenue 25,978 21,799 19% 50,021 41,898 19% Operating expenses 17,020 16,180 5% 32,689 31,114 5% Operating income $ 38,275 $ 31,653 21%"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": true,
+        "change_reason": "My initial verdict was INSUFFICIENT_EVIDENCE because the original evidence passages did not contain the specific operating income and revenue figures from the income statement. However, the counter-evidence retrieved during the challenge phase includes the complete income statement data showing: Revenue of $81,273 million and Operating income of $38,275 million for the three months ended December 31, 2025. This yields an operating margin of 47.09% (38,275/81,273), which exceeds the 45% threshold stated in the claim. The numeric check confirms this calculation with a computed level of 0.47094 (47.094%).",
+        "supporting_evidence": [
+          {
+            "evidence_id": "E13",
+            "quote": "Total Revenue $ 81,273 $ 69,632 $ 158,946 $ 135,217 Cost of revenue 25,978 21,799 50,021 41,898 Operating expenses 17,020 16,180 32,689 31,114 Operating income $ 38,275 $ 31,653 $ 76,236 $ 62,205"
+          },
+          {
+            "evidence_id": "E14",
+            "quote": "Three Months Ended December 31, Percentage Change Six Months Ended December 31, Percentage Change 2025 2024 2025 2024 Revenue $ 81,273 $ 69,632 17% $ 158,946 $ 135,217 18% Gross margin 55,295 47,833 16% 108,925 93,319 17% Operating income 38,275 31,653 21%"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Microsoft's operating margin for the quarter ended December 31, 2025 exceeded 45%. The counter-evidence provides the complete income statement figures for the three months ended December 31, 2025: Revenue of $81,273 million and Operating income of $38,275 million. This yields an operating margin of 47.09% ($38,275 / $81,273 = 0.4709), which exceeds the 45% threshold.\n\nAll three challenges were refuted:\nH1: The numeric check confirms the operating margin was 47.09%, not below 45%.\nH2: While impairment charges in the Gaming business were mentioned, they were part of the $587 million increase in R&D expenses and did not prevent the operating margin from exceeding 45%.\nH3: Total operating expenses were $17,020 million on revenue of $81,273 million, representing only 21% of revenue, which combined with cost of revenue of $25,978 million (32% of revenue) results in the 47.09% operating margin.\n\nThe claim is fully supported by the financial data in the 10-Q filing for the quarter ended December 31, 2025."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Microsoft's operating margin for the quarter ended December 31, 2025 exceeded 45%. FY2026 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "operating income operating margin quarter ended December 31 2025",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E12",
+        "E13",
+        "E14"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "impairment charges restructuring Gaming business quarter December 2025 operating income impact",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E15",
+        "E16",
+        "E17"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "total operating expenses income statement three months December 31 2025 revenue",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E18",
+        "E19",
+        "E20"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.45,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "quarter",
+            "level": 0.47094360980891564,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-10-01",
+                "period_end": "2025-12-31",
+                "value": 38275000000.0,
+                "filed": "2026-01-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-027207",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-10-01",
+                "period_end": "2025-12-31",
+                "value": 81273000000.0,
+                "filed": "2026-01-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-027207",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.4545754825367647,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.016368127272150923,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2025-12-31",
+            "comparison": "<=",
+            "threshold": 0.45,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "quarter",
+            "level": 0.47094360980891564,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-10-01",
+                "period_end": "2025-12-31",
+                "value": 38275000000.0,
+                "filed": "2026-01-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-027207",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-10-01",
+                "period_end": "2025-12-31",
+                "value": 81273000000.0,
+                "filed": "2026-01-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-027207",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.4545754825367647,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.016368127272150923,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001193125-26-027207",
+        "filed": "2026-01-28",
+        "report_date": "2025-12-31",
+        "primary_document": "msft-20251231.htm",
+        "sha256": "383fbc3a1bc3340a625fd05599c36462c5fe642d288202995692cc90507c189c"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001193125-25-256321",
+        "filed": "2025-10-29",
+        "report_date": "2025-09-30",
+        "primary_document": "msft-20250930.htm",
+        "sha256": "a15e809980c1d35fba36d587185ba5305e7dd2532c09c4c3442eb4c044b10ac7"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0000950170-25-100235",
+        "filed": "2025-07-30",
+        "report_date": "2025-06-30",
+        "primary_document": "msft-20250630.htm",
+        "sha256": "15d2ebb941500e84aeadd2654143ac3d0fbb10a65d8387391727ec4ae36fcd42"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 790
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:2503-3695",
+      "excerpt": "ry 22, 2026 Common Stock, $ 0.00000625 par value per share 7,425,629,076 shares MICROSOFT CORPORATION FORM 10-Q For the Quarter Ended December 31, 2025 INDEX Page PART I. FINANCIAL INFORMATION Item 1. Financial Statements a) Income Statements for the Three and Six Months Ended December 31, 2025 and 2024 3 b) Comprehensive Income Statements for the Three and Six Months Ended December 31, 2025 and 2024 4 c) Balance Sheets as of December 31, 2025 and June 30, 2025 5 d) Cash Flows Statements for the Three and Six Months Ended December 31, 2025 and 2024 6 e) Stockholders’ Equity Statements for the Three and Six Months Ended December 31, 2025 and 2024 7 f) Notes to Financial Statements 8 g) Report of Independent Registered Public Accounting Firm 29 Item 2. Management’s Discussion and Analysis of Financial Condition and Results of Operations 30 Item 3. Quantitative and Qualitative Disclosures About Market Risk 46 Item 4. Controls and Procedures 46 PART II. OTHER INFORMATION Item 1. Legal Proceedings 47 Item 1A. Risk Factors 47 Item 2. Unregistered Sales of Equity Securities and Use of Proceeds 62 Item 5. Other Information 63 Item 6. Exhibits 64 SIGNATURE 65 2 PART I Item 1 PART I.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:95970-97165",
+      "excerpt": "her margin businesses. • Operating expenses increased $369 million or 5% driven by impairment charges in our Gaming business and research and development investments in compute capacity and AI talent. OPERATING EXPENSES Research and Development (In millions, except percentages) Three Months Ended December 31, Percentage Change Six Months Ended December 31, Percentage Change 2025 2024 2025 2024 Research and development $ 8,504 $ 7,917 7% $ 16,650 $ 15,461 8% As a percent of revenue 10% 11% (1)ppt 10% 11% (1)ppt Research and development expenses include payroll, employee benefits, stock-based compensation expense, and other headcount-related expenses associated with product development. Research and development expenses also include technology development costs, including AI training and other infrastructure costs, third-party development and programming costs, and the amortization of purchased software code and services content. Three Months Ended December 31, 2025 Compared with Three Months Ended December 31, 2024 Research and development expenses increased $587 million or 7% driven by investments in compute capacity and AI talent and impairment charges in our Gaming business.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:81846-82970",
+      "excerpt": "losses from investments in OpenAI. Refer to the Non-GAAP Financial Measures section below for a reconciliation of our financial results reported in accordance with GAAP to non-GAAP financial results. Three Months Ended December 31, 2025 Compared with Three Months Ended December 31, 2024 Revenue increased $11.6 billion or 17% driven by Intelligent Cloud and Productivity and Business Processes, offset in part by More Personal Computing. Intelligent Cloud revenue increased driven by Azure. Productivity and Business Processes revenue increased driven by Microsoft 365 Commercial cloud. More Personal Computing revenue decreased driven by Gaming, offset in part by Search and news advertising as well as Windows OEM. Cost of revenue increased $4.2 billion or 19% driven by growth in Microsoft Cloud. Gross margin increased $7.5 billion or 16% with growth across each of our segments. • Gross margin percentage decreased slightly driven by continued investments in AI infrastructure and growing AI product usage, offset in part by efficiency gains across the Microsoft Cloud and sales mix shift to higher margin businesses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:91394-92555",
+      "excerpt": "her margin businesses. • Operating expenses increased $236 million or 6% driven by impairment charges in our Gaming business and research and development investments in compute capacity and AI talent. Six Months Ended December 31, 2025 Compared with Six Months Ended December 31, 2024 Productivity and Business Processes Revenue increased $9.4 billion or 16%. • Microsoft 365 Commercial products and cloud services revenue increased $6.9 billion or 17%. Microsoft 365 Commercial cloud revenue grew 17% with growth in revenue per user driven by Microsoft 365 E5 and Microsoft 365 Copilot, and continued Microsoft 365 Commercial seat growth. Microsoft 365 Commercial products revenue grew 15% driven by Windows Commercial on-premises components of Microsoft 365 suite sales, as well as an increase in Office 2024 transactional purchasing. • Microsoft 365 Consumer products and cloud services revenue increased $961 million or 27%. Microsoft 365 Consumer cloud revenue grew 27% driven by growth in revenue per user and continued growth in Microsoft 365 Consumer subscribers. • LinkedIn revenue increased $917 million or 10% driven by growth in Marketing Solutions.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:53726-54776",
+      "excerpt": "the program approved on September 14, 2021, has no expiration date, and may be terminated at any time. As of December 31, 2025, $ 47.4 billion remained of this $ 60.0 billion share repurchase program. We repurchased the following shares of common stock under the share repurchase programs: (In millions) Shares Amount Shares Amount Fiscal Year 2026 2025 First Quarter 8 $ 3,955 7 $ 2,800 Second Quarter 12 5,964 8 3,500 Total 20 $ 9,919 15 $ 6,300 All repurchases were made using cash resources. Shares repurchased during fiscal year 2026 were under the share repurchase program approved on September 16, 2024. Shares repurchased during fiscal year 2025 were under the share repurchase program approved on September 14, 2021. The above table excludes shares repurchased to settle employee tax withholding related to the vesting of stock awards of $ 1.5 billion and $ 3.1 billion for the three and six months ended December 31, 2025, respectively, and $ 1.5 billion and $ 2.8 billion for the three and six months ended December 31, 2024, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:83610-84631",
+      "excerpt": "t year net income and diluted EPS were positively impacted by net gains from investments in OpenAI, which resulted in an increase in net income and diluted EPS of $7.6 billion and $1.02, respectively. Prior year net income and diluted EPS were negatively impacted by net losses from investments in OpenAI, which resulted in a decrease in net income and diluted EPS of $939 million and $0.12, respectively. Six Months Ended December 31, 2025 Compared with Six Months Ended December 31, 2024 Revenue increased $23.7 billion or 18% with growth across each of our segments. Intelligent Cloud revenue increased driven by Azure. Productivity and Business Processes revenue increased driven by Microsoft 365 Commercial cloud. More Personal Computing revenue increased driven by Search and news advertising and Windows OEM, offset in part by Gaming and Devices. Cost of revenue increased $8.1 billion or 19% driven by growth in Microsoft Cloud. Gross margin increased $15.6 billion or 17% with growth across each of our segments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": "2025-10-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/0001193125-26-027207-index.htm",
+      "locator": "OperatingIncome 2025-10-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        38275000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": "2025-10-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/0001193125-26-027207-index.htm",
+      "locator": "Revenue 2025-10-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        81273000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": "2024-10-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/0001193125-26-027207-index.htm",
+      "locator": "OperatingIncome 2024-10-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        31653000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": "2024-10-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/0001193125-26-027207-index.htm",
+      "locator": "Revenue 2024-10-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        69632000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "MSFT",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "OperatingMargin level quarter @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        0.47094360980891564,
+        0.4545754825367647,
+        0.016368127272150923
+      ],
+      "unit": "ratio",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:61774-62974",
+      "excerpt": "d fines, information technology, human resources, finance, excise taxes, field selling, shared facilities services, customer service and support, and severance incurred as part of a corporate program. Each allocation is measured differently based on the specific facts and circumstances of the costs being allocated and is generally based on relative gross margin or relative headcount. Segment revenue, cost of revenue, operating expenses, and operating income were as follows during the periods presented: (In millions) Three Months Ended December 31, Six Months Ended December 31, 2025 2024 2025 2024 Productivity and Business Processes Revenue $ 34,116 $ 29,437 $ 67,136 $ 57,754 Cost of revenue 6,110 5,569 11,831 10,863 Operating expenses 7,407 6,983 14,299 13,490 Operating income $ 20,599 $ 16,885 $ 41,006 $ 33,401 Intelligent Cloud Revenue $ 32,907 $ 25,544 $ 63,804 $ 49,636 Cost of revenue 13,566 9,405 25,880 18,019 Operating expenses 5,468 5,288 10,660 10,263 Operating income $ 13,873 $ 10,851 $ 27,264 $ 21,354 More Personal Computing Revenue $ 14,250 $ 14,651 $ 28,006 $ 27,827 Cost of revenue 6,302 6,825 12,310 13,016 Operating expenses 4,145 3,909 7,730 7,361 Operating income $ 3",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:62774-63904",
+      "excerpt": "$ 10,851 $ 27,264 $ 21,354 More Personal Computing Revenue $ 14,250 $ 14,651 $ 28,006 $ 27,827 Cost of revenue 6,302 6,825 12,310 13,016 Operating expenses 4,145 3,909 7,730 7,361 Operating income $ 3,803 $ 3,917 $ 7,966 $ 7,450 Total Revenue $ 81,273 $ 69,632 $ 158,946 $ 135,217 Cost of revenue 25,978 21,799 50,021 41,898 Operating expenses 17,020 16,180 32,689 31,114 Operating income $ 38,275 $ 31,653 $ 76,236 $ 62,205 No sales to an individual customer or country other than the United States accounted for more than 10% of revenue for the three or six months ended December 31, 2025 or 2024. Revenue, classified by the major geographic areas in which our customers were located, was as follows: (In millions) Three Months Ended December 31, Six Months Ended December 31, 2025 2024 2025 2024 United States (a) $ 41,410 $ 35,537 $ 81,487 $ 69,450 Other countries 39,863 34,095 77,459 65,767 Total $ 81,273 $ 69,632 $ 158,946 $ 135,217 (a) Includes billings to OEMs and certain multinational organizations because of the nature of these businesses and the impracticability of determining the geographic source of the revenue.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:80893-82046",
+      "excerpt": "advertising revenue (ex TAC) growth Revenue from search and news advertising excluding traffic acquisition costs (“TAC”) paid to Bing Ads network publishers and news partners SUMMARY RESULTS OF OPERATIONS (In millions, except percentages and per share amounts) Three Months Ended December 31, Percentage Change Six Months Ended December 31, Percentage Change 2025 2024 2025 2024 Revenue $ 81,273 $ 69,632 17% $ 158,946 $ 135,217 18% Gross margin 55,295 47,833 16% 108,925 93,319 17% Operating income 38,275 31,653 21% 76,236 62,205 23% Net income 38,458 24,108 60% 66,205 48,775 36% Diluted earnings per share 5.16 3.23 60% 8.87 6.53 36% Adjusted net income (non-GAAP) 30,875 25,047 23% 61,708 50,237 23% Adjusted diluted earnings per share (non-GAAP) 4.14 3.35 24% 8.27 6.73 23% 33 PART I Item 2 Adjusted net income and adjusted diluted earnings per share (“EPS”) are non-GAAP financial measures. These non-GAAP financial measures exclude net gains and losses from investments in OpenAI. Refer to the Non-GAAP Financial Measures section below for a reconciliation of our financial results reported in accordance with GAAP to non-GAAP financial results.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:96965-97982",
+      "excerpt": "ree Months Ended December 31, 2024 Research and development expenses increased $587 million or 7% driven by investments in compute capacity and AI talent and impairment charges in our Gaming business. Six Months Ended December 31, 2025 Compared with Six Months Ended December 31, 2024 Research and development expenses increased $1.2 billion or 8% driven by investments in compute capacity and AI talent and impairment charges in our Gaming business. 38 PART I Item 2 Sales and Marketing (In millions, except percentages) Three Months Ended December 31, Percentage Change Six Months Ended December 31, Percentage Change 2025 2024 2025 2024 Sales and marketing $ 6,584 $ 6,440 2% $ 12,301 $ 12,157 1% As a percent of revenue 8% 9% (1)ppt 8% 9% (1)ppt Sales and marketing expenses include payroll, employee benefits, stock-based compensation expense, and other headcount-related expenses associated with sales and marketing personnel, and the costs of advertising, promotions, trade shows, seminars, and other programs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:82770-83810",
+      "excerpt": "ightly driven by continued investments in AI infrastructure and growing AI product usage, offset in part by efficiency gains across the Microsoft Cloud and sales mix shift to higher margin businesses. • Microsoft Cloud gross margin percentage decreased to 67% driven by continued investments in AI infrastructure and growing AI product usage, offset in part by efficiency gains in Azure and Microsoft 365 Commercial cloud. Operating expenses increased $840 million or 5% driven by research and development investments in compute capacity and AI talent, as well as impairment charges in our Gaming business. Operating income increased $6.6 billion or 21% driven by growth in Productivity and Business Processes and Intelligent Cloud. Revenue, gross margin, and operating income each included a favorable foreign currency impact of 2%. Current year net income and diluted EPS were positively impacted by net gains from investments in OpenAI, which resulted in an increase in net income and diluted EPS of $7.6 billion and $1.02, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:84431-85487",
+      "excerpt": "t in part by Gaming and Devices. Cost of revenue increased $8.1 billion or 19% driven by growth in Microsoft Cloud. Gross margin increased $15.6 billion or 17% with growth across each of our segments. • Gross margin percentage decreased slightly driven by continued investments in AI infrastructure and growing AI product usage, offset in part by efficiency gains across the Microsoft Cloud and sales mix shift to higher margin businesses. • Microsoft Cloud gross margin percentage decreased to 67% driven by continued investments in AI infrastructure and growing AI product usage, offset in part by efficiency gains in Azure and Microsoft 365 Commercial cloud. Operating expenses increased $1.6 billion or 5% driven by research and development investments in compute capacity and AI talent, as well as impairment charges in our Gaming business. Operating income increased $14.0 billion or 23% with growth across each of our segments. Revenue, gross margin, and operating income included a favorable foreign currency impact of 2%, 2%, and 3%, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:98782-99982",
+      "excerpt": "ed as part of a corporate program, and other headcount-related expenses associated with finance, legal, facilities, certain human resources and other administrative personnel, certain taxes, and legal and other administrative fees. Three Months Ended December 31, 2025 Compared with Three Months Ended December 31, 2024 General and administrative expenses increased $109 million or 6% driven by higher legal expenses. Six Months Ended December 31, 2025 Compared with Six Months Ended December 31, 2024 General and administrative expenses increased $242 million or 7% driven by higher legal expenses. OTHER INCOME (EXPENSE), NET The components of other income (expense), net were as follows: (In millions) Three Months Ended December 31, Six Months Ended December 31, 2025 2024 2025 2024 Interest and dividends income $ 840 $ 600 $ 1,816 $ 1,281 Interest expense (736 ) (594 ) (1,434 ) (1,176 ) Net recognized gains (losses) on investments 339 (860 ) (233 ) (397 ) Net gains (losses) on derivatives 37 (116 ) 1,616 (454 ) Net gains (losses) on foreign currency remeasurements (50 ) (153 ) (72 ) 23 Other, net 9,541 (1,165 ) 4,618 (1,848 ) Total $ 9,971 $ (2,288 ) $ 6,311 $ (2,571 ) 39 PART I Item 2 W",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:86716-87849",
+      "excerpt": "ng expenses 4,145 3,909 6% 7,730 7,361 5% Operating income $ 3,803 $ 3,917 (3)% $ 7,966 $ 7,450 7% Total Revenue $ 81,273 $ 69,632 17% $ 158,946 $ 135,217 18% Cost of revenue 25,978 21,799 19% 50,021 41,898 19% Operating expenses 17,020 16,180 5% 32,689 31,114 5% Operating income $ 38,275 $ 31,653 21% $ 76,236 $ 62,205 23% Reportable Segments Three Months Ended December 31, 2025 Compared with Three Months Ended December 31, 2024 Productivity and Business Processes Revenue increased $4.7 billion or 16%. • Microsoft 365 Commercial products and cloud services revenue increased $3.4 billion or 16%. Microsoft 365 Commercial cloud revenue grew 17% with growth in revenue per user driven by Microsoft 365 E5 and Microsoft 365 Copilot. Microsoft 365 Commercial seats grew 6% driven by small and medium businesses and frontline worker offerings. Microsoft 365 Commercial products revenue grew 13% driven by Windows Commercial on-premises components of Microsoft 365 suite sales, as well as an increase in Office 2024 transactional purchasing. • Microsoft 365 Consumer products and cloud services revenue increased $484 million or 27%.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E19"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:97782-98982",
+      "excerpt": "ock-based compensation expense, and other headcount-related expenses associated with sales and marketing personnel, and the costs of advertising, promotions, trade shows, seminars, and other programs. Three Months Ended December 31, 2025 Compared with Three Months Ended December 31, 2024 Sales and marketing expenses increased $144 million or 2% driven by higher advertising expenses. Six Months Ended December 31, 2025 Compared with Six Months Ended December 31, 2024 Sales and marketing expenses increased $144 million or 1% driven by higher advertising expenses. General and Administrative (In millions, except percentages) Three Months Ended December 31, Percentage Change Six Months Ended December 31, Percentage Change 2025 2024 2025 2024 General and administrative $ 1,932 $ 1,823 6% $ 3,738 $ 3,496 7% As a percent of revenue 2% 3% (1)ppt 2% 3% (1)ppt General and administrative expenses include payroll, employee benefits, stock-based compensation expense, employee severance expense incurred as part of a corporate program, and other headcount-related expenses associated with finance, legal, facilities, certain human resources and other administrative personnel, certain taxes, and legal",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E20"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E13",
+      "quote": "Total Revenue $ 81,273 $ 69,632 $ 158,946 $ 135,217 Cost of revenue 25,978 21,799 50,021 41,898 Operating expenses 17,020 16,180 32,689 31,114 Operating income $ 38,275 $ 31,653 $ 76,236 $ 62,205",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:62774-63904"
+    },
+    {
+      "evidence_id": "E14",
+      "quote": "Three Months Ended December 31, Percentage Change Six Months Ended December 31, Percentage Change 2025 2024 2025 2024 Revenue $ 81,273 $ 69,632 17% $ 158,946 $ 135,217 18% Gross margin 55,295 47,833 16% 108,925 93,319 17% Operating income 38,275 31,653 21%",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:80893-82046"
+    },
+    {
+      "evidence_id": "E11",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "OperatingMargin level quarter @ 2025-12-31"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 19260,
+    "output": 2199
+  },
+  "latency_ms": 14,
+  "estimated_cost_usd": 0.090765,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_ALL_TRUE",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 6,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_ALL_TRUE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 11,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

@@ -1,0 +1,1009 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-META-15:d6eeaddc",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-META-15",
+    "company": "META",
+    "claim": "Meta's revenue growth in 2025 was broad-based across geographic regions.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "In the third quarter of 2025, revenue increased by 24% in United States & Canada, 29% in Europe, 25% in Asia-Pacific, and 32% in Rest of World, in each case relative to the same period in 2024."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Meta's revenue growth in 2025 was broad-based across geographic regions. This is a qualitative/interpretive claim about the geographic distribution of revenue growth rather than a specific numeric assertion about a particular metric.\n\nEvidence E2 from the Q3 2025 10-Q (filed 2025-10-30, covering period ending 2025-09-30) directly supports this claim by showing that revenue increased across all four geographic regions Meta reports: United States & Canada (24%), Europe (29%), Asia-Pacific (25%), and Rest of World (32%). All regions showed positive growth, demonstrating that the revenue growth was indeed \"broad-based across geographic regions.\"\n\nSince the claim is about the full year 2025 and the evidence shows consistent growth across all regions in Q3 2025, and there is no contradicting evidence showing that other quarters had different patterns, the evidence supports the characterization of broad-based geographic revenue growth in 2025.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did Meta's full-year 2025 revenue growth show consistent positive growth across all geographic regions, or did some regions experience declines or minimal growth in other quarters that would contradict the 'broad-based' characterization?",
+          "search_query": "2025 revenue geographic region annual full year United States Canada Europe Asia-Pacific Rest of World decline decrease",
+          "numeric_check": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.0,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Was the revenue growth in 2025 driven primarily by one or two dominant regions rather than being truly 'broad-based', such that most revenue growth came from a concentrated geographic source?",
+          "search_query": "revenue contribution by region geographic concentration 2025 percentage of total revenue United States Canada Europe",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Did Meta experience significant geographic revenue declines or challenges in any region during 2025 that would undermine the characterization of broad-based growth?",
+          "search_query": "geographic region revenue decline headwind challenge weakness 2025 geopolitical impact regional performance",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "2025 revenue geographic region annual full year United States Canada Europe Asia-Pacific Rest of World decline decrease",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "revenue contribution by region geographic concentration 2025 percentage of total revenue United States Canada Europe",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "geographic region revenue decline headwind challenge weakness 2025 geopolitical impact regional performance",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 200966000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 200966000000.0,
+                "filed": "2026-01-29",
+                "form": "10-K",
+                "accession_number": "0001628280-26-003942",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 164501000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.2216703849824621,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E12",
+            "E10",
+            "E11"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "In 2025, revenue increased by 21% in United States & Canada, 24% in Europe, 20% in Asia-Pacific, and 27% in Rest of World, in each case relative to 2024.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003942",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+              "locator": "10-K 0001628280-26-003942:303249-304217"
+            },
+            {
+              "evidence_id": "E8",
+              "quote": "In the second quarter of 2025, revenue increased by 21% in United States & Canada, 24% in Europe, 19% in Asia-Pacific, and 24% in Rest of World, in each case relative to the same period in 2024.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-25-036791",
+              "form": "10-Q",
+              "filed": "2025-07-31",
+              "period_end": "2025-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+              "locator": "10-Q 0001628280-25-036791:99143-100149"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "In 2025, revenue increased by 21% in United States & Canada, 24% in Europe, 20% in Asia-Pacific, and 27% in Rest of World, in each case relative to 2024.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003942",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+              "locator": "10-K 0001628280-26-003942:303249-304217"
+            },
+            {
+              "evidence_id": "E14",
+              "quote": "United States and Canada (1) $ 78,866 $ 63,207 $ 52,888 Europe (2) 46,569 38,361 31,210 Asia-Pacific 53,817 45,009 36,154 Rest of World (2) 21,714 17,924 14,650",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003942",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+              "locator": "10-K 0001628280-26-003942:415823-417005"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "In 2025, revenue increased by 21% in United States & Canada, 24% in Europe, 20% in Asia-Pacific, and 27% in Rest of World, in each case relative to 2024.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003942",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+              "locator": "10-K 0001628280-26-003942:303249-304217"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "51390b3e1e630af97fe8e190c6e453b54fb362617d01762a4dc9df344ac702a4",
+      "source": "cache",
+      "input_tokens": 3647,
+      "output_tokens": 438,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "In the third quarter of 2025, revenue increased by 24% in United States & Canada, 29% in Europe, 25% in Asia-Pacific, and 32% in Rest of World, in each case relative to the same period in 2024."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Meta's revenue growth in 2025 was broad-based across geographic regions. This is a qualitative/interpretive claim about the geographic distribution of revenue growth rather than a specific numeric assertion about a particular metric.\n\nEvidence E2 from the Q3 2025 10-Q (filed 2025-10-30, covering period ending 2025-09-30) directly supports this claim by showing that revenue increased across all four geographic regions Meta reports: United States & Canada (24%), Europe (29%), Asia-Pacific (25%), and Rest of World (32%). All regions showed positive growth, demonstrating that the revenue growth was indeed \"broad-based across geographic regions.\"\n\nSince the claim is about the full year 2025 and the evidence shows consistent growth across all regions in Q3 2025, and there is no contradicting evidence showing that other quarters had different patterns, the evidence supports the characterization of broad-based geographic revenue growth in 2025.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "7abe816b4032b281dc054b6aa2864165c3417c83e2c926b8b3f5d0c98408a9db",
+      "source": "live",
+      "input_tokens": 4476,
+      "output_tokens": 407,
+      "stop_reason": "tool_use",
+      "latency_ms": 8366,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did Meta's full-year 2025 revenue growth show consistent positive growth across all geographic regions, or did some regions experience declines or minimal growth in other quarters that would contradict the 'broad-based' characterization?",
+            "search_query": "2025 revenue geographic region annual full year United States Canada Europe Asia-Pacific Rest of World decline decrease",
+            "numeric_check": {
+              "metric": "Revenue",
+              "measure": "yoy_growth",
+              "period_basis": "annual",
+              "period_end": "2025-12-31",
+              "comparison": ">",
+              "threshold": 0.0,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Was the revenue growth in 2025 driven primarily by one or two dominant regions rather than being truly 'broad-based', such that most revenue growth came from a concentrated geographic source?",
+            "search_query": "revenue contribution by region geographic concentration 2025 percentage of total revenue United States Canada Europe",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Did Meta experience significant geographic revenue declines or challenges in any region during 2025 that would undermine the characterization of broad-based growth?",
+            "search_query": "geographic region revenue decline headwind challenge weakness 2025 geopolitical impact regional performance",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "62381c3df0960bd85a4069538eb571a5a082aa6c08402a1e7b9daac3753c0f60",
+      "source": "live",
+      "input_tokens": 8623,
+      "output_tokens": 1210,
+      "stop_reason": "tool_use",
+      "latency_ms": 19414,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "In 2025, revenue increased by 21% in United States & Canada, 24% in Europe, 20% in Asia-Pacific, and 27% in Rest of World, in each case relative to 2024."
+              },
+              {
+                "evidence_id": "E8",
+                "quote": "In the second quarter of 2025, revenue increased by 21% in United States & Canada, 24% in Europe, 19% in Asia-Pacific, and 24% in Rest of World, in each case relative to the same period in 2024."
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "In 2025, revenue increased by 21% in United States & Canada, 24% in Europe, 20% in Asia-Pacific, and 27% in Rest of World, in each case relative to 2024."
+              },
+              {
+                "evidence_id": "E14",
+                "quote": "United States and Canada (1) $ 78,866 $ 63,207 $ 52,888 Europe (2) 46,569 38,361 31,210 Asia-Pacific 53,817 45,009 36,154 Rest of World (2) 21,714 17,924 14,650"
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "In 2025, revenue increased by 21% in United States & Canada, 24% in Europe, 20% in Asia-Pacific, and 27% in Rest of World, in each case relative to 2024."
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "In the third quarter of 2025, revenue increased by 24% in United States & Canada, 29% in Europe, 25% in Asia-Pacific, and 32% in Rest of World, in each case relative to the same period in 2024."
+          },
+          {
+            "evidence_id": "E7",
+            "quote": "In 2025, revenue increased by 21% in United States & Canada, 24% in Europe, 20% in Asia-Pacific, and 27% in Rest of World, in each case relative to 2024."
+          },
+          {
+            "evidence_id": "E8",
+            "quote": "In the second quarter of 2025, revenue increased by 21% in United States & Canada, 24% in Europe, 19% in Asia-Pacific, and 24% in Rest of World, in each case relative to the same period in 2024."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "All three challenges have been refuted by the newly retrieved evidence, which strengthens the initial SUPPORTED verdict.\n\nH1 challenged whether full-year 2025 showed consistent positive growth across all regions. Evidence E7 from the 2025 10-K definitively shows that all four geographic regions experienced positive revenue growth for the full year 2025: US & Canada (+21%), Europe (+24%), Asia-Pacific (+20%), and Rest of World (+27%). Evidence E8 shows similar positive growth across all regions in Q2 2025. This refutes any concern about regional declines.\n\nH2 challenged whether growth was concentrated in one or two regions rather than truly broad-based. The evidence shows balanced growth rates across all regions (ranging from 20% to 27% for full year 2025), with no single region dominating. While E14 shows that US & Canada and Asia-Pacific are the largest revenue contributors in absolute terms, the growth rates were relatively consistent across all regions, supporting the \"broad-based\" characterization.\n\nH3 challenged whether any region experienced significant declines or challenges. The evidence clearly shows all regions had strong positive growth throughout 2025, with no geographic revenue declines reported.\n\nThe initial verdict of SUPPORTED remains correct. The claim that Meta's revenue growth in 2025 was broad-based across geographic regions is fully supported by evidence showing positive growth in all four reported geographic regions for both the full year and individual quarters of 2025.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Meta's revenue growth in 2025 was broad-based across geographic regions. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "2025 revenue geographic region annual full year United States Canada Europe Asia-Pacific Rest of World decline decrease",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "revenue contribution by region geographic concentration 2025 percentage of total revenue United States Canada Europe",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "geographic region revenue decline headwind challenge weakness 2025 geopolitical impact regional performance",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.0,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 200966000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 200966000000.0,
+                "filed": "2026-01-29",
+                "form": "10-K",
+                "accession_number": "0001628280-26-003942",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 164501000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.2216703849824621,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E12",
+            "E10",
+            "E11"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-003942",
+        "filed": "2026-01-29",
+        "report_date": "2025-12-31",
+        "primary_document": "meta-20251231.htm",
+        "sha256": "5c4096ceb780d0fb52f3e3da5164ead16c58030223b453b0386ef2eb1bad8011"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-047240",
+        "filed": "2025-10-30",
+        "report_date": "2025-09-30",
+        "primary_document": "meta-20250930.htm",
+        "sha256": "f39bcd7a00c56aa48b4345190175554d892cdf0c2306ba77158bd09c8edaa6ea"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-036791",
+        "filed": "2025-07-31",
+        "report_date": "2025-06-30",
+        "primary_document": "meta-20250630.htm",
+        "sha256": "7b6a13ec0a671ca273fc0f7757071c664ae7b73fd87ab4f55615e88a52c6f3e3"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1460
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:104495-105627",
+      "excerpt": "the second quarter of 2025, worldwide ARPP was $13.65, an increase of 15% from the second quarter of 2024. 34 Table of Contents Trends in Our Ad Impressions and Average Price Per Ad • Ad Impressions. Our advertising revenue is generated by displaying ad products on Facebook, Instagram, Messenger, and third-party mobile applications. Impressions are considered delivered when an ad is displayed to a user. _ _ Note: Our ad impressions growth by user geography in the charts above is geographically apportioned based on our estimation of the geographic location of our users when an ad impression is delivered. 35 Table of Contents • Average Price Per Ad. We calculate average price per ad as total advertising revenue divided by the number of ads delivered. _ _ Note: Our average price per ad growth by user geography in the charts above is geographically apportioned based on our estimation of the geographic location of our users when an ad impression is delivered. 36 Table of Contents Components of Results of Operations Revenue Family of Apps (FoA) Advertising . We generate substantially all of our revenue from advertising.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+      "locator": "10-Q 0001628280-25-047240:109088-110117",
+      "excerpt": "ography in which ad impressions are delivered, virtual and digital goods are purchased, or consumer hardware products are shipped. The geography of our users affects our revenue and financial results. Our revenue in regions such as United States & Canada and Europe is relatively higher primarily due to the size and maturity of those online and mobile advertising markets, and ad impression growth is mainly in geographies that monetize at lower rates, such as Asia-Pacific. In the third quarter of 2025, revenue increased by 24% in United States & Canada, 29% in Europe, 25% in Asia-Pacific, and 32% in Rest of World, in each case relative to the same period in 2024. - Ad Revenue Non-Ad Revenue Note: Non-advertising revenue includes RL revenue generated from the delivery of consumer hardware products and FoA Other revenue, which consists of revenue from paid messaging from WhatsApp, Meta Verified subscriptions, net fees we receive from developers using our Payments infrastructure, and revenue from various other sources.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+      "locator": "10-Q 0001628280-25-047240:114246-115378",
+      "excerpt": "in Our Ad Impressions and Average Price Per Ad • Ad Impressions. Our advertising revenue is generated by displaying ad products on Facebook, Instagram, Messenger, and third-party mobile applications. Impressions are considered delivered when an ad is displayed to a user. _ _ Note: Our ad impressions growth by user geography in the charts above is geographically apportioned based on our estimation of the geographic location of our users when an ad impression is delivered. 39 Table of Contents • Average Price Per Ad. We calculate average price per ad as total advertising revenue divided by the number of ads delivered. _ _ Note: Our average price per ad growth by user geography in the charts above is geographically apportioned based on our estimation of the geographic location of our users when an ad impression is delivered. 40 Table of Contents Components of Results of Operations Revenue Family of Apps (FoA) Advertising . We generate substantially all of our revenue from advertising. Our advertising revenue is generated by displaying ad products on Facebook, Instagram, Messenger, and third-party mobile applications.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:300573-301730",
+      "excerpt": "een fluctuations and declines in the size of our active user base in one or more regions from time to time due to geopolitical conditions, which have adversely affected our user growth and engagement. These trends have adversely affected our advertising revenue and we expect will continue to adversely affect our advertising revenue in the foreseeable future. Although we regularly evaluate a variety of sources to understand trends in our advertising revenue, we do not have perfect visibility into the factors driving advertiser spending decisions and our assessments involve complex judgments about what is driving advertising decisions across a large and diversified advertiser base across the globe. Trends impacting advertising spend are also dynamic and interrelated. As a result, it is difficult to identify with precision which advertiser spending decisions are attributable to which trends, and we are unable to quantify the exact impact that each trend had on our advertising revenue during the periods presented. 62 Table of Contents Investment Philosophy We remain focused on operating efficiently while investing in significant opportunities.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:308643-309812",
+      "excerpt": "in Our Ad Impressions and Average Price Per Ad • Ad Impressions. Our advertising revenue is generated by displaying ad products on Facebook, Instagram, Messenger, and third-party mobile applications. Impressions are considered delivered when an ad is displayed to a user. Note: Our ad impressions growth by user geography in the charts above is geographically apportioned based on our estimation of the geographic location of our users when an ad impression is delivered. 67 Table of Contents • Average Price Per Ad. We calculate average price per ad as total advertising revenue divided by the number of ads delivered. Note: Our average price per ad growth by user geography in the charts above is geographically apportioned based on our estimation of the geographic location of our users when an ad impression is delivered. 68 Table of Contents Critical Accounting Estimates Our consolidated financial statements are prepared in accordance with GAAP. The preparation of these consolidated financial statements requires us to make estimates and assumptions that affect the reported amounts of assets, liabilities, revenue, costs and expenses, and related disclosures.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+      "locator": "10-Q 0001628280-25-047240:105548-106735",
+      "excerpt": "esults in improved user engagement and monetization of our products. However, we continue to face competition from other products and services within certain demographics, in particular younger users. In addition, while Reels is growing in usage, it monetizes at a lower rate than our Feed and Stories products and we expect it will continue to monetize at a lower rate for the foreseeable future. We also have seen fluctuations and declines in the size of our active user base in one or more regions from time to time due to geopolitical conditions, which have adversely affected our user growth and engagement. These trends have adversely affected our advertising revenue and we expect will continue to adversely affect our advertising revenue in the foreseeable future. Although we regularly evaluate a variety of sources to understand trends in our advertising revenue, we do not have perfect visibility into the factors driving advertiser spending decisions and our assessments involve complex judgments about what is driving advertising decisions across a large and diversified advertiser base across the globe. Trends impacting advertising spend are also dynamic and interrelated.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:303249-304217",
+      "excerpt": "we believe this will become the next computing platform and will unlock monetization opportunities for businesses, developers, and creators, including around advertising, hardware, and digital goods. 63 Table of Contents Trends in Our Revenue by User Geography We calculate our revenue by user geography based on our estimate of the geography in which ad impressions are delivered, virtual and digital goods are purchased, or consumer hardware products are shipped. The geography of our users affects our revenue and financial results. Our revenue in regions such as United States & Canada and Europe is relatively higher primarily due to the size and maturity of those online and mobile advertising markets, and ad impression growth is primarily in geographies that monetize at lower rates, such as Asia-Pacific. In 2025, revenue increased by 21% in United States & Canada, 24% in Europe, 20% in Asia-Pacific, and 27% in Rest of World, in each case relative to 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:99143-100149",
+      "excerpt": "we believe this will become the next computing platform and will unlock monetization opportunities for businesses, developers, and creators, including around advertising, hardware, and digital goods. 31 Table of Contents Trends in Our Revenue by User Geography We calculate our revenue by user geography based on our estimate of the geography in which ad impressions are delivered, virtual and digital goods are purchased, or consumer hardware products are shipped. The geography of our users affects our revenue and financial results. Our revenue in regions such as United States & Canada and Europe is relatively higher primarily due to the size and maturity of those online and mobile advertising markets, and ad impression growth is mainly in geographies that monetize at lower rates, such as Asia-Pacific. In the second quarter of 2025, revenue increased by 21% in United States & Canada, 24% in Europe, 19% in Asia-Pacific, and 24% in Rest of World, in each case relative to the same period in 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:304017-305069",
+      "excerpt": "monetize at lower rates, such as Asia-Pacific. In 2025, revenue increased by 21% in United States & Canada, 24% in Europe, 20% in Asia-Pacific, and 27% in Rest of World, in each case relative to 2024. - Ad Revenue Non-Ad Revenue Note: Non-advertising revenue includes RL revenue generated from the delivery of consumer hardware products and FoA Other revenue, which consists of revenue from paid messaging from WhatsApp, Meta Verified subscriptions, net fees we receive from developers using our Payments infrastructure, and revenue from various other sources. Our revenue by user geography in the charts above is geographically apportioned based on our estimation of the geographic location of our users when they perform a revenue-generating activity. This allocation differs from our revenue disaggregated by geography disclosure in Note 2 — Revenue in our consolidated financial statements included in Part II, Item 8, \"Financial Statements and Supplemental Data\" where revenue is geographically apportioned based on the addresses of our customers.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/0001628280-26-003942-index.htm",
+      "locator": "Revenue 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        200966000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/0001628280-26-003942-index.htm",
+      "locator": "Revenue 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        164501000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "META",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "Revenue yoy_growth annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        200966000000.0,
+        164501000000.0,
+        0.2216703849824621
+      ],
+      "unit": "ratio",
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:99949-100988",
+      "excerpt": "ific. In the second quarter of 2025, revenue increased by 21% in United States & Canada, 24% in Europe, 19% in Asia-Pacific, and 24% in Rest of World, in each case relative to the same period in 2024. - Ad Revenue Non-Ad Revenue Note: Non-advertising revenue includes RL revenue generated from the delivery of consumer hardware products and FoA Other revenue, which consists of revenue from paid messaging from WhatsApp, Meta Verified subscriptions, net fees we receive from developers using our Payments infrastructure, and revenue from various other sources. Our revenue by user geography in the charts above is geographically apportioned based on our estimation of the geographic location of our users when they perform a revenue-generating activity. This allocation differs from our revenue disaggregated by geography disclosure in Note 2 — Revenue in our condensed consolidated financial statements included in Part I, Item 1, \"Financial Statements\" where revenue is geographically apportioned based on the addresses of our customers.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:415823-417005",
+      "excerpt": "er a retrospective approach. We are evaluating the effect that this guidance and do not expect the adoption of this guidance to have a material impact on our consolidated financial statements. Note 2. Revenue Revenue disaggregated by revenue source and by segment consists of the following (in millions): Year Ended December 31, 2025 2024 2023 Advertising $ 196,175 $ 160,633 $ 131,948 Other revenue 2,584 1,722 1,058 Family of Apps 198,759 162,355 133,006 Reality Labs 2,207 2,146 1,896 Total revenue $ 200,966 $ 164,501 $ 134,902 Revenue disaggregated by geography, based on the addresses of our customers, consists of the following (in millions): Year Ended December 31, 2025 2024 2023 United States and Canada (1) $ 78,866 $ 63,207 $ 52,888 Europe (2) 46,569 38,361 31,210 Asia-Pacific 53,817 45,009 36,154 Rest of World (2) 21,714 17,924 14,650 Total revenue $ 200,966 $ 164,501 $ 134,902 _________________________ (1) United States revenue was $ 74.78 billion, $ 59.73 billion, and $ 49.78 billion for the years ended December 31, 2025, 2024, and 2023, respectively. (2) Europe includes Russia and Turkey, and Rest of World includes Africa, Latin America, and the Middle East.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:29362-30513",
+      "excerpt": "nt Accounting Policies There have been no material changes to our significant accounting policies from our Annual Report on Form 10-K for the year ended December 31, 2024. 12 Table of Contents Note 2. Revenue Revenue disaggregated by revenue source and by segment consists of the following (in millions): Three Months Ended June 30, Six Months Ended June 30, 2025 2024 2025 2024 Advertising $ 46,563 $ 38,329 $ 87,955 $ 73,965 Other revenue 583 389 1,093 769 Family of Apps 47,146 38,718 89,048 74,734 Reality Labs 370 353 782 793 Total revenue $ 47,516 $ 39,071 $ 89,830 $ 75,527 Revenue disaggregated by geography, based on the addresses of our customers, consists of the following (in millions): Three Months Ended June 30, Six Months Ended June 30, 2025 2024 2025 2024 United States and Canada $ 18,454 $ 14,640 $ 35,323 $ 28,287 Europe (1) 11,128 9,153 20,749 17,557 Asia-Pacific 12,858 10,967 24,097 21,279 Rest of World (1) 5,076 4,311 9,661 8,404 Total revenue $ 47,516 $ 39,071 $ 89,830 $ 75,527 ____________________________________ (1) Europe includes Russia and Turkey, and Rest of World includes Africa, Latin America, and the Middle East.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:47977-49117",
+      "excerpt": "ive products and services, such as TikTok, that have reduced some users' engagement with our products and services, as well as global and regional business, macroeconomic, and geopolitical conditions. For example, in connection with the war in Ukraine, access to Facebook and Instagram was restricted in Russia and these services were then prohibited by the Russian government, which contributed to slight decreases in the size of our active user base following the onset of the war. Any future declines in the size of our active user base may adversely impact our ability to deliver ad impressions and, in turn, our financial performance. If people do not perceive our products to be useful, reliable, and trustworthy, we may not be able to attract or retain users or otherwise maintain or increase the frequency and duration of their engagement. A number of other social networking companies that achieved early popularity have since seen their active user bases or levels of engagement decline, in some cases precipitously. There is no guarantee that we will not experience a similar erosion of our active user base or engagement levels.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:94750-95781",
+      "excerpt": "ich violate our advertising policies adversely affect our revenue, and we expect that the continued enhancement of such efforts will have an impact on our revenue in the future, which may be material. Other Business and Macroeconomic Conditions Other global and regional business, macroeconomic, and geopolitical conditions also have had, and we believe will continue to have, an impact on our user growth and engagement and advertising revenue. In particular, we believe advertising budgets have been pressured from time to time by factors such as inflation, economic policies and international trade, high interest rates, and related market uncertainty, which has led to reduced marketer spending. We are currently subject to increased business, macroeconomic, and geopolitical uncertainty, including as a result of volatility around international trade, which could impact our financial results in future periods. In addition, competitive products and services have reduced some users' engagement with our products and services.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:298687-299875",
+      "excerpt": "nue for the foreseeable future. In addition, we maintain advertising policies to protect the security and integrity of our platform and comply with global content, security, and integrity obligations. Our ongoing efforts to enhance enforcement against ads and marketers which violate our advertising policies adversely affect our revenue, and we expect that the continued enhancement of such efforts will have an impact on our revenue in the future, which may be material. Other Business and Macroeconomic Conditions Other global and regional business, macroeconomic, and geopolitical conditions also have had, and we believe will continue to have, an impact on our user growth and engagement and advertising revenue. In particular, we believe advertising budgets have been pressured from time to time by factors such as inflation, economic policies and international trade, high interest rates, and related market uncertainty, which has led to reduced marketer spending. We are currently subject to increased business, macroeconomic, and geopolitical uncertainty, including as a result of volatility around international trade, which could impact our financial results in future periods.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E2",
+      "quote": "In the third quarter of 2025, revenue increased by 24% in United States & Canada, 29% in Europe, 25% in Asia-Pacific, and 32% in Rest of World, in each case relative to the same period in 2024.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+      "locator": "10-Q 0001628280-25-047240:109088-110117"
+    },
+    {
+      "evidence_id": "E7",
+      "quote": "In 2025, revenue increased by 21% in United States & Canada, 24% in Europe, 20% in Asia-Pacific, and 27% in Rest of World, in each case relative to 2024.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:303249-304217"
+    },
+    {
+      "evidence_id": "E8",
+      "quote": "In the second quarter of 2025, revenue increased by 21% in United States & Canada, 24% in Europe, 19% in Asia-Pacific, and 24% in Rest of World, in each case relative to the same period in 2024.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:99143-100149"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 16746,
+    "output": 2055
+  },
+  "latency_ms": 27815,
+  "estimated_cost_usd": 0.081063,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 8368,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 23,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 19416,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 10,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

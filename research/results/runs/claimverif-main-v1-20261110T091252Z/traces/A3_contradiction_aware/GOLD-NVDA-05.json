@@ -1,0 +1,922 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-NVDA-05:024d9390",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-NVDA-05",
+    "company": "NVDA",
+    "claim": "NVIDIA's revenue for the quarter ended October 25, 2026 increased year over year.",
+    "as_of_date": "2026-10-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2027 Q3"
+  },
+  "initial_label": "INSUFFICIENT_EVIDENCE",
+  "final_label": "INSUFFICIENT_EVIDENCE",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-25",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": 0
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that NVIDIA's revenue for the quarter ended October 25, 2026 increased year over year. This would be the third quarter of fiscal year 2027 (FY2027 Q3).\n\nThe evidence provided includes:\n- E1: 10-Q filed 2026-05-20 for period ending 2026-04-26 (FY2027 Q1)\n- E2, E3, E6: 10-Q filed 2026-08-26 for period ending 2026-07-26 (FY2027 Q2)\n- E4, E5: Also from the FY2027 Q1 filing\n\nNone of the evidence passages contain financial data for the quarter ended October 25, 2026 (FY2027 Q3). The latest period covered in the evidence is July 26, 2026 (FY2027 Q2). \n\nEvidence E5 shows revenue data for Q1 FY2027 ($81,615 million for Apr 26, 2026 vs $44,062 million for Apr 27, 2025), demonstrating year-over-year growth in Q1, but this does not provide information about Q3 FY2027.\n\nSince the evidence does not include any 10-Q or 10-K filing covering the quarter ended October 25, 2026, there is insufficient evidence to verify whether revenue increased year over year for that specific period.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-25",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": 0
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-10-25"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Does the filing actually contain revenue data for the quarter ended October 25, 2026 (or October 27, 2026) that I may have missed?",
+          "search_query": "revenue quarter ended October 2026 three months",
+          "numeric_check": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-25",
+            "comparison": "increase",
+            "threshold": 0,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Could the quarter ended October 25, 2026 actually refer to a different fiscal period designation (e.g., Q2 instead of Q3) due to NVIDIA's fiscal calendar?",
+          "search_query": "fiscal year 2027 third quarter October 25 2026 fiscal calendar",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Is there a 10-Q filing for the period ending October 2026 that contains the relevant revenue comparison data?",
+          "search_query": "October 2026 10-Q quarterly report third quarter fiscal 2027",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "revenue quarter ended October 2026 three months",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "fiscal year 2027 third quarter October 25 2026 fiscal calendar",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "October 2026 10-Q quarterly report third quarter fiscal 2027",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-10-25"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "NVIDIA Corporation Form 10-Q For the Quarter Ended April 26, 2026",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000052",
+              "form": "10-Q",
+              "filed": "2026-05-20",
+              "period_end": "2026-04-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+              "locator": "10-Q 0001045810-26-000052:2597-3737"
+            },
+            {
+              "evidence_id": "E8",
+              "quote": "NVIDIA Corporation Form 10-Q For the Quarter Ended July 26, 2026",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000075",
+              "form": "10-Q",
+              "filed": "2026-08-26",
+              "period_end": "2026-07-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+              "locator": "10-Q 0001045810-26-000075:2598-3751"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E13",
+              "quote": "Revenue growth in the second quarter and the first half of fiscal year 2027 was driven by data center products",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000075",
+              "form": "10-Q",
+              "filed": "2026-08-26",
+              "period_end": "2026-07-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+              "locator": "10-Q 0001045810-26-000075:67646-68752"
+            },
+            {
+              "evidence_id": "E11",
+              "quote": "Gross margin increased to 75.0% for the second quarter of fiscal year 2027 compared to 72.4% for the second quarter of fiscal year 2026",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000075",
+              "form": "10-Q",
+              "filed": "2026-08-26",
+              "period_end": "2026-07-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+              "locator": "10-Q 0001045810-26-000075:87985-89043"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "NVIDIA Corporation Form 10-Q For the Quarter Ended April 26, 2026",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000052",
+              "form": "10-Q",
+              "filed": "2026-05-20",
+              "period_end": "2026-04-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+              "locator": "10-Q 0001045810-26-000052:2597-3737"
+            },
+            {
+              "evidence_id": "E8",
+              "quote": "NVIDIA Corporation Form 10-Q For the Quarter Ended July 26, 2026",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000075",
+              "form": "10-Q",
+              "filed": "2026-08-26",
+              "period_end": "2026-07-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+              "locator": "10-Q 0001045810-26-000075:2598-3751"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "f9ed6477dff6295d366a860115af201db4b23ea1cb07d857e1dbb1ab3cf2bc8c",
+      "source": "cache",
+      "input_tokens": 3916,
+      "output_tokens": 557,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-25",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": 0
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that NVIDIA's revenue for the quarter ended October 25, 2026 increased year over year. This would be the third quarter of fiscal year 2027 (FY2027 Q3).\n\nThe evidence provided includes:\n- E1: 10-Q filed 2026-05-20 for period ending 2026-04-26 (FY2027 Q1)\n- E2, E3, E6: 10-Q filed 2026-08-26 for period ending 2026-07-26 (FY2027 Q2)\n- E4, E5: Also from the FY2027 Q1 filing\n\nNone of the evidence passages contain financial data for the quarter ended October 25, 2026 (FY2027 Q3). The latest period covered in the evidence is July 26, 2026 (FY2027 Q2). \n\nEvidence E5 shows revenue data for Q1 FY2027 ($81,615 million for Apr 26, 2026 vs $44,062 million for Apr 27, 2025), demonstrating year-over-year growth in Q1, but this does not provide information about Q3 FY2027.\n\nSince the evidence does not include any 10-Q or 10-K filing covering the quarter ended October 25, 2026, there is insufficient evidence to verify whether revenue increased year over year for that specific period.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "64856c07b7753d7d3754f9a9597b08f2df3d2633eeafb48d18c72498bef538de",
+      "source": "live",
+      "input_tokens": 5020,
+      "output_tokens": 374,
+      "stop_reason": "tool_use",
+      "latency_ms": 6234,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Does the filing actually contain revenue data for the quarter ended October 25, 2026 (or October 27, 2026) that I may have missed?",
+            "search_query": "revenue quarter ended October 2026 three months",
+            "numeric_check": {
+              "metric": "Revenue",
+              "measure": "yoy_growth",
+              "period_basis": "quarter",
+              "period_end": "2026-10-25",
+              "comparison": "increase",
+              "threshold": 0,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Could the quarter ended October 25, 2026 actually refer to a different fiscal period designation (e.g., Q2 instead of Q3) due to NVIDIA's fiscal calendar?",
+            "search_query": "fiscal year 2027 third quarter October 25 2026 fiscal calendar",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Is there a 10-Q filing for the period ending October 2026 that contains the relevant revenue comparison data?",
+            "search_query": "October 2026 10-Q quarterly report third quarter fiscal 2027",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "1ec670a0cb13887dc88c01a13e6019591cc5a53da9778ab3960b67ba3be183b6",
+      "source": "live",
+      "input_tokens": 9201,
+      "output_tokens": 972,
+      "stop_reason": "tool_use",
+      "latency_ms": 16660,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "NVIDIA Corporation Form 10-Q For the Quarter Ended April 26, 2026"
+              },
+              {
+                "evidence_id": "E8",
+                "quote": "NVIDIA Corporation Form 10-Q For the Quarter Ended July 26, 2026"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E13",
+                "quote": "Revenue growth in the second quarter and the first half of fiscal year 2027 was driven by data center products"
+              },
+              {
+                "evidence_id": "E11",
+                "quote": "Gross margin increased to 75.0% for the second quarter of fiscal year 2027 compared to 72.4% for the second quarter of fiscal year 2026"
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "NVIDIA Corporation Form 10-Q For the Quarter Ended April 26, 2026"
+              },
+              {
+                "evidence_id": "E8",
+                "quote": "NVIDIA Corporation Form 10-Q For the Quarter Ended July 26, 2026"
+              }
+            ]
+          }
+        ],
+        "label": "INSUFFICIENT_EVIDENCE",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After investigating potential challenges to the initial INSUFFICIENT_EVIDENCE verdict, all three hypotheses were refuted:\n\nH1 (Missing revenue data for Q3 FY2027): The counter-evidence confirms that the available filings only cover quarters ending April 26, 2026 (Q1 FY2027) and July 26, 2026 (Q2 FY2027). The numeric check also returned PERIOD_NOT_AVAILABLE for 2026-10-25, confirming no data exists for the quarter ended October 25, 2026.\n\nH2 (Fiscal calendar confusion): Evidence E11 and E13 clearly identify July 26, 2026 as the \"second quarter of fiscal year 2027,\" confirming that October 25, 2026 would indeed be Q3 FY2027 as originally assessed. There is no fiscal calendar confusion.\n\nH3 (Missing 10-Q filing): The evidence shows only two 10-Q filings are available: one filed 2026-05-20 for Q1 FY2027 (ending April 26, 2026) and one filed 2026-08-26 for Q2 FY2027 (ending July 26, 2026). No 10-Q filing exists in the evidence for the quarter ending October 2026.\n\nThe claim requires revenue data for the quarter ended October 25, 2026 (Q3 FY2027), but the latest available filing only covers through July 26, 2026 (Q2 FY2027). The evidence cutoff date is 2026-10-15, which is before the quarter end date of October 25, 2026, making it impossible for a 10-Q covering that period to have been filed yet.\n\nThe verdict remains INSUFFICIENT_EVIDENCE.",
+        "change_reason": "No change - all challenges were refuted and the initial verdict stands."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "NVIDIA's revenue for the quarter ended October 25, 2026 increased year over year. FY2027 Q3",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "revenue quarter ended October 2026 three months",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "fiscal year 2027 third quarter October 25 2026 fiscal calendar",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "October 2026 10-Q quarterly report third quarter fiscal 2027",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-25",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": 0
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-10-25"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-25",
+            "comparison": "increase",
+            "threshold": 0,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-10-25"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001045810-26-000075",
+        "filed": "2026-08-26",
+        "report_date": "2026-07-26",
+        "primary_document": "nvda-20260726.htm",
+        "sha256": "bd3f27471f8ec978357f9a6f10121c41f788bb946b0fa1fe100e5d37e64e871a"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001045810-26-000052",
+        "filed": "2026-05-20",
+        "report_date": "2026-04-26",
+        "primary_document": "nvda-20260426.htm",
+        "sha256": "fb0363d34160d2cb9c1fcbbbda62c592a8e585a14e416cf8c70fba6fb7cb17cd"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001045810-26-000021",
+        "filed": "2026-02-25",
+        "report_date": "2026-01-25",
+        "primary_document": "nvda-20260125.htm",
+        "sha256": "d9135ae2801ec96e80398e2ddf0daa523b3a500ccf939ecf2ff150bdd13ab0dc"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 720
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:74254-75425",
+      "excerpt": "d the U.S. federal research tax credit. Refer to Note 11 of the Notes to Condensed Consolidated Financial Statements in Part I, Item 1 of this Quarterly Report on Form 10-Q for additional information. Liquidity and Capital Resources Apr 26, 2026 Jan 25, 2026 (In millions) Cash and cash equivalents $ 13,237 $ 10,605 Marketable debt securities 37,098 39,065 Cash, cash equivalents, and marketable debt securities $ 50,335 $ 49,670 Three Months Ended Apr 26, 2026 Apr 27, 2025 (In millions) Net cash provided by operating activities $ 50,344 $ 27,414 Net cash used in investing activities $ (26,429) $ (5,216) Net cash used in financing activities $ (21,283) $ (15,553) Our fixed income security investments include highly rated, diversified investment types and credit exposures with shorter maturities. Cash provided by operating activities increased in the first quarter of fiscal year 2027 compared to the first quarter of fiscal year 2026 due to higher revenue. Cash used in investing activities increased in the first quarter of fiscal year 2027 compared to the first quarter of fiscal year 2026, primarily driven by higher purchases of equity investment securities.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:14942-16066",
+      "excerpt": "thereto included in our Annual Report on Form 10-K for the fiscal year ended January 25, 2026. Certain prior fiscal year balances have been reclassified to conform to the current period presentation. Significant Accounting Policies There have been no material changes to our significant accounting policies disclosed in Note 1 - Organization and Summary of Significant Accounting Policies, of the Notes to the Consolidated Financial Statements included in our Annual Report on Form 10-K for the fiscal year ended January 25, 2026. Fiscal Year Fiscal year 2027 is a 53-week year, and fiscal year 2026 was a 52-week year, both ending on the last Sunday in January. The second quarters of fiscal years 2027 and 2026 were both 13-week quarters. The fourth quarter of fiscal year 2027 will be a 14-week quarter. Principles of Consolidation Our condensed consolidated financial statements include the accounts of NVIDIA Corporation and our wholly owned subsidiaries. All intercompany balances and transactions have been eliminated in consolidation. Use of Estimates The preparation of financial statements in conformity with U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:105424-106603",
+      "excerpt": "ndensed Consolidated Financial Statements in Part I, Item 1 of this Quarterly Report on Form 10-Q for a discussion of significant developments in our legal proceedings since January 25, 2026. Item 1A. Risk Factors Other than the risk factors listed below, there have been no material changes from the risk factors previously described under Item 1A of our Annual Report on Form 10-K for the fiscal year ended January 25, 2026 and Item 1A of our Quarterly Report on Form 10-Q for the fiscal quarter ended April 26, 2026. Purchasing or owning NVIDIA securities involves investment risks including, but not limited to, the risks described in Item 1A of our Annual Report on Form 10-K for the fiscal year ended January 25, 2026, Item 1A of our Quarterly Report on Form 10-Q for the fiscal quarter ended April 26, 2026, and below. Any one of those risks could harm our business, financial condition and results of operations or reputation, which could cause our stock price to decline. Additional risks, trends and uncertainties not presently known to us or that we currently believe are immaterial may also harm our business, financial condition, results of operations or reputation.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:13251-14390",
+      "excerpt": "rganization and Summary of Significant Accounting Policies, of the Notes to the Consolidated Financial Statements included in our Annual Report on Form 10-K for the fiscal year ended January 25, 2026. Fiscal Year Fiscal year 2027 is a 53-week year and fiscal year 2026 was a 52-week year, both ending on the last Sunday in January. The first quarters of fiscal years 2027 and 2026 were both 13-week quarters. The fourth quarter of fiscal year 2027 will be a 14-week quarter. Principles of Consolidation Our condensed consolidated financial statements include the accounts of NVIDIA Corporation and our wholly owned subsidiaries. All intercompany balances and transactions have been eliminated in consolidation. Use of Estimates The preparation of financial statements in conformity with U.S. GAAP requires management to make estimates and assumptions that affect the reported amounts of assets and liabilities and disclosures of contingent assets and liabilities at the date of the financial statements and the reported amounts of revenue and expenses during the reporting period. Actual results could differ materially from our estimates.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:49055-50131",
+      "excerpt": "( 102 ) ( 63 ) Other income (expense), net 15,929 ( 180 ) Consolidated income before income tax $ 69,903 $ 21,910 Revenue by geographic area is based upon the location of the customers’ headquarters. The end customer and shipping location may be different from our customers’ headquarters location. Three Months Ended Apr 26, 2026 Apr 27, 2025 (In millions) Geographic Revenue based upon Customer Headquarters Location: United States $ 63,769 $ 25,685 Taiwan 12,006 7,648 China (including Hong Kong) 4,550 9,659 Other 1,290 1,070 Total revenue $ 81,615 $ 44,062 Revenue from sales to customers headquartered outside of the United States accounted for 22 % of total revenue for the first quarter of fiscal year 2027 and 42 % of total revenue for the first quarter of fiscal year 2026 . We refer to customers who purchase products directly from NVIDIA as direct customers, such as AIBs, distributors, ODMs, OEMs, CSPs, AI model makers, and system integrators. Certain direct customers may use either internal resources or third-party system integrators to complete their build.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:68552-69645",
+      "excerpt": "ubin, began production shipments in the third quarter of fiscal year 2027. We will be shipping both Blackwell and Rubin systems in the future and are currently experiencing certain supply constraints. Demand estimates for our products can be inaccurate and create volatility in our revenue or supply levels. To secure inventory and capacity to meet demand for the next several years, we have entered into significant commitments and may continue to enter into manufacturing and supply agreements for both current and future products, and we continue to expand our supplier base. The scale and size of our production needs and the complexity of producing our data center systems has caused and could in the future cause delays in production, challenges in managing supply and demand, revenue volatility, quality issues, increased inventory provisions, decreases in product yields, higher material 25 costs, and increased warranty costs. We have significantly increased our supply and capacity commitments from $119 billion last quarter to $279 billion as of July 26, 2026 to meet future demand.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:2597-3737",
+      "excerpt": "ock, $0.001 par value, outstanding as of May 15, 2026, was 24.2 billion. NVIDIA Corporation Form 10-Q For the Quarter Ended April 26, 2026 Table of Contents Page Part I : Financial Information Item 1. Financial Statements (Unaudited) a) Condensed Consolidated Statements of Income for the three months ended April 26, 2026 and April 27, 2025 3 b) Condensed Consolidated Statements of Comprehensive Income for the three months ended April 26, 2026 and April 27, 2025 4 c) Condensed Consolidated Balance Sheets as of April 26, 2026 and January 25, 2026 5 d) Condensed Consolidated Statements of Shareholders’ Equity for the three months ended April 26, 2026 and April 27, 2025 6 e) Condensed Consolidated Statements of Cash Flows for the three months ended April 26, 2026 and April 27, 2025 7 f) Notes to Condensed Consolidated Financial Statements 8 Item 2. Management’s Discussion and Analysis of Financial Condition and Results of Operations 23 Item 3. Quantitative and Qualitative Disclosures About Market Risk 30 Item 4. Controls and Procedures 31 Part II : Other Information Item 1. Legal Proceedings 31 Item 1A. Risk Factors 31 Item 2.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:2598-3751",
+      "excerpt": "k, $0.001 par value, outstanding as of August 21, 2026, was 24.1 billion. NVIDIA Corporation Form 10-Q For the Quarter Ended July 26, 2026 Table of Contents Page Part I . Financial Information Item 1. Financial Statements (Unaudited) a) Condensed Consolidated Statements of Income for the three and six months ended July 26, 2026 and July 27, 2025 3 b) Condensed Consolidated Statements of Comprehensive Income for the three and six months ended July 26, 2026 and July 27, 2025 4 c) Condensed Consolidated Balance Sheets as of July 26, 2026 and January 25, 2026 5 d) Condensed Consolidated Statements of Shareholders’ Equity for the three and six months ended July 26, 2026 and July 27, 2025 6 e) Condensed Consolidated Statements of Cash Flows for the six months ended July 26, 2026 and July 27, 2025 8 f) Notes to Condensed Consolidated Financial Statements 9 Item 2. Management’s Discussion and Analysis of Financial Condition and Results of Operations 25 Item 3. Quantitative and Qualitative Disclosures About Market Risk 33 Item 4. Controls and Procedures 33 Part II . Other Information Item 1. Legal Proceedings 34 Item 1A. Risk Factors 34 Item 2.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:47155-48301",
+      "excerpt": "are no intersegment transactions. The accounting policies for segment reporting are the same as for our consolidated financial statements. The table below presents details of our reportable segments. Compute & Networking Graphics Total (In millions) Three Months Ended Apr 26, 2026 Revenue $ 74,550 $ 7,065 $ 81,615 Other segment items (1) 21,215 4,124 25,339 Operating income $ 53,335 $ 2,941 $ 56,276 Three Months Ended Apr 27, 2025 Revenue $ 39,589 $ 4,473 $ 44,062 Other segment items (1) 17,535 2,833 20,368 Operating income $ 22,054 $ 1,640 $ 23,694 (1) Other segment items primarily include product costs and inventory provisions, compensation and benefits excluding stock-based compensation expense, computing infrastructure expenses, and engineering development costs. Depreciation and amortization expense attributable to our Compute & Networking segment was $ 526 million and $ 296 million for the first quarter of fiscal years 2027 and 2026, respectively. Depreciation and amortization expense attributable to our Graphics segment was $ 194 million and $ 109 million for the first quarter of fiscal years 2027 and 2026, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:213292-214316",
+      "excerpt": "l of our cash, cash equivalents and marketable securities held outside the U.S. at the end of fiscal year 2026 are available for use in the U.S. without incurring additional U.S. federal income taxes. Our first quarter of any fiscal year (including fiscal year 2027) generally does not include any estimated federal and state income tax payments and our second quarter of any fiscal year (including fiscal year 2027) generally includes two estimated federal and state income tax payments. Capital Return to Shareholders On August 26, 2025, our Board of Directors approved an additional $60.0 billion in share repurchase authorization, without expiration. In fiscal year 2026, we repurchased 282 million shares of our common stock for $40.4 billion. As of January 25, 2026, we were authorized, subject to certain specifications, to repurchase up to $58.5 billion of our common stock. From January 26, 2026 through February 20, 2026, we repurchased 8 million shares for $1.5 billion pursuant to a pre-established trading plan.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:87985-89043",
+      "excerpt": "costs. Cost of revenue also includes acquisition-related intangible amortization expense, IP-related costs, and stock-based compensation related to personnel associated with manufacturing operations. 29 Gross margin increased to 75.0% for the second quarter of fiscal year 2027 compared to 72.4% for the second quarter of fiscal year 2026, and 75.0% for the first half of fiscal year 2027 compared to 66.6% for the first half of fiscal year 2026 due to improved mix from Blackwell Ultra. Gross margin for the first half of fiscal year 2026 was also impacted by a $4.5 billion charge associated with H20 excess inventory and purchase obligations. Provisions for inventory and excess inventory purchase obligations totaled $985 million and $2.1 billion for the second quarter and first half of fiscal year 2027, respectively. Sales of previously reserved inventory and settlements of excess inventory purchase obligations resulted in a provision release of $177 million and $280 million for the second quarter and first half of fiscal year 2027, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:88843-89883",
+      "excerpt": "ntory and settlements of excess inventory purchase obligations resulted in a provision release of $177 million and $280 million for the second quarter and first half of fiscal year 2027, respectively. The net effect on our gross margin was an unfavorable impact of 0.8% and 1.0% in the second quarter and first half of fiscal year 2027, respectively. Provisions for inventory and excess inventory purchase obligations totaled $1.0 billion and $6.3 billion for the second quarter and first half of fiscal year 2026, respectively, including $4.5 billion associated with H20 excess inventory and purchase obligations for the first quarter of fiscal year 2026. Sales of previously reserved inventory and settlements of excess inventory purchase obligations resulted in a provision release of $501 million and $937 million for the second quarter and first half of fiscal year 2026, respectively. The net effect on our gross margin was an unfavorable impact of 1.1% and 5.9% in the second quarter and first half of fiscal year 2026, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:67646-68752",
+      "excerpt": "latforms for scientific computing, AI, data science, autonomous vehicles, robotics, and digital twin applications. NVIDIA is now a data center-scale AI infrastructure company reshaping all industries. Our two operating segments are “Compute & Networking” and “Graphics.” Refer to Note 13 of the Notes to Condensed Consolidated Financial Statements in Part I, Item 1 of this Quarterly Report on Form 10-Q for additional information. Headquartered in Santa Clara, California, NVIDIA was incorporated in California in April 1993 and reincorporated in Delaware in April 1998. Recent Developments, Future Objectives and Challenges Revenue growth in the second quarter and the first half of fiscal year 2027 was driven by data center products for accelerated computing and AI solutions. Blackwell continued to account for the majority of our system shipments. Our next-generation Data Center architecture, Vera Rubin, began production shipments in the third quarter of fiscal year 2027. We will be shipping both Blackwell and Rubin systems in the future and are currently experiencing certain supply constraints.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:73256-74454",
+      "excerpt": "the first quarter of fiscal year 2026, was primarily driven by unrealized gains on investments in publicly-held equity securities of $13.4 billion and non-marketable equity securities of $2.6 billion. Income Taxes Income tax expense was $11.6 billion and $3.1 billion for the first quarter of fiscal years 2027 and 2026, respectively. Income tax as a percentage of income before income tax was 16.6% and 14.3% for the first quarter of fiscal years 2027 and 2026, respectively. The effective tax rate increased primarily due to a lower percentage of tax benefits from stock-based compensation relative to the increase in income before income tax. Our effective tax rates for the first quarter of fiscal years 2027 and 2026 were lower than the U.S. federal statutory rate of 21% primarily due to tax benefits from foreign-derived deduction eligible income, income earned in jurisdictions that were subject to taxes at rates lower than the U.S. federal statutory tax rate, stock-based compensation, and the U.S. federal research tax credit. Refer to Note 11 of the Notes to Condensed Consolidated Financial Statements in Part I, Item 1 of this Quarterly Report on Form 10-Q for additional information.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:91413-92510",
+      "excerpt": "d gains and losses from investments in non-marketable securities and publicly-held equity securities. Gains from equity securities, net, were primarily driven by unrealized gains in equity securities. Refer to Notes 5 and 6 of the Notes to Condensed Consolidated Financial Statements in Part I, Item 1 of this Quarterly Report on Form 10-Q for additional information. 30 Income Taxes Income tax expense was $11.8 billion and $4.8 billion for the second quarter, and $23.4 billion and $7.9 billion for the first half, of fiscal years 2027 and 2026, respectively. Income tax as a percentage of income before income tax was 16.5% and 15.3% for the second quarter, and 16.5% and 14.9% for the first half, of fiscal years 2027 and 2026, respectively. The effective tax rate increased primarily due to a lower percentage of tax benefits from stock-based compensation, foreign-derived deduction eligible income, and the U.S. federal research tax credit relative to the increase in income before income tax. Our effective tax rates for the first half of fiscal years 2027 and 2026 were lower than the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    }
+  ],
+  "citations": [],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 18137,
+    "output": 1903
+  },
+  "latency_ms": 22923,
+  "estimated_cost_usd": 0.082956,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+        "checks": [
+          "UNVERIFIABLE"
+        ]
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 6236,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 13,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 16663,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "INSUFFICIENT_EVIDENCE"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_PARTIALLY_UNVERIFIABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 11,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

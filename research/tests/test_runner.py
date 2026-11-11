@@ -141,3 +141,32 @@ def test_resume_refuses_changed_config(main_cfg, tmp_path):
     with pytest.raises(ValueError, match="config changed"):
         run_experiment(changed, claims, info, llm_mode="offline", llm=offline, approaches=["A1_conventional_rag"],
                        resume_run_id=run_id, runs_dir=str(tmp_path), progress=lambda s: None)
+
+
+def test_cost_cap_lowers_the_approved_budget(main_cfg, dev_claims):
+    from engine.llm import approve_paid_run
+    claims = [dev_claims["DEV-AMZN-06"]]
+    full = plan_run(main_cfg, claims)
+    capped = plan_run(main_cfg, claims, cost_cap_usd=0.5)
+    assert capped["max_cost_usd"] == 0.5 and capped["upper_bound_usd"] == full["max_cost_usd"] and capped["capped"]
+    assert "$0.50" in capped["confirmation_phrase"]
+    assert approve_paid_run(capped, capped["confirmation_phrase"]).max_cost_usd == 0.5
+    assert plan_run(main_cfg, claims, cost_cap_usd=1e6)["max_cost_usd"] == full["max_cost_usd"]  # never raised
+
+
+def test_fatal_api_error_stops_the_run_instead_of_recording_errors(tmp_path, main_cfg, dev_claims):
+    import requests
+
+    def unauthorized(p):
+        resp = requests.Response()
+        resp.status_code = 401
+        raise requests.HTTPError("401 Client Error: Unauthorized", response=resp)
+    llm = CachedLLM(mode="mock", inner=ScriptedLLM({"submit_verdict": unauthorized}), model=main_cfg["common"]["llm"]["model"])
+    claims, info = select_claims(main_cfg, claim_ids=["DEV-AMZN-06", "DEV-AAPL-04"])
+    with pytest.raises(requests.HTTPError):
+        run_experiment(main_cfg, claims, info, llm_mode="mock", llm=llm, approaches=["A1_conventional_rag"],
+                       runs_dir=str(tmp_path), progress=lambda s: None)
+    run_dir = next(tmp_path.iterdir())
+    status = json.load(open(run_dir / "status.json"))
+    assert status["state"] == "incomplete" and status["errors"] == 0 and "Unauthorized" in status["note"]
+    assert not (run_dir / "predictions.jsonl").exists() and not (run_dir / "SHA256SUMS").exists()

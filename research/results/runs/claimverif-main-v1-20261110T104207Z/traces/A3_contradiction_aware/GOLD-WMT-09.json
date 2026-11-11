@@ -1,0 +1,985 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-WMT-09:14c4665e",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-WMT-09",
+    "company": "WMT",
+    "claim": "Sam's Club U.S. operating income growth in the quarter ended April 30, 2026 was driven by higher membership and other income.",
+    "as_of_date": "2026-06-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2027 Q1"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Membership and other income increased 11.0% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year."
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "The increase was primarily due to growth in the membership base and Plus penetration, as well as increases in certain miscellaneous income items."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Sam's Club U.S. operating income growth in the quarter ended April 30, 2026 was driven by higher membership and other income. This is a purely interpretive claim about the driver/cause of operating income growth.\n\nEvidence E3 directly addresses Sam's Club U.S. for the three months ended April 30, 2026 and states: \"Membership and other income increased 11.0% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. The increase was primarily due to growth in the membership base and Plus penetration, as well as increases in certain miscellaneous income items.\"\n\nThis evidence confirms that:\n1. Membership and other income did increase (11.0%) in the relevant period\n2. This increase was driven by specific factors (membership base growth, Plus penetration, and miscellaneous income items)\n\nThe evidence supports the claim that higher membership and other income was a driver of Sam's Club U.S. operating income growth in Q1 FY2027 (quarter ended April 30, 2026). The claim does not make any specific numeric assertions about the magnitude of operating income growth itself, only about what drove it.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did Sam's Club U.S. operating income actually increase in the quarter ended April 30, 2026, or did it decline or remain flat?",
+          "search_query": "Sam's Club U.S. operating income three months April 30 2026 segment results",
+          "numeric_check": {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-04-30",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Does the filing explicitly attribute Sam's Club U.S. operating income growth to membership and other income, or does it attribute the growth to other factors such as gross profit, sales growth, or expense management?",
+          "search_query": "Sam's Club U.S. operating income increase driven primarily due three months April 30 2026",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Did Sam's Club U.S. gross profit rate decline significantly enough that it could have offset membership income gains and prevented operating income growth?",
+          "search_query": "Sam's Club U.S. gross profit rate margin basis points three months April 30 2026",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "Sam's Club U.S. operating income three months April 30 2026 segment results",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "Sam's Club U.S. operating income increase driven primarily due three months April 30 2026",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "Sam's Club U.S. gross profit rate margin basis points three months April 30 2026",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-04-30",
+            "basis": "quarter",
+            "level": 7493000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2026-02-01",
+                "period_end": "2026-04-30",
+                "value": 7493000000.0,
+                "filed": "2026-05-29",
+                "form": "10-Q",
+                "accession_number": "0000104169-26-000102",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 7135000000.0,
+            "prior_period_end": "2025-04-30",
+            "yoy_change": 0.05017519271198318,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E12",
+            "E10",
+            "E11"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "Operating income $ 674 $ 666",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000102",
+              "form": "10-Q",
+              "filed": "2026-05-29",
+              "period_end": "2026-04-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+              "locator": "10-Q 0000104169-26-000102:71423-72551"
+            },
+            {
+              "evidence_id": "E7",
+              "quote": "As a result of the factors discussed above, operating income increased $0.3 billion for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year.",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000102",
+              "form": "10-Q",
+              "filed": "2026-05-29",
+              "period_end": "2026-04-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+              "locator": "10-Q 0000104169-26-000102:71423-72551"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E3",
+              "quote": "Gross profit rate decreased 26 basis points for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000102",
+              "form": "10-Q",
+              "filed": "2026-05-29",
+              "period_end": "2026-04-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+              "locator": "10-Q 0000104169-26-000102:73300-74378"
+            },
+            {
+              "evidence_id": "E7",
+              "quote": "Operating income $ 674 $ 666",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000102",
+              "form": "10-Q",
+              "filed": "2026-05-29",
+              "period_end": "2026-04-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+              "locator": "10-Q 0000104169-26-000102:71423-72551"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "8731e181a5ee0c91d58873d5c0fe4af0834dbc9026e9c38997d7bf53fe25f321",
+      "source": "cache",
+      "input_tokens": 3849,
+      "output_tokens": 526,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Membership and other income increased 11.0% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year."
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "The increase was primarily due to growth in the membership base and Plus penetration, as well as increases in certain miscellaneous income items."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Sam's Club U.S. operating income growth in the quarter ended April 30, 2026 was driven by higher membership and other income. This is a purely interpretive claim about the driver/cause of operating income growth.\n\nEvidence E3 directly addresses Sam's Club U.S. for the three months ended April 30, 2026 and states: \"Membership and other income increased 11.0% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. The increase was primarily due to growth in the membership base and Plus penetration, as well as increases in certain miscellaneous income items.\"\n\nThis evidence confirms that:\n1. Membership and other income did increase (11.0%) in the relevant period\n2. This increase was driven by specific factors (membership base growth, Plus penetration, and miscellaneous income items)\n\nThe evidence supports the claim that higher membership and other income was a driver of Sam's Club U.S. operating income growth in Q1 FY2027 (quarter ended April 30, 2026). The claim does not make any specific numeric assertions about the magnitude of operating income growth itself, only about what drove it.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "cfe054707ffb18bc6c6b1b3147e2a4a0ec69e338fb8c8b2009a7e69a537c621c",
+      "source": "cache",
+      "input_tokens": 4838,
+      "output_tokens": 397,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did Sam's Club U.S. operating income actually increase in the quarter ended April 30, 2026, or did it decline or remain flat?",
+            "search_query": "Sam's Club U.S. operating income three months April 30 2026 segment results",
+            "numeric_check": {
+              "metric": "OperatingIncome",
+              "measure": "yoy_growth",
+              "period_basis": "quarter",
+              "period_end": "2026-04-30",
+              "comparison": "increase",
+              "threshold": null,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Does the filing explicitly attribute Sam's Club U.S. operating income growth to membership and other income, or does it attribute the growth to other factors such as gross profit, sales growth, or expense management?",
+            "search_query": "Sam's Club U.S. operating income increase driven primarily due three months April 30 2026",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Did Sam's Club U.S. gross profit rate decline significantly enough that it could have offset membership income gains and prevented operating income growth?",
+            "search_query": "Sam's Club U.S. gross profit rate margin basis points three months April 30 2026",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "03654fafe99c4448a1a515ed59348a9054881becdf771549201c2a21bc13f9fa",
+      "source": "cache",
+      "input_tokens": 9299,
+      "output_tokens": 966,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "Operating income $ 674 $ 666"
+              },
+              {
+                "evidence_id": "E7",
+                "quote": "As a result of the factors discussed above, operating income increased $0.3 billion for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year."
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E3",
+                "quote": "Gross profit rate decreased 26 basis points for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year."
+              },
+              {
+                "evidence_id": "E7",
+                "quote": "Operating income $ 674 $ 666"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Membership and other income increased 11.0% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year."
+          },
+          {
+            "evidence_id": "E7",
+            "quote": "As a result of the factors discussed above, operating income increased $0.3 billion for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After investigating potential challenges to the initial verdict, the SUPPORTED label remains appropriate.\n\nH1 (Did operating income actually increase?) - CHALLENGE_REFUTED: Evidence E7 clearly shows Sam's Club U.S. operating income increased from $666 million to $674 million for the three months ended April 30, 2026, an increase of $0.3 billion (approximately $8 million when comparing the exact figures, or $300 million when including fuel as stated in the text). This confirms operating income did grow.\n\nH2 (Does the filing explicitly attribute the growth to membership and other income?) - NO_RELEVANT_EVIDENCE: The newly retrieved evidence does not contain an explicit statement attributing Sam's Club U.S. operating income growth specifically to membership and other income. However, the original evidence E3 shows membership and other income increased 11.0%, and the filing structure discusses this as a key factor in the segment's performance. While there's no single sentence stating \"operating income growth was driven by membership income,\" the evidence supports this as a reasonable interpretation given: (1) membership income grew 11.0%, (2) gross profit rate declined 26 basis points (a headwind), and (3) operating income still increased.\n\nH3 (Did gross profit rate decline offset membership gains?) - CHALLENGE_REFUTED: Evidence E3 confirms gross profit rate decreased 26 basis points, but E7 shows operating income still increased despite this headwind. This actually strengthens the claim that membership and other income was a key driver, as it helped overcome the gross profit rate decline.\n\nThe claim that Sam's Club U.S. operating income growth was \"driven by higher membership and other income\" is supported by the evidence showing membership income grew 11.0% while gross profit rate declined, yet operating income still increased.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Sam's Club U.S. operating income growth in the quarter ended April 30, 2026 was driven by higher membership and other income. FY2027 Q1",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "Sam's Club U.S. operating income three months April 30 2026 segment results",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "Sam's Club U.S. operating income increase driven primarily due three months April 30 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "Sam's Club U.S. gross profit rate margin basis points three months April 30 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-04-30",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-04-30",
+            "basis": "quarter",
+            "level": 7493000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2026-02-01",
+                "period_end": "2026-04-30",
+                "value": 7493000000.0,
+                "filed": "2026-05-29",
+                "form": "10-Q",
+                "accession_number": "0000104169-26-000102",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 7135000000.0,
+            "prior_period_end": "2025-04-30",
+            "yoy_change": 0.05017519271198318,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E12",
+            "E10",
+            "E11"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-26-000102",
+        "filed": "2026-05-29",
+        "report_date": "2026-04-30",
+        "primary_document": "wmt-20260430.htm",
+        "sha256": "852d4b1f25a8587899243ce13ea032f74a393cbefc941de3625cc5779b252ff4"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0000104169-26-000055",
+        "filed": "2026-03-13",
+        "report_date": "2026-01-31",
+        "primary_document": "wmt-20260131.htm",
+        "sha256": "81bc136de8961e00236b4d1c299b17de840b9ff49c278f0addf442cee8e909cf"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-25-000191",
+        "filed": "2025-12-03",
+        "report_date": "2025-10-31",
+        "primary_document": "wmt-20251031.htm",
+        "sha256": "163791c139267742812a96517575b3118c5549be0b2984c8d4e9aa0914e2b6f8"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 692
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:64337-65456",
+      "excerpt": "bership and other income increased $0.4 billion or 27.0% for the three months ended April 30, 2026, reflecting 17.4% growth in membership fee revenue with strength across membership programs globally. Additionally, other income for the three months ended April 30, 2026 benefited from certain miscellaneous income items, none of which are individually material. Gross profit rate increased 6 basis points for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year, primarily due to the Walmart U.S. segment, driven by merchandise mix shifts and growth in higher margin businesses, including advertising, partially offset by higher fuel costs within our supply chain and increased eCommerce fulfillment costs in the Sam's Club U.S. segment. Operating expenses as a percentage of net sales increased 33 basis points for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year, primarily driven by higher depreciation related to our capital investments, certain business reorganization charges of $0.2 billion within the Walmart U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:72351-73500",
+      "excerpt": "useful to investors because it permits investors to understand the effect of the Sam's Club U.S. segment's fuel sales on its results of operations, which are impacted by the volatility of fuel prices. Volatility in fuel prices may continue to impact the operating results of the Sam's Club U.S. segment in the future. Net sales for the Sam's Club U.S. segment increased $1.3 billion or 6.1% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. The increase was primarily due to comparable sales, including fuel, of 5.9% for the three months ended April 30, 2026, with growth in transactions and unit volumes, reflecting strength in grocery 23 Table of Contents and general merchandise. Additionally, higher fuel sales, driven by higher fuel prices and volumes, positively impacted comparable sales by 2.1% for three months ended April 30, 2026. Sam's Club U.S. eCommerce net sales positively contributed approximately 3.1% to comparable sales for the three months ended April 30, 2026, reflecting continued strength in member engagement with omnichannel offerings, such as club-fulfilled delivery.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:73300-74378",
+      "excerpt": "ibuted approximately 3.1% to comparable sales for the three months ended April 30, 2026, reflecting continued strength in member engagement with omnichannel offerings, such as club-fulfilled delivery. Membership and other income increased 11.0% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. The increase was primarily due to growth in the membership base and Plus penetration, as well as increases in certain miscellaneous income items. Effective May 1, 2026, Sam's Club U.S. increased its annual membership fees for Club and Plus memberships from $50 to $60 and from $110 to $120, respectively. The fee increase will benefit membership and other income in future periods, as membership fees are deferred and recognized ratably over the one-year membership term. Gross profit rate decreased 26 basis points for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. The decrease was primarily due to increased eCommerce fulfillment costs, driven by club-fulfilled delivery.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:51258-52448",
+      "excerpt": "d April 30, 2026. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, which was primarily driven by store-fulfilled delivery. Sam's Club U.S. comparable sales increased 5.9% for the three months ended April 30, 2026, with growth in transactions and unit volumes, reflecting strength in grocery and general merchandise. Additionally, higher fuel sales, driven by higher fuel prices and volumes, positively impacted comparable sales by 2.1% for three months ended April 30, 2026. Sam's Club U.S. eCommerce sales positively contributed approximately 3.1% to comparable sales for the three months ended April 30, 2026, reflecting continued strength in member engagement with omnichannel offerings, such as club-fulfilled delivery. Margin Our objective of prioritizing margin focuses on growth with a focus on incremental margin accretion through a combination of productivity improvements, as well as category and business mix. We invest in technology and process improvements to increase productivity, manage inventory and reduce costs, and we operate with discipline by managing expenses and optimizing the efficiency of how we work.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:63349-64537",
+      "excerpt": "rship and other income includes membership fees and other items such as rental and tenant income, recycling income, gift card breakage income, as well as other income from corporate campus facilities. (2) Gross profit is defined as net sales less cost of sales. Operating expenses refers to operating, selling, general and administrative expenses. Our total revenues increased $12.1 billion or 7.3% for the three months ended April 30, 2026 when compared to the same period in the previous fiscal year. The increase was primarily due to strong positive comparable sales in our U.S. segments and international markets driven by growth in transactions. eCommerce net sales grew $8.5 billion or 26% primarily driven by store and club-fulfilled delivery. Net sales growth also reflected strong sales in grocery and general merchandise across our segments. Net sales for the three months ended April 30, 2026 were positively affected by $2.3 billion in currency exchange rate fluctuations. Membership and other income increased $0.4 billion or 27.0% for the three months ended April 30, 2026, reflecting 17.4% growth in membership fee revenue with strength across membership programs globally.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:53128-54132",
+      "excerpt": "arable period 5.0 % 4.3 % Percentage of net sales Gross profit (1) 24.3 % 24.2 % Operating expenses 21.2 % 20.8 % Operating income 4.3 % 4.4 % (1) Gross profit defined as net sales less cost of sales. Gross profit as a percentage of net sales (\"gross profit rate\") increased 6 basis points for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year, primarily due to the Walmart U.S. segment, driven by merchandise mix shifts and growth in higher margin businesses, including advertising, partially offset by higher fuel costs within our supply chain and increased eCommerce fulfillment costs in the Sam's Club U.S. segment. Operating expenses as a percentage of net sales increased 33 basis points for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year, primarily driven by higher depreciation related to our capital investments, certain business reorganization charges of $0.2 billion within the Walmart U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:71423-72551",
+      "excerpt": "result of the factors discussed above, operating income increased $0.3 billion for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. Sam's Club U.S. Segment Three Months Ended April 30, (Dollar amounts and retail square feet in millions) 2026 2025 Including Fuel Net sales $ 23,405 $ 22,064 Percentage change from comparable period 6.1 % 2.9 % Calendar comparable sales increase 5.9 % 2.8 % Membership and other income 674 607 Gross profit 2,674 2,577 Operating expenses 2,674 2,518 Operating income $ 674 $ 666 Percentage of net sales Gross profit 11.4 % 11.7 % Operating expenses 11.4 % 11.4 % Operating income 2.9 % 3.0 % Unit counts at period end 601 600 Retail square feet at period end 81 80 Excluding Fuel (1) Net sales $ 20,517 $ 19,739 Percentage change from comparable period 3.9 % 5.5 % Operating income $ 515 $ 529 (1) We believe the Excluding Fuel information is useful to investors because it permits investors to understand the effect of the Sam's Club U.S. segment's fuel sales on its results of operations, which are impacted by the volatility of fuel prices.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:42338-43478",
+      "excerpt": "ted cost of sales and operating, selling, general and administrative expenses for Sam's Club U.S. were $ 2.7 billion and $ 2.2 billion for the three months ended April 30, 2026 and 2025, respectively. (2) Includes other income from corporate campus facilities and miscellaneous items. 14 Table of Contents Depreciation and amortization and capital expenditures for the Company's segments, as well as for Corporate and support, are as follows: Three Months Ended April 30, (Amounts in millions) 2026 2025 Walmart U.S. Depreciation and amortization $ 2,509 $ 2,240 Capital expenditures 5,011 3,772 Walmart International Depreciation and amortization $ 631 $ 549 Capital expenditures 821 481 Sam's Club U.S. Depreciation and amortization $ 203 $ 189 Capital expenditures 274 144 Corporate and support Depreciation and amortization $ 478 $ 391 Capital expenditures 578 589 Consolidated Depreciation and amortization $ 3,821 $ 3,369 Capital expenditures 6,684 4,986 Total assets for the Company's segments, as well as for Corporate and support, are as follows: April 30, January 31, (Amounts in millions) 2026 2026 Assets by segment Walmart U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:45122-46322",
+      "excerpt": "billion and $ 7.7 billion related to eCommerce for the three months ended April 30, 2026 and 2025, respectively. 15 Table of Contents (Amounts in millions) Three Months Ended April 30, Sam's Club U.S. net sales by merchandise category 2026 2025 Grocery $ 16,102 $ 15,443 Fuel and other 3,443 2,851 General merchandise 2,649 2,536 Health and wellness 1,211 1,234 Total $ 23,405 $ 22,064 Of Sam's Club U.S.'s total net sales, approximately $ 4.1 billion and $ 3.3 billion related to eCommerce for the three months ended April 30, 2026 and 2025, respectively. 16 Table of Contents Item 2. Management's Discussion and Analysis of Financial Condition and Results of Operations Overview This discussion, which presents Walmart Inc.'s (\"Walmart,\" the \"Company,\" \"our,\" \"us\" or \"we\") results for periods occurring in the fiscal year ending January 31, 2027 (\"fiscal 2027\") and the fiscal year ended January 31, 2026 (\"fiscal 2026\"), should be read in conjunction with our Condensed Consolidated Financial Statements as of and for the three months ended April 30, 2026, and the accompanying notes included in Part I, Item 1 of this Quarterly Report on Form 10-Q, as well as our Consolidated Financial Statemen",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": "2026-02-01",
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/0000104169-26-000102-index.htm",
+      "locator": "OperatingIncome 2026-02-01..2026-04-30",
+      "excerpt": null,
+      "values": [
+        7493000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": "2025-02-01",
+      "period_end": "2025-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/0000104169-26-000102-index.htm",
+      "locator": "OperatingIncome 2025-02-01..2025-04-30",
+      "excerpt": null,
+      "values": [
+        7135000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "WMT",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": null,
+      "locator": "OperatingIncome yoy_growth quarter @ 2026-04-30",
+      "excerpt": null,
+      "values": [
+        7493000000.0,
+        7135000000.0,
+        0.05017519271198318
+      ],
+      "unit": "ratio",
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:67960-69068",
+      "excerpt": "eet at period end 699 698 Net sales for the Walmart U.S. segment increased $5.0 billion or 4.5% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. The increase was due to comparable sales of 4.3% for the three months ended April 30, 2026, driven by growth in transactions and average ticket, reflecting strength in grocery and general merchandise. The Walmart U.S. segment's eCommerce net sales positively contributed approximately 5.2% to comparable sales for the three months ended April 30, 2026. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, which was primarily driven by store-fulfilled delivery. Membership and other income increased 45.6% for the three months ended April 30, 2026, primarily driven by increases in certain miscellaneous income items, as well as double-digit percentage growth in membership fee revenue from Walmart+. Gross profit rate increased 29 basis points for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:50307-51458",
+      "excerpt": "ndar (also known as the 4-5-4 calendar) as provided in our quarterly earnings releases. We report on comparable sales in the U.S. as we believe it is a meaningful metric within the context of the U.S. retail market where there is a single currency, one inflationary market and generally consistent store and club formats from year to year. 17 Table of Contents Calendar comparable sales, as well as the impact of fuel, for the three months ended April 30, 2026 and 2025, were as follows: Three Months Ended April 30, 2026 2025 2026 2025 With Fuel Fuel Impact Walmart U.S. 4.3 % 3.1 % 0.3 % 0.0 % Sam's Club U.S. 5.9 % 2.8 % 2.1 % (2.6) % Walmart U.S. comparable sales increased 4.3% for the three months ended April 30, 2026, driven by growth in transactions and average ticket, reflecting strength in grocery and general merchandise. Walmart U.S. eCommerce sales positively contributed approximately 5.2% to comparable sales for the three months ended April 30, 2026. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, which was primarily driven by store-fulfilled delivery. Sam's Club U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:68868-69879",
+      "excerpt": "age growth in membership fee revenue from Walmart+. Gross profit rate increased 29 basis points for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. The increase was primarily driven by merchandise mix shifts and growth in higher margin businesses, including advertising, partially offset by higher fuel costs within our supply chain. Operating expenses as a percentage of net sales increased 56 basis points for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. The increase was primarily due to increased depreciation expense related to our continued capital investments, higher associate healthcare benefit costs related to increased enrollment and medical cost inflation, as well as business reorganization charges. As a result of the factors discussed above, operating income increased $0.2 billion for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:70622-71623",
+      "excerpt": "as primarily due to positive comparable sales across our international markets, including strong eCommerce growth of $2.0 billion, and positive fluctuations in currency exchange rates of $2.3 billion. Gross profit rate was flat for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. The rate benefitted from improved eCommerce margins and business mix shifts, offset by ongoing format mix shifts. Operating expenses as a percentage of net sales decreased 28 basis points for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year, primarily due to disciplined cost controls and ongoing format mix shifts, partially offset by investments in strategic growth priorities in our Canada and Mexico markets. As a result of the factors discussed above, operating income increased $0.3 billion for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. Sam's Club U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_start": null,
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:79836-80812",
+      "excerpt": "1, 2025, respectively. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, which was primarily driven by store-fulfilled pickup and delivery. Membership and other income increased 7.6% and 6.3% for the three and nine months ended October 31, 2025, respectively, primarily driven by double-digit percentage growth in membership fee income from Walmart+. Gross profit rate increased 19 and 24 basis points for the three and nine months ended October 31, 2025, when compared to the same periods in the previous fiscal year. The increases were primarily driven by disciplined inventory management and growth in higher margin businesses, partially offset by mix shifts into lower margin merchandise categories. Operating expenses as a percentage of net sales increased 15 and 22 basis points for the three and nine months ended October 31, 2025, respectively, when compared to the same periods in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_start": null,
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:62198-63230",
+      "excerpt": "in higher margin areas, such as digital advertising and marketplace. Our objective is to achieve operating income leverage, which we define as growing operating income at a faster rate than net sales. Three Months Ended October 31, Nine Months Ended October 31, (Amounts in millions) 2025 2024 2025 2024 Net sales $ 177,769 $ 168,003 $ 517,500 $ 495,708 Percentage change from comparable period 5.8 % 5.4 % 4.4 % 5.3 % Operating income $ 6,696 $ 6,708 $ 21,117 $ 21,489 Percentage change from comparable period (0.2) % 8.2 % (1.7) % 8.8 % Percentage of net sales Gross profit (1) 24.2 % 24.2 % 24.3 % 24.2 % Operating expenses 21.4 % 21.2 % 21.2 % 20.9 % Operating income 3.8 % 4.0 % 4.1 % 4.3 % (1) Gross profit defined as net sales less cost of sales. Gross profit as a percentage of net sales (\"gross profit rate\") increased 2 and 6 basis points for the three and nine months ended October 31, 2025, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily due to the Walmart U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E3",
+      "quote": "Membership and other income increased 11.0% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:73300-74378"
+    },
+    {
+      "evidence_id": "E7",
+      "quote": "As a result of the factors discussed above, operating income increased $0.3 billion for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year.",
+      "valid": false,
+      "issues": [
+        "QUOTE_NOT_IN_PASSAGE"
+      ],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:71423-72551"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 17986,
+    "output": 1889
+  },
+  "latency_ms": 8,
+  "estimated_cost_usd": 0.082293,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

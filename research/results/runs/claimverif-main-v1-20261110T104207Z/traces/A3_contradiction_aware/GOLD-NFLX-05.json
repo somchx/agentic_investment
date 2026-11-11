@@ -1,0 +1,1028 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-NFLX-05:0d60f281",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-NFLX-05",
+    "company": "NFLX",
+    "claim": "Netflix's revenues in the Asia-Pacific region for fiscal year 2025 grew by more than 15% compared with fiscal year 2024.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.15,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E5",
+            "quote": "APAC 5,353,717 59,740 (70,942) 5,342,515 4,414,746 (29,073) 4,385,673 21 % 22 %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Netflix's revenues in the Asia-Pacific region for fiscal year 2025 grew by more than 15% compared with fiscal year 2024. Evidence E5 provides a detailed breakdown of streaming revenues by region for the year ended December 31, 2025 compared to December 31, 2024. The APAC (Asia-Pacific) row shows revenues of $5,353,717 thousand for 2025 versus $4,414,746 thousand for 2024, with a reported change of 21%. This 21% growth rate is clearly greater than 15%, supporting the claim. The evidence also shows a constant currency change of 22%, which further confirms the growth exceeded 15% even when adjusting for currency fluctuations.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_ALL_TRUE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.15,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 45183036000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 45183036000.0,
+                "filed": "2026-01-23",
+                "form": "10-K",
+                "accession_number": "0001065280-26-000034",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 39000966000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.15851068919677527,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Does the filing define APAC as Asia-Pacific, or could APAC refer to a different regional grouping that doesn't match the claim's 'Asia-Pacific region'?",
+          "search_query": "APAC Asia-Pacific region definition geographic"
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Are there any restatements, reclassifications, or changes in regional reporting methodology between 2024 and 2025 that would make the year-over-year comparison invalid?",
+          "search_query": "restatement reclassification regional reporting methodology change prior period"
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Does the filing indicate that APAC revenues include non-streaming revenues or other components that might not be comparable between periods, or are there any discontinued operations or acquisitions affecting the comparison?",
+          "search_query": "APAC streaming revenues composition acquisition discontinued operations"
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "APAC Asia-Pacific region definition geographic",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "restatement reclassification regional reporting methodology change prior period",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "APAC streaming revenues composition acquisition discontinued operations",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_ALL_TRUE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E10",
+              "quote": "Asia-Pacific (APAC) 1,305,253 1,051,833 253,420 24 %",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-25-000323",
+              "form": "10-Q",
+              "filed": "2025-07-18",
+              "period_end": "2025-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+              "locator": "10-Q 0001065280-25-000323:67882-68574"
+            },
+            {
+              "evidence_id": "E11",
+              "quote": "Asia-Pacific (APAC) 1,368,561 1,127,869 240,692 21 %",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-25-000406",
+              "form": "10-Q",
+              "filed": "2025-10-22",
+              "period_end": "2025-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+              "locator": "10-Q 0001065280-25-000406:69443-70180"
+            },
+            {
+              "evidence_id": "E12",
+              "quote": "Asia-Pacific (APAC) 3,932,907 3,202,626 730,281 23 %",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-25-000406",
+              "form": "10-Q",
+              "filed": "2025-10-22",
+              "period_end": "2025-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+              "locator": "10-Q 0001065280-25-000406:69980-70926"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E16",
+              "quote": "Streaming revenues $ 45,183,036 $ 39,000,966 $ 33,640,458 $ 6,182,070 16 % DVD revenues (2) $ — $ — $ 82,839 $ — — % Total revenues $ 45,183,036",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-26-000034",
+              "form": "10-K",
+              "filed": "2026-01-23",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+              "locator": "10-K 0001065280-26-000034:103504-104689"
+            },
+            {
+              "evidence_id": "E5",
+              "quote": "Total Streaming Revenues $ 45,183,036 $ 179,557 $ 91,143 $ 45,453,736 $ 39,000,966 $ (124,011) $ 38,876,955 16 % 17 %",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-26-000034",
+              "form": "10-K",
+              "filed": "2026-01-23",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+              "locator": "10-K 0001065280-26-000034:109213-110266"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "f863734d0281d7503e7bf964025a52c0cafa4beb341dfafc5d0d79e53b3a4a20",
+      "source": "cache",
+      "input_tokens": 4165,
+      "output_tokens": 466,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.15,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E5",
+            "quote": "APAC 5,353,717 59,740 (70,942) 5,342,515 4,414,746 (29,073) 4,385,673 21 % 22 %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Netflix's revenues in the Asia-Pacific region for fiscal year 2025 grew by more than 15% compared with fiscal year 2024. Evidence E5 provides a detailed breakdown of streaming revenues by region for the year ended December 31, 2025 compared to December 31, 2024. The APAC (Asia-Pacific) row shows revenues of $5,353,717 thousand for 2025 versus $4,414,746 thousand for 2024, with a reported change of 21%. This 21% growth rate is clearly greater than 15%, supporting the claim. The evidence also shows a constant currency change of 22%, which further confirms the growth exceeded 15% even when adjusting for currency fluctuations.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "52965bd022e8622dafe7ed5f389783797a3c9e9c5daaecb9a435efdab8e8c367",
+      "source": "cache",
+      "input_tokens": 5226,
+      "output_tokens": 283,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Does the filing define APAC as Asia-Pacific, or could APAC refer to a different regional grouping that doesn't match the claim's 'Asia-Pacific region'?",
+            "search_query": "APAC Asia-Pacific region definition geographic"
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Are there any restatements, reclassifications, or changes in regional reporting methodology between 2024 and 2025 that would make the year-over-year comparison invalid?",
+            "search_query": "restatement reclassification regional reporting methodology change prior period"
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Does the filing indicate that APAC revenues include non-streaming revenues or other components that might not be comparable between periods, or are there any discontinued operations or acquisitions affecting the comparison?",
+            "search_query": "APAC streaming revenues composition acquisition discontinued operations"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "22d95403c9686d4b42584d6bdba5cb1b29f66eb9d87d3574bee023f655494124",
+      "source": "cache",
+      "input_tokens": 9361,
+      "output_tokens": 1018,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E10",
+                "quote": "Asia-Pacific (APAC) 1,305,253 1,051,833 253,420 24 %"
+              },
+              {
+                "evidence_id": "E11",
+                "quote": "Asia-Pacific (APAC) 1,368,561 1,127,869 240,692 21 %"
+              },
+              {
+                "evidence_id": "E12",
+                "quote": "Asia-Pacific (APAC) 3,932,907 3,202,626 730,281 23 %"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E16",
+                "quote": "Streaming revenues $ 45,183,036 $ 39,000,966 $ 33,640,458 $ 6,182,070 16 % DVD revenues (2) $ — $ — $ 82,839 $ — — % Total revenues $ 45,183,036"
+              },
+              {
+                "evidence_id": "E5",
+                "quote": "Total Streaming Revenues $ 45,183,036 $ 179,557 $ 91,143 $ 45,453,736 $ 39,000,966 $ (124,011) $ 38,876,955 16 % 17 %"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E5",
+            "quote": "APAC 5,353,717 59,740 (70,942) 5,342,515 4,414,746 (29,073) 4,385,673 21 % 22 %"
+          },
+          {
+            "evidence_id": "E10",
+            "quote": "Asia-Pacific (APAC) 1,305,253 1,051,833 253,420 24 %"
+          },
+          {
+            "evidence_id": "E11",
+            "quote": "Asia-Pacific (APAC) 1,368,561 1,127,869 240,692 21 %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After investigating potential challenges to the initial verdict, all challenges were either refuted or lacked relevant evidence:\n\nH1 (APAC definition): CHALLENGE_REFUTED. Multiple pieces of evidence (E10, E11, E12) explicitly confirm that APAC stands for \"Asia-Pacific\" in Netflix's regional reporting, matching the claim's terminology exactly.\n\nH2 (Restatements/methodology changes): NO_RELEVANT_EVIDENCE. The retrieved evidence discusses constant currency methodology but does not indicate any restatements, reclassifications, or changes in regional reporting methodology that would invalidate the year-over-year comparison.\n\nH3 (Revenue composition): CHALLENGE_REFUTED. Evidence E16 shows that for fiscal year 2025, streaming revenues equal total revenues ($45,183,036 thousand), with DVD revenues at $0. Evidence E5 confirms the regional breakdown is for \"Total Streaming Revenues,\" indicating the APAC figures represent streaming revenues consistently across both periods.\n\nThe original evidence (E5) remains valid and shows APAC revenues grew from $4,414,746 thousand (FY2024) to $5,353,717 thousand (FY2025), representing a 21% increase, which exceeds the claim's threshold of \"more than 15%.\" The verdict remains SUPPORTED.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Netflix's revenues in the Asia-Pacific region for fiscal year 2025 grew by more than 15% compared with fiscal year 2024. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "APAC Asia-Pacific region definition geographic",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "restatement reclassification regional reporting methodology change prior period",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "APAC streaming revenues composition acquisition discontinued operations",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.15,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 45183036000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 45183036000.0,
+                "filed": "2026-01-23",
+                "form": "10-K",
+                "accession_number": "0001065280-26-000034",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 39000966000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.15851068919677527,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001065280-26-000034",
+        "filed": "2026-01-23",
+        "report_date": "2025-12-31",
+        "primary_document": "nflx-20251231.htm",
+        "sha256": "caec332c25a15511728cc54b55ed5479ee04a2c9d9fa77e7d2f81a52bac97678"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001065280-25-000406",
+        "filed": "2025-10-22",
+        "report_date": "2025-09-30",
+        "primary_document": "nflx-20250930.htm",
+        "sha256": "fa3a310cd89c0b545abdf83eff5ad2d137bbcfe3495349a866f4907ccb372f0c"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001065280-25-000323",
+        "filed": "2025-07-18",
+        "report_date": "2025-06-30",
+        "primary_document": "nflx-20250630.htm",
+        "sha256": "9a73c0293b9963bb70b403298d0f98879258e6f540ec1dc3f78b8eb8e27a1048"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 569
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:108287-109413",
+      "excerpt": "currency fluctuations. However, this non-GAAP financial measure should be considered in addition to, not as a substitute for, or superior to other financial measures prepared in accordance with GAAP. In order to exclude the effect of foreign currency rate fluctuations on revenue, we calculate current period revenue assuming foreign exchange rates had remained constant with foreign exchange rates from each of the corresponding months of the prior-year period and exclude the impact of hedging gains or losses realized as revenues. Constant currency percentage change in revenues is calculated as the percentage change between current period constant currency revenue and the prior comparative period revenue. The impact of hedging gains or losses is excluded from both the current and prior periods. The table below summarizes constant currency streaming revenues by region for the year ended December 31, 2025 and the constant currency percentage change in streaming revenues by region for the year ended December 31, 2025 as compared to the year ended December 31, 2024: Year Ended December 31, Change 2025 2024 2025 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:67716-68888",
+      "excerpt": "other sources. Revenues earned from sources other than monthly membership fees were not a material component of revenues for the three and nine months ended September 30, 2025 and September 30, 2024. Three months ended September 30, 2025 as compared to the three months ended September 30, 2024 Three Months Ended Change September 30, 2025 September 30, 2024 Q3'25 vs. Q3'24 (in thousands, except percentages) Revenues $ 11,510,307 $ 9,824,703 $ 1,685,604 17 % Nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024 Nine Months Ended Change September 30, 2025 September 30, 2024 YTD'25 vs. YTD'24 (in thousands, except percentages) Revenues $ 33,132,274 $ 28,754,453 $ 4,377,821 15 % Revenues for the three and nine months ended September 30, 2025 increased 17% and 15% as compared to the three and nine months ended September 30, 2024, respectively, primarily due to the growth in memberships, price increases, and increased advertising revenue. Additionally, revenues for the nine months ended September 30, 2025 as compared to the same period in 2024 were unfavorably impacted by changes in foreign exchange rates, net of hedging.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:106405-107592",
+      "excerpt": "han monthly membership fees were not a material component of revenues for the years ended December 31, 2025, 2024, and 2023. 20 Table of Contents Year Ended December 31, Change 2025 2024 2023 2025 vs. 2024 (in thousands, except percentages) Revenues $ 45,183,036 $ 39,000,966 $ 33,723,297 $ 6,182,070 16 % Revenues for the year ended December 31, 2025 increased 16% as compared to the year ended December 31, 2024, primarily due to the growth in memberships, price increases, and increased advertising revenue, partially offset by unfavorable changes in foreign exchange rates, net of hedging. The following table summarizes streaming revenues by region for the years ended December 31, 2025, 2024 and 2023. Total streaming revenues are inclusive of hedging gains (losses) of $(91) million and $124 million for the years ended December 31, 2025 and 2024, respectively. No hedging gains and losses were recognized in total streaming revenues for the year ended December 31, 2023. See Note 8 Derivative Financial Instruments and Hedging Activities to the consolidated financial statements for further information regarding the Company’s derivative and non-derivative financial instruments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:58148-59290",
+      "excerpt": "million, respectively, for the three and six months ended June 30, 2024. See the consolidated financial statements for other financial information regarding the Company’s operating segment. Total U.S. revenues were $ 4.6 billion and $ 8.9 billion, respectively, for the three and six months ended June 30, 2025, and $ 4.0 billion and $ 7.9 billion, respectively, for the three and six months ended June 30, 2024. See Note 2 Revenue Recognition for additional information about revenues by region. The Company's long-lived tangible assets, as well as the Company's operating lease right-of-use assets recognized on the Consolidated Balance Sheets as of June 30, 2025 and December 31, 2024, were located as follows: As of June 30, 2025 December 31, 2024 (in thousands) United States $ 2,853,087 $ 2,769,828 International 1,065,822 926,238 12. Subsequent Event The One Big Beautiful Bill Act (“OBBBA”) was enacted on July 4, 2025 and the Company continues to evaluate the impact on its financial position. The OBBBA is not currently expected to materially impact the Company’s effective tax rate or cash flows in the current fiscal year. Item 2.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:109213-110266",
+      "excerpt": "stant currency percentage change in streaming revenues by region for the year ended December 31, 2025 as compared to the year ended December 31, 2024: Year Ended December 31, Change 2025 2024 2025 vs. 2024 As Reported Constant Currency Adjustment Hedging (Gains) Losses Included in Revenues Constant Currency Revenues As Reported Hedging (Gains) Losses Included in Revenues Revenues Less Hedging Impact Reported Change Constant Currency Change (in thousands, except percentages) UCAN $ 19,957,152 $ 36,991 $ (29,791) $ 19,964,352 $ 17,359,369 $ (11,181) $ 17,348,188 15 % 15 % EMEA 14,514,646 (374,174) 137,768 14,278,240 12,387,035 (25,303) 12,361,732 17 % 16 % LATAM 5,357,521 457,000 54,108 5,868,629 4,839,816 (58,454) 4,781,362 11 % 23 % APAC 5,353,717 59,740 (70,942) 5,342,515 4,414,746 (29,073) 4,385,673 21 % 22 % Total Streaming Revenues $ 45,183,036 $ 179,557 $ 91,143 $ 45,453,736 $ 39,000,966 $ (124,011) $ 38,876,955 16 % 17 % 21 Table of Contents Cost of Revenues Cost of revenues primarily consists of the amortization of content assets.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:68688-69643",
+      "excerpt": "sing revenue. Additionally, revenues for the nine months ended September 30, 2025 as compared to the same period in 2024 were unfavorably impacted by changes in foreign exchange rates, net of hedging. The following tables summarize revenues by region for the three and nine months ended September 30, 2025 and 2024. Total revenues are inclusive of hedging gains (losses) of $(129) million and $(2) million for the three and nine months ended September 30, 2025, respectively, and $48 million and $70 million for the three and nine months ended September 30, 2024, respectively. See Note 7 Derivative Financial Instruments and Hedging Activities to the consolidated financial statements for further information regarding the Company’s derivative and non-derivative financial instruments. Three months ended September 30, 2025 as compared to the three months ended September 30, 2024 Three Months Ended Change September 30, 2025 September 30, 2024 Q3'25 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/0001065280-26-000034-index.htm",
+      "locator": "Revenue 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        45183036000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/0001065280-26-000034-index.htm",
+      "locator": "Revenue 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        39000966000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "NFLX",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "Revenue yoy_growth annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        45183036000.0,
+        39000966000.0,
+        0.15851068919677527
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:67882-68574",
+      "excerpt": "erivative and non-derivative financial instruments. Three months ended June 30, 2025 as compared to the three months ended June 30, 2024 Three Months Ended Change June 30, 2025 June 30, 2024 Q2'25 vs. Q2'24 (in thousands, except percentages) United States and Canada (UCAN) $ 4,929,003 $ 4,295,560 $ 633,443 15 % Europe, Middle East, and Africa (EMEA) 3,538,175 3,007,772 530,403 18 % Latin America (LATAM) 1,306,735 1,204,145 102,590 9 % Asia-Pacific (APAC) 1,305,253 1,051,833 253,420 24 % Total Revenues $ 11,079,166 $ 9,559,310 $ 1,519,856 16 % Six months ended June 30, 2025 as compared to the six months ended June 30, 2024 Six Months Ended Change June 30, 2025 June 30, 2024 YTD'25 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:69443-70180",
+      "excerpt": "rivative financial instruments. Three months ended September 30, 2025 as compared to the three months ended September 30, 2024 Three Months Ended Change September 30, 2025 September 30, 2024 Q3'25 vs. Q3'24 (in thousands, except percentages) United States and Canada (UCAN) $ 5,071,781 $ 4,322,476 $ 749,305 17 % Europe, Middle East, and Africa (EMEA) 3,699,052 3,133,466 565,586 18 % Latin America (LATAM) 1,370,913 1,240,892 130,021 10 % Asia-Pacific (APAC) 1,368,561 1,127,869 240,692 21 % Total Revenues $ 11,510,307 $ 9,824,703 $ 1,685,604 17 % 26 Table of Contents Nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024 Nine Months Ended Change September 30, 2025 September 30, 2024 YTD'25 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:69980-70926",
+      "excerpt": "685,604 17 % 26 Table of Contents Nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024 Nine Months Ended Change September 30, 2025 September 30, 2024 YTD'25 vs. YTD'24 (in thousands, except percentages) United States and Canada (UCAN) $ 14,617,882 $ 12,842,351 $ 1,775,531 14 % Europe, Middle East, and Africa (EMEA) 10,641,903 9,099,431 1,542,472 17 % Latin America (LATAM) 3,939,582 3,610,045 329,537 9 % Asia-Pacific (APAC) 3,932,907 3,202,626 730,281 23 % Total Revenues $ 33,132,274 $ 28,754,453 $ 4,377,821 15 % Non-GAAP Constant Currency Information We believe the non-GAAP financial measure of constant currency revenue is useful in analyzing period-to-period comparisons in revenues absent foreign currency fluctuations. However, this non-GAAP financial measure should be considered in addition to, not as a substitute for, or superior to other financial measures prepared in accordance with GAAP.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:70726-71529",
+      "excerpt": "currency fluctuations. However, this non-GAAP financial measure should be considered in addition to, not as a substitute for, or superior to other financial measures prepared in accordance with GAAP. In order to exclude the effect of foreign currency rate fluctuations on revenue, we calculate current period revenue assuming foreign exchange rates had remained constant with foreign exchange rates from each of the corresponding months of the prior-year period and exclude the impact of hedging gains or losses realized as revenues. Constant currency percentage change in revenues is calculated as the percentage change between current period constant currency revenue and the prior comparative period revenue. The impact of hedging gains or losses is excluded from both the current and prior periods.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:69115-70311",
+      "excerpt": "currency fluctuations. However, this non-GAAP financial measure should be considered in addition to, not as a substitute for, or superior to other financial measures prepared in accordance with GAAP. In order to exclude the effect of foreign currency rate fluctuations on revenue, we calculate current period revenue assuming foreign exchange rates had remained constant with foreign exchange rates from each of the corresponding months of the prior-year period and exclude the impact of hedging gains or losses realized as revenues. Constant currency percentage change in revenues is calculated as the percentage change between current period constant currency revenue and the prior comparative period revenue. The impact of hedging gains or losses is excluded from both the current and prior periods. The tables below summarize constant currency revenues by region for the three and six months ended June 30, 2025 and the constant currency percentage change in revenues by region for the three and six months ended June 30, 2025 as compared to the three and six months ended June 30, 2024: 27 Table of Contents Three Months Ended Three Months Ended Change June 30, 2025 June 30, 2024 Q2'25 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:71329-72529",
+      "excerpt": "percentage change between current period constant currency revenue and the prior comparative period revenue. The impact of hedging gains or losses is excluded from both the current and prior periods. The tables below summarize constant currency revenues by region for the three and nine months ended September 30, 2025 and the constant currency percentage change in revenues by region for the three and nine months ended September 30, 2025 as compared to the three and nine months ended September 30, 2024: Three Months Ended Three Months Ended Change September 30, 2025 September 30, 2024 Q3'25 vs. Q3'24 As Reported Constant Currency Adjustment Hedging (Gains) Losses Included in Revenues Constant Currency Revenues As Reported Hedging (Gains) Losses Included in Revenues Revenues Less Hedging Impact Reported Change Constant Currency Change (in thousands, except percentages) UCAN $ 5,071,781 $ 1,816 $ (2,196) $ 5,071,401 $ 4,322,476 $ (3,265) $ 4,319,211 17 % 17 % EMEA 3,699,052 (199,597) 113,580 3,613,035 3,133,466 (1,857) 3,131,609 18 % 15 % LATAM 1,370,913 53,678 26,300 1,450,891 1,240,892 (34,654) 1,206,238 10 % 20 % APAC 1,368,561 (14,750) (8,319) 1,345,492 1,127,869 (8,408) 1,119,461",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:103504-104689",
+      "excerpt": "rm 10-K for the fiscal year ended December 31, 2024. Results of Operations The following represents our consolidated performance highlights (1) : Year Ended December 31, Change 2025 2024 2023 2025 vs. 2024 (in thousands, except percentages) Financial Results: Streaming revenues $ 45,183,036 $ 39,000,966 $ 33,640,458 $ 6,182,070 16 % DVD revenues (2) $ — $ — $ 82,839 $ — — % Total revenues $ 45,183,036 $ 39,000,966 $ 33,723,297 $ 6,182,070 16 % Constant currency change in revenues (3) 17 % Operating income $ 13,326,603 $ 10,417,614 $ 6,954,003 $ 2,908,989 28 % Operating margin 29.5 % 26.7 % 20.6 % 2.8 % Net income $ 10,981,201 $ 8,711,631 $ 5,407,990 $ 2,269,570 26 % (1) During the year ended December 31, 2025, we discontinued the reporting of membership numbers, including average paying memberships and average monthly revenue per paying membership, focusing instead on revenue and operating margin as the primary financial metrics that we believe best represent our business performance. (2) We discontinued our DVD-by-mail service in the year ended December 31, 2023. The discontinuance of our DVD business had an immaterial impact on our operations and financial results.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:64846-65995",
+      "excerpt": "nt that they will find enjoyable. Results of Operations The following represents our consolidated performance highlights (1) : Three Months Ended Change September 30, 2025 September 30, 2024 Q3'25 vs. Q3'24 (in thousands, except percentages) Financial Results: Revenues $ 11,510,307 $ 9,824,703 $ 1,685,604 17 % Constant currency change in revenues (2) 17 % Operating income $ 3,248,247 $ 2,909,477 $ 338,770 12 % Operating margin 28.2 % 29.6 % (1.4) % Net income $ 2,546,916 $ 2,363,509 $ 183,407 8 % (1) We have discontinued the quarterly reporting of membership numbers, focusing instead on revenue and operating margin as the primary financial metrics that we believe best represent our business performance. Effective with the Quarterly Report on Form 10-Q for the quarter ended March 31, 2025, we discontinued reporting streaming membership metrics, including paid net membership additions (losses), paid memberships at end of period, average paying memberships and average monthly revenue per paying membership. (2) See the “Non-GAAP Constant Currency Information” section below for additional details on our use of constant currency revenue.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:63533-64683",
+      "excerpt": "y will find enjoyable. 25 Table of Contents Results of Operations The following represents our consolidated performance highlights (1) : Three Months Ended Change June 30, 2025 June 30, 2024 Q2'25 vs. Q2'24 (in thousands, except percentages) Financial Results: Revenues $ 11,079,166 $ 9,559,310 $ 1,519,856 16 % Constant currency change in revenues (2) 17 % Operating income $ 3,774,694 $ 2,602,837 $ 1,171,857 45 % Operating margin 34.1 % 27.2 % 6.9 % Net income $ 3,125,413 $ 2,147,306 $ 978,107 46 % (1) We have discontinued the quarterly reporting of membership numbers, focusing instead on revenue and operating margin as the primary financial metrics that we believe best represent our business performance. Effective with the Quarterly Report on Form 10-Q for the quarter ended March 31, 2025, we discontinued reporting streaming membership metrics, including paid net membership additions (losses), paid memberships at end of period, average paying memberships and average monthly revenue per paying membership. (2) See the “Non-GAAP Constant Currency Information” section below for additional details on our use of constant currency revenue.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E5",
+      "quote": "APAC 5,353,717 59,740 (70,942) 5,342,515 4,414,746 (29,073) 4,385,673 21 % 22 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:109213-110266"
+    },
+    {
+      "evidence_id": "E10",
+      "quote": "Asia-Pacific (APAC) 1,305,253 1,051,833 253,420 24 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:67882-68574"
+    },
+    {
+      "evidence_id": "E11",
+      "quote": "Asia-Pacific (APAC) 1,368,561 1,127,869 240,692 21 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:69443-70180"
+    },
+    {
+      "evidence_id": "E9",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "Revenue yoy_growth annual @ 2025-12-31"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 18752,
+    "output": 1767
+  },
+  "latency_ms": 5,
+  "estimated_cost_usd": 0.082761,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_ALL_TRUE",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_ALL_TRUE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

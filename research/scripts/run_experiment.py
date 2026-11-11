@@ -17,6 +17,8 @@
     --approaches A2_rag_numeric,...     restrict to some approaches
     --resume RUN_ID                     continue an interrupted run
     --split gold --allow-gold           held-out evaluation (final runs only)
+    --max-cost 20                       cap the approved dollars below the plan's upper bound
+                                        (the run stops before exceeding it; resume later)
 """
 import argparse
 import json
@@ -41,13 +43,14 @@ def main() -> int:
     ap.add_argument("--resume", default=None)
     ap.add_argument("--split", default=None)
     ap.add_argument("--allow-gold", action="store_true")
+    ap.add_argument("--max-cost", type=float, default=None, help="approved dollar cap (default: the plan's upper bound)")
     args = ap.parse_args()
 
     cfg = load_config(args.config)
     claims, info = select_claims(cfg, split=args.split, claim_ids=[c for c in args.claims.split(",") if c] or None,
                                  allow_gold=args.allow_gold)
     approaches = [a for a in args.approaches.split(",") if a] or None
-    plan = plan_run(cfg, claims, approaches)
+    plan = plan_run(cfg, claims, approaches, cost_cap_usd=args.max_cost)
     print(json.dumps(plan, indent=2))
     if args.plan or args.mode is None:
         print("Plan only. Choose --mode offline | mock | live to run.")

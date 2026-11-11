@@ -85,3 +85,35 @@ def compare(preds_a: list[dict], preds_b: list[dict], gold: dict[str, dict], n_b
     return {"pairing": {k: p[k] for k in ("dropped_no_gold", "dropped_unpaired")}, "n": len(p["claim_ids"]),
             "mcnemar": mcnemar(p["y_true"], p["pred_a"], p["pred_b"]) if p["claim_ids"] else None,
             "bootstrap": bootstrap_diff(p["y_true"], p["pred_a"], p["pred_b"], n_boot=n_boot, seed=seed)}
+
+
+def bootstrap_ci(y_true: list[str], pred: list, n_boot: int = 5000, seed: int = 20261102, alpha: float = 0.05) -> dict:
+    """Percentile CI for one approach's accuracy and macro-F1 (claims
+    resampled with replacement)."""
+    n = len(y_true)
+    if n == 0:
+        return {"n": 0}
+    rng = random.Random(seed)
+    out = {"n": n, "n_boot": n_boot, "seed": seed}
+    samples = {"accuracy": [], "macro_f1": []}
+    for _ in range(n_boot):
+        idx = [rng.randrange(n) for _ in range(n)]
+        t, p = [y_true[i] for i in idx], [pred[i] for i in idx]
+        samples["accuracy"].append(_acc(t, p))
+        samples["macro_f1"].append(_f1(t, p))
+    for name, fn in (("accuracy", _acc), ("macro_f1", _f1)):
+        vals = sorted(v for v in samples[name] if not math.isnan(v))
+        out[name] = {"point": fn(y_true, pred), "ci_low": vals[int(math.floor(alpha / 2 * (len(vals) - 1)))],
+                     "ci_high": vals[int(math.ceil((1 - alpha / 2) * (len(vals) - 1)))]}
+    return out
+
+
+def compare_correctness(correct_a: list[bool], correct_b: list[bool], n_boot: int = 5000, seed: int = 20261102) -> dict:
+    """McNemar + paired bootstrap on per-claim correctness vectors, for
+    scorings where 'correct' is not a single label match (e.g. adjudicated
+    alternatives)."""
+    y = ["SUPPORTED"] * len(correct_a)
+    la = ["SUPPORTED" if c else "CONTRADICTED" for c in correct_a]
+    lb = ["SUPPORTED" if c else "CONTRADICTED" for c in correct_b]
+    boot = bootstrap_diff(y, la, lb, n_boot=n_boot, seed=seed)
+    return {"n": len(y), "mcnemar": mcnemar(y, la, lb), "accuracy_diff": boot.get("accuracy")}

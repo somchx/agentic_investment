@@ -108,6 +108,10 @@ cap as A3. A3 − SR therefore estimates the contribution of contradiction-direc
 
 ## 6. Gold dataset
 
+**Current evaluation reference (2026-11):** Final Gold v3, approved (`datasets/workbooks/Final_Gold_v3_approved.xlsx`, all 150 human review Approved) — see §10 item 1 for provenance. It is loaded only by
+`engine/reference.py` (evaluation code), validated by `scripts/validate_gold.py` / notebook 01, and never written.
+The human-annotation workflow below remains available for an independent human gold set.
+
 - Target ≈150 claims: ≈50 numerical, ≈50 interpretive, ≈50 ambiguous; AAPL / MSFT / AMZN first, other tickers
   with a known CIK supported.
 - Annotation schema (per reviewer): claim id, reviewer id / type, label, supporting and contradictory evidence
@@ -119,6 +123,14 @@ cap as A3. A3 − SR therefore estimates the contribution of contradiction-direc
 - Guidelines: `datasets/annotation_guidelines.md`.
 
 ## 7. Metrics
+
+**Scoring of INSUFFICIENT_EVIDENCE claims (reported side by side).** *Strict* (primary): only an exact match with
+the reference counts. *Adjudicated*: a decisive answer on an INSUFFICIENT_EVIDENCE claim also counts when the
+researcher, blind to the approach, judged its label and cited evidence ACCEPTABLE case by case
+(`INSUFFICIENT_adjudication_filled.xlsx`: 5 of 44 answers). *Lenient*: every decisive answer on such a claim
+counts (`INSUFFICIENT_adjudication__<run>.xlsx`: 44 of 44) -- an upper bound, since a real citation need not
+support the answer. Decisions are stored per variant in `datasets/adjudication/` and scored by
+`engine.reference.correct`; notebook 05 reports all three.
 
 - **Classification** (finalized gold only): accuracy; per-class precision, recall, F1; macro-F1 over classes
   present in the gold set; 3×3 confusion matrix plus a NO_PREDICTION column (errors count as wrong).
@@ -159,20 +171,27 @@ can be replayed offline.
 
 ## 10. Limitations and outstanding work
 
-1. **No gold labels and no held-out claims yet.** Accuracy, macro-F1, evidence P/R and the statistical tests
-   cannot be computed on real data until annotation is done.
-2. **No real-model run yet.** Only mock runs exist; the first paid run needs explicit approval (pilot first).
-3. **Retrieval scope.** Main 10-K/10-Q documents only; exhibits and 8-K earnings releases are not indexed by
+1. **Reference labels are not independent human gold.** Final Gold (v1 → v3) was annotated by three LLMs (Claude Opus
+   5.5, Gemini 4 Argon, GPT-6.0 Astra; Fleiss' κ = Krippendorff's α = 0.634), adjudicated with AI assistance and
+   reviewed by the researcher. Results are agreement with this reference and must be reported with its provenance.
+   Agreement on interpretive (α = 0.436) and ambiguous (α = 0.377) claims is below Krippendorff's 0.667 floor.
+2. **Model-family overlap.** One annotator is a Claude model; the experiment model is a Claude model.
+3. **Reference evidence not fully verbatim-verified** (v3: 71/150 corroborated table values, not quotes), so evidence precision / recall are not
+   computed; filing-level overlap with the reference is reported instead.
+4. **No real-model run yet.** Only mock runs exist; the first paid run needs explicit approval (pilot first).
+5. **Retrieval scope.** Main 10-K/10-Q documents only; exhibits and 8-K earnings releases are not indexed by
    default; BM25 is lexical (no embeddings).
-4. **Fiscal Q4.** Apple's fourth-quarter figures are not derived from FY − 9M (only Microsoft's are, in the app's
-   extractor), so claims about Apple's fiscal Q4 quarter return UNVERIFIABLE numeric checks. (The app's known AMZN
-   earnings-release column issue affects the 8-K cross-check tool, which this pipeline does not use.)
-5. **Numeric assertions come from the model.** A mis-extracted assertion (wrong period or basis) produces a wrong
-   deterministic check; these cases are visible in the trace and should be counted in error analysis.
-6. **Numeric override.** Because A2's numeric rule is re-applied after the second look, A3 and SR cannot change
-   labels of purely numeric claims whose checks are all TRUE or any FALSE; their effect is expected mainly on
-   interpretive and ambiguous claims (a design choice, switchable with `numeric.override_final_label`).
-7. **Pre-training knowledge** (see §5).
-8. **Mock LLM** is a keyword heuristic; it validates plumbing only.
-9. **Variance.** Temperature 0 is not fully deterministic; repeated live runs are needed to estimate run-to-run
-   variation.
+6. **Fiscal Q4.** Q4 = FY − 9M is derived only for Microsoft (app extractor); other companies' fiscal-Q4 quarters
+   return UNVERIFIABLE numeric checks. In the gold set this affects only future-period claims.
+7. **Numeric assertions come from the model.** A mis-extracted assertion (wrong period or basis) produces a wrong
+   deterministic check; these are counted by `incorrect_fiscal_period_rate` and visible in traces.
+8. **Numeric override.** Because A2's numeric rule is re-applied after the second look, A3 and SR cannot change
+   labels of purely numeric claims whose checks are all TRUE or any FALSE (switch: `numeric.override_final_label`).
+9. **Unequal budget.** A3 and SR make 3 model calls per claim, A1 / A2 one; A3 also issues up to 3 extra
+   retrieval queries. SR is the equal-call control; budgets are reported per approach (notebook 06).
+10. **Pre-training knowledge** (see §5).
+11. **Mock LLM** is a keyword heuristic; it validates plumbing only.
+12. **Variance.** Temperature 0 is not fully deterministic; repeated live runs are needed to estimate run-to-run
+    variation.
+13. **Retries.** Transient API errors (timeouts, 429 / 5xx) are retried up to three times with the identical
+    request; a request that timed out after the server processed it may still be billed.

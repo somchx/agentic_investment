@@ -1,0 +1,902 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-AAPL-04:cc011d4a",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-AAPL-04",
+    "company": "AAPL",
+    "claim": "Apple's total net sales for the quarter ended September 26, 2026 increased year over year.",
+    "as_of_date": "2026-10-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026 Q4"
+  },
+  "initial_label": "INSUFFICIENT_EVIDENCE",
+  "final_label": "INSUFFICIENT_EVIDENCE",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-26",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": 0
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Apple's total net sales for the quarter ended September 26, 2026 increased year over year. However, none of the evidence provided contains financial data for the quarter ended September 26, 2026. \n\nThe evidence includes:\n- E1: Q2 FY2026 (ended March 28, 2026)\n- E2: FY2025 annual report (ended September 27, 2025) - contains product announcements but no Q4 FY2026 financial data\n- E3, E4, E5: Q3 FY2026 (ended June 27, 2026)\n- E6: Q2 FY2026 (ended March 28, 2026)\n\nWhile E2 mentions fiscal year 2025 ended September 27, 2025, it does not provide financial data for the quarter ended September 26, 2026 (which would be Q4 FY2026). The claim's as_of_date is October 15, 2026, and the reporting period is FY2026 Q4, but no evidence passage contains the actual net sales figures for that quarter or the year-over-year comparison.\n\nWithout data for the specific quarter in question, the claim cannot be verified as supported or contradicted.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-26",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": 0
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-09-26"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Does the filing actually report total net sales for the quarter ended September 26, 2026 (or September 27, 2026, given Apple's fiscal calendar) and the year-over-year comparison?",
+          "search_query": "total net sales September 2026 fourth quarter Q4 fiscal 2026 year-over-year",
+          "numeric_check": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-27",
+            "comparison": "increase",
+            "threshold": 0,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Could the fiscal quarter ending date be September 27, 2026 instead of September 26, 2026, and does the filing report net sales for that period?",
+          "search_query": "September 27 2026 net sales revenue fourth quarter fiscal year ended",
+          "numeric_check": {
+            "metric": "Revenue",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-09-27",
+            "comparison": ">",
+            "threshold": null,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Is there a 10-K or 10-Q filing for fiscal year 2026 Q4 that contains the actual financial results showing whether net sales increased year-over-year?",
+          "search_query": "three months ended September 2026 2025 net sales change percent fiscal year 2026",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "total net sales September 2026 fourth quarter Q4 fiscal 2026 year-over-year",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "September 27 2026 net sales revenue fourth quarter fiscal year ended",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "three months ended September 2026 2025 net sales change percent fiscal year 2026",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-09-27"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        },
+        {
+          "hypothesis_id": "H2",
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-09-27"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E11",
+              "quote": "The Company's fiscal year is the 52- or 53-week period that ends on the last Saturday of September.",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-26-000020",
+              "form": "10-Q",
+              "filed": "2026-07-31",
+              "period_end": "2026-06-27",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm",
+              "locator": "10-Q 0000320193-26-000020:12187-13206"
+            },
+            {
+              "evidence_id": "E12",
+              "quote": "The Company's fiscal years 2026 and 2025 span 52 weeks each.",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-26-000013",
+              "form": "10-Q",
+              "filed": "2026-05-01",
+              "period_end": "2026-03-28",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+              "locator": "10-Q 0000320193-26-000013:12167-13186"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "aec548c3cf53b99b8db35f386724515976dce29c4c417d57a225a083a8af8715",
+      "source": "cache",
+      "input_tokens": 4338,
+      "output_tokens": 516,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-26",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": 0
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Apple's total net sales for the quarter ended September 26, 2026 increased year over year. However, none of the evidence provided contains financial data for the quarter ended September 26, 2026. \n\nThe evidence includes:\n- E1: Q2 FY2026 (ended March 28, 2026)\n- E2: FY2025 annual report (ended September 27, 2025) - contains product announcements but no Q4 FY2026 financial data\n- E3, E4, E5: Q3 FY2026 (ended June 27, 2026)\n- E6: Q2 FY2026 (ended March 28, 2026)\n\nWhile E2 mentions fiscal year 2025 ended September 27, 2025, it does not provide financial data for the quarter ended September 26, 2026 (which would be Q4 FY2026). The claim's as_of_date is October 15, 2026, and the reporting period is FY2026 Q4, but no evidence passage contains the actual net sales figures for that quarter or the year-over-year comparison.\n\nWithout data for the specific quarter in question, the claim cannot be verified as supported or contradicted.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "40a4d596c4aed46090a9f327f8b3b3564968a2a1b7b7c346b76bc3af050177e8",
+      "source": "cache",
+      "input_tokens": 5356,
+      "output_tokens": 476,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Does the filing actually report total net sales for the quarter ended September 26, 2026 (or September 27, 2026, given Apple's fiscal calendar) and the year-over-year comparison?",
+            "search_query": "total net sales September 2026 fourth quarter Q4 fiscal 2026 year-over-year",
+            "numeric_check": {
+              "metric": "Revenue",
+              "measure": "yoy_growth",
+              "period_basis": "quarter",
+              "period_end": "2026-09-27",
+              "comparison": "increase",
+              "threshold": 0,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Could the fiscal quarter ending date be September 27, 2026 instead of September 26, 2026, and does the filing report net sales for that period?",
+            "search_query": "September 27 2026 net sales revenue fourth quarter fiscal year ended",
+            "numeric_check": {
+              "metric": "Revenue",
+              "measure": "level",
+              "period_basis": "quarter",
+              "period_end": "2026-09-27",
+              "comparison": ">",
+              "threshold": null,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Is there a 10-K or 10-Q filing for fiscal year 2026 Q4 that contains the actual financial results showing whether net sales increased year-over-year?",
+            "search_query": "three months ended September 2026 2025 net sales change percent fiscal year 2026",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "6a88d5c3aeee75ecc826045eb8775304d0f8958083b6bc36e0f17e7f975f8008",
+      "source": "cache",
+      "input_tokens": 9821,
+      "output_tokens": 718,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E11",
+                "quote": "The Company's fiscal year is the 52- or 53-week period that ends on the last Saturday of September."
+              },
+              {
+                "evidence_id": "E12",
+                "quote": "The Company's fiscal years 2026 and 2025 span 52 weeks each."
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "INSUFFICIENT_EVIDENCE",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After investigating potential challenges to the initial verdict, the conclusion remains INSUFFICIENT_EVIDENCE.\n\nChallenge H1 sought to find total net sales for the quarter ended September 26 or 27, 2026 with year-over-year comparison. The retrieved evidence (E7-E9) only discusses Q2 and Q3 FY2026 results, not Q4 FY2026. The numeric check confirms the period is not available in the data.\n\nChallenge H2 investigated whether the fiscal quarter might end on September 27, 2026 instead of September 26, 2026. Evidence E11 and E12 confirm that Apple's fiscal year ends on \"the last Saturday of September\" and that fiscal years 2026 and 2025 span 52 weeks each. This establishes the correct period end date would be September 27, 2026 (not September 26). However, no evidence was retrieved containing actual financial results for that quarter, and the numeric check confirms this period is not available.\n\nChallenge H3 sought a 10-K or 10-Q filing for FY2026 Q4 with the actual results. The retrieved evidence (E13-E15) only contains data for Q2 and Q3 FY2026, not Q4 FY2026.\n\nThe claim references September 26, 2026, but the correct fiscal quarter end would be September 27, 2026. Regardless, no filing evidence has been provided that contains total net sales data for Q4 FY2026 (the quarter ending in September 2026) or the year-over-year comparison needed to verify the claim.",
+        "change_reason": "N/A"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Apple's total net sales for the quarter ended September 26, 2026 increased year over year. FY2026 Q4",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "total net sales September 2026 fourth quarter Q4 fiscal 2026 year-over-year",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "September 27 2026 net sales revenue fourth quarter fiscal year ended",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "three months ended September 2026 2025 net sales change percent fiscal year 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-26",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": 0
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-09-26"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-27",
+            "comparison": "increase",
+            "threshold": 0,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-09-27"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H2",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-09-27",
+            "comparison": ">",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-09-27"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-26-000020",
+        "filed": "2026-07-31",
+        "report_date": "2026-06-27",
+        "primary_document": "aapl-20260627.htm",
+        "sha256": "a12d2352fdb814fdd2423d6f4ced093b25fb2b30adc17e7a8326b9e0cd3c51b5"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-26-000013",
+        "filed": "2026-05-01",
+        "report_date": "2026-03-28",
+        "primary_document": "aapl-20260328.htm",
+        "sha256": "8a2c43286c07522163b237664aad64d3f1760654e22d881374dea29362508ea6"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0000320193-25-000079",
+        "filed": "2025-10-31",
+        "report_date": "2025-09-27",
+        "primary_document": "aapl-20250927.htm",
+        "sha256": "056f733f13ff7407e64dc81fb96da3c3c55a6ba429bf094f57cb6bd472231f82"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 431
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:39201-40394",
+      "excerpt": "es of iPhone and Services. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Rest of Asia Pacific net sales during the second quarter of 2026. Products and Services Performance The following table shows net sales by category for the three- and six-month periods ended March 28, 2026 and March 29, 2025 (dollars in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 Change March 28, 2026 March 29, 2025 Change iPhone $ 56,994 $ 46,841 22 % $ 142,263 $ 115,979 23 % Mac 8,399 7,949 6 % 16,785 16,936 (1) % iPad 6,914 6,402 8 % 15,509 14,490 7 % Wearables, Home and Accessories 7,901 7,522 5 % 19,394 19,269 1 % Services 30,976 26,645 16 % 60,989 52,985 15 % Total net sales $ 111,184 $ 95,359 17 % $ 254,940 $ 219,659 16 % iPhone iPhone net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 due to higher net sales of Pro models. Mac Mac net sales increased during the second quarter of 2026 compared to the second quarter of 2025 due to higher net sales of laptops. Year-over-year Mac net sales during the first six months of 2026 were relatively flat.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:104704-105792",
+      "excerpt": "Form 10-K for the fiscal year ended September 28, 2024. Product, Service and Software Announcements The Company announces new product, service and software offerings at various times during the year. Significant announcements during fiscal year 2025 included the following: First Quarter 2025: • MacBook Pro • Mac mini • iMac • iPad mini Second Quarter 2025: • iPhone 16e • iPad Air • iPad • MacBook Air • Mac Studio Third Quarter 2025: • iOS 26, macOS Tahoe 26, iPadOS 26, watchOS 26, visionOS 26 and tvOS 26 Fourth Quarter 2025: • iPhone 17, iPhone Air, iPhone 17 Pro and iPhone 17 Pro Max • Apple Watch Series 11, Apple Watch SE 3 and Apple Watch Ultra 3 • AirPods Pro 3 Fiscal Period The Company’s fiscal year is the 52- or 53-week period that ends on the last Saturday of September. An additional week is included in the first fiscal quarter every five or six years to realign the Company’s fiscal quarters with calendar quarters, which occurred in the first quarter of 2023. The Company’s fiscal years 2025 and 2024 spanned 52 weeks each, whereas fiscal year 2023 spanned 53 weeks.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000020",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_start": null,
+      "period_end": "2026-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm",
+      "locator": "10-Q 0000320193-26-000020:40136-41214",
+      "excerpt": "21,071 3% Wearables, Home and Accessories 7,883 7,404 6% 27,277 26,673 2% Services 30,739 27,423 12% 91,728 80,408 14% Total net sales $ 109,417 $ 94,036 16% $ 364,357 $ 313,695 16% iPhone iPhone net sales increased during the third quarter and first nine months of 2026 compared to the same periods in 2025 primarily due to higher net sales of Pro models. Mac Mac net sales increased during the third quarter and first nine months of 2026 compared to the same periods in 2025 due to higher net sales of laptops. iPad iPad net sales decreased during the third quarter of 2026 compared to the third quarter of 2025 primarily due to lower net sales of iPad mini ® and iPad Air ® . Year-over-year iPad net sales increased during the first nine months of 2026 primarily due to higher net sales of iPad, partially offset by lower net sales of iPad mini. Wearables, Home and Accessories Wearables, Home and Accessories net sales increased during the third quarter and first nine months of 2026 compared to the same periods in 2025 due to higher net sales of Accessories and Wearables.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000020",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_start": null,
+      "period_end": "2026-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm",
+      "locator": "10-Q 0000320193-26-000020:41014-42214",
+      "excerpt": "es Wearables, Home and Accessories net sales increased during the third quarter and first nine months of 2026 compared to the same periods in 2025 due to higher net sales of Accessories and Wearables. Services Services net sales increased during the third quarter and first nine months of 2026 compared to the same periods in 2025 primarily due to higher net sales from advertising and cloud services. Apple Inc. | Q3 2026 Form 10-Q | 15 Gross Margin Products and Services gross margin and gross margin percentage for the three- and nine-month periods ended June 27, 2026 and June 28, 2025, were as follows (dollars in millions): Three Months Ended Nine Months Ended June 27, 2026 June 28, 2025 June 27, 2026 June 28, 2025 Gross margin: Products $ 31,525 $ 22,993 $ 108,819 $ 86,190 Services 23,245 20,725 69,963 60,670 Total gross margin $ 54,770 $ 43,718 $ 178,782 $ 146,860 Gross margin percentage: Products 40.1 % 34.5 % 39.9 % 36.9 % Services 75.6 % 75.6 % 76.3 % 75.5 % Total gross margin percentage 50.1 % 46.5 % 49.1 % 46.8 % Products Gross Margin Products gross margin and gross margin percentage increased during the third quarter and first nine months of 2026 compared to the same periods",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000020",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_start": null,
+      "period_end": "2026-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm",
+      "locator": "10-Q 0000320193-26-000020:39136-40336",
+      "excerpt": "e to higher net sales of iPhone. The weakness in the yen relative to the U.S. dollar had an unfavorable year-over-year impact on Japan net sales during the third quarter and first nine months of 2026. Rest of Asia Pacific Rest of Asia Pacific net sales increased during the third quarter and first nine months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPhone, Services and Mac. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Rest of Asia Pacific net sales during the third quarter of 2026. Products and Services Performance The following table shows net sales by category for the three- and nine-month periods ended June 27, 2026 and June 28, 2025 (dollars in millions): Three Months Ended Nine Months Ended June 27, 2026 June 28, 2025 Change June 27, 2026 June 28, 2025 Change iPhone $ 54,252 $ 44,582 22% $ 196,515 $ 160,561 22% Mac 10,352 8,046 29% 27,137 24,982 9% iPad 6,191 6,581 (6) % 21,700 21,071 3% Wearables, Home and Accessories 7,883 7,404 6% 27,277 26,673 2% Services 30,739 27,423 12% 91,728 80,408 14% Total net sales $ 109,417 $ 94,036 16% $ 364,357 $ 313,695 16% iPhone iPhone net",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:40194-41177",
+      "excerpt": "ased during the second quarter of 2026 compared to the second quarter of 2025 due to higher net sales of laptops. Year-over-year Mac net sales during the first six months of 2026 were relatively flat. iPad iPad net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPad, partially offset by lower net sales of iPad mini ® . Wearables, Home and Accessories Wearables, Home and Accessories net sales increased during the second quarter of 2026 compared to the second quarter of 2025 primarily due to higher net sales of Accessories and Wearables. Year-over-year Wearables, Home and Accessories net sales during the first six months of 2026 were relatively flat. Services Services net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales from advertising, the App Store ® and cloud services. Apple Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:37764-38911",
+      "excerpt": "o higher net sales of iPhone and Services. The strength in foreign currencies relative to the U.S. dollar had a favorable year-over-year impact on Americas net sales during the second quarter of 2026. Europe Europe net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPhone and Services. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Europe net sales during the second quarter and first six months of 2026. Greater China Greater China net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 due to higher net sales of iPhone. The strength in the renminbi relative to the U.S. dollar had a favorable year-over-year impact on Greater China net sales during the second quarter of 2026. Apple Inc. | Q2 2026 Form 10-Q | 14 Japan Japan net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPhone. The weakness in the yen relative to the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000020",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_start": null,
+      "period_end": "2026-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm",
+      "locator": "10-Q 0000320193-26-000020:38247-39336",
+      "excerpt": "es and Mac. Europe Europe net sales increased during the third quarter and first nine months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPhone, Services and Mac. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Europe net sales during the first nine months of 2026. Greater China Greater China net sales increased during the third quarter and first nine months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPhone. The strength in the renminbi relative to the U.S. dollar had a favorable year-over-year impact on Greater China net sales during the third quarter and first nine months of 2026. Apple Inc. | Q3 2026 Form 10-Q | 14 Japan Japan net sales increased during the third quarter and first nine months of 2026 compared to the same periods in 2025 due to higher net sales of iPhone. The weakness in the yen relative to the U.S. dollar had an unfavorable year-over-year impact on Japan net sales during the third quarter and first nine months of 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:38711-39401",
+      "excerpt": "et sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPhone. The weakness in the yen relative to the U.S. dollar had an unfavorable year-over-year impact on Japan net sales during the first six months of 2026. Rest of Asia Pacific Rest of Asia Pacific net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPhone and Services. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Rest of Asia Pacific net sales during the second quarter of 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000020",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_start": null,
+      "period_end": "2026-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm",
+      "locator": "10-Q 0000320193-26-000020:13006-14206",
+      "excerpt": "rwise stated, references to particular years, quarters, months and periods refer to the Company’s fiscal years ended in September and the associated quarters, months and periods of those fiscal years. Note 2 – Revenue The following table shows disaggregated net sales, as well as the portion of total net sales that was previously deferred, for the three- and nine-month periods ended June 27, 2026 and June 28, 2025 (in millions): Three Months Ended Nine Months Ended June 27, 2026 June 28, 2025 June 27, 2026 June 28, 2025 iPhone ® $ 54,252 $ 44,582 $ 196,515 $ 160,561 Mac ® 10,352 8,046 27,137 24,982 iPad ® 6,191 6,581 21,700 21,071 Wearables, Home and Accessories 7,883 7,404 27,277 26,673 Services 30,739 27,423 91,728 80,408 Total net sales $ 109,417 $ 94,036 $ 364,357 $ 313,695 Portion of total net sales that was included in deferred revenue as of the beginning of the period $ 4,086 $ 4,015 $ 7,260 $ 6,958 The Company’s proportion of net sales by disaggregated revenue source was generally consistent for each reportable segment in Note 10, “Segment Information” for the three- and nine-month periods ended June 27, 2026 and June 28, 2025, except in Greater China, where iPhone revenue r",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000020",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_start": null,
+      "period_end": "2026-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm",
+      "locator": "10-Q 0000320193-26-000020:12187-13206",
+      "excerpt": "of management estimates. Certain prior period amounts in the condensed consolidated financial statements and accompanying notes have been reclassified to conform to the current period’s presentation. These condensed consolidated financial statements and accompanying notes should be read in conjunction with the Company’s annual consolidated financial statements and accompanying notes included in its Annual Report on Form 10-K for the fiscal year ended September 27, 2025 (the “2025 Form 10-K”). The Company’s fiscal year is the 52- or 53-week period that ends on the last Saturday of September. An additional week is included in the first fiscal quarter every five or six years to realign the Company’s fiscal quarters with calendar quarters. The Company’s fiscal years 2026 and 2025 span 52 weeks each. Unless otherwise stated, references to particular years, quarters, months and periods refer to the Company’s fiscal years ended in September and the associated quarters, months and periods of those fiscal years.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:12167-13186",
+      "excerpt": "of management estimates. Certain prior period amounts in the condensed consolidated financial statements and accompanying notes have been reclassified to conform to the current period’s presentation. These condensed consolidated financial statements and accompanying notes should be read in conjunction with the Company’s annual consolidated financial statements and accompanying notes included in its Annual Report on Form 10-K for the fiscal year ended September 27, 2025 (the “2025 Form 10-K”). The Company’s fiscal year is the 52- or 53-week period that ends on the last Saturday of September. An additional week is included in the first fiscal quarter every five or six years to realign the Company’s fiscal quarters with calendar quarters. The Company’s fiscal years 2026 and 2025 span 52 weeks each. Unless otherwise stated, references to particular years, quarters, months and periods refer to the Company’s fiscal years ended in September and the associated quarters, months and periods of those fiscal years.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:12986-14186",
+      "excerpt": "rwise stated, references to particular years, quarters, months and periods refer to the Company’s fiscal years ended in September and the associated quarters, months and periods of those fiscal years. Note 2 – Revenue The following table shows disaggregated net sales, as well as the portion of total net sales that was previously deferred, for the three- and six-month periods ended March 28, 2026 and March 29, 2025 (in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 March 28, 2026 March 29, 2025 iPhone ® $ 56,994 $ 46,841 $ 142,263 $ 115,979 Mac ® 8,399 7,949 16,785 16,936 iPad ® 6,914 6,402 15,509 14,490 Wearables, Home and Accessories 7,901 7,522 19,394 19,269 Services 30,976 26,645 60,989 52,985 Total net sales $ 111,184 $ 95,359 $ 254,940 $ 219,659 Portion of total net sales that was included in deferred revenue as of the beginning of the period $ 3,987 $ 3,672 $ 5,834 $ 5,440 The Company’s proportion of net sales by disaggregated revenue source was generally consistent for each reportable segment in Note 10, “Segment Information” for the three- and six-month periods ended March 28, 2026 and March 29, 2025, except in Greater China, where iPhone reven",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000020",
+      "form": "10-Q",
+      "filed": "2026-07-31",
+      "period_start": null,
+      "period_end": "2026-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm",
+      "locator": "10-Q 0000320193-26-000020:37265-38447",
+      "excerpt": "and reductions in consumer spending and negative consumer sentiment for the Company’s products and services, all of which can further adversely affect the Company’s business and results of operations. Segment Operating Performance The following table shows net sales by reportable segment for the three- and nine-month periods ended June 27, 2026 and June 28, 2025 (dollars in millions): Three Months Ended Nine Months Ended June 27, 2026 June 28, 2025 Change June 27, 2026 June 28, 2025 Change Americas $ 45,781 $ 41,198 11% $ 149,403 $ 134,161 11% Europe 29,395 24,014 22% 95,596 82,329 16% Greater China 18,816 15,369 22% 64,839 49,884 30% Japan 6,554 5,782 13% 24,368 22,067 10% Rest of Asia Pacific 8,871 7,673 16% 30,151 25,254 19% Total net sales $ 109,417 $ 94,036 16% $ 364,357 $ 313,695 16% Americas Americas net sales increased during the third quarter and first nine months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPhone, Services and Mac. Europe Europe net sales increased during the third quarter and first nine months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPhone, Services and Mac.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:36814-37964",
+      "excerpt": "and reductions in consumer spending and negative consumer sentiment for the Company’s products and services, all of which can further adversely affect the Company’s business and results of operations. Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 28, 2026 and March 29, 2025 (dollars in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 Change March 28, 2026 March 29, 2025 Change Americas $ 45,093 $ 40,315 12 % $ 103,622 $ 92,963 11 % Europe 28,055 24,454 15 % 66,201 58,315 14 % Greater China 20,497 16,002 28 % 46,023 34,515 33 % Japan 8,401 7,298 15 % 17,814 16,285 9 % Rest of Asia Pacific 9,138 7,290 25 % 21,280 17,581 21 % Total net sales $ 111,184 $ 95,359 17 % $ 254,940 $ 219,659 16 % Americas Americas net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 due to higher net sales of iPhone and Services. The strength in foreign currencies relative to the U.S. dollar had a favorable year-over-year impact on Americas net sales during the second quarter of 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    }
+  ],
+  "citations": [],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 19515,
+    "output": 1710
+  },
+  "latency_ms": 7,
+  "estimated_cost_usd": 0.084195,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+        "checks": [
+          "UNVERIFIABLE"
+        ]
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 2,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "INSUFFICIENT_EVIDENCE"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_PARTIALLY_UNVERIFIABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

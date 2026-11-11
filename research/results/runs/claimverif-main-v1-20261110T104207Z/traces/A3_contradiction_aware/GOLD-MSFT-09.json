@@ -1,0 +1,820 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-MSFT-09:844fd0e3",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-MSFT-09",
+    "company": "MSFT",
+    "claim": "The increase in Microsoft's research and development expense in fiscal 2025 was driven mainly by investments in cloud engineering.",
+    "as_of_date": "2025-08-31",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Research and development expenses increased $3.0 billion or 10% driven by investments in cloud and AI engineering and Gaming, including the impact of the Activision Blizzard acquisition."
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Research and development expenses increased $3.0 billion or 10% driven by investments in cloud and AI engineering and Gaming, including the impact of the Activision Blizzard acquisition."
+          }
+        ],
+        "reasoning_summary": "The claim states that the increase in Microsoft's R&D expense in fiscal 2025 was driven \"mainly by investments in cloud engineering.\" However, the evidence from the fiscal 2025 10-K (E1 and E2) explicitly states that the R&D expense increase was \"driven by investments in cloud and AI engineering and Gaming, including the impact of the Activision Blizzard acquisition.\" The filing identifies three drivers: (1) cloud and AI engineering, (2) Gaming, and (3) the Activision Blizzard acquisition impact. The claim's characterization that cloud engineering was the \"main\" driver is contradicted by the filing's attribution to multiple factors, and the claim omits both \"AI\" from the engineering investments and the Gaming/Activision Blizzard components entirely. This is a material misrepresentation of the stated drivers.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Does the filing provide a quantitative breakdown showing that cloud engineering (excluding AI) was indeed the largest component of the R&D increase, even though multiple drivers were listed?",
+          "search_query": "research and development cloud engineering AI Gaming Activision breakdown allocation percentage billion"
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Does the filing use 'cloud engineering' as an umbrella term that includes AI engineering, making the claim's reference to 'cloud engineering' technically accurate?",
+          "search_query": "cloud engineering AI infrastructure cloud and AI engineering definition includes"
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Does the filing indicate that Gaming and Activision Blizzard impacts were minor or immaterial compared to cloud engineering investments in the R&D increase?",
+          "search_query": "Gaming Activision Blizzard research and development impact acquisition headcount primarily mainly"
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "research and development cloud engineering AI Gaming Activision breakdown allocation percentage billion",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "cloud engineering AI infrastructure cloud and AI engineering definition includes",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "Gaming Activision Blizzard research and development impact acquisition headcount primarily mainly",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "Research and development expenses increased $3.0 billion or 10% driven by investments in cloud and AI engineering and Gaming",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000950170-25-100235",
+              "form": "10-K",
+              "filed": "2025-07-30",
+              "period_end": "2025-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm",
+              "locator": "10-K 0000950170-25-100235:157488-158686"
+            },
+            {
+              "evidence_id": "E3",
+              "quote": "Research and development expenses increased $2.2 billion or 10% driven by investments in cloud and AI engineering and the impact of the Activision Blizzard acquisition.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000950170-25-061046",
+              "form": "10-Q",
+              "filed": "2025-04-30",
+              "period_end": "2025-03-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025061046/msft-20250331.htm",
+              "locator": "10-Q 0000950170-25-061046:98890-100082"
+            },
+            {
+              "evidence_id": "E4",
+              "quote": "Research and development expenses increased $775 million or 11% driven by investments in cloud engineering.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000950170-25-010491",
+              "form": "10-Q",
+              "filed": "2025-01-29",
+              "period_end": "2024-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025010491/msft-20241231.htm",
+              "locator": "10-Q 0000950170-25-010491:97468-98539"
+            },
+            {
+              "evidence_id": "E5",
+              "quote": "Research and development expenses increased $1.7 billion or 12% driven by investments in cloud engineering and the impact of the Activision Blizzard acquisition.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000950170-25-010491",
+              "form": "10-Q",
+              "filed": "2025-01-29",
+              "period_end": "2024-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025010491/msft-20241231.htm",
+              "locator": "10-Q 0000950170-25-010491:98339-99526"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "36680b0ad75ffb13c51db82c8bd9d003db7dc9a066be00a6509dd0a7899cf7f7",
+      "source": "cache",
+      "input_tokens": 3950,
+      "output_tokens": 462,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Research and development expenses increased $3.0 billion or 10% driven by investments in cloud and AI engineering and Gaming, including the impact of the Activision Blizzard acquisition."
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Research and development expenses increased $3.0 billion or 10% driven by investments in cloud and AI engineering and Gaming, including the impact of the Activision Blizzard acquisition."
+          }
+        ],
+        "reasoning_summary": "The claim states that the increase in Microsoft's R&D expense in fiscal 2025 was driven \"mainly by investments in cloud engineering.\" However, the evidence from the fiscal 2025 10-K (E1 and E2) explicitly states that the R&D expense increase was \"driven by investments in cloud and AI engineering and Gaming, including the impact of the Activision Blizzard acquisition.\" The filing identifies three drivers: (1) cloud and AI engineering, (2) Gaming, and (3) the Activision Blizzard acquisition impact. The claim's characterization that cloud engineering was the \"main\" driver is contradicted by the filing's attribution to multiple factors, and the claim omits both \"AI\" from the engineering investments and the Gaming/Activision Blizzard components entirely. This is a material misrepresentation of the stated drivers.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "424ea386382f9c0249bfd56fdf0e55df0d180c1c3e0c18202d184620d51621b2",
+      "source": "cache",
+      "input_tokens": 4805,
+      "output_tokens": 276,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Does the filing provide a quantitative breakdown showing that cloud engineering (excluding AI) was indeed the largest component of the R&D increase, even though multiple drivers were listed?",
+            "search_query": "research and development cloud engineering AI Gaming Activision breakdown allocation percentage billion"
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Does the filing use 'cloud engineering' as an umbrella term that includes AI engineering, making the claim's reference to 'cloud engineering' technically accurate?",
+            "search_query": "cloud engineering AI infrastructure cloud and AI engineering definition includes"
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Does the filing indicate that Gaming and Activision Blizzard impacts were minor or immaterial compared to cloud engineering investments in the R&D increase?",
+            "search_query": "Gaming Activision Blizzard research and development impact acquisition headcount primarily mainly"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "96890f7a2cfe147f47c116ba220e738499f4aaa5c7b10e1112114cb22fdb6426",
+      "source": "cache",
+      "input_tokens": 8458,
+      "output_tokens": 946,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E1",
+                "quote": "Research and development expenses increased $3.0 billion or 10% driven by investments in cloud and AI engineering and Gaming"
+              },
+              {
+                "evidence_id": "E3",
+                "quote": "Research and development expenses increased $2.2 billion or 10% driven by investments in cloud and AI engineering and the impact of the Activision Blizzard acquisition."
+              },
+              {
+                "evidence_id": "E4",
+                "quote": "Research and development expenses increased $775 million or 11% driven by investments in cloud engineering."
+              },
+              {
+                "evidence_id": "E5",
+                "quote": "Research and development expenses increased $1.7 billion or 12% driven by investments in cloud engineering and the impact of the Activision Blizzard acquisition."
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "CONTRADICTED",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Research and development expenses increased $3.0 billion or 10% driven by investments in cloud and AI engineering and Gaming, including the impact of the Activision Blizzard acquisition."
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Research and development expenses increased $3.0 billion or 10% driven by investments in cloud and AI engineering and Gaming, including the impact of the Activision Blizzard acquisition."
+          }
+        ],
+        "reasoning_summary": "After investigating potential challenges to the initial verdict, the CONTRADICTED label remains appropriate. \n\nH1 (quantitative breakdown): No evidence was found providing a quantitative breakdown of the R&D increase components. Without such data, we cannot determine if cloud engineering alone was the largest driver.\n\nH2 (terminology): This challenge is REFUTED. The filing consistently distinguishes between \"cloud engineering\" and \"cloud and AI engineering\" as separate terms. Evidence E4 and E5 use \"cloud engineering\" alone for some periods, while E1, E2, and E3 use \"cloud and AI engineering\" for the full fiscal year 2025. This demonstrates that Microsoft treats these as distinct concepts, not umbrella terms. The claim's reference to \"cloud engineering\" cannot be interpreted to include AI engineering.\n\nH3 (Gaming/Activision immateriality): No evidence was found indicating that Gaming and Activision Blizzard impacts were minor relative to cloud engineering investments in R&D.\n\nThe claim states the R&D increase was driven \"mainly by investments in cloud engineering,\" but the fiscal 2025 10-K explicitly attributes the increase to three factors: \"cloud and AI engineering,\" \"Gaming,\" and \"the impact of the Activision Blizzard acquisition.\" The claim materially misrepresents the drivers by (1) omitting \"AI\" from engineering investments, (2) omitting Gaming entirely, and (3) omitting the Activision Blizzard acquisition impact. The filing's consistent use of \"cloud and AI engineering\" as a combined phrase shows these are treated as integrated investments, not separable components where \"cloud\" dominates.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "The increase in Microsoft's research and development expense in fiscal 2025 was driven mainly by investments in cloud engineering. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "research and development cloud engineering AI Gaming Activision breakdown allocation percentage billion",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "cloud engineering AI infrastructure cloud and AI engineering definition includes",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "Gaming Activision Blizzard research and development impact acquisition headcount primarily mainly",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0000950170-25-100235",
+        "filed": "2025-07-30",
+        "report_date": "2025-06-30",
+        "primary_document": "msft-20250630.htm",
+        "sha256": "15d2ebb941500e84aeadd2654143ac3d0fbb10a65d8387391727ec4ae36fcd42"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000950170-25-061046",
+        "filed": "2025-04-30",
+        "report_date": "2025-03-31",
+        "primary_document": "msft-20250331.htm",
+        "sha256": "1af6edb8e3efac7687482fa2b6041b1436e4f27f55a057f0a93ea2fae3fa5f6c"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000950170-25-010491",
+        "filed": "2025-01-29",
+        "report_date": "2024-12-31",
+        "primary_document": "msft-20241231.htm",
+        "sha256": "2ccb0b8eb2a9273a39f11693ae014884de90814d558609b59f352d2ad3a7332f"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 823
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-100235",
+      "form": "10-K",
+      "filed": "2025-07-30",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm",
+      "locator": "10-K 0000950170-25-100235:157488-158686",
+      "excerpt": "iven by growth in Search and news advertising. • Gross margin increased $3.5 billion or 13% with growth across all businesses. Gross margin percentage increased with improvement across all businesses. • Operating expenses increased $1.3 billion or 9% driven by Gaming, including the impact of the Activision Blizzard acquisition. OPERATING EXPENSES Research and Development (In millions, except percentages) 2025 2024 Percentage Change Research and development $ 32,488 $ 29,510 10% As a percent of revenue 12% 12% 0ppt Research and development expenses include payroll, employee benefits, stock-based compensation expense, and other headcount-related expenses associated with product development. Research and development expenses also include technology development costs, including AI training and other infrastructure costs, third-party development and programming costs, and the amortization of purchased software code and services content. 40 PART II Item 7 Fiscal Year 2025 Compared with Fiscal Year 2024 Research and development expenses increased $3.0 billion or 10% driven by investments in cloud and AI engineering and Gaming, including the impact of the Activision Blizzard acquisition.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-100235",
+      "form": "10-K",
+      "filed": "2025-07-30",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm",
+      "locator": "10-K 0000950170-25-100235:158486-159336",
+      "excerpt": "cal Year 2024 Research and development expenses increased $3.0 billion or 10% driven by investments in cloud and AI engineering and Gaming, including the impact of the Activision Blizzard acquisition. Sales and Marketing (In millions, except percentages) 2025 2024 Percentage Change Sales and marketing $ 25,654 $ 24,456 5% As a percent of revenue 9% 10% (1)ppt Sales and marketing expenses include payroll, employee benefits, stock-based compensation expense, and other headcount-related expenses associated with sales and marketing personnel, and the costs of advertising, promotions, trade shows, seminars, and other programs. Fiscal Year 2025 Compared with Fiscal Year 2024 Sales and marketing expenses increased $1.2 billion or 5% driven by investments in commercial sales and Gaming, including the impact of the Activision Blizzard acquisition.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-061046",
+      "form": "10-Q",
+      "filed": "2025-04-30",
+      "period_start": null,
+      "period_end": "2025-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025061046/msft-20250331.htm",
+      "locator": "10-Q 0000950170-25-061046:98890-100082",
+      "excerpt": "technology development costs, including AI training and other infrastructure costs, third-party development and programming costs, and the amortization of purchased software code and services content. Three Months Ended March 31, 2025 Compared with Three Months Ended March 31, 2024 Research and development expenses increased $545 million or 7% driven by investments in cloud and AI engineering. Nine Months Ended March 31, 2025 Compared with Nine Months Ended March 31, 2024 Research and development expenses increased $2.2 billion or 10% driven by investments in cloud and AI engineering and the impact of the Activision Blizzard acquisition. Sales and Marketing (In millions, except percentages) Three Months Ended March 31, Percentage Change Nine Months Ended March 31, Percentage Change 2025 2024 2025 2024 Sales and marketing $ 6,212 $ 6,207 0% $ 18,369 $ 17,640 4% As a percent of revenue 9% 10% (1)ppt 9% 10% (1)ppt Sales and marketing expenses include payroll, employee benefits, stock-based compensation expense, and other headcount-related expenses associated with sales and marketing personnel, and the costs of advertising, promotions, trade shows, seminars, and other programs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-010491",
+      "form": "10-Q",
+      "filed": "2025-01-29",
+      "period_start": null,
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025010491/msft-20241231.htm",
+      "locator": "10-Q 0000950170-25-010491:97468-98539",
+      "excerpt": "t to higher margin businesses and improvement in Search and news advertising and Gaming. • Operating expenses increased $1.1 billion or 17% driven by the impact of the Activision Blizzard acquisition. 38 PART I Item 2 OPERATING EXPENSES Research and Development (In millions, except percentages) Three Months Ended December 31, Percentage Change Six Months Ended December 31, Percentage Change 2024 2023 2024 2023 Research and development $ 7,917 $ 7,142 11% $ 15,461 $ 13,801 12% As a percent of revenue 11% 12% (1)ppt 11% 12% (1)ppt Research and development expenses include payroll, employee benefits, stock-based compensation expense, and other headcount-related expenses associated with product development. Research and development expenses also include third-party development and programming costs and the amortization of purchased software code and services content. Three Months Ended December 31, 2024 Compared with Three Months Ended December 31, 2023 Research and development expenses increased $775 million or 11% driven by investments in cloud engineering.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-010491",
+      "form": "10-Q",
+      "filed": "2025-01-29",
+      "period_start": null,
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025010491/msft-20241231.htm",
+      "locator": "10-Q 0000950170-25-010491:98339-99526",
+      "excerpt": "ent. Three Months Ended December 31, 2024 Compared with Three Months Ended December 31, 2023 Research and development expenses increased $775 million or 11% driven by investments in cloud engineering. Six Months Ended December 31, 2024 Compared with Six Months Ended December 31, 2023 Research and development expenses increased $1.7 billion or 12% driven by investments in cloud engineering and the impact of the Activision Blizzard acquisition. Sales and Marketing (In millions, except percentages) Three Months Ended December 31, Percentage Change Six Months Ended December 31, Percentage Change 2024 2023 2024 2023 Sales and marketing $ 6,440 $ 6,246 3% $ 12,157 $ 11,433 6% As a percent of revenue 9% 10% (1)ppt 9% 10% (1)ppt Sales and marketing expenses include payroll, employee benefits, stock-based compensation expense, and other headcount-related expenses associated with sales and marketing personnel, and the costs of advertising, promotions, trade shows, seminars, and other programs. Three Months Ended December 31, 2024 Compared with Three Months Ended December 31, 2023 Sales and marketing expenses increased $194 million or 3% driven by investments in commercial sales.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-100235",
+      "form": "10-K",
+      "filed": "2025-07-30",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm",
+      "locator": "10-K 0000950170-25-100235:151762-152880",
+      "excerpt": "gin 193,893 171,008 13% Operating income 128,528 109,433 17% Net income 101,832 88,136 16% Diluted earnings per share 13.64 11.80 16% Fiscal Year 2025 Compared with Fiscal Year 2024 Revenue increased $36.6 billion or 15% with growth across each of our segments. Intelligent Cloud revenue increased driven by Azure. Productivity and Business Processes revenue increased driven by Microsoft 365 Commercial cloud. More Personal Computing revenue increased driven by Gaming and Search and news advertising. Cost of revenue increased $13.7 billion or 19% driven by growth in Microsoft Cloud. Gross margin increased $22.9 billion or 13% with growth across each of our segments. • Gross margin percentage decreased slightly driven by Intelligent Cloud, offset in part by More Personal Computing. • Microsoft Cloud gross margin percentage decreased to 69% driven by the impact of scaling our AI infrastructure, offset in part by efficiency gains in Azure. Operating expenses increased $3.8 billion or 6% driven by investments in cloud and AI engineering and Gaming, including the impact of the Activision Blizzard acquisition.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-061046",
+      "form": "10-Q",
+      "filed": "2025-04-30",
+      "period_start": null,
+      "period_end": "2025-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025061046/msft-20250331.htm",
+      "locator": "10-Q 0000950170-25-061046:98045-99090",
+      "excerpt": "lizzard acquisition, and Search and news advertising. Gross margin percentage increased driven by sales mix shift to higher margin businesses and improvement in Search and news advertising and Gaming. • Operating expenses increased $1.1 billion or 11% driven by the impact of the Activision Blizzard acquisition. OPERATING EXPENSES Research and Development (In millions, except percentages) Three Months Ended March 31, Percentage Change Nine Months Ended March 31, Percentage Change 2025 2024 2025 2024 Research and development $ 8,198 $ 7,653 7% $ 23,659 $ 21,454 10% As a percent of revenue 12% 12% 0ppt 12% 12% 0ppt Research and development expenses include payroll, employee benefits, stock-based compensation expense, and other headcount-related expenses associated with product development. Research and development expenses also include technology development costs, including AI training and other infrastructure costs, third-party development and programming costs, and the amortization of purchased software code and services content.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-100235",
+      "form": "10-K",
+      "filed": "2025-07-30",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm",
+      "locator": "10-K 0000950170-25-100235:239905-241098",
+      "excerpt": "$ 11.0 billion, respectively. As of June 30, 2025, 2024, and 2023, purchases of property and equipment remaining in accounts payable were $ 6.9 billion, $ 4.3 billion, and $ 3.8 billion, respectively. As of June 30, 2025, we have committed $ 32.1 billion for the construction of new buildings, building improvements, and leasehold improvements, primarily related to datacenters. 69 PART II Item 8 NOTE 7 — BUSINESS COMBINATIONS Activision Blizzard, Inc. On October 13, 2023 , we completed our acquisition of Activision Blizzard, Inc. (“Activision Blizzard”) for a total purchase price of $ 75.4 billion, consisting primarily of cash. Activision Blizzard is a leader in game development and an interactive entertainment content publisher. The acquisition will accelerate the growth in our gaming business across mobile, PC, console, and cloud gaming. The financial results of Activision Blizzard have been included in our consolidated financial statements since the date of the acquisition. Activision Blizzard is reported as part of our More Personal Computing segment. The allocation of the purchase price to the assets acquired and liabilities assumed was completed as of September 30, 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-010491",
+      "form": "10-Q",
+      "filed": "2025-01-29",
+      "period_start": null,
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025010491/msft-20241231.htm",
+      "locator": "10-Q 0000950170-25-010491:88019-89172",
+      "excerpt": "nts. • Gross margin percentage increased slightly driven by More Personal Computing and sales mix shift to higher margin businesses within More Personal Computing, offset in part by Intelligent Cloud. • Microsoft Cloud gross margin percentage decreased to 70% driven by scaling our AI infrastructure. Operating expenses increased $815 million or 5% driven by investments in cloud engineering. Operating income increased $4.6 billion or 17% driven by growth across each of our segments. Six Months Ended December 31, 2024 Compared with Six Months Ended December 31, 2023 Revenue increased $16.7 billion or 14% driven by growth across each of our segments. Intelligent Cloud revenue increased driven by Azure. Productivity and Business Processes revenue increased driven by Microsoft 365 Commercial cloud. More Personal Computing revenue increased driven by Gaming. Cost of revenue increased $6.0 billion or 17% driven by growth in Microsoft Cloud. Gross margin increased $10.7 billion or 13% driven by growth across each of our segments. • Gross margin percentage decreased slightly driven by Intelligent Cloud, offset in part by More Personal Computing.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-061046",
+      "form": "10-Q",
+      "filed": "2025-04-30",
+      "period_start": null,
+      "period_end": "2025-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025061046/msft-20250331.htm",
+      "locator": "10-Q 0000950170-25-061046:92387-93528",
+      "excerpt": "centage was relatively unchanged inclusive of the impact of scaling our AI infrastructure. • Operating expenses increased $53 million or 1% primarily driven by investments in cloud and AI engineering. Revenue, gross margin, and operating income each included an unfavorable foreign currency impact of 3%. Intelligent Cloud Revenue increased $4.6 billion or 21%. • Server products and cloud services revenue increased $4.5 billion or 22% driven by Azure and other cloud services. Azure and other cloud services revenue grew 33% driven by demand for our portfolio of services, including 16 points from our AI services. Server products revenue decreased 6% primarily driven by a decrease in transactional purchasing with continued customer shift to cloud offerings. • Enterprise and partner services revenue increased $85 million or 5% driven by growth in Enterprise Support Services, offset in part by a decline in Industry Solutions. Operating income increased $1.6 billion or 17%. • Gross margin increased $1.9 billion or 13% driven by growth in Azure. Gross margin percentage decreased driven by the impact of scaling our AI infrastructure.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-100235",
+      "form": "10-K",
+      "filed": "2025-07-30",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm",
+      "locator": "10-K 0000950170-25-100235:22486-23549",
+      "excerpt": "s, complemented by our rapidly expanding portfolio of AI cloud services (including the latest models) and hardware, which includes custom-built silicon and strong partnerships with chip manufacturers. Azure AI Foundry is a unified platform for developers to design, customize, and manage AI applications and agents. Our server products are designed to make IT professionals, developers, and their systems more productive and efficient. Server software is integrated server infrastructure and middleware designed to support software applications built on the Windows Server operating system. This includes the server platform, database, business intelligence, storage, management and operations, virtualization, service-oriented architecture platform, security, and identity software. We also license standalone and software development lifecycle tools for software architects, developers, testers, and project managers. Server products revenue is mainly affected by purchases through volume licensing programs, licenses sold to OEMs, and retail packaged products.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-100235",
+      "form": "10-K",
+      "filed": "2025-07-30",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm",
+      "locator": "10-K 0000950170-25-100235:24306-25505",
+      "excerpt": "oft desktop solutions, and Nuance conversational AI and ambient intelligent solutions, along with providing training and certification to developers and IT professionals on various Microsoft products. Competition Azure faces diverse competition from cloud service providers and open source offerings. Azure’s competitive advantage includes enabling a hybrid cloud, allowing deployment of existing datacenters with our public cloud into a single, cohesive infrastructure, and the ability to run at a scale that meets the needs of businesses of all sizes and complexities. Our AI offerings compete with AI products from hyperscalers, as well as products from other emerging competitors and other open source offerings, many of which are also current or potential partners. Our Azure Security offerings include our cloud security solution and security information and event management solution, which compete with providers in the cybersecurity and cloud security space. We believe our cloud’s global scale, coupled with our broad portfolio of identity and security solutions, allows us to effectively solve complex cybersecurity challenges for our customers and differentiates us from the competition.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-061046",
+      "form": "10-Q",
+      "filed": "2025-04-30",
+      "period_start": null,
+      "period_end": "2025-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025061046/msft-20250331.htm",
+      "locator": "10-Q 0000950170-25-061046:40055-41154",
+      "excerpt": "ctivision Blizzard”) for a total purchase price of $ 75.4 billion, consisting primarily of cash. Activision Blizzard is a leader in game development and an interactive entertainment content publisher. The acquisition will accelerate the growth in our gaming business across mobile, PC, console, and cloud gaming. The financial results of Activision Blizzard have been included in our consolidated financial statements since the date of the acquisition. Activision Blizzard is reported as part of our More Personal Computing segment. 18 PART I Item 1 The allocation of the purchase price to the assets acquired and liabilities assumed was completed as of September 30, 2024. The major classes of assets and liabilities to which we have allocated the purchase price were as follows: (In millions) Cash and cash equivalents $ 12,976 Goodwill 51,001 Intangible assets 21,969 Other assets 2,503 Long-term debt ( 2,799 ) Long-term income taxes ( 1,946 ) Deferred income taxes ( 4,676 ) Other liabilities ( 3,620 ) Total purchase price $ 75,408 Goodwill was assigned to our More Personal Computing segment.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-010491",
+      "form": "10-Q",
+      "filed": "2025-01-29",
+      "period_start": null,
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025010491/msft-20241231.htm",
+      "locator": "10-Q 0000950170-25-010491:40142-41241",
+      "excerpt": "ctivision Blizzard”) for a total purchase price of $ 75.4 billion, consisting primarily of cash. Activision Blizzard is a leader in game development and an interactive entertainment content publisher. The acquisition will accelerate the growth in our gaming business across mobile, PC, console, and cloud gaming. The financial results of Activision Blizzard have been included in our consolidated financial statements since the date of the acquisition. Activision Blizzard is reported as part of our More Personal Computing segment. 18 PART I Item 1 The allocation of the purchase price to the assets acquired and liabilities assumed was completed as of September 30, 2024. The major classes of assets and liabilities to which we have allocated the purchase price were as follows: (In millions) Cash and cash equivalents $ 12,976 Goodwill 51,001 Intangible assets 21,969 Other assets 2,503 Long-term debt ( 2,799 ) Long-term income taxes ( 1,946 ) Deferred income taxes ( 4,676 ) Other liabilities ( 3,620 ) Total purchase price $ 75,408 Goodwill was assigned to our More Personal Computing segment.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-010491",
+      "form": "10-Q",
+      "filed": "2025-01-29",
+      "period_start": null,
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025010491/msft-20241231.htm",
+      "locator": "10-Q 0000950170-25-010491:96484-97668",
+      "excerpt": "ndows and Devices revenue increased $138 million or 2%. Windows OEM and Devices revenue increased 3% as commercial inventory builds drove growth in Windows OEM, offset in part by a decline in Devices. • Gaming revenue increased $1.2 billion or 11% driven by growth in Xbox content and services, offset in part by a decline in Xbox hardware. Xbox content and services revenue increased 24% driven by the impact of the Activision Blizzard acquisition. Xbox hardware revenue decreased 29% driven by lower volume of consoles sold. • Search and news advertising revenue increased $597 million or 10%. Search and news advertising revenue excluding traffic acquisition costs increased 20% driven by higher search volume and higher revenue per search. Operating income increased $798 million or 12%. • Gross margin increased $1.9 billion or 15% driven by growth in Gaming, including the impact of the Activision Blizzard acquisition. Gross margin percentage increased driven by sales mix shift to higher margin businesses and improvement in Search and news advertising and Gaming. • Operating expenses increased $1.1 billion or 17% driven by the impact of the Activision Blizzard acquisition.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "Research and development expenses increased $3.0 billion or 10% driven by investments in cloud and AI engineering and Gaming, including the impact of the Activision Blizzard acquisition.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000950170-25-100235",
+      "form": "10-K",
+      "filed": "2025-07-30",
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm",
+      "locator": "10-K 0000950170-25-100235:157488-158686"
+    },
+    {
+      "evidence_id": "E2",
+      "quote": "Research and development expenses increased $3.0 billion or 10% driven by investments in cloud and AI engineering and Gaming, including the impact of the Activision Blizzard acquisition.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000950170-25-100235",
+      "form": "10-K",
+      "filed": "2025-07-30",
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm",
+      "locator": "10-K 0000950170-25-100235:158486-159336"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 17213,
+    "output": 1684
+  },
+  "latency_ms": 7,
+  "estimated_cost_usd": 0.076899,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "CONTRADICTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 11,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

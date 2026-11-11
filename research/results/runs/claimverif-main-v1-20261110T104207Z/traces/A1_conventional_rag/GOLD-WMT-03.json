@@ -1,0 +1,346 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A1_conventional_rag:GOLD-WMT-03:7e83f05d",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A1_conventional_rag",
+  "approach_kind": "conventional_rag",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": false,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A1_conventional_rag",
+    "kind": "conventional_rag",
+    "description": "claim -> retrieval -> LLM -> verdict"
+  },
+  "config_hash": "1ebada2c6046452b",
+  "claim": {
+    "claim_id": "GOLD-WMT-03",
+    "company": "WMT",
+    "claim": "Walmart's consolidated operating margin for fiscal year 2026 exceeded 5%.",
+    "as_of_date": "2026-03-31",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2026-01-31",
+            "comparison": ">",
+            "threshold": 0.05,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Operating income as a percentage of net sales 4.2 %"
+          }
+        ],
+        "reasoning_summary": "The claim states that Walmart's consolidated operating margin for fiscal year 2026 exceeded 5%. Evidence E3 provides the consolidated financial results for fiscal year ended January 31, 2026 (which is fiscal year 2026), showing \"Operating income as a percentage of net sales 4.2%\". Operating income as a percentage of net sales is the operating margin. Since 4.2% is less than 5%, the claim is contradicted by the evidence.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "3d06ffc53a9ff962afc6c9359fddac77125623c47a0f8abcfc19a775258ddc60",
+      "source": "cache",
+      "input_tokens": 3820,
+      "output_tokens": 366,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2026-01-31",
+            "comparison": ">",
+            "threshold": 0.05,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Operating income as a percentage of net sales 4.2 %"
+          }
+        ],
+        "reasoning_summary": "The claim states that Walmart's consolidated operating margin for fiscal year 2026 exceeded 5%. Evidence E3 provides the consolidated financial results for fiscal year ended January 31, 2026 (which is fiscal year 2026), showing \"Operating income as a percentage of net sales 4.2%\". Operating income as a percentage of net sales is the operating margin. Since 4.2% is less than 5%, the claim is contradicted by the evidence.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Walmart's consolidated operating margin for fiscal year 2026 exceeded 5%. FY2026",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0000104169-26-000055",
+        "filed": "2026-03-13",
+        "report_date": "2026-01-31",
+        "primary_document": "wmt-20260131.htm",
+        "sha256": "81bc136de8961e00236b4d1c299b17de840b9ff49c278f0addf442cee8e909cf"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-25-000191",
+        "filed": "2025-12-03",
+        "report_date": "2025-10-31",
+        "primary_document": "wmt-20251031.htm",
+        "sha256": "163791c139267742812a96517575b3118c5549be0b2984c8d4e9aa0914e2b6f8"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-25-000137",
+        "filed": "2025-08-29",
+        "report_date": "2025-07-31",
+        "primary_document": "wmt-20250731.htm",
+        "sha256": "05974418e411cea9e0bc4acbaeb3ba6400348a940d109fbeac294723401f34b5"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 708
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:188128-189201",
+      "excerpt": "tems, including a reduction in recycling income in fiscal 2026. Our gross profit rate increased 8 and 40 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase in fiscal 2026 was primarily driven by the Walmart U.S. segment, due to disciplined inventory management, as well as growth in higher margin businesses globally. The increase in fiscal 2025 was primarily driven by the Walmart U.S. segment, due to managing prices aligned to our competitive historic price gaps, as well as growth in higher margin businesses globally. In both years, the increases were partially offset by mix shifts into lower margin merchandise categories across segments, as well as ongoing channel and format mix shifts in the Walmart International segment. Our operating expenses as a percentage of net sales increased 20 and 36 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase for fiscal 2026 was primarily due to higher self-insured general liability claims expense in the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:193534-194721",
+      "excerpt": "y double-digit growth in membership fee revenue from Walmart+. For fiscal 2026, the increase was partially offset by decreases in certain other income items, including a reduction in recycling income. Fiscal 2025 also benefited from higher recycling income compared to the previous fiscal year. Gross profit rate increased 22 and 47 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase for fiscal 2026 was primarily driven by disciplined inventory management and growth in higher margin businesses, partially offset by mix shifts into lower margin merchandise categories. The increase for fiscal 2025 was primarily due to managing prices aligned to our competitive historic price gaps and growth in higher margin businesses, partially offset by product mix shifts into lower margin categories. Operating expenses as a percentage of segment net sales increased 15 and 44 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase for fiscal 2026 was primarily due to higher self-insured general liability claims expense and increased depreciation related to our capital investments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:174967-176165",
+      "excerpt": "g our ecosystem in higher margin areas, such as digital advertising. Our objective is to achieve operating income leverage, which we define as growing operating income at a faster rate than net sales. Fiscal Years Ended January 31, (Amounts in millions, except unit counts) 2026 2025 Net sales $ 706,413 $ 674,538 Percentage change from comparable period 4.7 % 5.0 % Gross profit (1) as a percentage of net sales 24.2 % 24.1 % Operating expenses as a percentage of net sales 20.9 % 20.7 % Operating income $ 29,825 $ 29,348 Operating income as a percentage of net sales 4.2 % 4.4 % (1) Gross profit defined as net sales less cost of sales. Gross profit as a percentage of net sales (\"gross profit rate\") increased 8 and 40 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase in fiscal 2026 was primarily driven by the Walmart U.S. segment, due to disciplined inventory management, as well as growth in higher margin businesses globally. The increase in fiscal 2025 was primarily driven by the Walmart U.S. segment, due to managing prices aligned to our competitive historic price gaps, as well as growth in higher margin businesses globally.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_start": null,
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:63030-64107",
+      "excerpt": "d 6 basis points for the three and nine months ended October 31, 2025, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily due to the Walmart U.S. segment, driven by disciplined inventory management and growth in higher margin businesses, partially offset by mix shifts into lower margin merchandise categories and the timing of Flipkart's The Big Billion Days (\"BBD\") sales event in the Walmart International segment, which primarily occurred in the fourth quarter of fiscal 2025 but mostly shifted to the third quarter of fiscal 2026. Additionally, the increases were partially offset by ongoing channel and format mix shifts in the Walmart International segment. Operating expenses as a percentage of net sales increased 28 and 33 basis points for the three and nine months ended October 31, 2025, respectively, when compared to the same periods in the previous fiscal year, primarily driven by a charge of $0.7 billion related to modification of certain share-based compensation arrangements for our PhonePe subsidiary.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_start": null,
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:75040-76234",
+      "excerpt": "d 6 basis points for the three and nine months ended October 31, 2025, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily due to the Walmart U.S. segment, driven by disciplined inventory management and growth in higher margin businesses, partially offset by mix shifts into lower margin merchandise categories and the timing of Flipkart's BBD sales event in the Walmart International segment, which primarily occurred in the fourth quarter of fiscal 2025 but mostly shifted to the third quarter of fiscal 2026. Additionally, the increases were partially offset by ongoing channel and format mix shifts in the Walmart International segment. Operating expenses as a percentage of net sales increased 28 and 33 basis points for the three and nine months ended October 31, 2025, respectively, when compared to the same periods in the previous fiscal year, primarily driven by a charge of $0.7 billion related to modification of certain share-based compensation arrangements for our PhonePe subsidiary. The increase for the nine months ended October 31, 2025 was also impacted by higher self-insured general liability claims expense in the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:175965-177126",
+      "excerpt": "increase in fiscal 2025 was primarily driven by the Walmart U.S. segment, due to managing prices aligned to our competitive historic price gaps, as well as growth in higher margin businesses globally. In both years, the increases were partially offset by mix shifts into lower margin merchandise categories across segments, as well as ongoing channel and format mix shifts in the Walmart International segment. Operating expenses as a percentage of net sales increased 20 and 36 basis points for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase for fiscal 2026 was primarily due to higher self-insured general liability claims expense in the U.S. of approximately $0.9 billion, influenced by rising costs to resolve claims across retail and related industries, a charge of $0.7 billion related to modification of certain share-based compensation arrangements for our PhonePe subsidiary and increased depreciation related to our capital investments. The increase for fiscal 2025 was primarily due to higher variable pay as a result of exceeding planned performance, increased marketing and higher depreciation expenses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E3",
+      "quote": "Operating income as a percentage of net sales 4.2 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:174967-176165"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 3820,
+    "output": 366
+  },
+  "latency_ms": 2,
+  "estimated_cost_usd": 0.01695,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "conventional_rag",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

@@ -137,3 +137,101 @@ def evaluate(preds: list[dict], gold: dict[str, dict], traces: dict | None = Non
                 row[f"f1_{lab}"] = cls["per_class"][lab]["f1"]
         rows.append(row)
     return rows
+
+
+# ------------------------------------------------------------ second look
+
+TRANSITIONS = ("incorrect_to_correct", "correct_to_incorrect", "correct_to_correct", "incorrect_to_incorrect")
+
+
+def transition(initial: str | None, final: str | None, gold: str) -> str:
+    """Effect of the second look on one claim, judged against the reference."""
+    a, b = initial == gold, final == gold
+    return {(False, True): "incorrect_to_correct", (True, False): "correct_to_incorrect",
+            (True, True): "correct_to_correct", (False, False): "incorrect_to_incorrect"}[(a, b)]
+
+
+def second_look_metrics(preds: list[dict], gold: dict[str, dict]) -> list[dict]:
+    """Per approach: initial vs final accuracy, verdict-change rate, the four
+    transitions, and for A3 how often counter-evidence was found. A1 / A2
+    have initial == final by construction (change rate 0). Correctness uses
+    only labelled claims; retrieval figures use every prediction."""
+    groups = defaultdict(list)
+    for p in preds:
+        groups[p["approach"]].append(p)
+    rows = []
+    for name, ps in sorted(groups.items()):
+        lab = [p for p in ps if p["claim_id"] in gold and p.get("initial_label") in LABELS]
+        n = len(lab)
+        t = defaultdict(int)
+        for p in lab:
+            t[transition(p.get("initial_label"), p.get("predicted_label"), gold[p["claim_id"]]["label"])] += 1
+        changed = sum(1 for p in lab if p.get("verdict_changed"))
+        recs = [p["second_look_record"] for p in ps if p.get("second_look_record")]
+        kind = next((p.get("approach_kind") for p in ps if p.get("approach_kind")), None)
+        a3 = recs if kind == "contradiction_aware" else []
+        row = {"approach": name, "approach_kind": kind, "n_labelled": n,
+               "initial_accuracy": _safe_div(t["correct_to_correct"] + t["correct_to_incorrect"], n),
+               "final_accuracy": _safe_div(t["correct_to_correct"] + t["incorrect_to_correct"], n),
+               "verdict_change_rate": _safe_div(changed, n),
+               **{k: t[k] for k in TRANSITIONS},
+               **{f"{k}_rate": _safe_div(t[k], n) for k in ("incorrect_to_correct", "correct_to_incorrect")},
+               "net_gain": _safe_div(t["incorrect_to_correct"] - t["correct_to_incorrect"], n),
+               "change_precision": _safe_div(t["incorrect_to_correct"], changed),
+               "second_looks_completed": sum(1 for r in recs if r.get("completed")),
+               "counterevidence_retrieval_success": _safe_div(sum(1 for r in a3 if r["counterevidence_found"] > 0), len(a3)) if a3 else None,
+               "no_counterevidence_found": sum(1 for r in a3 if r.get("no_counterevidence_found")) if a3 else None,
+               "guard_reverted": sum(1 for r in recs if r.get("guard_reverted"))}
+        rows.append(row)
+    return rows
+
+
+# --------------------------------------------- evidence integrity (no gold)
+
+PERIOD_ISSUES = ("PERIOD_NOT_AVAILABLE", "BASIS_MISMATCH", "PRIOR_YEAR_NOT_AVAILABLE")
+
+
+def integrity_metrics(preds: list[dict], traces: dict | None, gold: dict[str, dict] | None = None) -> list[dict]:
+    """Per approach, from predictions and their traces:
+
+    - citation_validity: valid citations / all citations
+    - future_data_leakage_rate: share of runs where any filing, evidence unit
+      or XBRL fact used was filed after the claim's cutoff (expected 0)
+    - incorrect_fiscal_period_rate: among runs with a numeric check, share
+      where a model-extracted assertion named a period / basis that does not
+      exist at the cutoff (a proxy: the reference has no period annotation)
+    - reference_filing_hit_rate: among labelled runs with a valid citation
+      whose reference names SEC filings, share citing at least one of them
+      (filing level only; reference quotes are not verbatim-verified)
+    """
+    groups = defaultdict(list)
+    for p in preds:
+        groups[p["approach"]].append(p)
+    rows = []
+    for name, ps in sorted(groups.items()):
+        cites = [c for p in ps for c in p.get("citations") or []]
+        leaked, period_runs, period_bad, hit_n, hit = 0, 0, 0, 0, 0
+        for p in ps:
+            t = (traces or {}).get((p["approach"], p["claim_id"])) or {}
+            cutoff = (t.get("claim") or {}).get("as_of_date") or p.get("as_of_date")
+            dates = [f.get("filed") for f in (t.get("corpus") or {}).get("filings", [])]
+            dates += [u.get("filed") for u in t.get("evidence", [])]
+            checks = [c for s in t.get("tool_calls", []) if s.get("tool") == "verify_numbers" for c in s.get("checks", [])]
+            dates += [f.get("filed") for c in checks for f in (c.get("computed") or {}).get("facts", [])]
+            if cutoff and any(d and d > cutoff for d in dates):
+                leaked += 1
+            if checks:
+                period_runs += 1
+                period_bad += any(i.startswith(PERIOD_ISSUES) for c in checks for i in c.get("issues", []))
+            ref = (gold or {}).get(p["claim_id"]) or {}
+            valid = {c.get("accession_number") for c in p.get("citations") or [] if c.get("valid")}
+            if ref.get("reference_accessions") and valid:
+                hit_n += 1
+                hit += bool(valid & set(ref["reference_accessions"]))
+        rows.append({"approach": name, "n_predictions": len(ps), "n_traced": sum(1 for p in ps if (traces or {}).get((p["approach"], p["claim_id"]))),
+                     "citations": len(cites), "citation_validity": _safe_div(sum(1 for c in cites if c.get("valid")), len(cites)),
+                     "future_data_leakage_rate": _safe_div(leaked, len(ps)) if traces else None,
+                     "runs_with_numeric_checks": period_runs,
+                     "incorrect_fiscal_period_rate": _safe_div(period_bad, period_runs),
+                     "reference_filing_scored": hit_n, "reference_filing_hit_rate": _safe_div(hit, hit_n)})
+    return rows

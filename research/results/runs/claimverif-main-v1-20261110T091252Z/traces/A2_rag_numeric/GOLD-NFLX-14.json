@@ -1,0 +1,320 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A2_rag_numeric:GOLD-NFLX-14:fc6acfac",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A2_rag_numeric",
+  "approach_kind": "financial_verification",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A2_rag_numeric",
+    "kind": "financial_verification",
+    "description": "A1 + deterministic numeric verification"
+  },
+  "config_hash": "53b859cfe39ca3b0",
+  "claim": {
+    "claim_id": "GOLD-NFLX-14",
+    "company": "NFLX",
+    "claim": "Netflix's results for the quarter ended June 30, 2026 show that price increases did not hurt member retention.",
+    "as_of_date": "2026-08-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q2"
+  },
+  "initial_label": "INSUFFICIENT_EVIDENCE",
+  "final_label": "INSUFFICIENT_EVIDENCE",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes an interpretive assertion about causation - specifically that price increases did not hurt member retention for Q2 2026. While the evidence confirms that Netflix implemented price increases during this period (E5 states \"primarily due to the growth in memberships, price increases, and increased advertising revenue\"), none of the evidence passages provide information about member retention rates, churn rates, or any metrics that would allow us to assess whether retention was affected by price increases. E1 mentions pricing ranges but not retention. E5 confirms price increases occurred and revenue grew, but revenue growth alone does not establish that retention was unaffected - revenue could grow despite higher churn if remaining members pay more or new member additions offset losses. Without explicit data on member retention, churn rates, or a filing statement addressing the relationship between price increases and retention, we cannot verify this interpretive claim about the impact (or lack thereof) of price increases on member retention.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "639b1ee956ee2a4849c0d88702f3ed5a1ddea6758d8cef9ff025a619086dc242",
+      "source": "cache",
+      "input_tokens": 4106,
+      "output_tokens": 344,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes an interpretive assertion about causation - specifically that price increases did not hurt member retention for Q2 2026. While the evidence confirms that Netflix implemented price increases during this period (E5 states \"primarily due to the growth in memberships, price increases, and increased advertising revenue\"), none of the evidence passages provide information about member retention rates, churn rates, or any metrics that would allow us to assess whether retention was affected by price increases. E1 mentions pricing ranges but not retention. E5 confirms price increases occurred and revenue grew, but revenue growth alone does not establish that retention was unaffected - revenue could grow despite higher churn if remaining members pay more or new member additions offset losses. Without explicit data on member retention, churn rates, or a filing statement addressing the relationship between price increases and retention, we cannot verify this interpretive claim about the impact (or lack thereof) of price increases on member retention.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Netflix's results for the quarter ended June 30, 2026 show that price increases did not hurt member retention. 2026 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001065280-26-000212",
+        "filed": "2026-07-17",
+        "report_date": "2026-06-30",
+        "primary_document": "nflx-20260630.htm",
+        "sha256": "6bcaee1fd04987a2907f85bd9b87e5e2cfaa6fcd21afa0e98c5b03095d7884f8"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001065280-26-000138",
+        "filed": "2026-04-17",
+        "report_date": "2026-03-31",
+        "primary_document": "nflx-20260331.htm",
+        "sha256": "f0e6fd62ebd328e79398e717657f0d38bc2e9b717f866a087761ae7eb84b3b4e"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001065280-26-000034",
+        "filed": "2026-01-23",
+        "report_date": "2025-12-31",
+        "primary_document": "nflx-20251231.htm",
+        "sha256": "caec332c25a15511728cc54b55ed5479ee04a2c9d9fa77e7d2f81a52bac97678"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 558
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+      "locator": "10-Q 0001065280-26-000212:72890-74084",
+      "excerpt": "tent to our members. We offer a variety of streaming membership plans, the price of which varies by country and the features of the plan. As of June 30, 2026, pricing on our plans ranged from the U.S. dollar equivalent of $1 to $38 per month, and pricing on our extra member sub accounts ranged from the U.S. dollar equivalent of $2 to $10 per month. We expect that from time to time the prices of our membership plans in each country may change and we may test other plan and price variations. We also earn revenues from advertisements presented on our streaming service, consumer products and experiences, and various other sources. Revenues earned from sources other than monthly membership fees were not a material component of revenues for the three and six months ended June 30, 2026 and June 30, 2025. Three months ended June 30, 2026 as compared to the three months ended June 30, 2025 Three Months Ended Change June 30, 2026 June 30, 2025 Q2’26 vs. Q2’25 (in thousands, except percentages) Revenues $ 12,559,938 $ 11,079,166 $ 1,480,772 13 % Six months ended June 30, 2026 as compared to the six months ended June 30, 2025 Six Months Ended Change June 30, 2026 June 30, 2025 YTD’26 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+      "locator": "10-Q 0001065280-26-000212:89532-90572",
+      "excerpt": "2026, primarily due to a $2.8 billion termination fee received in connection with the termination of the WBD transaction in the first quarter of 2026. See Note 6 Acquisitions for further information. Provision for Income Taxes Three months ended June 30, 2026 as compared to the three months ended June 30, 2025 Three Months Ended Change June 30, 2026 June 30, 2025 Q2’26 vs. Q2’25 (in thousands, except percentages) Provision for income taxes $ 667,172 $ 506,262 $ 160,910 32 % Effective tax rate 16 % 14 % Six months ended June 30, 2026 as compared to the six months ended June 30, 2025 Six Months Ended Change June 30, 2026 June 30, 2025 YTD’26 vs. YTD’25 (in thousands, except percentages) Provision for income taxes $ 1,931,467 $ 829,637 $ 1,101,830 133 % Effective tax rate 18 % 12 % The increase in the effective tax rates for the three and six months ended June 30, 2026, as compared to the same periods in 2025, was primarily due to a decrease in tax benefits associated with lower excess tax benefits on stock-based compensation.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+      "locator": "10-Q 0001065280-26-000212:70978-72125",
+      "excerpt": "by offering compelling content that delights them and attracts new members. We aim to offer a range of pricing plans, including our ad-supported subscription plan, to meet a variety of consumer needs. We seek to drive conversation around our content to further enhance member joy, and we are continuously enhancing our user interface to help our members more easily choose content that they will find enjoyable. Results of Operations The following represents our consolidated performance highlights: Three Months Ended Change June 30, 2026 June 30, 2025 Q2’26 vs. Q2’25 (in thousands, except percentages) Financial Results: Revenues $ 12,559,938 $ 11,079,166 $ 1,480,772 13 % Constant currency change in revenues (1) 12 % Operating income $ 4,192,610 $ 3,774,694 $ 417,916 11 % Operating margin 33.4 % 34.1 % (0.7) % Net income $ 3,401,414 $ 3,125,413 $ 276,001 9 % (1) See the “Non-GAAP Constant Currency Information” section below for additional details on our use of constant currency revenue. Operating margin for the three months ended June 30, 2026 decreased by approximately one percentage point as compared to the prior comparative period.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+      "locator": "10-Q 0001065280-26-000212:97622-98576",
+      "excerpt": "contractual obligations table above. (2) Debt obligations include our Notes consisting of principal and interest payments. See Note 7 Debt to the consolidated financial statements for further details. (3) Operating lease obligations are comprised of operating lease liabilities included in “Accrued expenses and other liabilities” and “Other non-current liabilities” on the Consolidated Balance Sheets, inclusive of imputed interest. Operating lease obligations also include additional obligations that are not reflected on the Consolidated Balance Sheets as they did not meet the criteria for recognition. See Note 5 Balance Sheet Components in the accompanying notes to our consolidated financial statements for further details regarding leases. Cash Flows The following tables summarize our cash flows: Three months ended June 30, 2026 as compared to the three months ended June 30, 2025 Three Months Ended Change June 30, 2026 June 30, 2025 Q2’26 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+      "locator": "10-Q 0001065280-26-000212:73884-74983",
+      "excerpt": "ges) Revenues $ 12,559,938 $ 11,079,166 $ 1,480,772 13 % Six months ended June 30, 2026 as compared to the six months ended June 30, 2025 Six Months Ended Change June 30, 2026 June 30, 2025 YTD’26 vs. YTD’25 (in thousands, except percentages) Revenues $ 24,809,695 $ 21,621,967 $ 3,187,728 15 % Revenues for the three and six months ended June 30, 2026 increased 13% and 15% as compared to the three and six months ended June 30, 2025, respectively, primarily due to the growth in memberships, price increases, and increased advertising revenue. Additionally, revenues for the three and six months ended June 30, 2026 as compared to the same periods in 2025, were impacted by favorable changes in foreign exchange rates, net of hedging. The following tables summarize revenues by region for the three and six months ended June 30, 2026 and 2025. Total revenues are inclusive of hedging gains (losses) of $(48) million and $(180) million for the three and six months ended June 30, 2026, respectively, and $(37) million and $127 million for the three and six months ended June 30, 2025, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+      "locator": "10-Q 0001065280-26-000212:86856-88055",
+      "excerpt": "The decrease in interest expense for the three months ended June 30, 2026 as compared to the three months ended June 30, 2025 was due to the lower average aggregate principal of our Notes outstanding. The increase in interest expense for the six months ended June 30, 2026 as compared to the six months ended June 30, 2025 was primarily driven by higher amortization of debt issuance costs, including approximately $85 million recognized in connection with the termination of financing arrangements associated with the WBD transaction in the first quarter of 2026. See Note 7 Debt for additional details regarding the termination of financing arrangements associated with the WBD transaction. Interest and Other Income (Expense) Interest and other income (expense) consists primarily of foreign exchange gains and losses on foreign currency denominated balances, gains and losses on certain derivative instruments, interest earned on cash, cash equivalents and short-term investments, and miscellaneous other income and expenses. 32 Table of Contents Three months ended June 30, 2026 as compared to the three months ended June 30, 2025 Three Months Ended Change June 30, 2026 June 30, 2025 Q2’26 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 4106,
+    "output": 344
+  },
+  "latency_ms": 2,
+  "estimated_cost_usd": 0.017478,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "financial_verification",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

@@ -1,0 +1,367 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A1_conventional_rag:GOLD-AAPL-10:1e1cd452",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A1_conventional_rag",
+  "approach_kind": "conventional_rag",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": false,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A1_conventional_rag",
+    "kind": "conventional_rag",
+    "description": "claim -> retrieval -> LLM -> verdict"
+  },
+  "config_hash": "1ebada2c6046452b",
+  "claim": {
+    "claim_id": "GOLD-AAPL-10",
+    "company": "AAPL",
+    "claim": "Apple's Wearables, Home and Accessories net sales declined in the quarter ended March 28, 2026 because of lower sales of AirPods.",
+    "as_of_date": "2026-05-20",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026 Q2"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-03-28",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E4",
+            "quote": "Wearables, Home and Accessories 7,901 7,522 5 %"
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Wearables, Home and Accessories net sales increased during the second quarter of 2026 compared to the second quarter of 2025 primarily due to higher net sales of Accessories and Wearables."
+          }
+        ],
+        "reasoning_summary": "The claim states that Apple's Wearables, Home and Accessories net sales declined in the quarter ended March 28, 2026 because of lower sales of AirPods. However, the evidence directly contradicts this claim. Evidence E4 shows that Wearables, Home and Accessories net sales for the quarter ended March 28, 2026 were $7,901 million compared to $7,522 million for the quarter ended March 29, 2025, representing a 5% increase, not a decline. Furthermore, Evidence E2 explicitly states that \"Wearables, Home and Accessories net sales increased during the second quarter of 2026 compared to the second quarter of 2025 primarily due to higher net sales of Accessories and Wearables.\" This contradicts both the numeric assertion (that sales declined) and the causal attribution (lower AirPods sales). The claim is factually incorrect on its fundamental premise.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "c11e31af0c30f141d9685c83d78b84b08823cd355e6d8701026ceb2330f7d580",
+      "source": "live",
+      "input_tokens": 4196,
+      "output_tokens": 546,
+      "stop_reason": "tool_use",
+      "latency_ms": 8773,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-03-28",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E4",
+            "quote": "Wearables, Home and Accessories 7,901 7,522 5 %"
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Wearables, Home and Accessories net sales increased during the second quarter of 2026 compared to the second quarter of 2025 primarily due to higher net sales of Accessories and Wearables."
+          }
+        ],
+        "reasoning_summary": "The claim states that Apple's Wearables, Home and Accessories net sales declined in the quarter ended March 28, 2026 because of lower sales of AirPods. However, the evidence directly contradicts this claim. Evidence E4 shows that Wearables, Home and Accessories net sales for the quarter ended March 28, 2026 were $7,901 million compared to $7,522 million for the quarter ended March 29, 2025, representing a 5% increase, not a decline. Furthermore, Evidence E2 explicitly states that \"Wearables, Home and Accessories net sales increased during the second quarter of 2026 compared to the second quarter of 2025 primarily due to higher net sales of Accessories and Wearables.\" This contradicts both the numeric assertion (that sales declined) and the causal attribution (lower AirPods sales). The claim is factually incorrect on its fundamental premise.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Apple's Wearables, Home and Accessories net sales declined in the quarter ended March 28, 2026 because of lower sales of AirPods. FY2026 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-26-000013",
+        "filed": "2026-05-01",
+        "report_date": "2026-03-28",
+        "primary_document": "aapl-20260328.htm",
+        "sha256": "8a2c43286c07522163b237664aad64d3f1760654e22d881374dea29362508ea6"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-26-000006",
+        "filed": "2026-01-30",
+        "report_date": "2025-12-27",
+        "primary_document": "aapl-20251227.htm",
+        "sha256": "2d32cfc574b8a8301a1a165a93640ef5ab0de6e140054ccb16ded56d3bb02a78"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0000320193-25-000079",
+        "filed": "2025-10-31",
+        "report_date": "2025-09-27",
+        "primary_document": "aapl-20250927.htm",
+        "sha256": "056f733f13ff7407e64dc81fb96da3c3c55a6ba429bf094f57cb6bd472231f82"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 398
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:35429-36037",
+      "excerpt": "d net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPad and iPad Pro, partially offset by lower net sales of iPad mini ® . Wearables, Home and Accessories Wearables, Home and Accessories net sales decreased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to lower net sales of Wearables. Services Services net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales from advertising, the App Store ® and cloud services. Apple Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:40194-41177",
+      "excerpt": "ased during the second quarter of 2026 compared to the second quarter of 2025 due to higher net sales of laptops. Year-over-year Mac net sales during the first six months of 2026 were relatively flat. iPad iPad net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPad, partially offset by lower net sales of iPad mini ® . Wearables, Home and Accessories Wearables, Home and Accessories net sales increased during the second quarter of 2026 compared to the second quarter of 2025 primarily due to higher net sales of Accessories and Wearables. Year-over-year Wearables, Home and Accessories net sales during the first six months of 2026 were relatively flat. Services Services net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales from advertising, the App Store ® and cloud services. Apple Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:34468-35629",
+      "excerpt": "Rest of Asia Pacific Rest of Asia Pacific net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPhone and Services. Apple Inc. | Q1 2026 Form 10-Q | 14 Products and Services Performance The following table shows net sales by category for the three months ended December 27, 2025 and December 28, 2024 (dollars in millions): Three Months Ended December 27, 2025 December 28, 2024 Change iPhone $ 85,269 $ 69,138 23 % Mac 8,386 8,987 (7) % iPad 8,595 8,088 6 % Wearables, Home and Accessories 11,493 11,747 (2) % Services 30,013 26,340 14 % Total net sales $ 143,756 $ 124,300 16 % iPhone iPhone net sales increased during the first quarter of 2026 compared to the same quarter in 2025 due to higher net sales of Pro models. Mac Mac net sales decreased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to lower net sales of laptops and desktops. iPad iPad net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPad and iPad Pro, partially offset by lower net sales of iPad mini ® .",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:39201-40394",
+      "excerpt": "es of iPhone and Services. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Rest of Asia Pacific net sales during the second quarter of 2026. Products and Services Performance The following table shows net sales by category for the three- and six-month periods ended March 28, 2026 and March 29, 2025 (dollars in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 Change March 28, 2026 March 29, 2025 Change iPhone $ 56,994 $ 46,841 22 % $ 142,263 $ 115,979 23 % Mac 8,399 7,949 6 % 16,785 16,936 (1) % iPad 6,914 6,402 8 % 15,509 14,490 7 % Wearables, Home and Accessories 7,901 7,522 5 % 19,394 19,269 1 % Services 30,976 26,645 16 % 60,989 52,985 15 % Total net sales $ 111,184 $ 95,359 17 % $ 254,940 $ 219,659 16 % iPhone iPhone net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 due to higher net sales of Pro models. Mac Mac net sales increased during the second quarter of 2026 compared to the second quarter of 2025 due to higher net sales of laptops. Year-over-year Mac net sales during the first six months of 2026 were relatively flat.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:110015-111182",
+      "excerpt": "of laptops and desktops. iPad iPad net sales increased during 2025 compared to 2024 primarily due to higher net sales of iPad Air, iPad mini and iPad, partially offset by lower net sales of iPad Pro. Wearables, Home and Accessories Wearables, Home and Accessories net sales decreased during 2025 compared to 2024 primarily due to lower net sales of Accessories and Wearables. Services Services net sales increased during 2025 compared to 2024 primarily due to higher net sales from advertising, the App Store and cloud services. Apple Inc. | 2025 Form 10-K | 23 Gross Margin Products and Services gross margin and gross margin percentage for 2025, 2024 and 2023 were as follows (dollars in millions): 2025 2024 2023 Gross margin: Products $ 112,887 $ 109,633 $ 108,803 Services 82,314 71,050 60,345 Total gross margin $ 195,201 $ 180,683 $ 169,148 Gross margin percentage: Products 36.8 % 37.2 % 36.5 % Services 75.4 % 73.9 % 70.8 % Total gross margin percentage 46.9 % 46.2 % 44.1 % Products Gross Margin Products gross margin increased during 2025 compared to 2024 primarily due to favorable costs and a different mix of products, partially offset by tariff costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:12986-14186",
+      "excerpt": "rwise stated, references to particular years, quarters, months and periods refer to the Company’s fiscal years ended in September and the associated quarters, months and periods of those fiscal years. Note 2 – Revenue The following table shows disaggregated net sales, as well as the portion of total net sales that was previously deferred, for the three- and six-month periods ended March 28, 2026 and March 29, 2025 (in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 March 28, 2026 March 29, 2025 iPhone ® $ 56,994 $ 46,841 $ 142,263 $ 115,979 Mac ® 8,399 7,949 16,785 16,936 iPad ® 6,914 6,402 15,509 14,490 Wearables, Home and Accessories 7,901 7,522 19,394 19,269 Services 30,976 26,645 60,989 52,985 Total net sales $ 111,184 $ 95,359 $ 254,940 $ 219,659 Portion of total net sales that was included in deferred revenue as of the beginning of the period $ 3,987 $ 3,672 $ 5,834 $ 5,440 The Company’s proportion of net sales by disaggregated revenue source was generally consistent for each reportable segment in Note 10, “Segment Information” for the three- and six-month periods ended March 28, 2026 and March 29, 2025, except in Greater China, where iPhone reven",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E4",
+      "quote": "Wearables, Home and Accessories 7,901 7,522 5 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:39201-40394"
+    },
+    {
+      "evidence_id": "E2",
+      "quote": "Wearables, Home and Accessories net sales increased during the second quarter of 2026 compared to the second quarter of 2025 primarily due to higher net sales of Accessories and Wearables.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:40194-41177"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 4196,
+    "output": 546
+  },
+  "latency_ms": 8777,
+  "estimated_cost_usd": 0.020778,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "conventional_rag",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 8774,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "mixed"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 5,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

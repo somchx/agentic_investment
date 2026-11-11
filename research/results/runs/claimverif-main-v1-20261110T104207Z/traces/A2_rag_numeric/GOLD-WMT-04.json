@@ -1,0 +1,545 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A2_rag_numeric:GOLD-WMT-04:658206e3",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A2_rag_numeric",
+  "approach_kind": "financial_verification",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A2_rag_numeric",
+    "kind": "financial_verification",
+    "description": "A1 + deterministic numeric verification"
+  },
+  "config_hash": "53b859cfe39ca3b0",
+  "claim": {
+    "claim_id": "GOLD-WMT-04",
+    "company": "WMT",
+    "claim": "Walmart International net sales for the quarter ended April 30, 2026 grew by more than 5% year over year.",
+    "as_of_date": "2026-06-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2027 Q1"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-04-30",
+            "comparison": ">",
+            "threshold": 0.05,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Net sales for the Walmart International segment increased $5.4 billion or 18.0% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year."
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "Walmart International net sales by market 2026 2025 Mexico and Central America $ 13,847 $ 11,714 China 8,454 6,579 Canada 5,727 5,145 Other 7,082 6,316 Total $ 35,110 $ 29,754"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Walmart International net sales for the quarter ended April 30, 2026 grew by more than 5% year over year. Evidence E2 explicitly states that \"Net sales for the Walmart International segment increased $5.4 billion or 18.0% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year.\" This 18.0% growth rate is clearly greater than 5%, supporting the claim. Evidence E3 provides the underlying data showing Walmart International net sales of $35,110 million for Q1 2026 versus $29,754 million for Q1 2025, which confirms the 18.0% year-over-year growth calculation. The claim is fully supported by the evidence.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_ALL_TRUE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-04-30",
+            "comparison": ">",
+            "threshold": 0.05,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-04-30",
+            "basis": "quarter",
+            "level": 175684000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-02-01",
+                "period_end": "2026-04-30",
+                "value": 175684000000.0,
+                "filed": "2026-05-29",
+                "form": "10-Q",
+                "accession_number": "0000104169-26-000102",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 163981000000.0,
+            "prior_period_end": "2025-04-30",
+            "yoy_change": 0.07136802434428378,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "35d22a16608597551b5e11a8609c2f0aa2ebbf89e35488012f6ea9d60b940980",
+      "source": "cache",
+      "input_tokens": 4080,
+      "output_tokens": 562,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-04-30",
+            "comparison": ">",
+            "threshold": 0.05,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Net sales for the Walmart International segment increased $5.4 billion or 18.0% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year."
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "Walmart International net sales by market 2026 2025 Mexico and Central America $ 13,847 $ 11,714 China 8,454 6,579 Canada 5,727 5,145 Other 7,082 6,316 Total $ 35,110 $ 29,754"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Walmart International net sales for the quarter ended April 30, 2026 grew by more than 5% year over year. Evidence E2 explicitly states that \"Net sales for the Walmart International segment increased $5.4 billion or 18.0% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year.\" This 18.0% growth rate is clearly greater than 5%, supporting the claim. Evidence E3 provides the underlying data showing Walmart International net sales of $35,110 million for Q1 2026 versus $29,754 million for Q1 2025, which confirms the 18.0% year-over-year growth calculation. The claim is fully supported by the evidence.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Walmart International net sales for the quarter ended April 30, 2026 grew by more than 5% year over year. FY2027 Q1",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-04-30",
+            "comparison": ">",
+            "threshold": 0.05,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-04-30",
+            "basis": "quarter",
+            "level": 175684000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-02-01",
+                "period_end": "2026-04-30",
+                "value": 175684000000.0,
+                "filed": "2026-05-29",
+                "form": "10-Q",
+                "accession_number": "0000104169-26-000102",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 163981000000.0,
+            "prior_period_end": "2025-04-30",
+            "yoy_change": 0.07136802434428378,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-26-000102",
+        "filed": "2026-05-29",
+        "report_date": "2026-04-30",
+        "primary_document": "wmt-20260430.htm",
+        "sha256": "852d4b1f25a8587899243ce13ea032f74a393cbefc941de3625cc5779b252ff4"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0000104169-26-000055",
+        "filed": "2026-03-13",
+        "report_date": "2026-01-31",
+        "primary_document": "wmt-20260131.htm",
+        "sha256": "81bc136de8961e00236b4d1c299b17de840b9ff49c278f0addf442cee8e909cf"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-25-000191",
+        "filed": "2025-12-03",
+        "report_date": "2025-10-31",
+        "primary_document": "wmt-20251031.htm",
+        "sha256": "163791c139267742812a96517575b3118c5549be0b2984c8d4e9aa0914e2b6f8"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 692
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:63349-64537",
+      "excerpt": "rship and other income includes membership fees and other items such as rental and tenant income, recycling income, gift card breakage income, as well as other income from corporate campus facilities. (2) Gross profit is defined as net sales less cost of sales. Operating expenses refers to operating, selling, general and administrative expenses. Our total revenues increased $12.1 billion or 7.3% for the three months ended April 30, 2026 when compared to the same period in the previous fiscal year. The increase was primarily due to strong positive comparable sales in our U.S. segments and international markets driven by growth in transactions. eCommerce net sales grew $8.5 billion or 26% primarily driven by store and club-fulfilled delivery. Net sales growth also reflected strong sales in grocery and general merchandise across our segments. Net sales for the three months ended April 30, 2026 were positively affected by $2.3 billion in currency exchange rate fluctuations. Membership and other income increased $0.4 billion or 27.0% for the three months ended April 30, 2026, reflecting 17.4% growth in membership fee revenue with strength across membership programs globally.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:69679-70822",
+      "excerpt": "on charges. As a result of the factors discussed above, operating income increased $0.2 billion for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. 22 Table of Contents Walmart International Segment Three Months Ended April 30, (Dollar amounts and retail square feet in millions) 2026 2025 Net sales $ 35,110 $ 29,754 Percentage change from comparable period 18.0 % (0.3) % Membership and other income 425 379 Gross profit 7,423 6,290 Operating expenses 6,246 5,376 Operating income $ 1,602 $ 1,293 Percentage of net sales Gross profit 21.1 % 21.1 % Operating expenses 17.8 % 18.1 % Operating income 4.6 % 4.3 % Unit counts at period end 5,759 5,578 Retail square feet at period end 278 274 Net sales for the Walmart International segment increased $5.4 billion or 18.0% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. The increase was primarily due to positive comparable sales across our international markets, including strong eCommerce growth of $2.0 billion, and positive fluctuations in currency exchange rates of $2.3 billion.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:44267-45322",
+      "excerpt": "e category. When the assignment changes, previous period amounts are reclassified to be comparable to the current period's presentation. (Amounts in millions) Three Months Ended April 30, Walmart U.S. net sales by merchandise category 2026 2025 Grocery $ 70,696 $ 67,831 General merchandise 26,420 25,276 Health and wellness 16,355 16,244 Other categories 3,698 2,812 Total $ 117,169 $ 112,163 Of Walmart U.S.'s total net sales, approximately $ 27.1 billion and $ 21.4 billion related to eCommerce for the three months ended April 30, 2026 and 2025, respectively. (Amounts in millions) Three Months Ended April 30, Walmart International net sales by market 2026 2025 Mexico and Central America $ 13,847 $ 11,714 China 8,454 6,579 Canada 5,727 5,145 Other 7,082 6,316 Total $ 35,110 $ 29,754 Of Walmart International's total net sales, approximately $ 9.7 billion and $ 7.7 billion related to eCommerce for the three months ended April 30, 2026 and 2025, respectively. 15 Table of Contents (Amounts in millions) Three Months Ended April 30, Sam's Club U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:67960-69068",
+      "excerpt": "eet at period end 699 698 Net sales for the Walmart U.S. segment increased $5.0 billion or 4.5% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. The increase was due to comparable sales of 4.3% for the three months ended April 30, 2026, driven by growth in transactions and average ticket, reflecting strength in grocery and general merchandise. The Walmart U.S. segment's eCommerce net sales positively contributed approximately 5.2% to comparable sales for the three months ended April 30, 2026. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, which was primarily driven by store-fulfilled delivery. Membership and other income increased 45.6% for the three months ended April 30, 2026, primarily driven by increases in certain miscellaneous income items, as well as double-digit percentage growth in membership fee revenue from Walmart+. Gross profit rate increased 29 basis points for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:66986-68160",
+      "excerpt": "ents As a result of the factors discussed above, consolidated net income increased $0.9 billion for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. Accordingly, diluted net income per common share attributable to Walmart was $0.67 for the three months ended April 30, 2026, which represents an increase of $0.11 when compared to the same period in the previous fiscal year. Walmart U.S. Segment Three Months Ended April 30, (Dollar amounts and retail square feet in millions) 2026 2025 Net sales $ 117,169 $ 112,163 Net sales percentage change from comparable period 4.5 % 3.2 % Calendar comparable sales increase 4.3 % 3.1 % Membership and other income 926 636 Gross profit 32,529 30,811 Operating expenses 27,558 25,751 Operating income $ 5,897 $ 5,696 Percentage of net sales Gross profit 27.8 % 27.5 % Operating expenses 23.5 % 23.0 % Operating income 5.0 % 5.1 % Unit counts at period end 4,614 4,606 Retail square feet at period end 699 698 Net sales for the Walmart U.S. segment increased $5.0 billion or 4.5% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:70622-71623",
+      "excerpt": "as primarily due to positive comparable sales across our international markets, including strong eCommerce growth of $2.0 billion, and positive fluctuations in currency exchange rates of $2.3 billion. Gross profit rate was flat for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. The rate benefitted from improved eCommerce margins and business mix shifts, offset by ongoing format mix shifts. Operating expenses as a percentage of net sales decreased 28 basis points for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year, primarily due to disciplined cost controls and ongoing format mix shifts, partially offset by investments in strategic growth priorities in our Canada and Mexico markets. As a result of the factors discussed above, operating income increased $0.3 billion for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year. Sam's Club U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": "2026-02-01",
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/0000104169-26-000102-index.htm",
+      "locator": "Revenue 2026-02-01..2026-04-30",
+      "excerpt": null,
+      "values": [
+        175684000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": "2025-02-01",
+      "period_end": "2025-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/0000104169-26-000102-index.htm",
+      "locator": "Revenue 2025-02-01..2025-04-30",
+      "excerpt": null,
+      "values": [
+        163981000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "WMT",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2026-04-30",
+      "excerpt": null,
+      "values": [
+        175684000000.0,
+        163981000000.0,
+        0.07136802434428378
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E2",
+      "quote": "Net sales for the Walmart International segment increased $5.4 billion or 18.0% for the three months ended April 30, 2026, when compared to the same period in the previous fiscal year.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:69679-70822"
+    },
+    {
+      "evidence_id": "E3",
+      "quote": "Walmart International net sales by market 2026 2025 Mexico and Central America $ 13,847 $ 11,714 China 8,454 6,579 Canada 5,727 5,145 Other 7,082 6,316 Total $ 35,110 $ 29,754",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:44267-45322"
+    },
+    {
+      "evidence_id": "E9",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_end": "2026-04-30",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2026-04-30"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 4080,
+    "output": 562
+  },
+  "latency_ms": 5,
+  "estimated_cost_usd": 0.02067,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "financial_verification",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_ALL_TRUE",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

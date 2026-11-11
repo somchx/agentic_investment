@@ -1,0 +1,365 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A2_rag_numeric:GOLD-WMT-10:2b24116f",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A2_rag_numeric",
+  "approach_kind": "financial_verification",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A2_rag_numeric",
+    "kind": "financial_verification",
+    "description": "A1 + deterministic numeric verification"
+  },
+  "config_hash": "53b859cfe39ca3b0",
+  "claim": {
+    "claim_id": "GOLD-WMT-10",
+    "company": "WMT",
+    "claim": "Walmart's consolidated operating income in fiscal 2026 was reduced by legal and restructuring charges.",
+    "as_of_date": "2026-03-31",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "ROI benefited from increased operating income due to improved business performance, which was partially offset by the incremental non-cash share-based compensation charge at PhonePe as well as certain legal matters and other business restructuring charges."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "Operating expenses as a percentage of net sales increased 64 and 35 basis points for the three and six months ended July 31, 2025, respectively, when compared to the same periods in the previous fiscal year, which reflect charges of $0.4 billion related to certain legal matters."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Walmart's consolidated operating income in fiscal 2026 was reduced by legal and restructuring charges. This is a qualitative/interpretive claim about what factors affected operating income, without making specific numeric assertions.\n\nEvidence E1 directly supports this claim by stating that operating income was \"partially offset by the incremental non-cash share-based compensation charge at PhonePe as well as certain legal matters and other business restructuring charges\" in fiscal 2026 (the fiscal year ended January 31, 2026).\n\nEvidence E5 provides additional support by documenting charges of $0.4 billion related to certain legal matters during the six months ended July 31, 2025 (which falls within fiscal 2026), and notes these charges increased operating expenses as a percentage of net sales.\n\nBoth pieces of evidence confirm that legal matters and restructuring charges reduced operating income in fiscal 2026, fully supporting the claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "448c24f400b0a68834e70a80423ab6066fc8ea05723685f5ecdc0b5b27bfaa7a",
+      "source": "cache",
+      "input_tokens": 4106,
+      "output_tokens": 506,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "ROI benefited from increased operating income due to improved business performance, which was partially offset by the incremental non-cash share-based compensation charge at PhonePe as well as certain legal matters and other business restructuring charges."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "Operating expenses as a percentage of net sales increased 64 and 35 basis points for the three and six months ended July 31, 2025, respectively, when compared to the same periods in the previous fiscal year, which reflect charges of $0.4 billion related to certain legal matters."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Walmart's consolidated operating income in fiscal 2026 was reduced by legal and restructuring charges. This is a qualitative/interpretive claim about what factors affected operating income, without making specific numeric assertions.\n\nEvidence E1 directly supports this claim by stating that operating income was \"partially offset by the incremental non-cash share-based compensation charge at PhonePe as well as certain legal matters and other business restructuring charges\" in fiscal 2026 (the fiscal year ended January 31, 2026).\n\nEvidence E5 provides additional support by documenting charges of $0.4 billion related to certain legal matters during the six months ended July 31, 2025 (which falls within fiscal 2026), and notes these charges increased operating expenses as a percentage of net sales.\n\nBoth pieces of evidence confirm that legal matters and restructuring charges reduced operating income in fiscal 2026, fully supporting the claim.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Walmart's consolidated operating income in fiscal 2026 was reduced by legal and restructuring charges. FY2026",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0000104169-26-000055",
+        "filed": "2026-03-13",
+        "report_date": "2026-01-31",
+        "primary_document": "wmt-20260131.htm",
+        "sha256": "81bc136de8961e00236b4d1c299b17de840b9ff49c278f0addf442cee8e909cf"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-25-000191",
+        "filed": "2025-12-03",
+        "report_date": "2025-10-31",
+        "primary_document": "wmt-20251031.htm",
+        "sha256": "163791c139267742812a96517575b3118c5549be0b2984c8d4e9aa0914e2b6f8"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-25-000137",
+        "filed": "2025-08-29",
+        "report_date": "2025-07-31",
+        "primary_document": "wmt-20250731.htm",
+        "sha256": "05974418e411cea9e0bc4acbaeb3ba6400348a940d109fbeac294723401f34b5"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 708
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:180802-181959",
+      "excerpt": "combined with higher operating income, offset by an increase in average total assets due to higher purchases of property and equipment. ROI was 15.1% and 15.5% for fiscal 2026 and 2025, respectively. The decrease in ROI was primarily due to an increase in average invested capital due to higher purchases of property and equipment. ROI benefited from increased operating income due to improved business performance, which was partially offset by the incremental non-cash share-based compensation charge at PhonePe as well as certain legal matters and other business restructuring charges. Capital Allocation Our strategy includes allocating the majority of our capital to higher-return areas focused on automation such as eCommerce, supply chain and store and club investments. The following table provides additional detail regarding our capital expenditures: (Amounts in millions) Fiscal Years Ended January 31, Allocation of Capital Expenditures 2026 2025 Supply chain, customer-facing initiatives, technology and other $ 16,468 $ 14,603 Store and club remodels 5,571 5,552 New stores and clubs, including expansions and relocations 1,406 450 Total U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:184365-185356",
+      "excerpt": "n financing activities (13,553) (14,822) (13,414) (1) \"Net cash used in investing activities\" includes payments for property and equipment, which is also included in our computation of free cash flow. The increase in net cash provided by operating activities in fiscal 2026 is primarily due to an increase in cash provided by operating income, lower cash tax payments and the timing of certain payments. Free cash flow for fiscal 2026 increased when compared to fiscal 2025 due to an increase in cash provided by operating income, lower cash tax payments and timing of certain payments, partially offset by an increase of $2.9 billion in capital expenditures to support our omnichannel growth strategy. Net cash provided by operating activities for fiscal 2025 increased when compared to fiscal 2024 primarily due to an increase in cash provided by operating income and lapping the payment of accrued opioid legal charges in the prior year, partially offset by increased inventory purchases.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:202777-203760",
+      "excerpt": "25 2024 Net cash provided by operating activities $ 41,565 $ 36,443 $ 35,726 Net cash provided by operating activities increased $5.1 billion for fiscal 2026 when compared to the previous fiscal year. The increase is primarily due to an increase in cash provided by operating income, lower cash tax payments and timing of certain payments. The increase in net cash provided by operating activities for fiscal 2025, when compared to the previous fiscal year, was primarily due to an increase in cash provided by operating income and lapping the payment of accrued opioid legal charges in the prior year, partially offset by increased inventory purchases. Cash Equivalents and Working Capital Deficit Cash and cash equivalents were $10.7 billion and $9.0 billion as of January 31, 2026 and 2025, respectively. Our working capital deficit, defined as total current assets less total current liabilities, was $22.6 billion and $17.1 billion as of January 31, 2026 and 2025, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:185156-186356",
+      "excerpt": "cal 2024 primarily due to an increase in cash provided by operating income and lapping the payment of accrued opioid legal charges in the prior year, partially offset by increased inventory purchases. Free cash flow for fiscal 2025 decreased when compared to fiscal 2024 due to an increase of $3.2 billion in capital expenditures to support our omnichannel growth strategy, partially offset by the increase in net cash provided by operating activities described above. 37 Results of Operations Consolidated Results of Operations Fiscal Years Ended January 31, (Dollar amounts and retail square feet in millions) 2026 2025 2024 Net sales $ 706,413 $ 674,538 $ 642,637 Percentage change from comparable period 4.7 % 5.0 % 6.1 % Membership and other income (1) 6,750 6,447 5,488 Total revenues 713,163 680,985 648,125 Percentage change from comparable period 4.7 % 5.1 % 6.0 % Gross profit (2) 171,018 162,785 152,495 Operating expenses (2) 147,943 139,884 130,971 Operating income 29,825 29,348 27,012 Other (gains) and losses (2,075) 794 3,027 Consolidated net income $ 22,270 $ 20,157 $ 16,270 Percentage of net sales Gross profit 24.2 % 24.1 % 23.7 % Operating expenses 20.9 % 20.7 % 20.4 % Operatin",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000137",
+      "form": "10-Q",
+      "filed": "2025-08-29",
+      "period_start": null,
+      "period_end": "2025-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000137/wmt-20250731.htm",
+      "locator": "10-Q 0000104169-25-000137:62965-64164",
+      "excerpt": "net sales Gross profit (1) 24.5 % 24.4 % 24.3 % 24.2 % Operating expenses 21.2 % 20.6 % 21.1 % 20.7 % Operating income 4.1 % 4.7 % 4.2 % 4.5 % (1) Gross profit defined as net sales less cost of sales. Gross profit as a percentage of net sales (\"gross profit rate\") increased 4 and 8 basis points for the three and six months ended July 31, 2025, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily due to the Walmart U.S. segment, driven by disciplined inventory management and growth in higher margin businesses, partially offset by mix shifts into lower margin merchandise categories. Additionally, the increases were partially offset by ongoing channel and format mix shifts in the Walmart International segment. Operating expenses as a percentage of net sales increased 64 and 35 basis points for the three and six months ended July 31, 2025, respectively, when compared to the same periods in the previous fiscal year, which reflect charges of $0.4 billion related to certain legal matters. The increases for the three and six months ended July 31, 2025 were also impacted by higher self-insured general liability claims expense in the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:258991-260127",
+      "excerpt": "related to goodwill during fiscal 2026, fiscal 2025 or fiscal 2024. The following table reflects goodwill activity, by reportable segment, for fiscal 2026 and 2025: (Amounts in millions) Walmart U.S. Walmart International Sam's Club U.S. Total Balances as of February 1, 2024 $ 3,364 $ 24,428 $ 321 $ 28,113 Changes in currency translation and other — ( 696 ) — ( 696 ) Acquisitions (1) 1,375 — — 1,375 Balances as of January 31, 2025 4,739 23,732 321 28,792 Changes in currency translation and other 53 ( 119 ) — ( 66 ) Acquisitions — 9 — 9 Balances as of January 31, 2026 $ 4,792 $ 23,622 $ 321 $ 28,735 (1) Goodwill recorded in fiscal 2025 relates to the acquisition of VIZIO Holding Corp. in December 2024 within the Walmart U.S. segment. Intangible assets are recorded in other long-term assets in the Company's Consolidated Balance Sheets . As of January 31, 2026 and 2025, the Company had $ 4.3 billion and $ 4.5 billion, respectively, in indefinite-lived intangible assets which primarily consists of acquired trade names. There were no significant impairment charges related to intangible assets for fiscal 2026, 2025 or 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "ROI benefited from increased operating income due to improved business performance, which was partially offset by the incremental non-cash share-based compensation charge at PhonePe as well as certain legal matters and other business restructuring charges.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:180802-181959"
+    },
+    {
+      "evidence_id": "E5",
+      "quote": "Operating expenses as a percentage of net sales increased 64 and 35 basis points for the three and six months ended July 31, 2025, respectively, when compared to the same periods in the previous fiscal year, which reflect charges of $0.4 billion related to certain legal matters.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-25-000137",
+      "form": "10-Q",
+      "filed": "2025-08-29",
+      "period_end": "2025-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000137/wmt-20250731.htm",
+      "locator": "10-Q 0000104169-25-000137:62965-64164"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 4106,
+    "output": 506
+  },
+  "latency_ms": 4,
+  "estimated_cost_usd": 0.019908,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "financial_verification",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

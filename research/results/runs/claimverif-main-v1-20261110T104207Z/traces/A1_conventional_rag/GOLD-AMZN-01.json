@@ -1,0 +1,346 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A1_conventional_rag:GOLD-AMZN-01:02d22053",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A1_conventional_rag",
+  "approach_kind": "conventional_rag",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": false,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A1_conventional_rag",
+    "kind": "conventional_rag",
+    "description": "claim -> retrieval -> LLM -> verdict"
+  },
+  "config_hash": "1ebada2c6046452b",
+  "claim": {
+    "claim_id": "GOLD-AMZN-01",
+    "company": "AMZN",
+    "claim": "Amazon's net sales for the quarter ended September 30, 2026 increased by more than 10% year over year.",
+    "as_of_date": "2026-11-01",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q3"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 0.1,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E5",
+            "quote": "Sales increased 12% in Q3 2026, and 16% for the nine months ended September 30, 2026 compared to the comparable prior year periods."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Amazon's net sales for Q3 2026 (quarter ended September 30, 2026) increased by more than 10% year over year. Evidence E5 directly states \"Sales increased 12% in Q3 2026...compared to the comparable prior year periods.\" Since 12% is greater than 10%, the claim is supported. The evidence clearly refers to the same period (Q3 2026 ending September 30, 2026) and provides the year-over-year growth rate for net sales.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "9727db84d5deac8af26fc8d45a1913c49cb0af9c823786d2364ab9bbf4fe5aef",
+      "source": "cache",
+      "input_tokens": 3786,
+      "output_tokens": 402,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 0.1,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E5",
+            "quote": "Sales increased 12% in Q3 2026, and 16% for the nine months ended September 30, 2026 compared to the comparable prior year periods."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Amazon's net sales for Q3 2026 (quarter ended September 30, 2026) increased by more than 10% year over year. Evidence E5 directly states \"Sales increased 12% in Q3 2026...compared to the comparable prior year periods.\" Since 12% is greater than 10%, the claim is supported. The evidence clearly refers to the same period (Q3 2026 ending September 30, 2026) and provides the year-over-year growth rate for net sales.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Amazon's net sales for the quarter ended September 30, 2026 increased by more than 10% year over year. 2026 Q3",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001018724-26-000040",
+        "filed": "2026-10-30",
+        "report_date": "2026-09-30",
+        "primary_document": "amzn-20260930.htm",
+        "sha256": "4860db2de7364f53ecf18f81a5c607c3d2ba957044ff09fb33f7128466f6e92e"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001018724-26-000026",
+        "filed": "2026-07-31",
+        "report_date": "2026-06-30",
+        "primary_document": "amzn-20260630.htm",
+        "sha256": "4a6bb6e27c4ef03a8d77118309163b73e7f15077b448bde2d1ebdd7a6c78d7e7"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001018724-26-000004",
+        "filed": "2026-02-06",
+        "report_date": "2025-12-31",
+        "primary_document": "amzn-20251231.htm",
+        "sha256": "3702599045ec83f3faca3186c42b62247d1ec0e3bdf47c7f8acc7305b858f139"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 791
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000040",
+      "form": "10-Q",
+      "filed": "2026-10-30",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+      "locator": "10-Q 0001018724-26-000040:106003-106683",
+      "excerpt": "ising sales, and subscription services. Increased unit sales were driven largely by our continued focus on price, selection, and convenience for our customers, including from our fast shipping offers. Changes in foreign exchange rates reduced International net sales by $927 million for Q3 2026, and increased International net sales by $1.5 billion for the nine months ended September 30, 2026 . AWS sales increased 39% in Q3 2026, and 35% for the nine months ended September 30, 2026 compared to the comparable prior year periods. The sales growth primarily reflects increased customer usage, partially offset by pricing changes primarily driven by long-term customer contracts.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000040",
+      "form": "10-Q",
+      "filed": "2026-10-30",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+      "locator": "10-Q 0001018724-26-000040:105171-106203",
+      "excerpt": "30, 2026 compared to the comparable prior year periods. The sales growth primarily reflects increased unit sales, including sales by third-party sellers, advertising sales, and subscription services. Increased unit sales were driven largely by our continued focus on price, selection, and 30 Table of Contents convenience for our customers, including from our fast shipping offers. Changes in foreign exchange rates did not significantly impact North America net sales for Q3 2026, but increased North America net sales by $502 million for the nine months ended September 30, 2026. International sales increased 5% in Q3 2026, and 13% for the nine months ended September 30, 2026 compared to the comparable prior year periods. The sales growth primarily reflects increased unit sales, including sales by third-party sellers, advertising sales, and subscription services. Increased unit sales were driven largely by our continued focus on price, selection, and convenience for our customers, including from our fast shipping offers.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000040",
+      "form": "10-Q",
+      "filed": "2026-10-30",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+      "locator": "10-Q 0001018724-26-000040:115863-116968",
+      "excerpt": "nges in foreign exchange rates did not significantly impact sales and marketing costs for Q3 2026, but increased sales and marketing costs by $268 million for the nine months ended September 30, 2026. While costs associated with Amazon Prime membership benefits and other shipping offers are not included in sales and marketing expense, we view these offers as effective worldwide marketing tools, and intend to continue offering them indefinitely. General and Administrative The decrease in general and administrative costs in Q3 2026 and for the nine months ended September 30, 2026, compared to the comparable prior year periods, is primarily due to a decrease in payroll and related expenses. Other Operating Expense (Income), Net Other operating expense (income), net was $2.9 billion and $134 million for Q3 2025 and Q3 2026, and $3.4 billion and $671 million for the nine months ended September 30, 2025 and 2026, and other than the settlement of a lawsuit for the three and nine months ended September 30, 2025, was primarily related to asset impairments and the amortization of intangible assets.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000040",
+      "form": "10-Q",
+      "filed": "2026-10-30",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+      "locator": "10-Q 0001018724-26-000040:117732-118749",
+      "excerpt": "ng expenses that impact segment operating income, see “Operating Expenses” and the descriptions of operating expense line item changes on pages 31 to 33, and “Note 8 — Segment Information” on page 23. The increase in North America operating income in Q3 2026 and for the nine months ended September 30, 2026, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased shipping, fulfillment, and technology and infrastructure costs. The increase in International operating income in Q3 2026 and for the nine months ended September 30, 2026, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased shipping and fulfillment costs. Changes in foreign exchange rates negatively impacted operating income by $125 million for Q3 2026, and positively impacted operating income by $179 million for the nine months ended September 30, 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000040",
+      "form": "10-Q",
+      "filed": "2026-10-30",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+      "locator": "10-Q 0001018724-26-000040:104305-105371",
+      "excerpt": "5 12 13 AWS 20 39 18 35 Consolidated 13 12 12 16 Year-over-year Percentage Growth, excluding the effect of foreign exchange rates: North America 11 % 6 % 10 % 11 % International 10 8 10 11 AWS 20 39 18 35 Consolidated 12 13 12 16 Net Sales Mix: North America 59 % 56 % 59 % 57 % International 23 21 22 21 AWS 18 23 19 22 Consolidated 100 % 100 % 100 % 100 % Sales increased 12% in Q3 2026, and 16% for the nine months ended September 30, 2026 compared to the comparable prior year periods. Changes in foreign exchange rates reduced net sales by $896 million for Q3 2026, and increased net sales by $2.1 billion for the nine months ended September 30, 2026. For a discussion of the effect of foreign exchange rates on sales growth, see “Effect of Foreign Exchange Rates” below. North America sales increased 6% in Q3 2026, and 11% for the nine months ended September 30, 2026 compared to the comparable prior year periods. The sales growth primarily reflects increased unit sales, including sales by third-party sellers, advertising sales, and subscription services.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000040",
+      "form": "10-Q",
+      "filed": "2026-10-30",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+      "locator": "10-Q 0001018724-26-000040:107483-108567",
+      "excerpt": "ome), net 994 (95) 476 (80) Percent of Net Sales: Cost of sales 49.2 % 46.8 % 48.9 % 47.6 % Fulfillment 15.4 14.9 15.5 14.9 Technology and infrastructure 16.1 17.2 15.7 16.7 Sales and marketing 6.5 5.8 6.5 5.8 General and administrative 1.6 1.3 1.7 1.4 Other operating expense (income), net 1.6 0.1 0.7 0.1 Cost of Sales Cost of sales primarily consists of the purchase price of consumer products, inbound and outbound shipping costs, including costs related to sortation and delivery centers and where we are the transportation service provider, and digital media content costs where we record revenue gross, including video and music. The increase in cost of sales in Q3 2026 and for the nine months ended September 30, 2026, compared to the comparable prior year periods, is primarily due to increased product and shipping costs resulting from increased sales, partially offset by operational efficiencies. Changes in foreign exchange rates reduced cost of sales by $619 million for Q3 2026, and increased cost of sales by $1.2 billion for the nine months ended September 30, 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E5",
+      "quote": "Sales increased 12% in Q3 2026, and 16% for the nine months ended September 30, 2026 compared to the comparable prior year periods.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001018724-26-000040",
+      "form": "10-Q",
+      "filed": "2026-10-30",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+      "locator": "10-Q 0001018724-26-000040:104305-105371"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 3786,
+    "output": 402
+  },
+  "latency_ms": 3,
+  "estimated_cost_usd": 0.017388,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "conventional_rag",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

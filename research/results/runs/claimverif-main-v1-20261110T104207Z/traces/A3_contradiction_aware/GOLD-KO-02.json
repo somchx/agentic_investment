@@ -1,0 +1,1007 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A3_contradiction_aware:GOLD-KO-02:71269e61",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-KO-02",
+    "company": "KO",
+    "claim": "Coca-Cola's operating margin for fiscal year 2025 exceeded 25%.",
+    "as_of_date": "2026-03-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.25,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Information about our operating margin on a consolidated basis and by operating segment and Corporate is as follows: Year Ended December 31, 2025 2024 Consolidated 28.7 % 21.2 %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Coca-Cola's operating margin for fiscal year 2025 exceeded 25%. Evidence E2 explicitly provides the consolidated operating margin for the year ended December 31, 2025 as 28.7%, which is greater than 25%. This directly supports the claim. The evidence also defines operating margin as \"a ratio calculated by dividing operating income by net operating revenues\" and confirms this is for the consolidated basis. Since 28.7% > 25%, the claim is supported.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_ALL_TRUE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.25,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 0.28706117936630443,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 13762000000.0,
+                "filed": "2026-02-20",
+                "form": "10-K",
+                "accession_number": "0001628280-26-010047",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 47941000000.0,
+                "filed": "2026-02-20",
+                "form": "10-K",
+                "accession_number": "0001628280-26-010047",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.21232018019166612,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.0747409991746383,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Was the operating margin calculation affected by one-time items, restructuring charges, or other operating charges that might make the 28.7% figure not representative of normal operations?",
+          "search_query": "operating margin restructuring charges other operating charges one-time items adjustments 2025",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Does the filing provide an adjusted or non-GAAP operating margin that differs from the reported 28.7%, suggesting the GAAP figure may not be the most relevant measure?",
+          "search_query": "adjusted operating margin non-GAAP comparable operating margin excluding items 2025",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Was there a restatement or correction to the fiscal year 2025 operating margin figures after the initial 10-K filing?",
+          "search_query": "restatement correction revision operating income operating margin 2025 restated",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "operating margin restructuring charges other operating charges one-time items adjustments 2025",
+          "results": [
+            "E12",
+            "E13",
+            "E14"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "adjusted operating margin non-GAAP comparable operating margin excluding items 2025",
+          "results": [
+            "E15",
+            "E16",
+            "E17"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "restatement correction revision operating income operating margin 2025 restated",
+          "results": [
+            "E18",
+            "E19",
+            "E20"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18",
+        "E19",
+        "E20"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_ALL_TRUE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E2",
+              "quote": "Operating income was $13,762 million in 2025, compared to $9,992 million in 2024, an increase of $3,770 million, or 38%. The increases in operating income and operating margin were primarily driven by lower other operating charges, due to the prior year remeasurement of our contingent consideration liability to fair value in conjunction with the fairlife acquisition",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-010047",
+              "form": "10-K",
+              "filed": "2026-02-20",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+              "locator": "10-K 0001628280-26-010047:262355-263456"
+            },
+            {
+              "evidence_id": "E1",
+              "quote": "Operating margin is a ratio calculated by dividing operating income by net operating revenues. Management believes operating margin provides investors with useful information related to the profitability of our business after considering selling, general and administrative expenses and other operating charges.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-010047",
+              "form": "10-K",
+              "filed": "2026-02-20",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+              "locator": "10-K 0001628280-26-010047:261554-262555"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "56abd2c0c9e2bda333433d8506c008efd14f23fcb26bc7b17d5c4381e9c74f1d",
+      "source": "cache",
+      "input_tokens": 3764,
+      "output_tokens": 405,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.25,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Information about our operating margin on a consolidated basis and by operating segment and Corporate is as follows: Year Ended December 31, 2025 2024 Consolidated 28.7 % 21.2 %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Coca-Cola's operating margin for fiscal year 2025 exceeded 25%. Evidence E2 explicitly provides the consolidated operating margin for the year ended December 31, 2025 as 28.7%, which is greater than 25%. This directly supports the claim. The evidence also defines operating margin as \"a ratio calculated by dividing operating income by net operating revenues\" and confirms this is for the consolidated basis. Since 28.7% > 25%, the claim is supported.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "74516a792b67a291afc1be411fd53e20b4d681574339ad62ebfe09d1c42c450c",
+      "source": "cache",
+      "input_tokens": 4805,
+      "output_tokens": 309,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Was the operating margin calculation affected by one-time items, restructuring charges, or other operating charges that might make the 28.7% figure not representative of normal operations?",
+            "search_query": "operating margin restructuring charges other operating charges one-time items adjustments 2025",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Does the filing provide an adjusted or non-GAAP operating margin that differs from the reported 28.7%, suggesting the GAAP figure may not be the most relevant measure?",
+            "search_query": "adjusted operating margin non-GAAP comparable operating margin excluding items 2025",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Was there a restatement or correction to the fiscal year 2025 operating margin figures after the initial 10-K filing?",
+            "search_query": "restatement correction revision operating income operating margin 2025 restated",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "fbf47d0b6edac4bde4c71eba59d2c0f5431c83a654b43ddf73f47e351c14be3e",
+      "source": "cache",
+      "input_tokens": 8705,
+      "output_tokens": 778,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E2",
+                "quote": "Operating income was $13,762 million in 2025, compared to $9,992 million in 2024, an increase of $3,770 million, or 38%. The increases in operating income and operating margin were primarily driven by lower other operating charges, due to the prior year remeasurement of our contingent consideration liability to fair value in conjunction with the fairlife acquisition"
+              },
+              {
+                "evidence_id": "E1",
+                "quote": "Operating margin is a ratio calculated by dividing operating income by net operating revenues. Management believes operating margin provides investors with useful information related to the profitability of our business after considering selling, general and administrative expenses and other operating charges."
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Information about our operating margin on a consolidated basis and by operating segment and Corporate is as follows: Year Ended December 31, 2025 2024 Consolidated 28.7 % 21.2 %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Coca-Cola's operating margin for fiscal year 2025 exceeded 25%. Evidence E2 explicitly shows the consolidated operating margin for the year ended December 31, 2025 was 28.7%, which exceeds 25%. \n\nChallenge H1 questioned whether one-time items affected the 28.7% figure. The evidence shows that operating margin is calculated after considering \"other operating charges\" (E1), and that 2025 actually benefited from LOWER other operating charges compared to 2024, which had a significant fairlife-related charge (E2). This means the 28.7% figure is the GAAP operating margin that includes all charges, and if anything, 2024 was more affected by one-time items than 2025. This refutes the challenge.\n\nChallenge H2 sought evidence of an adjusted or non-GAAP operating margin. No such alternative measure was found in the retrieved evidence for fiscal year 2025.\n\nChallenge H3 sought evidence of restatements or corrections. No such evidence was found.\n\nThe initial verdict of SUPPORTED remains correct. The 28.7% operating margin for fiscal year 2025 is clearly stated and exceeds the 25% threshold in the claim.",
+        "change_reason": "N/A"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Coca-Cola's operating margin for fiscal year 2025 exceeded 25%. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "operating margin restructuring charges other operating charges one-time items adjustments 2025",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E12",
+        "E13",
+        "E14"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "adjusted operating margin non-GAAP comparable operating margin excluding items 2025",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E15",
+        "E16",
+        "E17"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "restatement correction revision operating income operating margin 2025 restated",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E18",
+        "E19",
+        "E20"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.25,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 0.28706117936630443,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 13762000000.0,
+                "filed": "2026-02-20",
+                "form": "10-K",
+                "accession_number": "0001628280-26-010047",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 47941000000.0,
+                "filed": "2026-02-20",
+                "form": "10-K",
+                "accession_number": "0001628280-26-010047",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.21232018019166612,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.0747409991746383,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-010047",
+        "filed": "2026-02-20",
+        "report_date": "2025-12-31",
+        "primary_document": "ko-20251231.htm",
+        "sha256": "a091d2ed9db7e14f46e64111d3e2154b0e0c26ceb9b7200d9b613db2fe8f0dca"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-046054",
+        "filed": "2025-10-23",
+        "report_date": "2025-09-26",
+        "primary_document": "ko-20250926.htm",
+        "sha256": "94a26963837d00fbcfe420db71b1b6d91208498bb2682f244cff2e17a09c064a"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000021344-25-000061",
+        "filed": "2025-07-24",
+        "report_date": "2025-06-27",
+        "primary_document": "ko-20250627.htm",
+        "sha256": "3326ac76eab810fde30004981c1868e25afea6a8a810e074cb68c21e46a65368"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1187
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:261554-262555",
+      "excerpt": "impact these charges had on our operating segments and Corporate. Refer to Note 19 of Notes to Consolidated Financial Statements for additional information on the Company’s restructuring initiatives. Operating Income and Operating Margin Information about our operating income contribution by operating segment and Corporate on a percentage basis is as follows: Year Ended December 31, 2025 2024 EMEA 31.2 % 42.6 % Latin America 27.2 38.0 North America 36.8 45.6 Asia Pacific 14.9 21.5 Bottling Investments 3.1 5.0 Corporate (13.2) (52.7) Total 100.0 % 100.0 % Operating margin is a ratio calculated by dividing operating income by net operating revenues. Management believes operating margin provides investors with useful information related to the profitability of our business after considering selling, general and administrative expenses and other operating charges. Management uses this measure in making financial, operating and planning decisions and in evaluating the Company’s performance.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:262355-263456",
+      "excerpt": "elling, general and administrative expenses and other operating charges. Management uses this measure in making financial, operating and planning decisions and in evaluating the Company’s performance. Information about our operating margin on a consolidated basis and by operating segment and Corporate is as follows: Year Ended December 31, 2025 2024 Consolidated 28.7 % 21.2 % EMEA 39.7 41.4 Latin America 59.1 58.6 North America 25.9 24.1 Asia Pacific 38.3 42.1 Bottling Investments 7.4 8.0 Corporate * * * Calculation is not meaningful. Operating income was $13,762 million in 2025, compared to $9,992 million in 2024, an increase of $3,770 million, or 38%. The increases in operating income and operating margin were primarily driven by lower other operating charges, due to the prior year remeasurement of our contingent consideration liability to fair value in conjunction with the fairlife acquisition, concentrate sales volume growth of 1% and favorable pricing initiatives. These items were partially offset by higher commodity costs and an unfavorable foreign currency exchange rate impact.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:550047-551082",
+      "excerpt": "filed with the SEC within 120 days after the end of the fiscal year ended December 31, 2025. See Item X. in Part I of this report for information regarding executive officers of the Company. ITEM 11. EXECUTIVE COMPENSATION The information required by this item is incorporated by reference to the Company’s 2026 Proxy Statement to be filed with the SEC within 120 days after the end of the fiscal year ended December 31, 2025. ITEM 12. SECURITY OWNERSHIP OF CERTAIN BENEFICIAL OWNERS AND MANAGEMENT AND RELATED STOCKHOLDER MATTERS The information required by this item is incorporated by reference to the Company’s 2026 Proxy Statement to be filed with the SEC within 120 days after the end of the fiscal year ended December 31, 2025. ITEM 13. CERTAIN RELATIONSHIPS AND RELATED TRANSACTIONS, AND DIRECTOR INDEPENDENCE The information required by this item is incorporated by reference to the Company’s 2026 Proxy Statement to be filed with the SEC within 120 days after the end of the fiscal year ended December 31, 2025. 124 ITEM 14.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:144385-145543",
+      "excerpt": "t on our Europe, Middle East and Africa; Asia Pacific; and Bottling Investments operating segments. Refer to the heading “Liquidity, Capital Resources and Financial Position — Foreign Exchange” below. 40 Net operating revenue growth rates are impacted by sales volume; price, product and geographic mix; foreign currency exchange rate fluctuations; and acquisitions and divestitures. The size and timing of acquisitions and divestitures are not consistent from period to period. Based on current spot rates and our hedging coverage in place, we expect foreign currency exchange rate fluctuations will have an unfavorable impact on our full year 2025 net operating revenues. Gross Profit Margin Gross profit margin is a ratio calculated by dividing gross profit by net operating revenues. Management believes gross profit margin provides investors with useful information related to the profitability of our business prior to considering all of the selling, general and administrative expenses and other operating charges incurred. Management uses this measure in making financial, operating and planning decisions and in evaluating the Company’s performance.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0000021344-25-000061",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134425000061/ko-20250627.htm",
+      "locator": "10-Q 0000021344-25-000061:138599-139730",
+      "excerpt": "the British pound, South African rand, Kenyan shilling and Japanese yen, which had a favorable impact on our Europe, Middle East and Africa; Asia Pacific; and Bottling Investments operating segments. Refer to the heading “Liquidity, Capital Resources and Financial Position — Foreign Exchange” below. 39 Net operating revenue growth rates are impacted by sales volume; price, product and geographic mix; foreign currency exchange rate fluctuations; and acquisitions and divestitures. The size and timing of acquisitions and divestitures are not consistent from period to period. Based on current spot rates and our hedging coverage in place, we expect foreign currency exchange rate fluctuations will have an unfavorable impact on our full year 2025 net operating revenues. Gross Profit Margin Gross profit margin is a ratio calculated by dividing gross profit by net operating revenues. Management believes gross profit margin provides investors with useful information related to the profitability of our business prior to considering all of the selling, general and administrative expenses and other operating charges incurred.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:257447-258600",
+      "excerpt": ". Management uses this measure in making financial, operating and planning decisions and in evaluating the Company’s performance. Our gross profit margin increased to 61.6% in 2025 from 61.1% in 2024. This increase was primarily due to the impact of favorable pricing initiatives and the impact of the prior year refranchising of our bottling operations in the Philippines, Bangladesh and certain territories in India, partially offset by the unfavorable impact of foreign currency exchange rate fluctuations and higher commodity costs. Selling, General and Administrative Expenses Selling, general and administrative expenses were $14,521 million in 2025, compared to $14,582 million in 2024, a decrease of $61 million. This decrease was primarily due to lower contributions to The Coca-Cola Foundation and lower annual incentive expense, partially offset by higher severance costs in 2025 associated with ongoing initiatives to optimize our organization, higher advertising expenses and an asset impairment charge related to certain prototypes in the prior year. Advertising expenses for 2025 and 2024 were $5.4 billion and $5.1 billion, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/0001628280-26-010047-index.htm",
+      "locator": "OperatingIncome 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        13762000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/0001628280-26-010047-index.htm",
+      "locator": "Revenue 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        47941000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/0001628280-26-010047-index.htm",
+      "locator": "OperatingIncome 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        9992000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/0001628280-26-010047-index.htm",
+      "locator": "Revenue 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        47061000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "KO",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "OperatingMargin level annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        0.28706117936630443,
+        0.21232018019166612,
+        0.0747409991746383
+      ],
+      "unit": "ratio",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:152010-153086",
+      "excerpt": "ional information on the Company’s restructuring initiatives. Refer to Note 16 of Notes to Consolidated Financial Statements for additional information on the fairlife acquisition and the impairments. Operating Income and Operating Margin Information about our operating income contribution by operating segment and Corporate on a percentage basis is as follows: Three Months Ended Nine Months Ended September 26, 2025 September 27, 2024 September 26, 2025 September 27, 2024 Europe, Middle East & Africa 27.5 % 39.8 % 29.3 % 46.1 % Latin America 22.5 37.3 23.1 38.5 North America 42.2 58.0 38.9 45.7 Asia Pacific 13.2 18.4 15.0 24.2 Bottling Investments 1.4 1.7 2.0 4.1 Corporate (6.8) (55.2) (8.3) (58.6) Total 100.0 % 100.0 % 100.0 % 100.0 % Operating margin is a ratio calculated by dividing operating income by net operating revenues. Management believes operating margin provides investors with useful information related to the profitability of our business after considering all of the selling, general and administrative expenses and other operating charges incurred.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0000021344-25-000061",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134425000061/ko-20250627.htm",
+      "locator": "10-Q 0000021344-25-000061:145532-146498",
+      "excerpt": "ional information on the Company’s restructuring initiatives. Refer to Note 16 of Notes to Consolidated Financial Statements for additional information on the fairlife acquisition and the impairments. Refer to Note 17 of Notes to Consolidated Financial Statements for the impact certain of these charges had on our operating segments and Corporate. Operating Income and Operating Margin Information about our operating income contribution by operating segment and Corporate on a percentage basis is as follows: Three Months Ended Six Months Ended June 27, 2025 June 28, 2024 June 27, 2025 June 28, 2024 Europe, Middle East & Africa 31.0 % 48.7 % 30.1 % 49.5 % Latin America 22.3 35.0 23.4 39.1 North America 37.9 52.2 37.3 39.2 Asia Pacific 15.1 24.6 16.0 27.3 Bottling Investments 1.4 3.7 2.3 5.3 Corporate (7.7) (64.2) (9.1) (60.4) Total 100.0 % 100.0 % 100.0 % 100.0 % Operating margin is a ratio calculated by dividing operating income by net operating revenues.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:256579-257647",
+      "excerpt": "0.0 % The percentage contribution of each operating segment fluctuates over time due to net operating revenues in some operating segments growing at a faster rate compared to other operating segments. In addition, foreign currency exchange rate fluctuations impact the percentage contribution of each operating segment. For additional information about the impact of foreign currency exchange rate fluctuations, refer to the heading “Liquidity, Capital Resources and Financial Position — Foreign Exchange” below. Gross Profit Margin Gross profit margin is a ratio calculated by dividing gross profit by net operating revenues. Management believes gross profit margin provides investors with useful information related to the profitability of our business prior to considering all of the selling, general and administrative expenses and other operating charges incurred. Management uses this measure in making financial, operating and planning decisions and in evaluating the Company’s performance. Our gross profit margin increased to 61.6% in 2025 from 61.1% in 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0000021344-25-000061",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134425000061/ko-20250627.htm",
+      "locator": "10-Q 0000021344-25-000061:146298-147365",
+      "excerpt": "ing Investments 1.4 3.7 2.3 5.3 Corporate (7.7) (64.2) (9.1) (60.4) Total 100.0 % 100.0 % 100.0 % 100.0 % Operating margin is a ratio calculated by dividing operating income by net operating revenues. Management believes operating margin provides investors with useful information related to the profitability of our business after considering all of the selling, general and administrative expenses and other operating charges incurred. Management uses this measure in making financial, operating and planning decisions and in evaluating the Company’s performance. Information about our operating margin on a consolidated basis and for each of our operating segments and Corporate is as follows: Three Months Ended Six Months Ended June 27, 2025 June 28, 2024 June 27, 2025 June 28, 2024 Consolidated 34.1 % 21.3 % 33.6 % 20.2 % Europe, Middle East & Africa 44.1 44.6 43.5 44.5 Latin America 60.3 55.8 60.7 58.7 North America 32.3 28.2 31.6 20.6 Asia Pacific 44.2 46.3 45.6 49.0 Bottling Investments 4.2 6.4 6.2 7.6 Corporate * * * * * Calculation is not meaningful.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:442518-443705",
+      "excerpt": "settled in stock. For performance share unit awards granted from 2020 through 2022, the performance criteria were equally weighted among net operating revenues, earnings per share and free cash flow. For performance share unit awards granted to executives in 2022, and for performance share unit awards granted to all participants in 2023 and 2024, the performance criteria were weighted 30% for net operating revenues, 30% for earnings per share, 30% for free cash flow and 10% for environmental sustainability. For performance share unit awards granted to all participants in 2025, the performance criteria were equally weighted among net operating revenues, earnings per share and free cash flow. For purposes of these performance criteria, earnings per share is diluted net income per share; free cash flow is net cash provided by operating activities less purchases of property, plant and equipment; and environmental sustainability is composed of predefined goals related to the Company’s packaging and water security strategies in place at the time of grant. These performance criteria are adjusted for certain items, if applicable, which are subject to Audit Committee approval.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:145343-146493",
+      "excerpt": "eneral and administrative expenses and other operating charges incurred. Management uses this measure in making financial, operating and planning decisions and in evaluating the Company’s performance. Our gross profit margin increased to 61.5% for the three months ended September 26, 2025, compared to 60.7% for the three months ended September 27, 2024. Our gross profit margin increased to 62.1% for the nine months ended September 26, 2025, compared to 61.4% for the nine months ended September 27, 2024. The increases were primarily due to the impact of favorable pricing initiatives and the refranchising of certain of our bottling operations, partially offset by the unfavorable impact of foreign currency exchange rate fluctuations and higher commodity costs. Selling, General and Administrative Expenses During the three months ended September 26, 2025, selling, general and administrative expenses were $3,618 million, compared to $3,636 million during the three months ended September 27, 2024, a decrease of $18 million. This decrease was primarily due to lower annual incentive expense, partially offset by increased advertising expense.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:438133-439278",
+      "excerpt": "025, 2024 and 2023, respectively. Stock-based compensation expense in 2025 and 2024 was recorded in the line item selling, general and administrative expenses in our consolidated statements of income. In 2023, the Company recorded stock-based compensation expense of $ 254 million in the line item selling, general and administrative expenses in our consolidated statement of income. This was partially offset by $ 3 million related to the revision of management’s estimates arising from the settlement of the estimated cash payments recognized in 2022, which was recorded in the line item other operating charges in our consolidated statement of income. The total income tax benefit recognized in our consolidated statements of income related to total stock-based compensation expense was $ 47 million, $ 47 million and $ 40 million in 2025, 2024 and 2023, respectively. As of December 31, 2025, we had $ 236 million of total unrecognized compensation cost related to nonvested stock-based compensation awards granted under our plans, which we expect to recognize over a weighted-average period of 1.7 years as stock‑based compensation expense.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0000021344-25-000061",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134425000061/ko-20250627.htm",
+      "locator": "10-Q 0000021344-25-000061:139530-140665",
+      "excerpt": "ovides investors with useful information related to the profitability of our business prior to considering all of the selling, general and administrative expenses and other operating charges incurred. Management uses this measure in making financial, operating and planning decisions and in evaluating the Company’s performance. Our gross profit margin increased to 62.4% for the three months ended June 27, 2025, compared to 61.1% for the three months ended June 28, 2024. Our gross profit margin increased to 62.5% for the six months ended June 27, 2025, compared to 61.8% for the six months ended June 28, 2024. The increases were primarily due to the impact of favorable pricing initiatives and the refranchising of certain of our bottling operations, partially offset by the unfavorable impact of foreign currency exchange rate fluctuations and higher commodity costs. Selling, General and Administrative Expenses During the three months ended June 27, 2025, selling, general and administrative expenses were $3,470 million, compared to $3,549 million during the three months ended June 28, 2024, a decrease of $79 million, or 2%.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E19"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:85482-86676",
+      "excerpt": "2 million related to a revision of management’s estimates for tax litigation expense. During the nine months ended September 27, 2024, the Company recorded other operating charges of $ 3,987 million. These charges consisted of $ 3,021 million related to the remeasurement of our contingent consideration liability to fair value in conjunction with the fairlife acquisition, $ 760 million related to the impairment of our BodyArmor trademark that impacted our North America operating segment, $ 102 million related to the Company’s productivity and reinvestment program and $ 87 million related to the impairment of a trademark that impacted our Latin America operating segment. In addition, other operating charges included $ 11 million for the amortization of noncompete agreements related to the BodyArmor acquisition, $ 7 million of transaction costs related to the refranchising of our bottling operations in certain territories in India and $ 2 million of transaction costs related to the sale of a portion of our interest in Coke Consolidated. These charges were partially offset by a net benefit of $ 3 million related to a revision of management’s estimates for tax litigation expense.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E20"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E2",
+      "quote": "Information about our operating margin on a consolidated basis and by operating segment and Corporate is as follows: Year Ended December 31, 2025 2024 Consolidated 28.7 % 21.2 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:262355-263456"
+    },
+    {
+      "evidence_id": "E11",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "OperatingMargin level annual @ 2025-12-31"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 17274,
+    "output": 1492
+  },
+  "latency_ms": 10,
+  "estimated_cost_usd": 0.074202,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_ALL_TRUE",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_ALL_TRUE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 5,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

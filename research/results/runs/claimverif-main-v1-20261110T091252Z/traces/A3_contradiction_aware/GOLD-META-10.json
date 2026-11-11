@@ -1,0 +1,971 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-META-10:a9a1b44a",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-META-10",
+    "company": "META",
+    "claim": "The increase in Meta's capital expenditures in 2025 was driven primarily by investments in servers, data centers and network infrastructure.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Cash used in investing activities during 2025 mostly consisted of $69.69 billion of purchases of property and equipment as we continued to invest in servers, data centers, and network infrastructure"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "The increase in cash used in investing activities during 2025 compared to 2024 was mostly due to increases in purchases of property and equipment"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim is interpretive as it makes an attribution about what drove the increase in capital expenditures. Evidence E1 from Meta's 2025 10-K directly supports this claim. It states that cash used in investing activities in 2025 \"mostly consisted of $69.69 billion of purchases of property and equipment as we continued to invest in servers, data centers, and network infrastructure\" and that \"The increase in cash used in investing activities during 2025 compared to 2024 was mostly due to increases in purchases of property and equipment.\" Since capital expenditures are purchases of property and equipment, and the filing explicitly states these purchases were for servers, data centers, and network infrastructure, and that the increase was mostly due to these purchases, the claim is fully supported. The claim makes no specific numeric assertions about amounts or growth rates, only a qualitative statement about what drove the increase.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did capital expenditures actually increase in 2025 compared to 2024, or did they decrease or remain flat?",
+          "search_query": "capital expenditures 2025 2024 property and equipment purchases",
+          "numeric_check": {
+            "metric": "CapitalExpenditure",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Were there other significant drivers of the capital expenditure increase besides servers, data centers, and network infrastructure, such as Reality Labs hardware, acquisitions, or other categories?",
+          "search_query": "capital expenditures Reality Labs consumer hardware acquisitions office buildings real estate",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Does the filing indicate that non-marketable equity investments or other investing activities (not property and equipment) were the primary driver of the increase in cash used in investing activities?",
+          "search_query": "increase investing activities non-marketable equity investments primarily mostly driven",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "capital expenditures 2025 2024 property and equipment purchases",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "capital expenditures Reality Labs consumer hardware acquisitions office buildings real estate",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "increase investing activities non-marketable equity investments primarily mostly driven",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 69691000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "CapitalExpenditure",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 69691000000.0,
+                "filed": "2026-01-29",
+                "form": "10-K",
+                "accession_number": "0001628280-26-003942",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 37256000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.8705980244792785,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E12",
+            "E10",
+            "E11"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "$72.22 billion of capital expenditures, which includes purchases of property and equipment and principal payments on finance leases",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003942",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+              "locator": "10-K 0001628280-26-003942:338713-339590"
+            },
+            {
+              "evidence_id": "E16",
+              "quote": "The increase in cash used in investing activities during 2025 compared to 2024 was mostly due to increases in purchases of property and equipment",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003942",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+              "locator": "10-K 0001628280-26-003942:339390-340510"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "The increase in cash used in investing activities during 2025 compared to 2024 was mostly due to increases in purchases of property and equipment",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003942",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+              "locator": "10-K 0001628280-26-003942:340310-341202"
+            },
+            {
+              "evidence_id": "E16",
+              "quote": "The increase in cash used in investing activities during 2025 compared to 2024 was mostly due to increases in purchases of property and equipment and non-marketable equity investments",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003942",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+              "locator": "10-K 0001628280-26-003942:339390-340510"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "cc9054088eb986e27495aa376ecb4ea01d3e63949e2152644e032b1f5e8a9257",
+      "source": "cache",
+      "input_tokens": 3671,
+      "output_tokens": 454,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Cash used in investing activities during 2025 mostly consisted of $69.69 billion of purchases of property and equipment as we continued to invest in servers, data centers, and network infrastructure"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "The increase in cash used in investing activities during 2025 compared to 2024 was mostly due to increases in purchases of property and equipment"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim is interpretive as it makes an attribution about what drove the increase in capital expenditures. Evidence E1 from Meta's 2025 10-K directly supports this claim. It states that cash used in investing activities in 2025 \"mostly consisted of $69.69 billion of purchases of property and equipment as we continued to invest in servers, data centers, and network infrastructure\" and that \"The increase in cash used in investing activities during 2025 compared to 2024 was mostly due to increases in purchases of property and equipment.\" Since capital expenditures are purchases of property and equipment, and the filing explicitly states these purchases were for servers, data centers, and network infrastructure, and that the increase was mostly due to these purchases, the claim is fully supported. The claim makes no specific numeric assertions about amounts or growth rates, only a qualitative statement about what drove the increase.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "7d470d28ef758c794d43bc9d50a6a68ca74c62c7a6013aa66674f47eb25de8ab",
+      "source": "live",
+      "input_tokens": 4506,
+      "output_tokens": 370,
+      "stop_reason": "tool_use",
+      "latency_ms": 7278,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did capital expenditures actually increase in 2025 compared to 2024, or did they decrease or remain flat?",
+            "search_query": "capital expenditures 2025 2024 property and equipment purchases",
+            "numeric_check": {
+              "metric": "CapitalExpenditure",
+              "measure": "yoy_growth",
+              "period_basis": "annual",
+              "period_end": "2025-12-31",
+              "comparison": "increase",
+              "threshold": null,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Were there other significant drivers of the capital expenditure increase besides servers, data centers, and network infrastructure, such as Reality Labs hardware, acquisitions, or other categories?",
+            "search_query": "capital expenditures Reality Labs consumer hardware acquisitions office buildings real estate",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Does the filing indicate that non-marketable equity investments or other investing activities (not property and equipment) were the primary driver of the increase in cash used in investing activities?",
+            "search_query": "increase investing activities non-marketable equity investments primarily mostly driven",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "d6a05d248b88025013a6185bf27f61d7f310099d7118e7cbe6b598e3e500b260",
+      "source": "live",
+      "input_tokens": 8325,
+      "output_tokens": 901,
+      "stop_reason": "tool_use",
+      "latency_ms": 14990,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "$72.22 billion of capital expenditures, which includes purchases of property and equipment and principal payments on finance leases"
+              },
+              {
+                "evidence_id": "E16",
+                "quote": "The increase in cash used in investing activities during 2025 compared to 2024 was mostly due to increases in purchases of property and equipment"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E1",
+                "quote": "The increase in cash used in investing activities during 2025 compared to 2024 was mostly due to increases in purchases of property and equipment"
+              },
+              {
+                "evidence_id": "E16",
+                "quote": "The increase in cash used in investing activities during 2025 compared to 2024 was mostly due to increases in purchases of property and equipment and non-marketable equity investments"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Cash used in investing activities during 2025 mostly consisted of $69.69 billion of purchases of property and equipment as we continued to invest in servers, data centers, and network infrastructure"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "The increase in cash used in investing activities during 2025 compared to 2024 was mostly due to increases in purchases of property and equipment"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "All three challenges have been refuted or found to have no relevant evidence:\n\nH1 (Did capital expenditures actually increase?): CHALLENGE_REFUTED. The numeric check confirms capital expenditures increased from $37.26 billion in 2024 to $69.69 billion in 2025 (87% increase). Evidence E7 and E16 confirm the increase occurred.\n\nH2 (Were there other significant drivers besides servers, data centers, and network infrastructure?): NO_RELEVANT_EVIDENCE. The retrieved evidence mentions consumer hardware products and other categories in general risk factor discussions (E13, E14, E15), but provides no specific information indicating these were significant drivers of the 2025 capital expenditure increase. The evidence does not contradict the claim.\n\nH3 (Were non-marketable equity investments the primary driver?): CHALLENGE_REFUTED. Evidence E1 and E16 explicitly state that the increase in cash used in investing activities was \"mostly due to increases in purchases of property and equipment\" (with E16 adding \"and non-marketable equity investments\" as a secondary factor). This confirms property and equipment purchases were the primary driver, not non-marketable equity investments.\n\nThe original verdict remains SUPPORTED. The claim that the increase in Meta's capital expenditures in 2025 was driven primarily by investments in servers, data centers and network infrastructure is directly supported by the filing evidence, and no contradicting evidence was found."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "The increase in Meta's capital expenditures in 2025 was driven primarily by investments in servers, data centers and network infrastructure. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "capital expenditures 2025 2024 property and equipment purchases",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "capital expenditures Reality Labs consumer hardware acquisitions office buildings real estate",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "increase investing activities non-marketable equity investments primarily mostly driven",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "CapitalExpenditure",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 69691000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "CapitalExpenditure",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 69691000000.0,
+                "filed": "2026-01-29",
+                "form": "10-K",
+                "accession_number": "0001628280-26-003942",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 37256000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.8705980244792785,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E12",
+            "E10",
+            "E11"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-003942",
+        "filed": "2026-01-29",
+        "report_date": "2025-12-31",
+        "primary_document": "meta-20251231.htm",
+        "sha256": "5c4096ceb780d0fb52f3e3da5164ead16c58030223b453b0386ef2eb1bad8011"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-047240",
+        "filed": "2025-10-30",
+        "report_date": "2025-09-30",
+        "primary_document": "meta-20250930.htm",
+        "sha256": "f39bcd7a00c56aa48b4345190175554d892cdf0c2306ba77158bd09c8edaa6ea"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-036791",
+        "filed": "2025-07-31",
+        "report_date": "2025-06-30",
+        "primary_document": "meta-20250630.htm",
+        "sha256": "7b6a13ec0a671ca273fc0f7757071c664ae7b73fd87ab4f55615e88a52c6f3e3"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1460
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:340310-341202",
+      "excerpt": "o 2024, was primarily due to an increase in cash collections from our customers driven by the increase in revenue and lower cash paid for income taxes, partially offset by higher operational spending. Cash Used in Investing Activities Cash used in investing activities during 2025 mostly consisted of $69.69 billion of purchases of property and equipment as we continued to invest in servers, data centers, and network infrastructure, and $18.33 billion of purchases of non-marketable equity investments, and $10.05 billion of net purchases of marketable securities. The increase in cash used in investing activities during 2025 compared to 2024 was mostly due to increases in purchases of property and equipment and non-marketable equity investments. We anticipate making capital expenditures of approximately $115 billion to $135 billion in 2026 to support our AI efforts and core business.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:127119-128028",
+      "excerpt": "n 2024, was due primarily to an increase in cash collections from our customers driven by the increase in revenue and lower cash paid for income taxes, partially offset by higher operational spending. Cash Used in Investing Activities Cash used in investing activities during the six months ended June 30, 2025 mostly consisted of $29.48 billion of purchases of property and equipment as we continued to invest in servers, data centers, and network infrastructure, and $15.21 billion of purchases of non-marketable equity investments. The increase in cash used in investing activities during the six months ended June 30, 2025, compared to the same period in 2024, was mostly due to increases in non-marketable equity investments and purchases of property and equipment. We anticipate making capital expenditures of approximately $66 billion to $72 billion in 2025 to support our core business and AI efforts.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+      "locator": "10-Q 0001628280-25-047240:137242-138333",
+      "excerpt": "d in 2024, was mainly due to an increase in cash collections from our customers driven by the increase in revenue and lower cash paid for income taxes, partially offset by higher operational spending. 47 Table of Contents Cash Used in Investing Activities Cash used in investing activities during the nine months ended September 30, 2025 mostly consisted of $48.31 billion of purchases of property and equipment as we continued to invest in servers, data centers, and network infrastructure, and $18.26 billion of purchases of non-marketable equity investments. The increase in cash used in investing activities during the nine months ended September 30, 2025, compared to the same period in 2024, was mostly due to increases in purchases of property and equipment and non-marketable equity investments, offset by an increase in net proceeds from sales and purchases of marketable securities. We anticipate making capital expenditures of approximately $70 billion to $72 billion in 2025 to support our core business and AI efforts, and expect significant capital expenditures growth in 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:128775-129882",
+      "excerpt": "operational cash needs and fund our investments in infrastructure and AI initiatives, share repurchases and dividend payments for at least the next 12 months and thereafter for the foreseeable future. We continuously evaluate our liquidity and capital resources, including our access to external capital, to ensure we can finance our future capital requirements. Leases and Contractual Commitments Our operating and finance leases include data centers, offices, certain network infrastructure and colocations. In addition to lease liabilities, we have leases that have not yet commenced of approximately $52.56 billion as of June 30, 2025, which will commence between the remainder of 2025 and 2034. We also have $27.95 billion of contractual commitments as of June 30, 2025, mostly related to our investments in servers and network infrastructure, consumer hardware products in Reality Labs, and data centers. Long-term Debt As of June 30, 2025, we had outstanding long-term debt in the form of senior unsecured notes for an aggregate principal amount of $29.0 billion, which mature from 2027 through 2064.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:344346-345363",
+      "excerpt": "return of capital to stockholders over the next 12 months and thereafter for the foreseeable future. We have increased investments in infrastructure and AI initiatives and expect to continue to do so. From time to time we may also seek to raise additional capital through debt, equity, or other financing arrangements. We continuously evaluate our liquidity and capital resources, including our access to external capital, to ensure we can finance our future capital requirements. Leases and Contractual Commitments Our operating and finance leases include data centers, offices, and certain network infrastructure. In addition to lease liabilities included in our consolidated balance sheets, we have leases that have not yet commenced, with total lease obligations of approximately $103.77 billion, mostly for data centers, colocations, and network infrastructure, as of December 31, 2025. These operating and finance leases will commence between 2026 and 2030 with lease terms of greater than one year to 30 years.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:345163-346347",
+      "excerpt": "centers, colocations, and network infrastructure, as of December 31, 2025. These operating and finance leases will commence between 2026 and 2030 with lease terms of greater than one year to 30 years. We also have $131.05 billion of contractual commitments as of December 31, 2025, mostly related to third-party cloud capacity arrangements and our continued investments in servers and network infrastructure, data centers, and consumer hardware products in Reality Labs with $30.63 billion due in 2026. Long-term Debt As of December 31, 2025, we had outstanding long-term debt in the form of senior unsecured notes for an aggregate principal amount of $59.0 billion, which mature from 2027 through 2064. Short-term and long-term future interest payments obligations as of December 31, 2025 were $2.98 billion and $56.74 billion, respectively. Capital Return Program Share Repurchase Our board of directors has authorized a share repurchase program of our Class A common stock, which commenced in January 2017 and does not have an expiration date. In 2025, we repurchased and subsequently retired 40 million shares of our Class A common stock for an aggregate amount of $26.26 billion.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:338713-339590",
+      "excerpt": "holdings are in diversified highly rated securities. Cash, cash equivalents, and marketable securities were $81.59 billion as of December 31, 2025, an increase of $3.78 billion from December 31, 2024. The increase was due to $115.80 billion of cash generated from operations and $29.91 billion of net proceeds from the issuance of fixed-rate senior unsecured notes (the Notes) in November 2025. These increases were partially offset by $72.22 billion of capital expenditures, which includes purchases of property and equipment and principal payments on finance leases; $31.57 billion of capital returns for repurchases of our Class A common stock and payments of dividends and dividend equivalents; $18.40 billion of taxes paid related to net share settlement of employee restricted stock unit (RSU) awards; and $18.33 billion of purchases of non-marketable equity investments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+      "locator": "10-Q 0001628280-25-047240:135713-136463",
+      "excerpt": "oldings are in diversified highly rated securities. Cash, cash equivalents, and marketable securities were $44.45 billion as of September 30, 2025, a decrease of $33.37 billion from December 31, 2024. The decrease was mostly due to $50.08 billion of capital expenditures which includes purchases of property and equipment and principal payments on finance leases; $30.23 billion of capital returns for repurchases of our Class A common stock and payments of dividends and dividend equivalents; $18.26 billion of non-marketable equity investments; and $14.13 billion of taxes paid related to net share settlement of employee restricted stock unit (RSU) awards. These decreases were partially offset by $79.59 billion of cash generated from operations.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:341002-342157",
+      "excerpt": "operty and equipment and non-marketable equity investments. We anticipate making capital expenditures of approximately $115 billion to $135 billion in 2026 to support our AI efforts and core business. 77 Table of Contents Cash Used in Financing Activities Cash used in financing activities during 2025 mostly consisted of $26.25 billion for repurchases of our Class A common stock, $18.40 billion of taxes paid related to net share settlement of RSUs, and $5.32 billion of payments of dividends and dividend equivalents, partially offset by $29.91 billion net proceeds from the issuance of the Notes in November 2025. The decrease in cash used in financing activities during 2025 compared to 2024, was mostly due to an increase in net proceeds from the Notes. Free Cash Flow In addition to other financial measures presented in accordance with U.S. GAAP, we monitor free cash flow (FCF) as a non-GAAP measure to manage our business, make planning decisions, evaluate our performance, and allocate resources. We define FCF as net cash provided by operating activities reduced by purchases of property and equipment and principal payments on finance leases.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/0001628280-26-003942-index.htm",
+      "locator": "CapitalExpenditure 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        69691000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/0001628280-26-003942-index.htm",
+      "locator": "CapitalExpenditure 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        37256000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "META",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "CapitalExpenditure yoy_growth annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        69691000000.0,
+        37256000000.0,
+        0.8705980244792785
+      ],
+      "unit": "ratio",
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:103931-105131",
+      "excerpt": "es, as well as capital expenditures, that we will incur to grow and expand our business and to remain competitive, including costs related to our data centers and technical infrastructure as well as other costs relating to our AI initiatives; • costs related to our privacy, safety, security, and content and advertising review and enforcement efforts, including as a result of implementing changes to our practices, whether voluntarily, in connection with laws, regulations, regulatory actions, or decisions or recommendations from the independent Oversight Board, or otherwise; • costs and expenses related to the development, manufacturing, and delivery of our consumer hardware products; • our ability to maintain gross margins and operating margins; • costs related to acquisitions or other strategic transactions, including costs associated with amortization and additional investments to develop acquired technologies; • charges associated with impairment or abandonment of any assets on our balance sheet, including as a result of changes to our real property lease arrangements and data center and infrastructure assets; • our ability to obtain equipment, components, and labor for our data",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+      "locator": "10-Q 0001628280-25-047240:245980-247180",
+      "excerpt": "es, as well as capital expenditures, that we will incur to grow and expand our business and to remain competitive, including costs related to our data centers and technical infrastructure as well as other costs relating to our AI initiatives; • costs related to our privacy, safety, security, and content and advertising review and enforcement efforts, including as a result of implementing changes to our practices, whether voluntarily, in connection with laws, regulations, regulatory actions, or decisions or recommendations from the independent Oversight Board, or otherwise; • costs and expenses related to the development, manufacturing, and delivery of our consumer hardware products; • our ability to maintain gross margins and operating margins; • costs related to acquisitions or other strategic transactions, including costs associated with amortization and additional investments to develop acquired technologies; • charges associated with impairment or abandonment of any assets on our balance sheet, including as a result of changes to our real property lease arrangements and data center and infrastructure assets; • our ability to obtain equipment, components, and labor for our data",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:232439-233639",
+      "excerpt": "es, as well as capital expenditures, that we will incur to grow and expand our business and to remain competitive, including costs related to our data centers and technical infrastructure as well as other costs relating to our AI initiatives; • costs related to our privacy, safety, security, and content and advertising review and enforcement efforts, including as a result of implementing changes to our practices, whether voluntarily, in connection with laws, regulations, regulatory actions, or decisions or recommendations from the independent Oversight Board, or otherwise; • costs and expenses related to the development, manufacturing, and delivery of our consumer hardware products; • our ability to maintain gross margins and operating margins; • costs related to acquisitions, including costs associated with amortization and additional investments to develop the acquired technologies; • charges associated with impairment or abandonment of any assets on our balance sheet, including as a result of changes to our real property lease arrangements and data center assets; • our ability to obtain equipment, components, and labor for our data centers and other technical infrastructure in a",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:339390-340510",
+      "excerpt": "dividend equivalents; $18.40 billion of taxes paid related to net share settlement of employee restricted stock unit (RSU) awards; and $18.33 billion of purchases of non-marketable equity investments. The following table presents our cash flows (in millions): Year Ended December 31, 2025 2024 2023 Net cash provided by operating activities $ 115,800 $ 91,328 $ 71,113 Net cash used in investing activities $ (102,003) $ (47,150) $ (24,495) Net cash used in financing activities $ (20,370) $ (40,781) $ (19,500) Cash Provided by Operating Activities Cash provided by operating activities during 2025 mostly consisted of $60.46 billion net income adjusted for certain non-cash items, such as $20.43 billion of share-based compensation expense, $18.74 billion of deferred income taxes, and $18.62 billion of depreciation and amortization expense. The increase in cash flows from operating activities during 2025 compared to 2024, was primarily due to an increase in cash collections from our customers driven by the increase in revenue and lower cash paid for income taxes, partially offset by higher operational spending.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+      "locator": "10-Q 0001628280-25-047240:38207-39017",
+      "excerpt": "ideration, $ 13.79 billion was included in non-marketable equity investments accounted for under the measurement alternative method, as we do not have significant influence over Scale AI's operations. Our non-marketable equity method investments include mostly unconsolidated variable interest entities (VIE) of which we are not the primary beneficiary as we do not direct the activities that would significantly affect their economic performance. As of September 30, 2025, our maximum exposure to loss in these VIEs was $ 5.01 billion, which represents the carrying value of our investments, including the tender offers executed during the three months ended September 30, 2025. Investments held in our non-marketable equity investment portfolios are subject to equity price risk. 17 Table of Contents Note 6.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:37783-38967",
+      "excerpt": "ts under equity method 2,022 52 Total non-marketable equity investments $ 21,988 $ 6,070 Our non-marketable equity investments are in privately-held companies without readily determinable fair values. In June 2025, we completed an investment in Scale AI by acquiring a non-voting minority of its outstanding equity. Out of the total consideration, $ 13.79 billion was included in non-marketable equity investments accounted for under the measurement alternative method, as we do not have significant influence over Scale AI's operations. Our non-marketable equity method investments include mostly unconsolidated variable interest entities (VIE) of which we are not the primary beneficiary as we do not direct the activities that would significantly affect their economic performance. As of June 30, 2025, our maximum exposure to loss in these VIEs was $ 1.98 billion, which is the carrying value of our investments. Subsequent to June 30, 2025, we have extended tender offers of up to $ 3.0 billion to acquire additional equity interests in these VIEs. Investments held in our non-marketable equity investment portfolios are subject to equity price risk. 17 Table of Contents Note 6.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "Cash used in investing activities during 2025 mostly consisted of $69.69 billion of purchases of property and equipment as we continued to invest in servers, data centers, and network infrastructure",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:340310-341202"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 16502,
+    "output": 1725
+  },
+  "latency_ms": 22339,
+  "estimated_cost_usd": 0.075381,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 30,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 7280,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 13,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 14993,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 10,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

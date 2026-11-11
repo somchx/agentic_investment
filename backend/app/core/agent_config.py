@@ -25,6 +25,9 @@ History:
 - 2026-11-02 (chat only, no version bump: B0-B3 do not use the intent
   analyzer or the demo list): demo universe AAPL/MSFT/AMZN + GOOGL/NVDA;
   intent aliases for both; "เป็นไง" also counts as a portfolio question.
+- 2026-11-02 (chat only, no version bump, same reason): demo universe grows
+  to 10 with META/TSLA/NFLX/WMT/KO from the validated 15-company catalog;
+  intent aliases for the new five.
 """
 
 import hashlib

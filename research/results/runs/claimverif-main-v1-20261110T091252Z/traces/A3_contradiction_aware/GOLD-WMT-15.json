@@ -1,0 +1,887 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-WMT-15:20a98938",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-WMT-15",
+    "company": "WMT",
+    "claim": "Walmart's net income for fiscal 2026 was affected by fair value changes on equity investments that mask its operating performance.",
+    "as_of_date": "2026-03-31",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Other gains and losses included a gain of $ 2.1 billion and losses of $ 0.8 billion and $ 3.0 billion for fiscal 2026, 2025, and 2024, respectively, driven primarily by fair value changes on these investments"
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "Other gains and losses consist of certain non-operating items, such as changes in the fair value of our investments, which by their nature can fluctuate from period to period. Other gains and losses resulted in a net gain of $2.1 billion and a net loss of $0.8 billion in fiscal 2026 and 2025, respectively, primarily driven by changes in the fair value of our equity and other investments due to fluctuations in their underlying stock prices."
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "net loss of $0.8 billion in fiscal 2026 and 2025, respectively, primarily driven by changes in the fair value of our equity and other investments due to fluctuations in their underlying stock prices."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim is interpretive, asserting that Walmart's net income for fiscal 2026 was affected by fair value changes on equity investments that mask its operating performance. The evidence clearly supports this claim:\n\n1. E1 confirms that fiscal 2026 included a gain of $2.1 billion in \"other gains and losses\" driven primarily by fair value changes on equity investments.\n\n2. E3 explicitly characterizes these fair value changes as \"non-operating items\" that \"by their nature can fluctuate from period to period,\" directly supporting the notion that they mask operating performance. It confirms the $2.1 billion net gain in fiscal 2026.\n\n3. E2 provides additional context about the fair value changes being driven by fluctuations in underlying stock prices.\n\nThe evidence establishes that: (a) net income for fiscal 2026 was affected by fair value changes on equity investments ($2.1 billion gain), and (b) these are explicitly described as non-operating items that fluctuate, which supports the characterization that they mask operating performance. The claim makes no specific numeric assertions requiring verification.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Were the fair value changes on equity investments immaterial relative to total net income for fiscal 2026, such that they would not meaningfully 'mask' operating performance?",
+          "search_query": "fiscal 2026 net income consolidated earnings attributable total",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Does Walmart present adjusted or non-GAAP earnings metrics that exclude these fair value changes, indicating the company itself provides clarity on operating performance rather than these items 'masking' it?",
+          "search_query": "adjusted earnings non-GAAP exclude fair value equity investments operating income",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Are the fair value changes on equity investments actually included in operating income rather than being classified as non-operating, which would contradict the claim that they mask operating performance?",
+          "search_query": "operating income other gains losses fair value equity investments classification",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "fiscal 2026 net income consolidated earnings attributable total",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "adjusted earnings non-GAAP exclude fair value equity investments operating income",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "operating income other gains losses fair value equity investments classification",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "we reported $22.3 billion and $20.2 billion of consolidated net income for fiscal 2026 and 2025, respectively",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:190836-191758"
+            },
+            {
+              "evidence_id": "E1",
+              "quote": "Other gains and losses included a gain of $ 2.1 billion and losses of $ 0.8 billion and $ 3.0 billion for fiscal 2026, 2025, and 2024, respectively, driven primarily by fair value changes on these investments",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:299005-300100"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E13",
+              "quote": "The associated gains and losses from fair value changes for these investments are recognized within other gains and losses in the Consolidated Statements of Income.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:298112-299205"
+            },
+            {
+              "evidence_id": "E15",
+              "quote": "Other gains and losses consist of certain non-operating items, such as the change in the fair value of our investments and gains or losses on business dispositions",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-25-000191",
+              "form": "10-Q",
+              "filed": "2025-12-03",
+              "period_end": "2025-10-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+              "locator": "10-Q 0000104169-25-000191:76034-77181"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "8311845b5c84e0faf2cfe5278e13ecc96a78fec2cefb10a90707770167a6afab",
+      "source": "cache",
+      "input_tokens": 3767,
+      "output_tokens": 667,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Other gains and losses included a gain of $ 2.1 billion and losses of $ 0.8 billion and $ 3.0 billion for fiscal 2026, 2025, and 2024, respectively, driven primarily by fair value changes on these investments"
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "Other gains and losses consist of certain non-operating items, such as changes in the fair value of our investments, which by their nature can fluctuate from period to period. Other gains and losses resulted in a net gain of $2.1 billion and a net loss of $0.8 billion in fiscal 2026 and 2025, respectively, primarily driven by changes in the fair value of our equity and other investments due to fluctuations in their underlying stock prices."
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "net loss of $0.8 billion in fiscal 2026 and 2025, respectively, primarily driven by changes in the fair value of our equity and other investments due to fluctuations in their underlying stock prices."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim is interpretive, asserting that Walmart's net income for fiscal 2026 was affected by fair value changes on equity investments that mask its operating performance. The evidence clearly supports this claim:\n\n1. E1 confirms that fiscal 2026 included a gain of $2.1 billion in \"other gains and losses\" driven primarily by fair value changes on equity investments.\n\n2. E3 explicitly characterizes these fair value changes as \"non-operating items\" that \"by their nature can fluctuate from period to period,\" directly supporting the notion that they mask operating performance. It confirms the $2.1 billion net gain in fiscal 2026.\n\n3. E2 provides additional context about the fair value changes being driven by fluctuations in underlying stock prices.\n\nThe evidence establishes that: (a) net income for fiscal 2026 was affected by fair value changes on equity investments ($2.1 billion gain), and (b) these are explicitly described as non-operating items that fluctuate, which supports the characterization that they mask operating performance. The claim makes no specific numeric assertions requiring verification.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "2b18829ee34ca1144cd56e8b42ff0b17a98e6f028f5e3afdb4f02a0154e47866",
+      "source": "live",
+      "input_tokens": 5020,
+      "output_tokens": 304,
+      "stop_reason": "tool_use",
+      "latency_ms": 5908,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Were the fair value changes on equity investments immaterial relative to total net income for fiscal 2026, such that they would not meaningfully 'mask' operating performance?",
+            "search_query": "fiscal 2026 net income consolidated earnings attributable total",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Does Walmart present adjusted or non-GAAP earnings metrics that exclude these fair value changes, indicating the company itself provides clarity on operating performance rather than these items 'masking' it?",
+            "search_query": "adjusted earnings non-GAAP exclude fair value equity investments operating income",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Are the fair value changes on equity investments actually included in operating income rather than being classified as non-operating, which would contradict the claim that they mask operating performance?",
+            "search_query": "operating income other gains losses fair value equity investments classification",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "cffbf80c9e695e20d18e6c724286009ae61dec6d9ba02d4072b18be0c9fc9e8d",
+      "source": "live",
+      "input_tokens": 8820,
+      "output_tokens": 1152,
+      "stop_reason": "tool_use",
+      "latency_ms": 17673,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "we reported $22.3 billion and $20.2 billion of consolidated net income for fiscal 2026 and 2025, respectively"
+              },
+              {
+                "evidence_id": "E1",
+                "quote": "Other gains and losses included a gain of $ 2.1 billion and losses of $ 0.8 billion and $ 3.0 billion for fiscal 2026, 2025, and 2024, respectively, driven primarily by fair value changes on these investments"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E13",
+                "quote": "The associated gains and losses from fair value changes for these investments are recognized within other gains and losses in the Consolidated Statements of Income."
+              },
+              {
+                "evidence_id": "E15",
+                "quote": "Other gains and losses consist of certain non-operating items, such as the change in the fair value of our investments and gains or losses on business dispositions"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Other gains and losses included a gain of $ 2.1 billion and losses of $ 0.8 billion and $ 3.0 billion for fiscal 2026, 2025, and 2024, respectively, driven primarily by fair value changes on these investments"
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "Other gains and losses consist of certain non-operating items, such as changes in the fair value of our investments, which by their nature can fluctuate from period to period. Other gains and losses resulted in a net gain of $2.1 billion and a net loss of $0.8 billion in fiscal 2026 and 2025, respectively, primarily driven by changes in the fair value of our equity and other investments due to fluctuations in their underlying stock prices."
+          },
+          {
+            "evidence_id": "E7",
+            "quote": "we reported $22.3 billion and $20.2 billion of consolidated net income for fiscal 2026 and 2025, respectively"
+          },
+          {
+            "evidence_id": "E13",
+            "quote": "The associated gains and losses from fair value changes for these investments are recognized within other gains and losses in the Consolidated Statements of Income."
+          },
+          {
+            "evidence_id": "E15",
+            "quote": "Other gains and losses consist of certain non-operating items, such as the change in the fair value of our investments and gains or losses on business dispositions, which by their nature can fluctuate from period to period."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After investigating potential challenges, the initial SUPPORTED verdict remains correct.\n\nH1 (materiality challenge) is REFUTED: The $2.1 billion gain from fair value changes on equity investments (E1) represents approximately 9.4% of the $22.3 billion consolidated net income for fiscal 2026 (E7). This is material enough to affect net income and potentially mask operating performance trends.\n\nH2 (non-GAAP metrics challenge) has NO_RELEVANT_EVIDENCE: The retrieved evidence does not contain any information about Walmart presenting adjusted or non-GAAP earnings metrics that exclude these fair value changes. The absence of such evidence does not support the challenge.\n\nH3 (classification challenge) is REFUTED: E13 and E15 confirm that fair value changes are recognized within \"other gains and losses\" and are explicitly described as \"non-operating items,\" not operating income. This supports rather than contradicts the claim.\n\nThe evidence continues to support that: (1) Walmart's fiscal 2026 net income was affected by a material $2.1 billion gain from fair value changes on equity investments, and (2) these are explicitly classified as non-operating items that fluctuate by nature, supporting the characterization that they can mask operating performance.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Walmart's net income for fiscal 2026 was affected by fair value changes on equity investments that mask its operating performance. FY2026",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "fiscal 2026 net income consolidated earnings attributable total",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "adjusted earnings non-GAAP exclude fair value equity investments operating income",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "operating income other gains losses fair value equity investments classification",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0000104169-26-000055",
+        "filed": "2026-03-13",
+        "report_date": "2026-01-31",
+        "primary_document": "wmt-20260131.htm",
+        "sha256": "81bc136de8961e00236b4d1c299b17de840b9ff49c278f0addf442cee8e909cf"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-25-000191",
+        "filed": "2025-12-03",
+        "report_date": "2025-10-31",
+        "primary_document": "wmt-20251031.htm",
+        "sha256": "163791c139267742812a96517575b3118c5549be0b2984c8d4e9aa0914e2b6f8"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-25-000137",
+        "filed": "2025-08-29",
+        "report_date": "2025-07-31",
+        "primary_document": "wmt-20250731.htm",
+        "sha256": "05974418e411cea9e0bc4acbaeb3ba6400348a940d109fbeac294723401f34b5"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 708
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:299005-300100",
+      "excerpt": "anying Consolidated Balance Sheets. The associated gains and losses from fair value changes for these investments are recognized within other gains and losses in the Consolidated Statements of Income. Other gains and losses included a gain of $ 2.1 billion and losses of $ 0.8 billion and $ 3.0 billion for fiscal 2026, 2025, and 2024, respectively, driven primarily by fair value changes on these investments, as well as other immaterial activity. The fair value of these investments is as follows: (Amounts in millions) Fair Value as of January 31, 2026 Fair Value as of January 31, 2025 Equity investments measured using Level 1 inputs $ 1,037 $ 959 Equity investments measured using Level 2 inputs 3,462 2,082 Debt investments measured using Level 3 inputs 1,176 1,181 Total $ 5,675 $ 4,222 The fair value of these investments increased $ 1.5 billion during fiscal 2026, primarily due to gains and losses resulting from net changes in the underlying stock prices of the equity investments and certain other immaterial investment activity, partially offset by the sale of certain investments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:189917-191036",
+      "excerpt": "net loss of $0.8 billion in fiscal 2026 and 2025, respectively, primarily driven by changes in the fair value of our equity and other investments due to fluctuations in their underlying stock prices. 38 Our effective income tax rate was 24.4%, 23.4%, and 25.5% for fiscal 2026, 2025 and 2024, respectively. The increase in effective income tax rate in fiscal 2026 compared to fiscal 2025 is primarily due to the share-based compensation charge recorded at the Company's PhonePe subsidiary, which provided no tax benefit. The decrease in effective tax rate in fiscal 2025 compared to fiscal 2024 is primarily due to the tax impact on changes in fair value of our investments. Our effective income tax rate may also fluctuate as a result of various factors, including changes in our assessment of unrecognized tax benefits, valuation allowances, business operations, acquisitions, investments, entry into new businesses and geographies, intercompany transactions, changes in tax law, changes in the administrative practices, principles, and interpretations related to tax, and the mix and size of earnings among our U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:189001-190117",
+      "excerpt": "ts for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. The increase for fiscal 2026 was primarily due to higher self-insured general liability claims expense in the U.S. of approximately $0.9 billion, influenced by rising costs to resolve claims across retail and related industries, a charge of $0.7 billion related to modification of certain share-based compensation arrangements for our PhonePe subsidiary and increased depreciation related to our capital investments. The increase for fiscal 2025 was primarily due to higher variable pay as a result of exceeding planned performance, increased marketing and higher depreciation expenses. Other gains and losses consist of certain non-operating items, such as changes in the fair value of our investments, which by their nature can fluctuate from period to period. Other gains and losses resulted in a net gain of $2.1 billion and a net loss of $0.8 billion in fiscal 2026 and 2025, respectively, primarily driven by changes in the fair value of our equity and other investments due to fluctuations in their underlying stock prices.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_start": null,
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:25195-26185",
+      "excerpt": "l equity method investments where the Company has elected the fair value option, on a recurring basis primarily within other long-term assets in the accompanying Condensed Consolidated Balance Sheets. The amounts of gains and losses included in earnings from fair value changes for these investments are recognized within other gains and losses in the Condensed Consolidated Statements of Income. The fair value of these investments is as follows: (Amounts in millions) Fair Value as of October 31, 2025 Fair Value as of January 31, 2025 Equity investments measured using Level 1 inputs $ 1,557 $ 959 Equity investments measured using Level 2 inputs 5,154 2,082 Total $ 6,711 $ 3,041 The fair value of these investments increased $ 2.1 billion and $ 3.7 billion for the three and nine months ended October 31, 2025, respectively, primarily due to gains and losses resulting from net changes in the underlying stock prices of the investments and certain other immaterial investment activity.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:260625-261803",
+      "excerpt": "to settle the liability with the creditor. Refer to Note 7 for more information. Investments Investments in equity securities are recorded in other long-term assets in the Consolidated Balance Sheets. Changes in the fair value of certain equity securities, as well as certain immaterial equity method investments where the Company has elected the fair value option, are measured on a recurring basis (generally using Level 1 and Level 2 inputs in the fair value hierarchy) and recognized within other gains and losses in the Consolidated Statements of Income. Measurement of equity investments using Level 2 inputs is primarily based on quoted prices for similar securities in active markets. Equity investments without readily 59 determinable fair values are carried at cost and adjusted for any observable price changes or impairments within other gains and losses in the Consolidated Statements of Income. Investments in debt securities classified as trading are reported at fair value and included in other long-term assets in the Consolidated Balance Sheets, and adjustments in fair value are recorded within other gains and losses in the Consolidated Statements of Income.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000137",
+      "form": "10-Q",
+      "filed": "2025-08-29",
+      "period_start": null,
+      "period_end": "2025-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000137/wmt-20250731.htm",
+      "locator": "10-Q 0000104169-25-000137:75802-76718",
+      "excerpt": "consist of certain non-operating items, such as the change in the fair value of our investments and gains or losses on business dispositions, which by their nature can fluctuate from period to period. Other gains and losses for the three and six months ended July 31, 2025 consisted of net gains of $2.7 billion and $2.1 billion, respectively, compared to net losses of $1.2 billion and $0.4 billion for the same periods in the previous fiscal year. These net gains and losses primarily consisted of changes in fair value of our equity and other investments driven by changes in their underlying stock prices. Our effective income tax rate was 23.3% and 23.0% for the three and six months ended July 31, 2025, respectively, compared to 24.2% and 24.4% for the same periods in the previous fiscal year. The decrease in effective tax rate is primarily due to the tax impact on changes in fair value of our investments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:190836-191758",
+      "excerpt": "and geographies, intercompany transactions, changes in tax law, changes in the administrative practices, principles, and interpretations related to tax, and the mix and size of earnings among our U.S. operations and international operations, which are subject to statutory rates that are generally higher than the U.S. statutory rate. The reconciliation from the U.S. statutory rate to the effective income tax rates for fiscal 2026, 2025 and 2024 is provided in Note 8 . As a result of the factors discussed above, we reported $22.3 billion and $20.2 billion of consolidated net income for fiscal 2026 and 2025, respectively, which represent increases of $2.1 billion and $3.9 billion for fiscal 2026 and 2025, respectively, when compared to the previous fiscal year. Diluted net income per common share attributable to Walmart (\"EPS\") was $2.73, $2.41 and $1.91 for fiscal 2026, 2025 and 2024, respectively. Walmart U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:239346-240546",
+      "excerpt": "lling interest ( 377 ) ( 721 ) ( 759 ) Consolidated net income attributable to Walmart $ 21,893 $ 19,436 $ 15,511 Net income per common share: Basic net income per common share attributable to Walmart $ 2.74 $ 2.42 $ 1.92 Diluted net income per common share attributable to Walmart 2.73 2.41 1.91 Weighted-average common shares outstanding: Basic 7,983 8,041 8,077 Diluted 8,022 8,081 8,108 Dividends declared per common share $ 0.94 $ 0.83 $ 0.76 See accompanying notes. 52 Walmart Inc. Consolidated Statements of Comprehensive Income Fiscal Years Ended January 31, (Amounts in millions) 2026 2025 2024 Consolidated net income $ 22,270 $ 20,157 $ 16,270 Consolidated net income attributable to noncontrolling interest ( 377 ) ( 721 ) ( 759 ) Consolidated net income attributable to Walmart 21,893 19,436 15,511 Other comprehensive income (loss), net of income taxes 1,009 ( 2,859 ) 944 Other comprehensive (income) loss attributable to noncontrolling interest ( 174 ) 556 ( 566 ) Other comprehensive income (loss) attributable to Walmart 835 ( 2,303 ) 378 Comprehensive income, net of income taxes 23,279 17,298 17,214 Comprehensive income attributable to noncontrolling interest ( 551 ) ( 165 ) ( 1",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:279716-280916",
+      "excerpt": "e to Walmart is based on the weighted-average common shares outstanding during the relevant period adjusted for the dilutive effect of share-based awards as determined under the treasury stock method. The Company did not have significant share-based awards outstanding that were antidilutive and not included in the calculation of diluted net income per common share attributable to Walmart for fiscal 2026, 2025 and 2024. The following table provides a reconciliation of the numerators and denominators used to determine basic and diluted net income per common share attributable to Walmart: Fiscal Years Ended January 31, (Amounts in millions, except per share data) 2026 2025 2024 Numerator Consolidated net income $ 22,270 $ 20,157 $ 16,270 Consolidated net income attributable to noncontrolling interest ( 377 ) ( 721 ) ( 759 ) Consolidated net income attributable to Walmart $ 21,893 $ 19,436 $ 15,511 Denominator Weighted-average common shares outstanding, basic 7,983 8,041 8,077 Dilutive impact of share-based awards 39 40 31 Weighted-average common shares outstanding, diluted 8,022 8,081 8,108 Net income per common share attributable to Walmart Basic $ 2.74 $ 2.42 $ 1.92 Diluted 2.73 2.4",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000137",
+      "form": "10-Q",
+      "filed": "2025-08-29",
+      "period_start": null,
+      "period_end": "2025-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000137/wmt-20250731.htm",
+      "locator": "10-Q 0000104169-25-000137:23768-24868",
+      "excerpt": "l equity method investments where the Company has elected the fair value option, on a recurring basis primarily within other long-term assets in the accompanying Condensed Consolidated Balance Sheets. The amounts of gains and losses included in earnings from fair value changes for these investments are recognized within other gains and losses in the Condensed Consolidated Statements of Income. The fair value of these investments is as follows: (Amounts in millions) Fair Value as of July 31, 2025 Fair Value as of January 31, 2025 Equity investments measured using Level 1 inputs $ 1,097 $ 959 Equity investments measured using Level 2 inputs 3,466 2,082 Total $ 4,563 $ 3,041 The fair value of these investments increased $ 2.2 billion and $ 1.5 billion for the three and six months ended July 31, 2025, respectively, and decreased $ 1.1 billion and $ 0.6 billion for the three and six months ended July 31, 2024, respectively, primarily due to gains and losses resulting from net changes in the underlying stock prices of the investments along with certain other immaterial investment activity.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000137",
+      "form": "10-Q",
+      "filed": "2025-08-29",
+      "period_start": null,
+      "period_end": "2025-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000137/wmt-20250731.htm",
+      "locator": "10-Q 0000104169-25-000137:24668-25482",
+      "excerpt": "ded July 31, 2024, respectively, primarily due to gains and losses resulting from net changes in the underlying stock prices of the investments along with certain other immaterial investment activity. Equity investments without readily determinable fair values are carried at cost and adjusted for any observable price changes or impairments within other gains and losses in the Condensed Consolidated Statements of Income. Derivatives The Company also has derivatives recorded at fair value. Derivative fair values are the estimated amounts the Company would receive or pay upon termination of the related derivative agreements as of the reporting dates. The fair values have been measured using the income approach and Level 2 inputs, which include the relevant interest rate and foreign currency forward curves.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_start": null,
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:25985-27170",
+      "excerpt": "s ended October 31, 2025, respectively, primarily due to gains and losses resulting from net changes in the underlying stock prices of the investments and certain other immaterial investment activity. The fair value of these investments decreased $ 3.7 billion and $ 4.3 billion for the three and nine months ended October 31, 2024, respectively, primarily due to the sale of certain strategic investments, as well as gains and losses resulting from net changes in the underlying stock prices of the remaining investments and certain other immaterial investment activity. Equity investments without readily determinable fair values are carried at cost and adjusted for any observable price changes or impairments within other gains and losses in the Condensed Consolidated Statements of Income. Derivatives The Company also has derivatives recorded at fair value. Derivative fair values are the estimated amounts the Company would receive or pay upon termination of the related derivative agreements as of the reporting dates. The fair values have been measured using the income approach and Level 2 inputs, which include the relevant interest rate and foreign currency forward curves.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:298112-299205",
+      "excerpt": "15,572 $ 6,761 68 Note 7. Fair Value Measurements Assets and liabilities recorded at fair value are measured using the fair value hierarchy, which prioritizes the inputs used in measuring fair value. The levels of the fair value hierarchy are: • Level 1: observable inputs such as quoted prices in active markets; • Level 2: inputs other than quoted prices in active markets that are either directly or indirectly observable; and • Level 3: unobservable inputs for which little or no market data exists, therefore requiring the Company to develop its own assumptions. As described in Note 1 , the Company measures the fair value of certain equity investments, including certain immaterial equity method investments where the Company has elected the fair value option, as well as debt investments classified as trading on a recurring basis primarily within other long-term assets in the accompanying Consolidated Balance Sheets. The associated gains and losses from fair value changes for these investments are recognized within other gains and losses in the Consolidated Statements of Income.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:299900-301001",
+      "excerpt": "ns and losses resulting from net changes in the underlying stock prices of the equity investments and certain other immaterial investment activity, partially offset by the sale of certain investments. The fair value of investments decreased $ 4.2 billion during fiscal 2025 primarily due to the sale of the Company's investment in JD.com, as well as gains and losses resulting from net changes in the underlying stock prices of the equity investments, along with certain other immaterial investment activity. Sale of Investment In August 2024, the Company sold its investment in JD.com for net proceeds of approximately $ 3.6 billion and recorded a realized loss of $ 0.3 billion within other gains and losses. Derivatives The Company also has derivatives recorded at fair value. Derivative fair values are the estimated amounts the Company would receive or pay upon termination of the related derivative agreements as of the reporting dates. The fair values have been measured using the income approach and Level 2 inputs, which include the relevant interest rate and foreign currency forward curves.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_start": null,
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:76034-77181",
+      "excerpt": "ased compensation arrangements for our PhonePe subsidiary. The increase for the nine months ended October 31, 2025 was also impacted by higher self-insured general liability claims expense in the U.S. of approximately $0.8 billion, influenced by rising costs to resolve claims across retail and related industries. Other gains and losses consist of certain non-operating items, such as the change in the fair value of our investments and gains or losses on business dispositions, which by their nature can fluctuate from period to period. Other gains and losses for the three and nine months ended October 31, 2025 consisted of net gains of $2.1 billion and $4.2 billion, respectively, compared to net losses of $0.1 billion and $0.5 billion for the same periods in the previous fiscal year. These net gains and losses primarily consisted of changes in fair value of our equity and other investments driven by changes in their underlying stock prices. Our effective income tax rate was 25.6% and 23.9% for the three and nine months ended October 31, 2025, respectively, compared to 22.7% and 23.8% for the same periods in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "Other gains and losses included a gain of $ 2.1 billion and losses of $ 0.8 billion and $ 3.0 billion for fiscal 2026, 2025, and 2024, respectively, driven primarily by fair value changes on these investments",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:299005-300100"
+    },
+    {
+      "evidence_id": "E3",
+      "quote": "Other gains and losses consist of certain non-operating items, such as changes in the fair value of our investments, which by their nature can fluctuate from period to period. Other gains and losses resulted in a net gain of $2.1 billion and a net loss of $0.8 billion in fiscal 2026 and 2025, respectively, primarily driven by changes in the fair value of our equity and other investments due to fluctuations in their underlying stock prices.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:189001-190117"
+    },
+    {
+      "evidence_id": "E7",
+      "quote": "we reported $22.3 billion and $20.2 billion of consolidated net income for fiscal 2026 and 2025, respectively",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:190836-191758"
+    },
+    {
+      "evidence_id": "E13",
+      "quote": "The associated gains and losses from fair value changes for these investments are recognized within other gains and losses in the Consolidated Statements of Income.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:298112-299205"
+    },
+    {
+      "evidence_id": "E15",
+      "quote": "Other gains and losses consist of certain non-operating items, such as the change in the fair value of our investments and gains or losses on business dispositions, which by their nature can fluctuate from period to period.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:76034-77181"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 17607,
+    "output": 2123
+  },
+  "latency_ms": 23596,
+  "estimated_cost_usd": 0.084666,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 5910,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 17674,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 9,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

@@ -1,0 +1,1000 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T104207Z:A2_rag_numeric:GOLD-GOOGL-12:9c75a2af",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A2_rag_numeric",
+  "approach_kind": "financial_verification",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A2_rag_numeric",
+    "kind": "financial_verification",
+    "description": "A1 + deterministic numeric verification"
+  },
+  "config_hash": "53b859cfe39ca3b0",
+  "claim": {
+    "claim_id": "GOLD-GOOGL-12",
+    "company": "GOOGL",
+    "claim": "Alphabet's large increase in capital expenditures in 2025 had no visible effect on its profitability.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "CapitalExpenditure",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          {
+            "metric": "NetMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "approximately",
+            "threshold": 0.0,
+            "stated_value": null
+          },
+          {
+            "metric": "OperatingMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "approximately",
+            "threshold": 0.0,
+            "stated_value": null
+          },
+          {
+            "metric": "GrossMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "approximately",
+            "threshold": 0.0,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E6",
+            "quote": "During the nine months ended September 30, 2024 and 2025, we spent $38.3 billion and $63.6 billion on capital expenditures, respectively."
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "We invested heavily in capital expenditures in 2025"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes two assertions: (1) Alphabet had a large increase in capital expenditures in 2025, and (2) this had no visible effect on profitability. \n\nEvidence E6 shows capital expenditures increased from $38.3 billion (9 months 2024) to $63.6 billion (9 months 2025), representing a substantial increase. Evidence E1 confirms \"We invested heavily in capital expenditures in 2025.\"\n\nHowever, the evidence does not provide actual profitability metrics (net margin, operating margin, or gross margin) for FY2025 or FY2024 that would allow verification of whether profitability was affected. While E1 mentions that margins on certain revenues \"vary significantly and are generally lower than the margins on our advertising revenues\" and discusses expected future cost increases, it does not provide actual margin figures or year-over-year comparisons for 2025 vs 2024.\n\nWithout concrete profitability data for FY2025 and FY2024, I cannot verify whether the capital expenditure increase had \"no visible effect\" on profitability. The evidence establishes the capex increase but is insufficient to verify the profitability claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "CONTRADICTED",
+      "rule": "NUMERIC_FALSE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "CapitalExpenditure",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 91447000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "CapitalExpenditure",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 91447000000.0,
+                "filed": "2026-02-05",
+                "form": "10-K",
+                "accession_number": "0001652044-26-000018",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 52535000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.7406871609403255,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        },
+        {
+          "assertion": {
+            "metric": "NetMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "approximately",
+            "threshold": 0.0,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [
+            "STATED_VALUE_MISMATCH:stated 0 vs computed 0.0420621"
+          ],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 0.3280987796522654,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "NetIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 132170000000.0,
+                "filed": "2026-02-05",
+                "form": "10-K",
+                "accession_number": "0001652044-26-000018",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 402836000000.0,
+                "filed": "2026-02-05",
+                "form": "10-K",
+                "accession_number": "0001652044-26-000018",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.28603671811164,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.04206206154062542,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E14",
+            "E10",
+            "E11",
+            "E12",
+            "E13"
+          ]
+        },
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "approximately",
+            "threshold": 0.0,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 0.32032638592380025,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 129039000000.0,
+                "filed": "2026-02-05",
+                "form": "10-K",
+                "accession_number": "0001652044-26-000018",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 402836000000.0,
+                "filed": "2026-02-05",
+                "form": "10-K",
+                "accession_number": "0001652044-26-000018",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.32109777211457696,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": -0.0007713861907767128,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E17",
+            "E15",
+            "E11",
+            "E16",
+            "E13"
+          ]
+        },
+        {
+          "assertion": {
+            "metric": "GrossMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "approximately",
+            "threshold": 0.0,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2025-12-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "3bc808305e3212d0f48d9517d48606b1c7948eae0bc2d5671c0efb3048f9ac91",
+      "source": "cache",
+      "input_tokens": 3793,
+      "output_tokens": 835,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "CapitalExpenditure",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          {
+            "metric": "NetMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "approximately",
+            "threshold": 0.0,
+            "stated_value": null
+          },
+          {
+            "metric": "OperatingMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "approximately",
+            "threshold": 0.0,
+            "stated_value": null
+          },
+          {
+            "metric": "GrossMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "approximately",
+            "threshold": 0.0,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E6",
+            "quote": "During the nine months ended September 30, 2024 and 2025, we spent $38.3 billion and $63.6 billion on capital expenditures, respectively."
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "We invested heavily in capital expenditures in 2025"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes two assertions: (1) Alphabet had a large increase in capital expenditures in 2025, and (2) this had no visible effect on profitability. \n\nEvidence E6 shows capital expenditures increased from $38.3 billion (9 months 2024) to $63.6 billion (9 months 2025), representing a substantial increase. Evidence E1 confirms \"We invested heavily in capital expenditures in 2025.\"\n\nHowever, the evidence does not provide actual profitability metrics (net margin, operating margin, or gross margin) for FY2025 or FY2024 that would allow verification of whether profitability was affected. While E1 mentions that margins on certain revenues \"vary significantly and are generally lower than the margins on our advertising revenues\" and discusses expected future cost increases, it does not provide actual margin figures or year-over-year comparisons for 2025 vs 2024.\n\nWithout concrete profitability data for FY2025 and FY2024, I cannot verify whether the capital expenditure increase had \"no visible effect\" on profitability. The evidence establishes the capex increase but is insufficient to verify the profitability claim.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Alphabet's large increase in capital expenditures in 2025 had no visible effect on its profitability. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "CapitalExpenditure",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 91447000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "CapitalExpenditure",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 91447000000.0,
+                "filed": "2026-02-05",
+                "form": "10-K",
+                "accession_number": "0001652044-26-000018",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 52535000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.7406871609403255,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        },
+        {
+          "assertion": {
+            "metric": "NetMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "approximately",
+            "threshold": 0.0,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [
+            "STATED_VALUE_MISMATCH:stated 0 vs computed 0.0420621"
+          ],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 0.3280987796522654,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "NetIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 132170000000.0,
+                "filed": "2026-02-05",
+                "form": "10-K",
+                "accession_number": "0001652044-26-000018",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 402836000000.0,
+                "filed": "2026-02-05",
+                "form": "10-K",
+                "accession_number": "0001652044-26-000018",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.28603671811164,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.04206206154062542,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E14",
+            "E10",
+            "E11",
+            "E12",
+            "E13"
+          ]
+        },
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "approximately",
+            "threshold": 0.0,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 0.32032638592380025,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 129039000000.0,
+                "filed": "2026-02-05",
+                "form": "10-K",
+                "accession_number": "0001652044-26-000018",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 402836000000.0,
+                "filed": "2026-02-05",
+                "form": "10-K",
+                "accession_number": "0001652044-26-000018",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.32109777211457696,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": -0.0007713861907767128,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E17",
+            "E15",
+            "E11",
+            "E16",
+            "E13"
+          ]
+        },
+        {
+          "assertion": {
+            "metric": "GrossMargin",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "approximately",
+            "threshold": 0.0,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2025-12-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001652044-26-000018",
+        "filed": "2026-02-05",
+        "report_date": "2025-12-31",
+        "primary_document": "goog-20251231.htm",
+        "sha256": "bab3d2601c394c4b603fa4ae30165a65e123a37087a172c8e4146dba0c80ab82"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001652044-25-000091",
+        "filed": "2025-10-30",
+        "report_date": "2025-09-30",
+        "primary_document": "goog-20250930.htm",
+        "sha256": "57df4d84196b2229b19b397a415de411e01c29326a6f8980d5d37ddb93c9005e"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001652044-25-000062",
+        "filed": "2025-07-24",
+        "report_date": "2025-06-30",
+        "primary_document": "goog-20250630.htm",
+        "sha256": "6033115a6e513f35d04cc6b2831886f6ad0e22d358c5b8a00159058f692f7ef0"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 746
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:132034-133118",
+      "excerpt": "over time. Certain of these revenues have been growing at a rate higher than our advertising revenues, becoming a larger percentage of our consolidated revenues, and we expect this trend to continue. The margins on these revenues vary significantly and are generally lower than the margins on our advertising revenues. Increased Investment in Technical Infrastructure: We continue to invest in capital expenditures as we scale our technical infrastructure, in particular for AI, to meet the demand of our users and enterprise customers and to support research internally. We invested heavily in capital expenditures in 2025 and in 2026, we expect to significantly increase , relative to 2025, our i nvestment in our technical infrastructure, including servers and network equipment, and data centers. The costs associated with operating our technical infrastructure - depreciation, energy, equipment, and network capacity - are expected to significantly increase as developing and serving AI offerings require more compute power than our historical consumer and enterprise offerings.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000091",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/goog-20250930.htm",
+      "locator": "10-Q 0001652044-25-000091:2680-3788",
+      "excerpt": "any, or an emerging growth company. See the definitions of “large accelerated filer,” “accelerated filer,” “smaller reporting company,” and \"emerging growth company\" in Rule 12b-2 of the Exchange Act. Large accelerated filer ☒ Accelerated filer ☐ Non-accelerated filer ☐ Smaller reporting company ☐ Emerging growth company ☐ If an emerging growth company, indicate by check mark if the registrant has elected not to use the extended transition period for complying with any new or revised financial accounting standards provided pursuant to Section 13(a) of the Exchange Act. ☐ Indicate by check mark whether t he registrant is a shell company (as defined in Rule 12b-2 of the Exchange Act). Yes ☐ No ☒ As of October 22, 2025, there were 5,818 million shares of Alphabet’s Class A stock outstanding, 842 million shares of Alphabet's Class B stock outstanding, and 5,407 million shares of Alphabet's Class C stock outstanding. 1 Table of Contents Alphabet Inc. Alphabet Inc. Form 10-Q For the Quarterly Period Ended September 30, 2025 TABLE OF CONTENTS Page No. Note About Forward-Looking Statements 3 PART I.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000062",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000062/goog-20250630.htm",
+      "locator": "10-Q 0001652044-25-000062:2675-3776",
+      "excerpt": "any, or an emerging growth company. See the definitions of “large accelerated filer,” “accelerated filer,” “smaller reporting company,” and \"emerging growth company\" in Rule 12b-2 of the Exchange Act. Large accelerated filer ☒ Accelerated filer ☐ Non-accelerated filer ☐ Smaller reporting company ☐ Emerging growth company ☐ If an emerging growth company, indicate by check mark if the registrant has elected not to use the extended transition period for complying with any new or revised financial accounting standards provided pursuant to Section 13(a) of the Exchange Act. ☐ Indicate by check mark whether t he registrant is a shell company (as defined in Rule 12b-2 of the Exchange Act). Yes ☐ No ☒ As of July 16, 2025, there were 5,817 million shares of Alphabet’s Class A stock outstanding, 847 million shares of Alphabet's Class B stock outstanding, and 5,430 million shar es of Alphabet's Class C stock outstanding. 1 Table of Contents Alphabet Inc. Alphabet Inc. Form 10-Q For the Quarterly Period Ended June 30, 2025 TABLE OF CONTENTS Page No. Note About Forward-Looking Statements 3 PART I.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:165006-166183",
+      "excerpt": ". Net cash used in financing activities decreased from 2024 to 2025 due to an increase in proceeds from issuance of debt and a decrease in repurchases of stock, partially offset by repayments of debt. Liquidity and Material Cash Requirements We expect exist ing cash, cash equivalents, short-term marketable securities, and cash flows from operations and financing activities to continue to be sufficient to fund our operating activities and cash commitments for investing and financing activities for at least the next 12 months, and thereafter for the foreseeable future. Capital Expenditures and Leases We make investments in land, buildings, and servers and network equipment through purchases of property and equipment and lease arrangements to provide capacity for the growth of our services and products. Capital Expenditures Our capital investments in property and equipment consist primarily of the following major categories: • technical infrastructure, which consists of our investments in servers and network equipment, data center land, and building construction and improvements; and • office facilities, ground-up development projects, and building improvements.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:41576-42645",
+      "excerpt": "compliance risks. For instance, we may be subject to government audits and cost reviews, and any failure to comply or any deficiencies found may expose us to legal, financial, and reputational risks. Evolving laws and regulations may require us to make new capital investments, build new products, and seek partners to deliver localized services in other countries, and we may not be able to meet sovereign operating requirements. Within Other Bets, we are investing significantly in areas such as life sciences and transportation, among others. These investment areas face intense competition from large, experienced, and well-funded competitors, and our offerings, many of which involve the development of new and emerging technologies, may not be successful, or be able to compete effectively or operate at sufficient levels of profitability. In addition, new and evolving products and services, including those that use AI, raise ethical, technological, legal, regulatory, and other challenges, which could harm our brands and demand for our products and services.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000091",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/goog-20250930.htm",
+      "locator": "10-Q 0001652044-25-000091:136223-137390",
+      "excerpt": "e process of construction or assembly, and consists primarily of technical infrastructure. The time frame from date of purchase to placement in service of these assets may extend from months to years. For example, our data center construction projects are generally multi-year projects with multiple phases, where we acquire land and buildings, construct buildings, and secure and install servers and network equipment. During the nine months ended September 30, 2024 and 2025, we spent $38.3 billion and $63.6 billion on capital expenditures, respectively. We expect full year 2025 capital expenditures to exceed full year 2024. In 2026, we expect to significantly increase, relative to 2025, our investment in our technical infrastructure, including servers, network equipment, and data centers, to support the growth of our business and our long-term initiatives, in particular in support of AI products and services. Depreciation of our property and equipment commences when such assets are ready for our intended use. For the nine months ended September 30, 2024 and 2025, depreciation on property and equipment was $11.1 billion and $15.1 billion, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/0001652044-26-000018-index.htm",
+      "locator": "CapitalExpenditure 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        91447000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/0001652044-26-000018-index.htm",
+      "locator": "CapitalExpenditure 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        52535000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "GOOGL",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "CapitalExpenditure yoy_growth annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        91447000000.0,
+        52535000000.0,
+        0.7406871609403255
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/0001652044-26-000018-index.htm",
+      "locator": "NetIncome 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        132170000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/0001652044-26-000018-index.htm",
+      "locator": "Revenue 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        402836000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/0001652044-26-000018-index.htm",
+      "locator": "NetIncome 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        100118000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/0001652044-26-000018-index.htm",
+      "locator": "Revenue 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        350018000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "GOOGL",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "NetMargin yoy_growth annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        0.3280987796522654,
+        0.28603671811164,
+        0.04206206154062542
+      ],
+      "unit": "ratio_points",
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/0001652044-26-000018-index.htm",
+      "locator": "OperatingIncome 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        129039000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/0001652044-26-000018-index.htm",
+      "locator": "OperatingIncome 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        112390000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "GOOGL",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "OperatingMargin yoy_growth annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        0.32032638592380025,
+        0.32109777211457696,
+        -0.0007713861907767128
+      ],
+      "unit": "ratio_points",
+      "evidence_id": "E17"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E6",
+      "quote": "During the nine months ended September 30, 2024 and 2025, we spent $38.3 billion and $63.6 billion on capital expenditures, respectively.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001652044-25-000091",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/goog-20250930.htm",
+      "locator": "10-Q 0001652044-25-000091:136223-137390"
+    },
+    {
+      "evidence_id": "E1",
+      "quote": "We invested heavily in capital expenditures in 2025",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "locator": "10-K 0001652044-26-000018:132034-133118"
+    },
+    {
+      "evidence_id": "E14",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "filed": "2026-02-05",
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "NetMargin yoy_growth annual @ 2025-12-31"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 3793,
+    "output": 835
+  },
+  "latency_ms": 4,
+  "estimated_cost_usd": 0.023904,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "financial_verification",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "mixed"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_FALSE",
+        "checks": [
+          "TRUE",
+          "FALSE",
+          "TRUE",
+          "UNVERIFIABLE"
+        ]
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

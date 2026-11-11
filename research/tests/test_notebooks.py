@@ -17,9 +17,10 @@ NO_NETWORK = nbformat.v4.new_code_cell(
     "requests.get = requests.post = requests.Session.request = _refuse")
 
 
-def test_six_notebooks_exist():
-    assert NOTEBOOKS == ["01_dataset_exploration.ipynb", "02_gold_dataset_review.ipynb", "03_baseline_comparison.ipynb",
-                         "04_contradiction_analysis.ipynb", "05_evaluation_metrics.ipynb", "06_statistical_tests.ipynb"]
+def test_expected_notebooks_exist():
+    assert NOTEBOOKS == ["01_gold_dataset_validation.ipynb", "02_langgraph_pilot.ipynb", "03_baseline_comparison.ipynb",
+                         "04_contradiction_analysis.ipynb", "05_evaluation_metrics.ipynb", "06_statistical_analysis.ipynb",
+                         "07_llm_annotator_comparison.ipynb", "08_error_analysis.ipynb"]
 
 
 def test_notebooks_execute_offline(tmp_path, monkeypatch):

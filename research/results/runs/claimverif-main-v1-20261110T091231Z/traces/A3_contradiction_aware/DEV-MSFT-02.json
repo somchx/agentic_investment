@@ -1,0 +1,1091 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091231Z:A3_contradiction_aware:DEV-MSFT-02:d1244c86",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "DEV-MSFT-02",
+    "company": "MSFT",
+    "claim": "Microsoft's operating margin for the quarter ended June 30, 2026 was above 40%.",
+    "as_of_date": "2026-08-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026 Q4"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": ">",
+            "threshold": 0.4,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Microsoft's operating margin for the quarter ended June 30, 2026 was above 40%. This is a numeric claim requiring verification of the operating margin (operating income divided by revenue) for Q4 FY2026.\n\nWhile the evidence includes multiple passages from Microsoft's 10-K filed on 2026-07-29 covering the period ending 2026-06-30, none of the provided evidence passages contain the actual operating margin figure or the underlying operating income and revenue figures for the quarter ended June 30, 2026.\n\nEvidence E1 discusses share repurchases and dividends for Q4 FY2026 but contains no income statement data. Evidence E2 discusses internal controls. Evidence E3 discusses tax matters. Evidence E4 discusses share repurchase programs. Evidence E5 is from the Q3 10-Q (period ending March 31, 2026). Evidence E6 discusses segment performance for what appears to be a different period with percentage changes but does not provide the specific operating margin for the quarter ended June 30, 2026.\n\nWithout access to the actual income statement data showing operating income and revenue (or a direct statement of operating margin) for the quarter ended June 30, 2026, I cannot verify whether the operating margin was above 40%.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_ALL_TRUE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": ">",
+            "threshold": 0.4,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-06-30",
+            "basis": "quarter",
+            "level": 0.4511093581610319,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 40603000000.0,
+                "filed": "2026-07-29",
+                "form": "10-K",
+                "accession_number": "0001193125-26-323660",
+                "derived": true
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 90007000000.0,
+                "filed": "2026-07-29",
+                "form": "10-K",
+                "accession_number": "0001193125-26-323660",
+                "derived": true
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.44901296424693554,
+            "prior_period_end": "2025-06-30",
+            "yoy_change": 0.002096393914096384,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "The operating margin for Q4 FY2026 (quarter ended June 30, 2026) might actually be below 40%, contradicting the claim.",
+          "search_query": "operating income revenue quarter ended June 30 2026 three months",
+          "numeric_check": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": "<=",
+            "threshold": 0.4,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "One-time charges, restructuring costs, or accounting adjustments in Q4 FY2026 might have artificially depressed the operating margin below 40%.",
+          "search_query": "restructuring charges impairment one-time costs fourth quarter fiscal 2026 June 30 2026",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "The filing might report operating margin on a different basis (e.g., non-GAAP, adjusted) that differs from the GAAP operating margin calculation.",
+          "search_query": "operating margin percentage non-GAAP adjusted fourth quarter June 2026",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "operating income revenue quarter ended June 30 2026 three months",
+          "results": [
+            "E12",
+            "E13",
+            "E14"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "restructuring charges impairment one-time costs fourth quarter fiscal 2026 June 30 2026",
+          "results": [
+            "E15",
+            "E16",
+            "E17"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "operating margin percentage non-GAAP adjusted fourth quarter June 2026",
+          "results": [
+            "E18",
+            "E19",
+            "E20"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18",
+        "E19",
+        "E20"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-06-30",
+            "basis": "quarter",
+            "level": 0.4511093581610319,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 40603000000.0,
+                "filed": "2026-07-29",
+                "form": "10-K",
+                "accession_number": "0001193125-26-323660",
+                "derived": true
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 90007000000.0,
+                "filed": "2026-07-29",
+                "form": "10-K",
+                "accession_number": "0001193125-26-323660",
+                "derived": true
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.44901296424693554,
+            "prior_period_end": "2025-06-30",
+            "yoy_change": 0.002096393914096384,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_ALL_TRUE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "counter_numeric_H1",
+              "quote": "Operating margin computed as 0.4511093581610319 (45.11%) for quarter ended 2026-06-30, based on operating income of $40,603 million and revenue of $90,007 million",
+              "valid": false,
+              "issues": [
+                "UNKNOWN_EVIDENCE_ID"
+              ]
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "561043681e47bbf3e9af462d2686bfdd71c04d40e3dc09aeb3139ca33505f765",
+      "source": "cache",
+      "input_tokens": 4093,
+      "output_tokens": 514,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": ">",
+            "threshold": 0.4,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Microsoft's operating margin for the quarter ended June 30, 2026 was above 40%. This is a numeric claim requiring verification of the operating margin (operating income divided by revenue) for Q4 FY2026.\n\nWhile the evidence includes multiple passages from Microsoft's 10-K filed on 2026-07-29 covering the period ending 2026-06-30, none of the provided evidence passages contain the actual operating margin figure or the underlying operating income and revenue figures for the quarter ended June 30, 2026.\n\nEvidence E1 discusses share repurchases and dividends for Q4 FY2026 but contains no income statement data. Evidence E2 discusses internal controls. Evidence E3 discusses tax matters. Evidence E4 discusses share repurchase programs. Evidence E5 is from the Q3 10-Q (period ending March 31, 2026). Evidence E6 discusses segment performance for what appears to be a different period with percentage changes but does not provide the specific operating margin for the quarter ended June 30, 2026.\n\nWithout access to the actual income statement data showing operating income and revenue (or a direct statement of operating margin) for the quarter ended June 30, 2026, I cannot verify whether the operating margin was above 40%.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "e156e3a820c95ca79bbcf4258b0886dcb63ed6fc9b3163433510d045d485fd64",
+      "source": "cache",
+      "input_tokens": 5383,
+      "output_tokens": 387,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "The operating margin for Q4 FY2026 (quarter ended June 30, 2026) might actually be below 40%, contradicting the claim.",
+            "search_query": "operating income revenue quarter ended June 30 2026 three months",
+            "numeric_check": {
+              "metric": "OperatingMargin",
+              "measure": "level",
+              "period_basis": "quarter",
+              "period_end": "2026-06-30",
+              "comparison": "<=",
+              "threshold": 0.4,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "One-time charges, restructuring costs, or accounting adjustments in Q4 FY2026 might have artificially depressed the operating margin below 40%.",
+            "search_query": "restructuring charges impairment one-time costs fourth quarter fiscal 2026 June 30 2026",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "The filing might report operating margin on a different basis (e.g., non-GAAP, adjusted) that differs from the GAAP operating margin calculation.",
+            "search_query": "operating margin percentage non-GAAP adjusted fourth quarter June 2026",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "4cc197dc98b2fc6416e08dc5cf01dfc405ea5efd5239170c597725378e8828ac",
+      "source": "cache",
+      "input_tokens": 10221,
+      "output_tokens": 757,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "counter_numeric_H1",
+                "quote": "Operating margin computed as 0.4511093581610319 (45.11%) for quarter ended 2026-06-30, based on operating income of $40,603 million and revenue of $90,007 million"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": true,
+        "change_reason": "My initial verdict was INSUFFICIENT_EVIDENCE because the originally provided evidence passages (E1-E6) did not contain the income statement data needed to calculate operating margin for Q4 FY2026. However, the numeric computation system has now provided the underlying financial data: operating income of $40,603 million and revenue of $90,007 million for the quarter ended June 30, 2026. This yields an operating margin of 45.11% (40,603/90,007 = 0.4511), which is indeed above 40% as claimed. The challenge hypothesis H1 tested whether the margin might be below 40%, but the computed result of 45.11% refutes this challenge and confirms the claim is correct.",
+        "supporting_evidence": [
+          {
+            "evidence_id": "counter_numeric_H1",
+            "quote": "Operating income: $40,603 million, Revenue: $90,007 million, Operating margin: 45.11% for quarter ended June 30, 2026"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Microsoft's operating margin for the quarter ended June 30, 2026 was above 40%. The numeric computation provides the key financial metrics: operating income of $40,603 million and revenue of $90,007 million for Q4 FY2026. Calculating the operating margin: $40,603M / $90,007M = 0.4511 or 45.11%. This is clearly above the 40% threshold stated in the claim. Challenge H1 tested whether the margin might be at or below 40%, but the computed 45.11% margin refutes this challenge. Challenges H2 and H3 sought evidence of one-time charges or non-GAAP adjustments that might affect the calculation, but no relevant evidence was found for either. The GAAP-based operating margin of 45.11% supports the claim."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Microsoft's operating margin for the quarter ended June 30, 2026 was above 40%. FY2026 Q4",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "operating income revenue quarter ended June 30 2026 three months",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E12",
+        "E13",
+        "E14"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "restructuring charges impairment one-time costs fourth quarter fiscal 2026 June 30 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E15",
+        "E16",
+        "E17"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "operating margin percentage non-GAAP adjusted fourth quarter June 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E18",
+        "E19",
+        "E20"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": ">",
+            "threshold": 0.4,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-06-30",
+            "basis": "quarter",
+            "level": 0.4511093581610319,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 40603000000.0,
+                "filed": "2026-07-29",
+                "form": "10-K",
+                "accession_number": "0001193125-26-323660",
+                "derived": true
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 90007000000.0,
+                "filed": "2026-07-29",
+                "form": "10-K",
+                "accession_number": "0001193125-26-323660",
+                "derived": true
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.44901296424693554,
+            "prior_period_end": "2025-06-30",
+            "yoy_change": 0.002096393914096384,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": "<=",
+            "threshold": 0.4,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-06-30",
+            "basis": "quarter",
+            "level": 0.4511093581610319,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 40603000000.0,
+                "filed": "2026-07-29",
+                "form": "10-K",
+                "accession_number": "0001193125-26-323660",
+                "derived": true
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 90007000000.0,
+                "filed": "2026-07-29",
+                "form": "10-K",
+                "accession_number": "0001193125-26-323660",
+                "derived": true
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.44901296424693554,
+            "prior_period_end": "2025-06-30",
+            "yoy_change": 0.002096393914096384,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001193125-26-323660",
+        "filed": "2026-07-29",
+        "report_date": "2026-06-30",
+        "primary_document": "msft-20260630.htm",
+        "sha256": "a2e8af9a97a682ba3b408c9557ec6f0f3dbd4db6f600d310ae23ebe5b3c827a4"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001193125-26-191507",
+        "filed": "2026-04-29",
+        "report_date": "2026-03-31",
+        "primary_document": "msft-20260331.htm",
+        "sha256": "320b75a01f6ea0cf6cb1ccd46e1081de9e596c2a87f43a65412a159da12ad2d5"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001193125-26-027207",
+        "filed": "2026-01-28",
+        "report_date": "2025-12-31",
+        "primary_document": "msft-20251231.htm",
+        "sha256": "383fbc3a1bc3340a625fd05599c36462c5fe642d288202995692cc90507c189c"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 824
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-323660",
+      "form": "10-K",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+      "locator": "10-K 0001193125-26-323660:140526-141574",
+      "excerpt": "30 May 1, 2026 – May 31, 2026 3,559,509 416.81 3,559,509 42,147 June 1, 2026 – June 30, 2026 3,828,061 396.19 3,828,061 40,630 8,389,689 8,389,689 All share repurchases were made using cash resources. Our share repurchases may occur through open market purchases or pursuant to a Rule 10b5-1 trading plan. The above table excludes shares repurchased to settle employee tax withholding related to the vesting of stock awards. Our Board of Directors declared the following dividends during the fourth quarter of fiscal year 2026: Declaration Date Record Date Payment Date Dividend Per Share Amount (In millions) June 10, 2026 August 20, 2026 September 10, 2026 $ 0.91 $ 6,759 We returned $10.2 billion to shareholders in the form of share repurchases and dividends in the fourth quarter of fiscal year 2026. Refer to Note 15 – Stockholders’ Equity of the Notes to Financial Statements (Part II, Item 8 of this Form 10-K) for further discussion regarding share repurchases and dividends. 32 PART II Item 6 ITEM 6. [R ESERVED] 33 PART II Item 7 ITEM 7.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-323660",
+      "form": "10-K",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+      "locator": "10-K 0001193125-26-323660:299523-300497",
+      "excerpt": "herent limitations, internal control over financial reporting is not intended to provide absolute assurance that a misstatement of our consolidated financial statements would be prevented or detected. Management conducted an evaluation of the effectiveness of our internal control over financial reporting based on the framework in Internal Control – Integrated Framework (2013) issued by the Committee of Sponsoring Organizations of the Treadway Commission. Based on this evaluation, management concluded that the Company’s internal control over financial reporting was effective as of June 30, 2026. There were no changes in our internal control over financial reporting during the quarter ended June 30, 2026 that have materially affected, or are reasonably likely to materially affect, our internal control over financial reporting. Deloitte & Touche LLP has audited our internal control over financial reporting as of June 30, 2026; their report is included in Item 9A.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-323660",
+      "form": "10-K",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+      "locator": "10-K 0001193125-26-323660:262998-264186",
+      "excerpt": "rds have varying expiration dates ranging from fiscal year 2027 to 2046 or indefinite carryforward periods, if not utilized. The majority of our foreign net operating loss carryforwards do not expire. Certain acquired net operating loss carryforwards are subject to an annual limitation but are expected to be realized with the exception of those which have a valuation allowance. As of June 30, 2026, we had $ 613 million federal capital loss carryforwards for U.S. tax purposes. The federal capital loss carryforwards will expire in fiscal year 2030 if not utilized. The valuation allowance disclosed in the table above relates to the foreign net operating loss carryforwards, federal capital loss carryforwards, and foreign tax credits carryforwards that may not be realized. Income taxes paid, net of refunds, pursuant to the disclosure requirements of ASU 2023-09 in fiscal year 2026 were as follows: (In millions) Year Ended June 30 2026 U.S. federal $ 6,246 U.S. state and local 2,917 Foreign Ireland 6,495 Other 5,530 Income taxes paid, net of refunds $ 21,188 Income taxes paid, net of refunds, were $ 28.7 billion, and $ 23.4 billion in fiscal years 2025 and 2024, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-323660",
+      "form": "10-K",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+      "locator": "10-K 0001193125-26-323660:272600-273647",
+      "excerpt": "ram commenced in November 2021 and was completed in April 2025. On September 16, 2024, our Board of Directors approved a share repurchase program authorizing up to $ 60.0 billion in share repurchases. This share repurchase program commenced in April 2025, following completion of the program approved on September 14, 2021, has no expiration date, and may be terminated at any time. As of June 30, 2026, $ 40.6 billion remained of this $ 60.0 billion share repurchase program. We repurchased the following shares of common stock under the share repurchase programs: (In millions) Shares Amount Shares Amount Shares Amount Year Ended June 30, 2026 2025 2024 First Quarter 8 $ 3,955 7 $ 2,800 11 $ 3,560 Second Quarter 12 5,964 8 3,500 7 2,800 Third Quarter 7 3,400 8 3,500 7 2,800 Fourth Quarter 9 3,400 8 3,200 7 2,800 Total 36 $ 16,719 31 $ 13,000 32 $ 11,960 79 PART II Item 8 All share repurchases were made using cash resources. Shares repurchased during fiscal year 2026 were under the share repurchase program approved on September 16, 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-191507",
+      "form": "10-Q",
+      "filed": "2026-04-29",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm",
+      "locator": "10-Q 0001193125-26-191507:2495-3676",
+      "excerpt": "April 23, 2026 Common Stock, $ 0.00000625 par value per share 7,428,434,704 shares MICROSOFT CORPORATION FORM 10-Q For the Quarter Ended March 31, 2026 INDEX Page PART I. FINANCIAL INFORMATION Item 1. Financial Statements a) Income Statements for the Three and Nine Months Ended March 31, 2026 and 2025 3 b) Comprehensive Income Statements for the Three and Nine Months Ended March 31, 2026 and 2025 4 c) Balance Sheets as of March 31, 2026 and June 30, 2025 5 d) Cash Flows Statements for the Three and Nine Months Ended March 31, 2026 and 2025 6 e) Stockholders’ Equity Statements for the Three and Nine Months Ended March 31, 2026 and 2025 7 f) Notes to Financial Statements 8 g) Report of Independent Registered Public Accounting Firm 30 Item 2. Management’s Discussion and Analysis of Financial Condition and Results of Operations 31 Item 3. Quantitative and Qualitative Disclosures About Market Risk 48 Item 4. Controls and Procedures 48 PART II. OTHER INFORMATION Item 1. Legal Proceedings 49 Item 1A. Risk Factors 49 Item 2. Unregistered Sales of Equity Securities and Use of Proceeds 65 Item 5. Other Information 66 Item 6. Exhibits 67 SIGNATURE 68 2 PART I Item 1 PART I.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-191507",
+      "form": "10-Q",
+      "filed": "2026-04-29",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm",
+      "locator": "10-Q 0001193125-26-191507:88960-89936",
+      "excerpt": "ercial cloud. Gross margin percentage increased slightly driven by efficiency gains in Microsoft 365 Commercial cloud even with continued investments in AI infrastructure and growing AI product usage. • Operating expenses increased $795 million or 11% driven by continued investments in research and development compute capacity, AI talent, and data to support product development that benefits the entire portfolio, as well as higher Copilot advertising expenses. Revenue, gross margin, and operating income included a favorable foreign currency impact of 4%, 5%, and 7%, respectively. Operating expenses included an unfavorable foreign currency impact of 2%. Intelligent Cloud Revenue increased $7.9 billion or 30%. • Server products and cloud services revenue increased $7.8 billion or 32% driven by Azure and other cloud services. Azure and other cloud services revenue grew 40% driven by demand for services across the platform with continued growth across all workloads.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-323660",
+      "form": "10-K",
+      "filed": "2026-07-29",
+      "period_start": "2026-04-01",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/0001193125-26-323660-index.htm",
+      "locator": "OperatingIncome 2026-04-01..2026-06-30",
+      "excerpt": null,
+      "values": [
+        40603000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-323660",
+      "form": "10-K",
+      "filed": "2026-07-29",
+      "period_start": "2026-04-01",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/0001193125-26-323660-index.htm",
+      "locator": "Revenue 2026-04-01..2026-06-30",
+      "excerpt": null,
+      "values": [
+        90007000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-100235",
+      "form": "10-K",
+      "filed": "2025-07-30",
+      "period_start": "2025-04-01",
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/0000950170-25-100235-index.htm",
+      "locator": "OperatingIncome 2025-04-01..2025-06-30",
+      "excerpt": null,
+      "values": [
+        34323000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-100235",
+      "form": "10-K",
+      "filed": "2025-07-30",
+      "period_start": "2025-04-01",
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/0000950170-25-100235-index.htm",
+      "locator": "Revenue 2025-04-01..2025-06-30",
+      "excerpt": null,
+      "values": [
+        76441000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "MSFT",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001193125-26-323660",
+      "form": "10-K",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": null,
+      "locator": "OperatingMargin level quarter @ 2026-06-30",
+      "excerpt": null,
+      "values": [
+        0.4511093581610319,
+        0.44901296424693554,
+        0.002096393914096384
+      ],
+      "unit": "ratio",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:2503-3695",
+      "excerpt": "ry 22, 2026 Common Stock, $ 0.00000625 par value per share 7,425,629,076 shares MICROSOFT CORPORATION FORM 10-Q For the Quarter Ended December 31, 2025 INDEX Page PART I. FINANCIAL INFORMATION Item 1. Financial Statements a) Income Statements for the Three and Six Months Ended December 31, 2025 and 2024 3 b) Comprehensive Income Statements for the Three and Six Months Ended December 31, 2025 and 2024 4 c) Balance Sheets as of December 31, 2025 and June 30, 2025 5 d) Cash Flows Statements for the Three and Six Months Ended December 31, 2025 and 2024 6 e) Stockholders’ Equity Statements for the Three and Six Months Ended December 31, 2025 and 2024 7 f) Notes to Financial Statements 8 g) Report of Independent Registered Public Accounting Firm 29 Item 2. Management’s Discussion and Analysis of Financial Condition and Results of Operations 30 Item 3. Quantitative and Qualitative Disclosures About Market Risk 46 Item 4. Controls and Procedures 46 PART II. OTHER INFORMATION Item 1. Legal Proceedings 47 Item 1A. Risk Factors 47 Item 2. Unregistered Sales of Equity Securities and Use of Proceeds 62 Item 5. Other Information 63 Item 6. Exhibits 64 SIGNATURE 65 2 PART I Item 1 PART I.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-191507",
+      "form": "10-Q",
+      "filed": "2026-04-29",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm",
+      "locator": "10-Q 0001193125-26-191507:63400-64342",
+      "excerpt": "ng income $ 3,672 $ 3,526 $ 11,638 $ 10,976 Total Revenue $ 82,886 $ 70,066 $ 241,832 $ 205,283 Cost of revenue 26,828 21,919 76,849 63,817 Operating expenses 17,660 16,147 50,349 47,261 Operating income $ 38,398 $ 32,000 $ 114,634 $ 94,205 No sales to an individual customer or country other than the United States accounted for more than 10% of revenue for the three or nine months ended March 31, 2026 or 2025. Revenue, classified by the major geographic areas in which our customers were located, was as follows: (In millions) Three Months Ended March 31, Nine Months Ended March 31, 2026 2025 2026 2025 United States (a) $ 42,336 $ 36,084 $ 123,823 $ 105,534 Other countries 40,550 33,982 118,009 99,749 Total $ 82,886 $ 70,066 $ 241,832 $ 205,283 (a) Includes billings to OEMs and certain multinational organizations because of the nature of these businesses and the impracticability of determining the geographic source of the revenue.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-191507",
+      "form": "10-Q",
+      "filed": "2026-04-29",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm",
+      "locator": "10-Q 0001193125-26-191507:44483-45628",
+      "excerpt": "ove is comprised of senior unsecured obligations and ranks equally with our other outstanding obligations. Interest is paid semi-annually, except for the Euro-denominated debt, which is paid annually. The following table outlines maturities of our long-term debt, including the current portion, as of March 31, 2026: (In millions) Year Ending June 30, 2026 (excluding the nine months ended March 31, 2026) $ 0 2027 9,250 2028 0 2029 2,016 2030 0 Thereafter 34,890 Total $ 46,156 20 PART I Item 1 NOTE 10 — INCOME TAXES Effective Tax Rate Our effective tax rate was 19 % and 18 % for the three months ended March 31, 2026 and 2025, respectively, and 20 % and 18 % for the nine months ended March 31, 2026 and 2025, respectively. The increase in our effective tax rate for the three months ended March 31, 2026 compared to the prior year was primarily due to changes in the mix of our earnings and tax expenses between the U.S. and foreign countries. The increase in our effective tax rate for the nine months ended March 31, 2026 compared to the prior year was primarily due to changes in the mix of our earnings and tax expenses between the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-323660",
+      "form": "10-K",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+      "locator": "10-K 0001193125-26-323660:147693-148871",
+      "excerpt": "ions in the U.S. dollar relative to certain foreign currencies increased reported revenue and did not have a material impact on reported expenses from our international operations in fiscal year 2026. Further, global, regional, and local economic developments and changes in global trade policies such as restrictions on international trade, including tariffs and other controls on imports or exports, could result in increased supply chain challenges, cost volatility, and consumer and economic uncertainty which may adversely affect our results of operations. Refer to Risk Factors (Part I, Item 1A of this Form 10-K) for a discussion of these factors and other risks. Seasonality Our revenue fluctuates quarterly and is generally higher in the fourth quarter of our fiscal year. Fourth quarter revenue is driven by a higher volume of multi-year contracts executed during the period. Reportable Segments We report our financial performance based on the following three segments: Productivity and Business Processes, Intelligent Cloud, and More Personal Computing. The segment amounts included in MD&A are presented on a basis consistent with our internal management reporting.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-323660",
+      "form": "10-K",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+      "locator": "10-K 0001193125-26-323660:139588-140726",
+      "excerpt": "Statements (Part II, Item 8 of this Form 10-K) for information regarding legal proceedings in which we are involved. ITEM 4. MINE SAFE TY DISCLOSURES Not applicable. 31 PART II Item 5 PAR T II ITEM 5. MARKET FOR REGISTRANT’S COM MON EQUITY, RELATED STOCKHOLDER MATTERS, AND ISSUER PURCHASES OF EQUITY SECURITIES MARKET AND STOCKHOLDERS Our common stock is traded on the NASDAQ Stock Market under the symbol MSFT. On July 23, 2026, there were 74,199 registered holders of record of our common stock. SHARE REPURCHASES AND DIVIDENDS Following are our monthly share repurchases for the fourth quarter of fiscal year 2026: Period Total Number of Shares Purchased Average Price Paid Per Share Total Number of Shares Purchased as Part of Publicly Announced Plans or Programs Approximate Dollar Value of Shares That May Yet Be Purchased Under the Plans or Programs (In millions) April 1, 2026 – April 30, 2026 1,002,119 $ 398.88 1,002,119 $ 43,630 May 1, 2026 – May 31, 2026 3,559,509 416.81 3,559,509 42,147 June 1, 2026 – June 30, 2026 3,828,061 396.19 3,828,061 40,630 8,389,689 8,389,689 All share repurchases were made using cash resources.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-323660",
+      "form": "10-K",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+      "locator": "10-K 0001193125-26-323660:273447-274131",
+      "excerpt": "0 32 $ 11,960 79 PART II Item 8 All share repurchases were made using cash resources. Shares repurchased during fiscal year 2026 were under the share repurchase program approved on September 16, 2024. Shares repurchased during the fourth quarter of fiscal year 2025 were under the share repurchase programs approved on September 14, 2021 and September 16, 2024. All other shares repurchased were under the share repurchase program approved on September 14, 2021. The above table excludes shares repurchased to settle employee tax withholding related to the vesting of stock awards of $ 5.6 billion, $ 5.4 billion, and $ 5.3 billion for fiscal years 2026, 2025, and 2024, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-191507",
+      "form": "10-Q",
+      "filed": "2026-04-29",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm",
+      "locator": "10-Q 0001193125-26-191507:81250-82388",
+      "excerpt": "ng revenue (ex TAC) growth Revenue from search advertising excluding traffic acquisition costs (“TAC”) paid to Bing Ads network publishers and content partners SUMMARY RESULTS OF OPERATIONS (In millions, except percentages and per share amounts) Three Months Ended March 31, Percentage Change Nine Months Ended March 31, Percentage Change 2026 2025 2026 2025 Revenue $ 82,886 $ 70,066 18% $ 241,832 $ 205,283 18% Gross margin 56,058 48,147 16% 164,983 141,466 17% Operating income 38,398 32,000 20% 114,634 94,205 22% Net income 31,778 25,824 23% 97,983 74,599 31% Diluted earnings per share 4.27 3.46 23% 13.14 9.99 32% Adjusted net income (non-GAAP) 31,792 26,407 20% 93,500 76,644 22% Adjusted diluted earnings per share (non-GAAP) 4.27 3.54 21% 12.54 10.27 22% 34 PART I Item 2 Adjusted net income and adjusted diluted earnings per share (“EPS”) are non-GAAP financial measures. These non-GAAP financial measures exclude net gains and losses from investments in OpenAI. Refer to the Non-GAAP Financial Measures section below for a reconciliation of our financial results reported in accordance with GAAP to non-GAAP financial results.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-323660",
+      "form": "10-K",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+      "locator": "10-K 0001193125-26-323660:153118-154284",
+      "excerpt": "Cloud Gaming, advertising, and other cloud services Search advertising revenue (ex TAC) growth Revenue from search advertising excluding traffic acquisition costs (“TAC”) paid to Bing Ads network publishers and content partners SUMMARY RESULTS OF OPERATIONS (In millions, except percentages and per share amounts) 2026 2025 Percentage Change Revenue $ 331,839 $ 281,724 18% Gross margin 225,465 193,893 16% Operating income 155,237 128,528 21% Net income 133,749 101,832 31% Diluted earnings per share 17.95 13.64 32% Adjusted net income (non-GAAP) 128,786 105,452 22% Adjusted diluted earnings per share (non-GAAP) 17.28 14.13 22% Adjusted net income and adjusted diluted earnings per share (“EPS”) are non-GAAP financial measures. These non-GAAP financial measures exclude net gains and losses from investments in OpenAI. Refer to the Non-GAAP Financial Measures section below for a reconciliation of our financial results reported in accordance with GAAP to non-GAAP financial results. Fiscal Year 2026 Compared with Fiscal Year 2025 Revenue increased $50.1 billion or 18% driven by growth in Microsoft Cloud. Intelligent Cloud revenue increased driven by Azure.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E19"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:80893-82046",
+      "excerpt": "advertising revenue (ex TAC) growth Revenue from search and news advertising excluding traffic acquisition costs (“TAC”) paid to Bing Ads network publishers and news partners SUMMARY RESULTS OF OPERATIONS (In millions, except percentages and per share amounts) Three Months Ended December 31, Percentage Change Six Months Ended December 31, Percentage Change 2025 2024 2025 2024 Revenue $ 81,273 $ 69,632 17% $ 158,946 $ 135,217 18% Gross margin 55,295 47,833 16% 108,925 93,319 17% Operating income 38,275 31,653 21% 76,236 62,205 23% Net income 38,458 24,108 60% 66,205 48,775 36% Diluted earnings per share 5.16 3.23 60% 8.87 6.53 36% Adjusted net income (non-GAAP) 30,875 25,047 23% 61,708 50,237 23% Adjusted diluted earnings per share (non-GAAP) 4.14 3.35 24% 8.27 6.73 23% 33 PART I Item 2 Adjusted net income and adjusted diluted earnings per share (“EPS”) are non-GAAP financial measures. These non-GAAP financial measures exclude net gains and losses from investments in OpenAI. Refer to the Non-GAAP Financial Measures section below for a reconciliation of our financial results reported in accordance with GAAP to non-GAAP financial results.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E20"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "counter_numeric_H1",
+      "quote": "Operating income: $40,603 million, Revenue: $90,007 million, Operating margin: 45.11% for quarter ended June 30, 2026",
+      "valid": false,
+      "issues": [
+        "UNKNOWN_EVIDENCE_ID"
+      ]
+    },
+    {
+      "evidence_id": "E11",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001193125-26-323660",
+      "form": "10-K",
+      "filed": "2026-07-29",
+      "period_end": "2026-06-30",
+      "source_url": null,
+      "locator": "OperatingMargin level quarter @ 2026-06-30"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 19697,
+    "output": 1658
+  },
+  "latency_ms": 13,
+  "estimated_cost_usd": 0.083961,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_ALL_TRUE",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 5,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_ALL_TRUE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 13,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

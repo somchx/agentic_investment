@@ -1,0 +1,867 @@
+{
+  "trace_id": "claimverif-main-v1-20261110T091252Z:A3_contradiction_aware:GOLD-NVDA-14:d86692e0",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3_contradiction_aware",
+  "approach_kind": "contradiction_aware",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 3,
+      "max_input_tokens_per_claim": 60000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A3_contradiction_aware",
+    "kind": "contradiction_aware",
+    "description": "A2 + contradiction investigation + reconciliation"
+  },
+  "config_hash": "06b9eff7658d5e71",
+  "claim": {
+    "claim_id": "GOLD-NVDA-14",
+    "company": "NVDA",
+    "claim": "The growth in NVIDIA's accounts receivable during fiscal 2026 signals deteriorating collection quality.",
+    "as_of_date": "2026-03-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026"
+  },
+  "initial_label": "INSUFFICIENT_EVIDENCE",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes an interpretive assertion about collection quality deteriorating based on accounts receivable growth during fiscal 2026. This is a qualitative/interpretive claim about the cause or meaning of a financial metric change, not a numeric claim about specific figures.\n\nWhile the evidence shows information about accounts receivable balances and customer concentration at different points in time (E1, E2, E3 mention accounts receivable balances as of July 27, 2025, January 25, 2026, October 26, 2025, and January 26, 2025), none of the evidence passages discuss:\n1. Collection quality metrics (such as days sales outstanding, aging of receivables, bad debt provisions, or write-offs)\n2. Any deterioration in collection quality\n3. Any causal relationship between accounts receivable growth and collection quality\n\nE5 mentions that \"The carrying value of cash equivalents, accounts receivable, accounts payable and accrued liabilities approximate their fair values due to their relatively short maturities\" but this is a standard disclosure and does not address collection quality.\n\nE6 mentions \"estimates, including those related to accounts receivable\" but provides no specific information about collection quality or deterioration.\n\nThe evidence does not contain any discussion of allowances for doubtful accounts, collection periods, or other indicators of collection quality that would be needed to support or contradict the claim about deteriorating collection quality.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Does the filing explicitly discuss collection quality, days sales outstanding, or allowance for doubtful accounts, indicating that collection quality actually improved or remained stable during fiscal 2026?",
+          "search_query": "allowance doubtful accounts bad debt days sales outstanding DSO collection quality aging receivables credit loss",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Does the filing explain that accounts receivable growth was simply proportional to revenue growth (not indicative of deteriorating collection), or provide context that the AR growth is normal given business expansion?",
+          "search_query": "accounts receivable revenue growth proportional normal business expansion customer payment terms",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Does the filing disclose that payment terms were extended to customers or that there were changes in customer mix that would explain AR growth without implying deteriorating collection quality?",
+          "search_query": "payment terms extended credit terms customer mix timing revenue recognition deferred",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "allowance doubtful accounts bad debt days sales outstanding DSO collection quality aging receivables credit loss",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "accounts receivable revenue growth proportional normal business expansion customer payment terms",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "payment terms extended credit terms customer mix timing revenue recognition deferred",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "Allowance for doubtful accounts $ 4 $ — (1) $ — (1) $ 4",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000021",
+              "form": "10-K",
+              "filed": "2026-02-25",
+              "period_end": "2026-01-25",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+              "locator": "10-K 0001045810-26-000021:329498-330694"
+            },
+            {
+              "evidence_id": "E8",
+              "quote": "We perform ongoing credit evaluations of our customers' financial condition and maintain an allowance for potential credit losses. This allowance consists of an amount identified for specific customers and an amount based on overall estimated exposure.",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000021",
+              "form": "10-K",
+              "filed": "2026-02-25",
+              "period_end": "2026-01-25",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+              "locator": "10-K 0001045810-26-000021:264703-265835"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E10",
+              "quote": "we have granted and may continue to grant extended payment terms to some customers, particularly during macroeconomic downturns, which could impact our ability to collect payment",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000021",
+              "form": "10-K",
+              "filed": "2026-02-25",
+              "period_end": "2026-01-25",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+              "locator": "10-K 0001045810-26-000021:123607-124636"
+            },
+            {
+              "evidence_id": "E11",
+              "quote": "our extended payment term arrangements with certain customers, the inability of some customers to make required payments, our ability to obtain credit insurance for customers with extended payment terms, and customer bad debt write-offs",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000021",
+              "form": "10-K",
+              "filed": "2026-02-25",
+              "period_end": "2026-01-25",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+              "locator": "10-K 0001045810-26-000021:122626-123807"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E10",
+              "quote": "we have granted and may continue to grant extended payment terms to some customers, particularly during macroeconomic downturns",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000021",
+              "form": "10-K",
+              "filed": "2026-02-25",
+              "period_end": "2026-01-25",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+              "locator": "10-K 0001045810-26-000021:123607-124636"
+            },
+            {
+              "evidence_id": "E11",
+              "quote": "our extended payment term arrangements with certain customers",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000021",
+              "form": "10-K",
+              "filed": "2026-02-25",
+              "period_end": "2026-01-25",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+              "locator": "10-K 0001045810-26-000021:122626-123807"
+            },
+            {
+              "evidence_id": "E13",
+              "quote": "Financing arrangements, if undertaken, may in some circumstances result in lower upfront cash flows associated with extended payment terms or payment terms made over a multi-year term",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000021",
+              "form": "10-K",
+              "filed": "2026-02-25",
+              "period_end": "2026-01-25",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+              "locator": "10-K 0001045810-26-000021:118427-119527"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "12a1abe46e38562d0c30689bb8706fc8e9b82103bfbcc0f1d2c573b49fecdb5e",
+      "source": "cache",
+      "input_tokens": 3894,
+      "output_tokens": 455,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes an interpretive assertion about collection quality deteriorating based on accounts receivable growth during fiscal 2026. This is a qualitative/interpretive claim about the cause or meaning of a financial metric change, not a numeric claim about specific figures.\n\nWhile the evidence shows information about accounts receivable balances and customer concentration at different points in time (E1, E2, E3 mention accounts receivable balances as of July 27, 2025, January 25, 2026, October 26, 2025, and January 26, 2025), none of the evidence passages discuss:\n1. Collection quality metrics (such as days sales outstanding, aging of receivables, bad debt provisions, or write-offs)\n2. Any deterioration in collection quality\n3. Any causal relationship between accounts receivable growth and collection quality\n\nE5 mentions that \"The carrying value of cash equivalents, accounts receivable, accounts payable and accrued liabilities approximate their fair values due to their relatively short maturities\" but this is a standard disclosure and does not address collection quality.\n\nE6 mentions \"estimates, including those related to accounts receivable\" but provides no specific information about collection quality or deterioration.\n\nThe evidence does not contain any discussion of allowances for doubtful accounts, collection periods, or other indicators of collection quality that would be needed to support or contradict the claim about deteriorating collection quality.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "2c578198194563a432a34976880b28a77f1034ca54b5eeda027d7a8b49097786",
+      "source": "live",
+      "input_tokens": 4784,
+      "output_tokens": 311,
+      "stop_reason": "tool_use",
+      "latency_ms": 7241,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Does the filing explicitly discuss collection quality, days sales outstanding, or allowance for doubtful accounts, indicating that collection quality actually improved or remained stable during fiscal 2026?",
+            "search_query": "allowance doubtful accounts bad debt days sales outstanding DSO collection quality aging receivables credit loss",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Does the filing explain that accounts receivable growth was simply proportional to revenue growth (not indicative of deteriorating collection), or provide context that the AR growth is normal given business expansion?",
+            "search_query": "accounts receivable revenue growth proportional normal business expansion customer payment terms",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Does the filing disclose that payment terms were extended to customers or that there were changes in customer mix that would explain AR growth without implying deteriorating collection quality?",
+            "search_query": "payment terms extended credit terms customer mix timing revenue recognition deferred",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "437a3f80c79f723251b8b11ab31927e835d8a091c541f5998eda16c05d2e9849",
+      "source": "live",
+      "input_tokens": 8290,
+      "output_tokens": 1198,
+      "stop_reason": "tool_use",
+      "latency_ms": 21197,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "Allowance for doubtful accounts $ 4 $ — (1) $ — (1) $ 4"
+              },
+              {
+                "evidence_id": "E8",
+                "quote": "We perform ongoing credit evaluations of our customers' financial condition and maintain an allowance for potential credit losses. This allowance consists of an amount identified for specific customers and an amount based on overall estimated exposure."
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E10",
+                "quote": "we have granted and may continue to grant extended payment terms to some customers, particularly during macroeconomic downturns, which could impact our ability to collect payment"
+              },
+              {
+                "evidence_id": "E11",
+                "quote": "our extended payment term arrangements with certain customers, the inability of some customers to make required payments, our ability to obtain credit insurance for customers with extended payment terms, and customer bad debt write-offs"
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E10",
+                "quote": "we have granted and may continue to grant extended payment terms to some customers, particularly during macroeconomic downturns"
+              },
+              {
+                "evidence_id": "E11",
+                "quote": "our extended payment term arrangements with certain customers"
+              },
+              {
+                "evidence_id": "E13",
+                "quote": "Financing arrangements, if undertaken, may in some circumstances result in lower upfront cash flows associated with extended payment terms or payment terms made over a multi-year term"
+              }
+            ]
+          }
+        ],
+        "label": "CONTRADICTED",
+        "verdict_changed": true,
+        "change_reason": "The initial verdict was INSUFFICIENT_EVIDENCE because the original evidence did not contain information about collection quality metrics. However, the new evidence reveals critical information that directly contradicts the claim that AR growth signals deteriorating collection quality. E7 shows the allowance for doubtful accounts remained completely stable at $4 million throughout fiscal years 2024, 2025, and 2026 with zero additions or deductions. This is a key indicator that collection quality did not deteriorate. While E10, E11, and E13 confirm that NVIDIA has granted extended payment terms to some customers, this explains AR growth as a business decision rather than deteriorating collection quality. The stable allowance for doubtful accounts directly contradicts the claim's assertion that AR growth signals deteriorating collection quality.",
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E7",
+            "quote": "Allowance for doubtful accounts $ 4 $ — (1) $ — (1) $ 4"
+          },
+          {
+            "evidence_id": "E8",
+            "quote": "We perform ongoing credit evaluations of our customers' financial condition and maintain an allowance for potential credit losses."
+          }
+        ],
+        "reasoning_summary": "The claim asserts that growth in NVIDIA's accounts receivable during fiscal 2026 signals deteriorating collection quality. This claim is CONTRADICTED by the evidence.\n\nE7 provides the Schedule II valuation and qualifying accounts, showing that the allowance for doubtful accounts remained constant at $4 million at the beginning and end of fiscal years 2024, 2025, and 2026, with zero additions (no bad debt expense) and zero deductions (no write-offs) in all three years. The allowance for doubtful accounts is a primary indicator of collection quality - if collection quality were deteriorating, we would expect to see increases in this allowance to reflect higher expected credit losses.\n\nE8 confirms that NVIDIA performs ongoing credit evaluations and maintains an allowance for potential credit losses based on specific customers and overall estimated exposure. The fact that this allowance has remained flat at $4 million despite significant business growth indicates stable, not deteriorating, collection quality.\n\nWhile E10, E11, and E13 reveal that NVIDIA has granted extended payment terms to some customers, this is a deliberate business decision and does not necessarily indicate deteriorating collection quality. Extended payment terms can increase accounts receivable balances without implying customers are unable or unwilling to pay.\n\nThe stable allowance for doubtful accounts throughout fiscal 2026 directly contradicts the claim that AR growth signals deteriorating collection quality."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "The growth in NVIDIA's accounts receivable during fiscal 2026 signals deteriorating collection quality. FY2026",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "allowance doubtful accounts bad debt days sales outstanding DSO collection quality aging receivables credit loss",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "accounts receivable revenue growth proportional normal business expansion customer payment terms",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "payment terms extended credit terms customer mix timing revenue recognition deferred",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001045810-26-000021",
+        "filed": "2026-02-25",
+        "report_date": "2026-01-25",
+        "primary_document": "nvda-20260125.htm",
+        "sha256": "d9135ae2801ec96e80398e2ddf0daa523b3a500ccf939ecf2ff150bdd13ab0dc"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001045810-25-000230",
+        "filed": "2025-11-19",
+        "report_date": "2025-10-26",
+        "primary_document": "nvda-20251026.htm",
+        "sha256": "2717bff8ccce5de703742a3c1293d63f23651eba4179601bdf80d9efb5591332"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001045810-25-000209",
+        "filed": "2025-08-27",
+        "report_date": "2025-07-27",
+        "primary_document": "nvda-20250727.htm",
+        "sha256": "fca595d3d28a47de9624f4b5f1e08d3e4588db0b9e405661360ca1b6e967f69a"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 720
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-25-000209",
+      "form": "10-Q",
+      "filed": "2025-08-27",
+      "period_start": null,
+      "period_end": "2025-07-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000209/nvda-20250727.htm",
+      "locator": "10-Q 0001045810-25-000209:29927-31008",
+      "excerpt": "s directly from NVIDIA as direct customers, such as add-in board manufacturers, distributors, original device manufacturers, or ODMs, original equipment manufacturers, or OEMs, and system integrators. We have certain customers that may purchase products directly from NVIDIA and may use either internal resources or third-party system integrators to complete their build. Three direct customers accounted for 23 %, 19 % and 14 % of our accounts receivable balance as of July 27, 2025. Two direct customers accounted for 17 % and 16 % of our accounts receivable balance as of January 26, 2025. Certain balance sheet components are as follows: Jul 27, 2025 Jan 26, 2025 Inventories: (In millions) Raw materials $ 1,843 $ 3,408 Work in process 4,411 3,399 Finished goods 8,708 3,273 Total inventories (1) $ 14,962 $ 10,080 (1) We recorded an inventory provision of $ 886 million and $ 345 million for the second quarter of fiscal years 2026 and 2025, respectively, and $ 3.2 billion and $ 555 million for the first half of fiscal years 2026 and 2025, respectively, in cost of revenue.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:290394-291509",
+      "excerpt": "$ 2.7 billion and $ 1.1 billion, and cumulative gross unrealized losses and impairments of $ 176 million and $ 105 million on securities held as of January 25, 2026 and January 26, 2025, respectively. Note 9 - Balance Sheet Components We refer to customers who purchase products directly from NVIDIA as direct customers, such as AIBs, distributors, ODMs, OEMs, CSPs, AI model makers, and system integrators. Certain direct customers may use either internal resources or third-party system integrators to complete their build. Three direct customers accounted for 25 %, 18 %, and 13 % of our accounts receivable balance as of January 25, 2026. Two direct customers accounted for 17 % and 16 % of our accounts receivable balance as of January 26, 2025. Certain balance sheet components are as follows: Jan 25, 2026 Jan 26, 2025 Inventories: (In millions) Raw materials $ 3,807 $ 3,408 Work in process 8,822 3,399 Finished goods 8,774 3,273 Total inventories (1) $ 21,403 $ 10,080 (1) In fiscal years 2026 and 2025, we recorded inventory provisions of $ 4.0 billion and $ 1.6 billion, respectively, in cost of revenue.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-25-000230",
+      "form": "10-Q",
+      "filed": "2025-11-19",
+      "period_start": null,
+      "period_end": "2025-10-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000230/nvda-20251026.htm",
+      "locator": "10-Q 0001045810-25-000230:30147-31187",
+      "excerpt": "in board manufacturers, distributors, original device manufacturers, or ODMs, original equipment manufacturers, or OEMs, cloud service providers, or CSPs, hyperscale companies, and system integrators. Certain direct customers may use either internal resources or third-party system integrators to complete their build. Four direct customers accounted for 22 %, 17 %, 14 % and 12 % of our accounts receivable balance as of October 26, 2025. Two direct customers accounted for 17 % and 16 % of our accounts receivable balance as of January 26, 2025. Certain balance sheet components are as follows: Oct 26, 2025 Jan 26, 2025 Inventories: (In millions) Raw materials $ 4,209 $ 3,408 Work in process 8,735 3,399 Finished goods 6,840 3,273 Total inventories (1) $ 19,784 $ 10,080 (1) We recorded inventory provisions of $ 378 million and $ 322 million for the third quarter of fiscal years 2026 and 2025, respectively, and $ 3.6 billion and $ 876 million for the first nine months of fiscal years 2026 and 2025, respectively, in cost of revenue.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-25-000209",
+      "form": "10-Q",
+      "filed": "2025-08-27",
+      "period_start": null,
+      "period_end": "2025-07-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000209/nvda-20250727.htm",
+      "locator": "10-Q 0001045810-25-000209:73299-74324",
+      "excerpt": "cture. Reportable segment operating income – The year over year increase in Compute & Networking segment operating income in the second quarter of fiscal year 2026 was driven by the growth in revenue. The year over year increase in Compute & Networking segment operating income in the first half of fiscal year 2026 was driven by the growth in revenue, partially offset by a $4.5 billion charge associated with H20 excess inventory and purchase obligations in the first quarter of fiscal year 2026. The year over year increase in Graphics segment operating income in the second quarter and first half of fiscal year 2026 was driven by the growth in revenue. Concentration of Revenue We refer to customers who purchase products directly from NVIDIA as direct customers, such as add-in board manufacturers, distributors, ODMs, OEMs, and system integrators. We have certain customers that may purchase products directly from NVIDIA and may use either internal resources or third-party system integrators to complete their build.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:263017-264068",
+      "excerpt": "edit losses and write-down the amortized cost basis of the securities if it is more likely than not we will be required or we intend to sell the securities before recovery of its amortized cost basis. Allowances for credit losses and write-downs are recognized in the Other income, net, net section of our Consolidated Statements of Income. Publicly-held equity securities and money market funds have readily determinable fair values with changes in fair value recorded in Other income, net. Fair Value of Financial Instruments The carrying value of cash equivalents, accounts receivable, accounts payable and accrued liabilities approximate their fair values due to their relatively short maturities as of January 25, 2026 and January 26, 2025. Marketable debt and equity securities are reported at fair value. Derivative instruments are recognized as either assets or liabilities and are measured at fair value. The accounting for changes in the fair value of a derivative depends on the intended use of the derivative and the resulting designation.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-25-000209",
+      "form": "10-Q",
+      "filed": "2025-08-27",
+      "period_start": null,
+      "period_end": "2025-07-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000209/nvda-20250727.htm",
+      "locator": "10-Q 0001045810-25-000209:16322-17423",
+      "excerpt": "assets and liabilities at the date of the financial statements and the reported amounts of revenue and expenses during the reporting period. Actual results could differ materially from our estimates. On an on-going basis, we evaluate our estimates, including those related to accounts receivable, cash equivalents and marketable securities, goodwill, income taxes, inventories and product purchase commitments, investigation and settlement costs, litigation, non-marketable equity securities, other contingencies, property, plant, and equipment, restructuring and other charges, revenue recognition, and stock-based compensation. These estimates are based on historical facts and various other assumptions that we believe are reasonable. Recently Issued Accounting Pronouncements Recent Accounting Pronouncements Not Yet Adopted In December 2023, the FASB issued a new accounting standard which includes new and updated income tax disclosures, including disaggregation of information in the rate reconciliation and income taxes paid. We will adopt this standard in our fiscal year 2026 annual report.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:329498-330694",
+      "excerpt": "rs and a weighted average discount rate of 4.38 %. As of January 26, 2025, our operating leases had a weighted average remaining lease term of 6.5 years and a weighted average discount rate of 4.16 %. 80 NVIDIA Corporation and Subsidiaries Schedule II – Valuation and Qualifying Accounts Description Balance at Beginning of Period Additions Deductions Balance at End of Period (In millions) Fiscal year 2026 Allowance for doubtful accounts $ 4 $ — (1) $ — (1) $ 4 Sales return allowance $ 82 $ 188 (2) $ ( 100 ) (4) $ 170 Deferred tax valuation allowance $ 1,610 $ 31 (3) $ ( 873 ) (3) $ 768 Fiscal year 2025 Allowance for doubtful accounts $ 4 $ — (1) $ — (1) $ 4 Sales return allowance $ 109 $ 151 (2) $ ( 178 ) (4) $ 82 Deferred tax valuation allowance $ 1,552 $ 58 (3) $ — (3) $ 1,610 Fiscal year 2024 Allowance for doubtful accounts $ 4 $ — (1) $ — (1) $ 4 Sales return allowance $ 26 $ 213 (2) $ ( 130 ) (4) $ 109 Deferred tax valuation allowance $ 1,484 $ 162 (3) $ ( 94 ) (3) $ 1,552 (1) Additions represent either expense or acquired balances and deductions represent write-offs. (2) Additions represent estimated product returns charged as a reduction to revenue or an acquired balance.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:264703-265835",
+      "excerpt": "s in active markets. • Level 2: Observable inputs other than Level 1 prices, such as quoted prices in less active markets or model-derived valuations that are observable either directly or indirectly. 58 Table of Contents NVIDIA Corporation and Subsidiaries Notes to the Consolidated Financial Statements (Continued) • Level 3: Unobservable inputs in which there is little or no market data that are significant to the fair value of the assets or liabilities. Concentration of Credit Risk Financial instruments that potentially subject us to concentrations of credit risk consist primarily of cash equivalents, marketable securities, lease guarantees, and accounts receivable. Our investment policy requires the purchase of highly-rated fixed income securities, the diversification of investment type and credit exposures, and includes certain limits on our portfolio maturities. We perform ongoing credit evaluations of our customers’ financial condition and maintain an allowance for potential credit losses. This allowance consists of an amount identified for specific customers and an amount based on overall estimated exposure.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:265635-266612",
+      "excerpt": "rs’ financial condition and maintain an allowance for potential credit losses. This allowance consists of an amount identified for specific customers and an amount based on overall estimated exposure. Our overall estimated exposure excludes amounts covered by credit insurance and letters of credit. Inventories Inventory cost is computed on an adjusted standard basis, which approximates actual cost on an average or first-in, first-out basis. Inventory costs consist of the cost of semiconductors, including wafer fabrication, assembly, testing and packaging, manufacturing support costs, including labor and overhead associated with such purchases, final test yield fallout, and shipping costs, as well as the cost of purchased memory products and other component parts. We charge cost of sales for inventory provisions to write-down our inventory to the lower of cost or net realizable value or for obsolete or excess inventory, and for excess product purchase commitments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:123607-124636",
+      "excerpt": "esults. For example, we have granted and may continue to grant extended payment terms to some customers, particularly during macroeconomic downturns, which could impact our ability to collect payment. Our vendors have requested and may continue to ask for shorter payment terms, which may impact our cash flow generation. These arrangements reduce the cash we have available for general business operations. In addition, the pace of growth in our operating expenses and investments may lag our revenue growth, creating volatility or periods where profitability levels may not be sustainable. Failure to meet our expectations or the expectations of our investors or security analysts is likely to cause our stock price to decline, as it has in the past, or substantial price volatility. Risks Related to Regulatory, Legal, Our Stock and Other Matters We are subject to complex laws, rules, regulations, and political and other actions, including restrictions on the export of our products, which may adversely impact our business.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:122626-123807",
+      "excerpt": "have in the past fluctuated and may continue to fluctuate due to a number of factors. Therefore, investors should not rely on our past results of operations as an indication of our future performance. Factors that could affect our results of operations include, but are not limited to: • our ability to adjust spending due to the multi-year development cycle for some of our products and services; • our ability to comply with our contractual obligations to customers; • our extended payment term arrangements with certain customers, the inability of some customers to make required payments, our ability to obtain credit insurance for customers with extended payment terms, and customer bad debt write-offs; • our vendors' payment requirements; • unanticipated costs associated with environmental liabilities; and • changes in financial accounting standards or interpretations of existing standards. Any of these factors could prevent us from achieving our anticipated financial results. For example, we have granted and may continue to grant extended payment terms to some customers, particularly during macroeconomic downturns, which could impact our ability to collect payment.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:251749-252922",
+      "excerpt": "mates are based on historical facts and various other assumptions that we believe are reasonable. Revenue Recognition We derive our revenue primarily from product sales including hardware and systems. We determine revenue recognition through the following steps: (1) identification of the contract with a customer; (2) identification of the performance obligations in the contract; (3) determination of the transaction price; (4) allocation of the transaction price to the performance obligations in the contract (where revenue is allocated on a relative standalone selling price basis by maximizing the use of observable inputs to determine the standalone selling price for each performance obligation); and (5) recognition of revenue when, or as, we satisfy a performance obligation. Payment from customers, per our standard payment terms, is generally due shortly after delivery of our products. Product Sales Revenue Revenue from product sales is recognized upon transfer of control of products to customers in an amount that reflects the consideration we expect to receive in exchange for those products. Certain products are sold with support or an extended warranty.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:118427-119527",
+      "excerpt": "cial guarantees, and have been asked to offer financing arrangements to support our customers’ and partners’ buildout of datacenter infrastructure. We have not entered into any financing arrangements. Commercial arrangements expose us to counterparty risk, including customers' or partners' inability to fulfill their financial commitments and secure necessary financing or infrastructure, the occurrence of significant project delays, and counterparty financial distress or insolvency, all of which may negatively impact our business, financial condition, or results of operations. Financing arrangements, if undertaken, may in some circumstances result in lower upfront cash flows associated with extended payment terms or payment terms made over a multi-year term and may increase credit risk. If we are unable to attract, retain and motivate our executives and key employees, our business may be harmed. To remain competitive and successfully execute our business strategy, we must attract, retain, and motivate our executives and key employees, as well as recruit and develop exceptional talent.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:254220-255419",
+      "excerpt": "tements (Continued) Contracts with Multiple Performance Obligations Our contracts may contain more than one deliverable, each of which is separately accounted for as a distinct performance obligation. We account for multiple agreements with a single customer as a single contract if the contractual terms and/or substance of those agreements indicate that they may be so closely related that they are, in effect, parts of a single contract. We allocate the total transaction price to each distinct performance obligation in an arrangement with multiple performance obligations on a relative standalone selling price basis. The standalone selling price reflects the price we would charge for a specific product or service if it were sold separately in similar circumstances and to similar customers. When determining standalone selling price, we maximize the use of observable inputs. Product Warranties We offer a limited warranty to end-users ranging from one to three years for products to repair or replace products for manufacturing defects or hardware component failures. Cost of revenue includes the estimated cost of product warranties that are calculated at the point of revenue recognition.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:117739-118627",
+      "excerpt": "concentrated near a quarter end, the system integrators, distributors, and channel partners may have limited ability to increase their credit, which could impact the timing and amount of our revenue. The loss of any of our large customers, a significant reduction in purchases by them, our inability to sell to a customer due to U.S. or other countries’ trade restrictions, or any difficulties in collecting accounts receivable would likely harm our financial condition and results of operations. Commercial arrangements expose us to counterparty risks. We have entered and may in the future enter into commercial arrangements, including long-term capacity purchase obligations and financial guarantees, and have been asked to offer financing arrangements to support our customers’ and partners’ buildout of datacenter infrastructure. We have not entered into any financing arrangements.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E7",
+      "quote": "Allowance for doubtful accounts $ 4 $ — (1) $ — (1) $ 4",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:329498-330694"
+    },
+    {
+      "evidence_id": "E8",
+      "quote": "We perform ongoing credit evaluations of our customers' financial condition and maintain an allowance for potential credit losses.",
+      "valid": false,
+      "issues": [
+        "QUOTE_NOT_IN_PASSAGE"
+      ],
+      "kind": "filing_passage",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:264703-265835"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 16968,
+    "output": 1964
+  },
+  "latency_ms": 28466,
+  "estimated_cost_usd": 0.080364,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 7243,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 11,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "reconcile",
+        "status": "ok",
+        "duration_ms": 21202,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "CONTRADICTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 12,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "generate_hypotheses",
+      "counter_investigation",
+      "reconcile",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}
