@@ -1,0 +1,18 @@
+{
+  "experiment_id": "a3v2-dev-0.1",
+  "description": "A3 v2 development configuration (not run). Same model, retrieval and counter-investigation settings as v1; one extra LLM call per claim for the isolated evidence review. Development split only; the gold split and a new holdout are evaluated only after the design is frozen and pre-registered.",
+  "dataset": {"split": "development"},
+  "common": {
+    "llm": {"temperature": 0, "max_output_tokens": 1500},
+    "retrieval": {"top_k": 6, "chunk_chars": 1200, "chunk_overlap": 200,
+                  "max_filings_per_form": {"10-K": 1, "10-Q": 2, "8-K": 2}, "passage_chars_in_prompt": 1200},
+    "numeric": {"max_assertions": 6, "override_final_label": true},
+    "budget": {"max_llm_calls_per_claim": 4, "max_input_tokens_per_claim": 80000, "max_retrieval_queries_per_claim": 4}
+  },
+  "approaches": [
+    {"name": "A3v2_R", "description": "A3 v1 + evidence reviewer; v1 guards only",
+     "overrides": {"contradiction": {"max_hypotheses": 3, "top_k_per_query": 3}, "review": {"enabled": true}, "guard": {"enabled": false}}},
+    {"name": "A3v2_RG", "description": "A3 v1 + evidence reviewer + reconciliation guard",
+     "overrides": {"contradiction": {"max_hypotheses": 3, "top_k_per_query": 3}, "review": {"enabled": true}, "guard": {"enabled": true}}}
+  ]
+}
