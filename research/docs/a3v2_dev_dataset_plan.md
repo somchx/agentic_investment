@@ -60,6 +60,47 @@
   - Keep the companies and periods of the dev set separate from the planned holdout. Otherwise dev and holdout
     would share disclosures.
 
+## 2b. Concrete expansion target (update after the first labelling round)
+
+**Starting point: the first labels (`rev_som`, provisional, before second review and adjudication).**
+- SUPPORTED 14, CONTRADICTED 8, INSUFFICIENT_EVIDENCE **2** (8%).
+- The set measures A3 v1's main failure poorly: decisive answers on claims whose reference label is INSUFFICIENT.
+
+**Target: 72 claims (24 current + 48 new).**
+
+| Category | Now | Add | Target |
+|---|---|---|---|
+| Ambiguous | 5 | +25 | 30 |
+| Interpretive | 7 | +15 | 22 |
+| Numerical | 12 | +8 | 20 |
+| **Total** | 24 | +48 | **72** |
+
+**INSUFFICIENT_EVIDENCE.**
+- Target: at least 24 of 72 (one third). About 22 of the 48 new claims therefore need to *turn out* INSUFFICIENT.
+- Labels are known only after annotation. Authors should record a non-binding `design_intent` per claim (the
+  outcome the author expects) and keep it out of the annotators' workbook.
+- After labelling, compare the realised mix with the target and top up if needed.
+
+**Avoid a shortcut.** Each "likely INSUFFICIENT" type needs decisive counterparts. Otherwise "evaluative wording →
+INSUFFICIENT" would become a rule the system could learn from the wording alone.
+
+| Pair | Likely INSUFFICIENT | Decisive counterpart |
+|---|---|---|
+| Evaluative predicate | No criterion in the claim or the filing (+12) | A factual part is false → CONTRADICTED (+6) |
+| Cause / driver | Filing reports the change, not the cause (+6) | Filing states the cause (+5 SUPPORTED, +3 CONTRADICTED) |
+| Absence claim | Filing states neither the absence nor that the effect is immaterial (+4) | Filing discloses the effect → CONTRADICTED (+2) |
+| Period | Claimed period not covered or only partly covered (+2) | Another period's disclosure is a trap; the claim's own period decides (+4) |
+| Computation / definition | — | FCF, share of change, level vs change, renamed segment (+4) |
+
+**Companies.** Add 3–4 companies that are not among the 10 gold companies and not reserved for the holdout. Use a mix
+of industries (for example, a consumer staples, an industrial, a software and a semiconductor company). Their filings
+must be downloaded from SEC (free) before the claims are written.
+
+**Labelling.**
+- Two independent human reviewers for every new ambiguous and interpretive claim.
+- One reviewer, with a second-review sample, for numerical claims.
+- Report κ before adjudication.
+
 ## 3. Rules for writing new claims
 
 1. **Do not use gold claims.** Do not copy or paraphrase the 150 gold claims, and do not write a claim by looking

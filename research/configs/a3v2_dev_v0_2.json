@@ -1,0 +1,19 @@
+{
+  "experiment_id": "a3v2-dev-v0.2",
+  "description": "A3 v2 on the development set dev-v0.2 (72 claims). A2 baseline, A3v2_R (evidence reviewer, v1 guards) and A3v2_RG (A3v2_R + deterministic reconciliation guard). A3v2_RG replays A3v2_R from the response cache (cache-only, no paid call). Same model, retrieval and budgets as a3v2_development.json; development split only.",
+  "dataset": {"split": "development", "development_path": "datasets/development_cases_dev-v0.2.jsonl"},
+  "common": {
+    "llm": {"temperature": 0, "max_output_tokens": 1500},
+    "retrieval": {"top_k": 6, "chunk_chars": 1200, "chunk_overlap": 200,
+                  "max_filings_per_form": {"10-K": 1, "10-Q": 2, "8-K": 2}, "passage_chars_in_prompt": 1200},
+    "numeric": {"max_assertions": 6, "override_final_label": true},
+    "budget": {"max_llm_calls_per_claim": 4, "max_input_tokens_per_claim": 80000, "max_retrieval_queries_per_claim": 4}
+  },
+  "approaches": [
+    {"name": "A2_rag_numeric", "kind": "financial_verification", "description": "A2 baseline: RAG + deterministic numeric verification"},
+    {"name": "A3v2_R", "description": "A3 v1 + evidence reviewer; v1 guards only",
+     "overrides": {"contradiction": {"max_hypotheses": 3, "top_k_per_query": 3}, "review": {"enabled": true}, "guard": {"enabled": false}}},
+    {"name": "A3v2_RG", "description": "A3v2_R + deterministic reconciliation guard (cache-only replay of A3v2_R)", "replay_of": "A3v2_R",
+     "overrides": {"contradiction": {"max_hypotheses": 3, "top_k_per_query": 3}, "review": {"enabled": true}, "guard": {"enabled": true}}}
+  ]
+}

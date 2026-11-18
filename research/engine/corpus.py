@@ -46,10 +46,16 @@ class CorpusUnavailable(RuntimeError):
 
 # ------------------------------------------------------------- filings
 
+# Development-split companies outside the app's pilot set. CIKs from SEC's
+# company_tickers.json (fetched 2026-11-17), not hand-typed; research only.
+RESEARCH_CIKS = {"ADBE": "0000796343", "INTC": "0000050863", "CAT": "0000018230"}
+
+
 def _cik(ticker: str) -> str:
-    if ticker not in ALL_KNOWN_CIKS:
+    cik = ALL_KNOWN_CIKS.get(ticker) or RESEARCH_CIKS.get(ticker)
+    if not cik:
         raise CorpusUnavailable(f"ticker {ticker} has no known CIK")
-    return ALL_KNOWN_CIKS[ticker].zfill(10)
+    return cik.zfill(10)
 
 
 def submissions_path(ticker: str) -> str:
@@ -273,7 +279,7 @@ def build_corpus(claims, config: RetrievalConfig | None = None, allow_network: b
     for c in claims:
         if allow_network and not os.path.exists(submissions_path(c.company)):
             from sec_client import get_submissions
-            get_submissions(c.company)
+            get_submissions(_cik(c.company))
             _submissions.cache_clear()
         for f in eligible_filings(c.company, c.as_of_date, c.allowed_forms(), config.max_filings_per_form):
             key = (f["accession_number"], f["primary_document"])

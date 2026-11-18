@@ -33,7 +33,7 @@ import agent_config  # noqa: E402
 
 DEFAULT_CACHE_DIR = os.path.join(RESEARCH_ROOT, "results", "llm_cache")
 LLM_MODES = ("offline", "live", "mock")
-MOCK_VERSION = "mock-heuristic-1.0"
+MOCK_VERSION = "mock-heuristic-1.2"  # 1.1: + submit_evidence_review (A3 v2); 1.2: + classify_claim, report_contribution_figures (A3 v2.2)
 
 
 class CacheMiss(RuntimeError):
@@ -42,6 +42,32 @@ class CacheMiss(RuntimeError):
 
 class PaidCallNotApproved(PermissionError):
     pass
+
+
+class TransientRetriesExhausted(RuntimeError):
+    """A transient API error (e.g. 529 overloaded) persisted through every
+    retry. Not itself transient, so graph-level retry policies do not multiply
+    the attempts; the claim is recorded as an ERROR and can be re-run with
+    resume --retry-errors (completed calls come from the cache)."""
+
+
+RETRY_STATUS = frozenset({408, 429, 500, 502, 503, 504, 529})  # never 400 / 401 / 403 / 404
+
+
+def _retryable(e: BaseException) -> bool:
+    import requests
+    if isinstance(e, (requests.Timeout, requests.ConnectionError)):
+        return True
+    return isinstance(e, requests.HTTPError) and e.response is not None and e.response.status_code in RETRY_STATUS
+
+
+def _retry_after(e: BaseException) -> float | None:
+    resp = getattr(e, "response", None)
+    v = (getattr(resp, "headers", None) or {}).get("retry-after") if resp is not None else None
+    try:
+        return float(v) if v is not None else None
+    except ValueError:
+        return None
 
 
 class BudgetExceeded(RuntimeError):
@@ -102,12 +128,15 @@ def approve_paid_run(plan: dict, typed_phrase: str) -> PaidRunApproval:
 
 
 class BudgetGuard:
-    def __init__(self, approval: PaidRunApproval | None, pricing: Pricing):
-        self.approval, self.pricing = approval, pricing
+    """Per-process cap from the approval; with a CostLedger, also the
+    aggregate cap shared by every process and resume (engine.cost_ledger)."""
+
+    def __init__(self, approval: PaidRunApproval | None, pricing: Pricing, ledger=None):
+        self.approval, self.pricing, self.ledger = approval, pricing, ledger
         self.paid_calls = 0
         self.spent_usd = 0.0
 
-    def before_call(self, max_tokens: int, est_input_tokens: int) -> None:
+    def before_call(self, max_tokens: int, est_input_tokens: int, request_key: str | None = None) -> str | None:
         if self.approval is None:
             raise PaidCallNotApproved("live mode requires a PaidRunApproval (see runner.plan_run / approve_paid_run)")
         if self.paid_calls >= self.approval.max_calls:
@@ -116,27 +145,48 @@ class BudgetGuard:
         if worst > self.approval.max_cost_usd:
             raise BudgetExceeded(f"next call could exceed the approved ${self.approval.max_cost_usd:.2f} "
                                  f"(spent ${self.spent_usd:.4f})")
+        if self.ledger is None:
+            return None
+        from .cost_ledger import LedgerExceeded
+        try:
+            # est_input_tokens is chars/3; the ledger reserves for chars/2 so a
+            # dense packet (figures, tables) cannot settle above its reservation
+            return self.ledger.reserve(self.pricing.cost(est_input_tokens * 3 // 2, max_tokens), request_key)
+        except LedgerExceeded as e:
+            raise BudgetExceeded(str(e)) from e
 
-    def after_call(self, usage: dict) -> None:
+    def after_call(self, usage: dict, reservation: str | None = None) -> None:
         self.paid_calls += 1
-        self.spent_usd += self.pricing.cost(usage.get("input_tokens", 0), usage.get("output_tokens", 0))
+        cost = self.pricing.cost(usage.get("input_tokens", 0), usage.get("output_tokens", 0))
+        self.spent_usd += cost
+        if reservation:
+            self.ledger.settle(reservation, cost, {k: usage.get(k) for k in ("input_tokens", "output_tokens")})
+
+    def call_failed(self, reservation: str | None, error: Exception) -> None:
+        if reservation:
+            self.ledger.fail(reservation, f"{type(error).__name__}: {error}")
 
 
 class CachedLLM:
     def __init__(self, mode: str = "offline", model: str = agent_config.MODEL, temperature: float = agent_config.TEMPERATURE,
                  cache_dir: str = DEFAULT_CACHE_DIR, inner=None, approval: PaidRunApproval | None = None,
-                 pricing: Pricing | None = None):
+                 pricing: Pricing | None = None, ledger=None, retry: dict | None = None, sleep=time.sleep, rng=None):
         if mode not in LLM_MODES:
             raise ValueError(f"mode must be one of {LLM_MODES}")
         self.mode, self.model, self.temperature, self.cache_dir = mode, model, temperature, cache_dir
         self.pricing = pricing or Pricing()
-        self.guard = BudgetGuard(approval, self.pricing)
+        self.guard = BudgetGuard(approval, self.pricing, ledger)
+        # live-call retries (None = the v1 behaviour: graph-level retry policy only)
+        self.retry = None if not retry else {"max_retries": 5, "base_s": 2.0, "max_s": 60.0, "jitter": True, **dict(retry)}
+        self._sleep = sleep
+        import random
+        self._rng = rng or random.Random()
         if mode == "live" and approval is None:
             raise PaidCallNotApproved("live mode requires a PaidRunApproval")
         if mode == "mock" and inner is None:
             inner = HeuristicMockLLM()
         self.inner = inner
-        self.stats = {"cache_hits": 0, "live_calls": 0, "mock_calls": 0}
+        self.stats = {"cache_hits": 0, "live_calls": 0, "mock_calls": 0, "retries": 0, "failed_attempts": 0}
 
     def _path(self, key: str) -> str:
         return os.path.join(self.cache_dir, key[:2], f"{key}.json")
@@ -156,14 +206,34 @@ class CachedLLM:
         if self.mode == "offline":
             raise CacheMiss(f"no cached response for request {key[:12]} (offline mode never calls the paid API)")
         est_in = len(json.dumps([system, messages, tools], default=str)) // 3
-        self.guard.before_call(max_tokens, est_in)
-        if self.inner is None:
+        if self.inner is None:  # before reserving: a client that cannot be built sends nothing
             from investigation_engine import AnthropicClient
             self.inner = AnthropicClient(model=self.model)
-        t0 = time.monotonic()
-        response = self.inner.create(system, messages, tools, max_tokens, tool_choice)
+        attempt = 0
+        while True:
+            # every attempt is reserved, and a failed one stays counted in the ledger
+            reservation = self.guard.before_call(max_tokens, est_in, key)
+            t0 = time.monotonic()
+            try:
+                response = self.inner.create(system, messages, tools, max_tokens, tool_choice)
+                break
+            except BaseException as e:
+                self.guard.call_failed(reservation, e)
+                self.stats["failed_attempts"] += 1
+                if not self.retry or not _retryable(e):
+                    raise
+                if attempt >= self.retry["max_retries"]:
+                    raise TransientRetriesExhausted(f"{type(e).__name__}: {e} -- still failing after {attempt} retries") from e
+                delay = min(self.retry["max_s"], self.retry["base_s"] * 2 ** attempt)
+                if self.retry["jitter"]:
+                    delay *= 0.5 + self._rng.random() / 2
+                ra = _retry_after(e)
+                if ra is not None:
+                    delay = min(self.retry["max_s"], max(delay, ra))
+                attempt += 1
+                self.stats["retries"] += 1
+                self._sleep(delay)
         latency = round((time.monotonic() - t0) * 1000)
-        self.guard.after_call(response.get("usage") or {})
         self.stats["live_calls"] += 1
         os.makedirs(os.path.dirname(path), exist_ok=True)
         tmp = path + ".tmp"
@@ -171,10 +241,13 @@ class CachedLLM:
             json.dump({"request_key": key, "model": self.model, "temperature": self.temperature, "latency_ms": latency,
                        "stored_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "response": response}, f)
         os.replace(tmp, path)
+        # settled after the cache write: a crash in between leaves an open
+        # reservation that CostLedger.reconcile settles from the cached usage
+        self.guard.after_call(response.get("usage") or {}, reservation)
         return {**response, "_request_key": key, "_source": "live", "_latency_ms": latency}
 
     def describe(self) -> dict:
-        return {"mode": self.mode, "model": self.model, "temperature": self.temperature,
+        return {"mode": self.mode, "model": self.model, "temperature": self.temperature, "api_retry": self.retry,
                 "pricing": {"input_per_m": self.pricing.input_per_m, "output_per_m": self.pricing.output_per_m,
                             "version": self.pricing.version},
                 "mock_version": getattr(self.inner, "version", None) if self.mode == "mock" else None}
@@ -293,6 +366,20 @@ class HeuristicMockLLM:
                                     "supporting_evidence": initial.get("supporting_evidence") or [],
                                     "contradicting_evidence": challenged if label != initial.get("label") else [],
                                     "reasoning_summary": "[MOCK] keyword heuristic, not a model judgement."})
+        if name == "submit_evidence_review":  # A3 v2 reviewer: everything is context, nothing decides
+            ids = [a.get("assertion_id") for a in p.get("assertions") or []][:1]
+            findings = [{"assertion_id": ids[0], "evidence_ids": [e["evidence_id"]], "relation": "RELATED_NOT_DECIDING",
+                         "evidence_type": "OTHER_CONTEXT", "addresses": "OTHER", "key_quote": _quote(e.get("text") or ""),
+                         "justification": "[MOCK] keyword heuristic, not a model judgement."}
+                        for e in passages if ids and e.get("kind") == "filing_passage"][:6]
+            return _tool_use(name, {"findings": findings})
+        if name == "classify_claim":  # A3 v2.2 decidability: always "measurable", never gates
+            return _tool_use(name, {"predicate_type": "MEASURABLE", "evaluative_terms": [], "criterion_source": "CLAIM_STATES",
+                                    "contribution": {"type": "NONE"}, "required_evidence": ["NUMERIC_FACT"],
+                                    "note": "[MOCK] keyword heuristic, not a model judgement."})
+        if name == "report_contribution_figures":  # A3 v2.2c: nothing reported, never decides
+            return _tool_use(name, {"test": "PRIMARY_DRIVER", "reported": False, "target": None, "other_items": [],
+                                    "note": "[MOCK] keyword heuristic, not a model judgement."})
         raise ValueError(f"mock has no behaviour for tool {name}")
 
 

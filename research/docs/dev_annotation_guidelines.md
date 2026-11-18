@@ -1,4 +1,4 @@
-# Development annotation addendum (`dev-addendum-1.0`)
+# Development annotation addendum (`dev-addendum-1.1`)
 
 This addendum is for labelling the **development split** (`datasets/development_cases.jsonl`), which is used to
 develop A3 v2. It **extends** `datasets/annotation_guidelines.md` (`gold-guidelines-1.0`).
@@ -74,7 +74,7 @@ The following points come from the v1 error analysis. They are reminders of exis
 | Column | Values | When to use it |
 |---|---|---|
 | Confidence | HIGH / MEDIUM / LOW | **Required** for every labelled claim.<br>HIGH = another reviewer would very likely give the same label.<br>MEDIUM = there is a point of interpretation, but you chose for a stated reason.<br>LOW = another label is also reasonable. |
-| Uncertainty type | NONE, UNDEFINED_PREDICATE, CAUSE_NOT_STATED, PERIOD_OR_BASIS_UNCLEAR, DEFINITION_CHANGE, CONFLICTING_DISCLOSURES, THRESHOLD_OR_ROUNDING_EDGE, FIGURE_NOT_FOUND, OTHER | The main reason for the uncertainty. OTHER requires a note. |
+| Uncertainty type | NONE, UNDEFINED_PREDICATE, CAUSE_NOT_STATED, PERIOD_OR_BASIS_UNCLEAR, DEFINITION_CHANGE, CONFLICTING_DISCLOSURES, THRESHOLD_OR_ROUNDING_EDGE, FIGURE_NOT_FOUND, NEGATIVE_CLAIM, OTHER | The main reason for the uncertainty. OTHER requires a note. |
 | Uncertainty note | Free text | Explain what could change the label. |
 | Second review requested | "ใช่" (yes) | Use when confidence is LOW or the claim should get a second, independent review. |
 
@@ -89,3 +89,22 @@ Confidence is the reviewer's judgement. It is not a statistical measure of how r
 3. **Agreement.** Report Cohen's κ before adjudication.
 4. **Disagreements.** An adjudicator who did not label the claim decides, and records the decision as in gold §5.
 5. **Freeze the dev labels**, with a version and a sha256, before any paid A3 v2 development run.
+
+## 6. Evidence from outside the system's filing set (added in 1.1)
+
+**Rule.** Development evidence may cite any filing that meets all of these:
+- same company;
+- an allowed form;
+- filed on or before the cutoff (gold §1.3).
+
+This covers, for example, the prior-year 10-Q a year-over-year balance comparison needs. The system retrieves only
+the latest 10-K and the 2 latest 10-Qs.
+
+**On import.** Each claim lists such filings in `evidence_outside_system_corpus`, so that evidence-recall metrics can
+exclude them. The gold workbook tool keeps its narrower rule.
+
+**In Excel.** The Evidence sheet's check column may still show "ไม่ใช่รายงานที่ใช้ได้ของ claim นี้" ("not an eligible
+filing for this claim") for such a filing. The import rule decides.
+
+`NEGATIVE_CLAIM` (added in 1.1) marks an absence claim ("not affected by…", "no pressure on…") whose filings state
+neither the absence nor that the effect is immaterial.

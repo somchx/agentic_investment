@@ -54,9 +54,39 @@ REVIEW_TOOL = {
         "required": ["findings"]},
 }
 
+REVIEW_SYSTEM_PROMPT_V21 = REVIEW_SYSTEM_PROMPT + """
+
+REPORTING PERIODS (v2.1)
+The packet gives the claim's period (start, end, months, kind = duration or instant) and, for each piece of
+evidence, its own period and a deterministic period_status: EXACT_MATCH, COMPATIBLE_AFTER_VERIFIED_DERIVATION,
+MISMATCH or UNKNOWN. A figure for a different duration (three months vs nine months, six months vs trailing
+twelve months, a fiscal year vs a twelve-month period ending at a quarter) or a balance at another date does not
+decide the claim, even when it ends on the same date. Evidence whose period_status is MISMATCH or UNKNOWN cannot
+be ENTAILS or CONTRADICTS. When a passage covers several periods, copy into key_quote the words that state the
+period of the figure or statement you rely on (e.g. "three months ended", "first half", "fiscal 2025")."""
+
+REVIEW_SYSTEM_PROMPT_V211 = REVIEW_SYSTEM_PROMPT_V21 + """
+
+STATEMENT TIME (v2.1.1)
+A claim about results already reported is decided only by statements of what happened. Expectations,
+plans, outlook and forecasts ("we anticipate", "will", "is expected to") never ENTAIL or CONTRADICT such a
+claim, and a statement about another year (e.g. expected 2026 growth) does not decide a claim about 2025.
+Copy into key_quote the sentence that states the historical result, with its year or period words; the
+system rejects deciding findings whose key quote is forward-looking, mixed, or names only other years.
+Computed figures (operating margin, growth) are checked against the reporting period of their source facts."""
+
 RECONCILIATION_INSTRUCTION_V2 = RECONCILIATION_INSTRUCTION + (
     " The packet also contains an independent evidence review (evidence_review): per assertion and evidence, whether "
     "the evidence ENTAILS, CONTRADICTS, is RELATED_NOT_DECIDING or IRRELEVANT, after deterministic checks of quote, "
     "company, period and figures. A change of verdict is accepted only when it rests on cited evidence the review "
     "marks ENTAILS (to SUPPORTED) or CONTRADICTS (to CONTRADICTED); a move to INSUFFICIENT_EVIDENCE is accepted only "
     "when no valid evidence still decides your initial verdict or a definition mismatch is shown.")
+
+RECONCILIATION_INSTRUCTION_V21 = RECONCILIATION_INSTRUCTION_V2 + (
+    " Each evidence_review row also carries period_compatibility: only rows whose period is EXACT_MATCH or "
+    "COMPATIBLE_AFTER_VERIFIED_DERIVATION for the claim's reporting period can support a change; evidence for another "
+    "duration or date (MISMATCH) or of unknown period (UNKNOWN) cannot, even if its end date is the same.")
+
+RECONCILIATION_INSTRUCTION_V211 = RECONCILIATION_INSTRUCTION_V21 + (
+    " Each row also carries statement_time (HISTORICAL_FACT, FORWARD_LOOKING or MIXED_OR_UNCLEAR, from the key quote): "
+    "an expectation or forecast never supports or refutes a claim about results already reported.")

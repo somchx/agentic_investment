@@ -1,0 +1,138 @@
+{
+  "experiment_id": "a3v2.2-gold150",
+  "description": "PREREGISTERED test of the final A3 candidate on the Gold 150 set: A3v2_2e = A3 v2.1.1 reviewer + guard 0.3 (G3b) + quote check 1.1 + decidability gate (G1, G4) + D-sup + A3-side numeric checks (N1, N2) + E1 evidence coverage. Baselines (advisor design P1 / P2 / P3): P1 = A1 conventional RAG, A2 RAG + numeric verification, P2 = SR generic self-critique (no new retrieval), A3 v2.1.1 R and RG (replay); P3 = the candidate. Runs only once the preregistration is locked; no change after seeing results.",
+  "dataset": {
+    "split": "gold"
+  },
+  "common": {
+    "llm": {
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    }
+  },
+  "approaches": [
+    {
+      "name": "A1_conventional_rag",
+      "kind": "conventional_rag",
+      "description": "claim -> retrieval -> LLM -> verdict"
+    },
+    {
+      "name": "A2_rag_numeric",
+      "kind": "financial_verification",
+      "description": "A2 baseline: RAG + deterministic numeric verification"
+    },
+    {
+      "name": "SR_self_reflection",
+      "kind": "self_reflection",
+      "description": "A2 + self-critique and revision, no new retrieval",
+      "overrides": {
+        "reflection": {
+          "max_items": 3
+        }
+      }
+    },
+    {
+      "name": "A3v2_1_1_R",
+      "description": "A3 v2.1.1: evidence reviewer with period compatibility 1.1 and statement-time checks; v1 guards only",
+      "overrides": {
+        "contradiction": {
+          "max_hypotheses": 3,
+          "top_k_per_query": 3
+        },
+        "review": {
+          "enabled": true,
+          "max_output_tokens": 4096
+        },
+        "guard": {
+          "enabled": false
+        },
+        "periods": {
+          "enabled": true,
+          "version": "1.1"
+        }
+      }
+    },
+    {
+      "name": "A3v2_1_1_RG",
+      "description": "A3v2_1_1_R + deterministic reconciliation guard (cache-only replay of A3v2_1_1_R)",
+      "replay_of": "A3v2_1_1_R",
+      "overrides": {
+        "contradiction": {
+          "max_hypotheses": 3,
+          "top_k_per_query": 3
+        },
+        "review": {
+          "enabled": true,
+          "max_output_tokens": 4096
+        },
+        "guard": {
+          "enabled": true
+        },
+        "periods": {
+          "enabled": true,
+          "version": "1.1"
+        }
+      }
+    },
+    {
+      "name": "A3v2_2e",
+      "description": "A3 v2.2 + E1 evidence coverage: a final SUPPORTED / CONTRADICTED needs a validated finding, a valid A2 numeric rule or an A3 deterministic check",
+      "overrides": {
+        "contradiction": {
+          "max_hypotheses": 3,
+          "top_k_per_query": 3
+        },
+        "review": {
+          "enabled": true,
+          "max_output_tokens": 4096
+        },
+        "guard": {
+          "enabled": true,
+          "version": "0.3"
+        },
+        "periods": {
+          "enabled": true,
+          "version": "1.1"
+        },
+        "quote_check": "1.1",
+        "decidability": {
+          "name": "llm_0.1",
+          "scope_gate": true,
+          "downgrade": "supported"
+        },
+        "numeric_checks": "0.1",
+        "coverage": "0.1"
+      }
+    }
+  ],
+  "api_retry": {
+    "max_retries": 5,
+    "base_s": 2.0,
+    "max_s": 60.0,
+    "jitter": true
+  },
+  "preregistration": {
+    "path": "docs/a3v2_2/08_preregistration_gold150.md",
+    "sha256": "TO_BE_FILLED_WHEN_LOCKED"
+  }
+}

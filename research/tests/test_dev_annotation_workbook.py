@@ -42,7 +42,7 @@ def test_export_is_blank_development_only(blank):
     assert "Development" in wb["คำแนะนำ"]["A1"].value
 
 
-def fill(path, label, conf="MEDIUM", utype="CAUSE_NOT_STATED", evidence=True):
+def fill(path, label, conf="MEDIUM", utype="CAUSE_NOT_STATED", evidence=True, accn=None):
     wb = load_workbook(path)
     sheet, ref = next(wb.defined_names["ReviewerID"].destinations)
     wb[sheet][ref.replace("$", "")] = "rev_test"
@@ -50,7 +50,7 @@ def fill(path, label, conf="MEDIUM", utype="CAUSE_NOT_STATED", evidence=True):
     h = headers(cs)
     row = next(r for r in range(2, cs.max_row + 1) if cs.cell(row=r, column=1).value == "DEV-AMZN-04")
     elig = cs.cell(row=row, column=9).value.split("\n")[0]
-    accn = elig.split("(")[1].rstrip(")")
+    accn = accn or elig.split("(")[1].rstrip(")")
     cs.cell(row=row, column=h[daw.aw.H_LABEL], value=label)
     cs.cell(row=row, column=h[daw.aw.H_NOTES], value="synthetic test row")
     cs.cell(row=row, column=h[daw.H_CONF], value=conf)
@@ -79,3 +79,51 @@ def test_import_rejects_bad_rows(blank, tmp_path, kw, msg):
     fill(blank, "SUPPORTED", **kw)
     with pytest.raises(SchemaError, match=msg):
         daw.import_dev(str(blank), annotation_dir=str(tmp_path / "a"))
+
+
+def test_negative_claim_uncertainty_type(blank, tmp_path):
+    lists = [d.formula1 for d in load_workbook(blank)["Claims"].data_validations.dataValidation]
+    assert any("NEGATIVE_CLAIM" in f for f in lists) and all(len(f) <= 257 for f in lists)  # Excel list limit
+    fill(blank, "SUPPORTED", utype="NEGATIVE_CLAIM")
+    rows = [json.loads(x) for x in open(daw.import_dev(str(blank), annotation_dir=str(tmp_path / "a")), encoding="utf-8")]
+    assert rows[0]["uncertainty_type"] == "NEGATIVE_CLAIM"
+
+
+def _filings(company, **kw):
+    return [f for f in daw.aw.load_manifest() if f["company"] == company and all(f[k] == v for k, v in kw.items())]
+
+
+def test_dev_rule_accepts_older_same_company_filing(blank, tmp_path):
+    """DEV-AMZN-04 (cutoff 2026-08-15): the Q2 2025 10-Q is outside the system's retrieval set but filed before the cutoff."""
+    claim = next(c for c in daw.load_claims(daw.DEV_PATH) if c.claim_id == "DEV-AMZN-04")
+    old = next(f for f in _filings("AMZN", form="10-Q") if f["report_date"] == "2025-06-30")
+    assert old not in daw.aw.eligible_filings(claim, daw.aw.load_manifest())  # gold / system rule: not eligible
+    assert old in daw.dev_eligible_filings(claim, daw.aw.load_manifest())
+    fill(blank, "SUPPORTED", accn=old["accession_number"])
+    rows = [json.loads(x) for x in open(daw.import_dev(str(blank), annotation_dir=str(tmp_path / "a")), encoding="utf-8")]
+    assert rows[0]["evidence_outside_system_corpus"] == [old["accession_number"]]
+    assert daw.aw.eligible_filings.__name__ == "eligible_filings"  # gold rule restored after import
+
+
+@pytest.mark.parametrize("pick", ["after_cutoff", "other_company"])
+def test_dev_rule_still_rejects_bad_filings(blank, tmp_path, pick):
+    accn = (next(f for f in _filings("AMZN") if f["filed"] > "2026-08-15") if pick == "after_cutoff"
+            else _filings("AAPL", form="10-Q")[0])["accession_number"]
+    fill(blank, "SUPPORTED", accn=accn)
+    with pytest.raises(SchemaError, match="not an eligible filing"):
+        daw.import_dev(str(blank), annotation_dir=str(tmp_path / "a"))
+
+
+def test_versioned_import_keeps_earlier_file(blank, tmp_path):
+    fill(blank, "SUPPORTED")
+    d = tmp_path / "a"
+    first = daw.import_dev(str(blank), annotation_dir=str(d))
+    before = open(first, encoding="utf-8").read()
+    second = daw.import_dev(str(blank), annotation_dir=str(d), version="v2")
+    assert os.path.basename(second) == "rev_test.v2.jsonl" and open(first, encoding="utf-8").read() == before
+    row = json.loads(open(second, encoding="utf-8").readline())
+    assert row["annotation_version"] == "v2" and len(row["source_workbook_sha256"]) == 64
+    with pytest.raises(SchemaError, match="not overwritten"):
+        daw.import_dev(str(blank), annotation_dir=str(d), version="v2")
+    with pytest.raises(SchemaError, match="letters, digits"):
+        daw.import_dev(str(blank), annotation_dir=str(d), version="../x")

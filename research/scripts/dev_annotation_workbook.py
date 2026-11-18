@@ -4,6 +4,10 @@
     research/.venv/bin/python research/scripts/dev_annotation_workbook.py export \
         --out research/datasets/workbooks/dev_annotation_workbook.xlsx
 
+    # blind second-review workbook for selected claims (blank, like any export)
+    research/.venv/bin/python research/scripts/dev_annotation_workbook.py export \
+        --ids DEV-AAPL-05 DEV-MSFT-07 --out research/datasets/workbooks/dev_blind_review.xlsx
+
     # a reviewer's filled workbook -> datasets/annotations_dev/<reviewer_id>.jsonl
     research/.venv/bin/python research/scripts/dev_annotation_workbook.py import filled.xlsx
 
@@ -16,17 +20,24 @@ checks, plus
   the workbook;
 - a development addendum sheet (docs/dev_annotation_guidelines.md);
 - a separate output directory, so development labels never mix with gold
-  annotations.
+  annotations;
+- a wider evidence rule on import: any same-company filing of an allowed form
+  filed on or before the cutoff (gold guideline §1.3), not only the filings in
+  the system's retrieval set. The gold tool keeps its narrower rule. Evidence
+  from outside the system's set is listed per claim
+  (`evidence_outside_system_corpus`) so evidence-recall metrics can exclude it.
 
 The workbook carries claims and filing links only: no label, no model output,
 and no passages chosen by the system's retriever (they would anchor the
 reviewer on what the system under evaluation already sees).
 """
 import argparse
+import contextlib
 import importlib.util
 import json
 import os
 import sys
+import tempfile
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -35,13 +46,17 @@ from openpyxl.utils import get_column_letter  # noqa: E402
 from openpyxl.worksheet.datavalidation import DataValidation  # noqa: E402
 
 from engine.datasets import DATASET_DIR, DEV_PATH, load_claims  # noqa: E402
-from engine.schema import SchemaError  # noqa: E402
+from engine.schema import SOURCE_FORMS, SchemaError  # noqa: E402
 
 _spec = importlib.util.spec_from_file_location("annotation_workbook", os.path.join(os.path.dirname(__file__), "annotation_workbook.py"))
 aw = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(aw)
+_spec = importlib.util.spec_from_file_location("dev_corpus", os.path.join(os.path.dirname(__file__), "dev_corpus.py"))
+dev_corpus = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(dev_corpus)
+aw.load_manifest = dev_corpus.load_manifest  # frozen manifest + development manifests (new companies)
 
-DEV_ADDENDUM_VERSION = "dev-addendum-1.0"
+DEV_ADDENDUM_VERSION = "dev-addendum-1.1"
 DEV_ANNOTATION_DIR = os.path.join(DATASET_DIR, "annotations_dev")
 H_CONF = "✎ ความมั่นใจ\nConfidence"
 H_UTYPE = "✎ ประเภทความไม่แน่ใจ\nUncertainty type"
@@ -57,6 +72,7 @@ UNCERTAINTY_TYPES = {
     "CONFLICTING_DISCLOSURES": "รายงานมีข้อมูลสองด้านที่ชี้ไปคนละทาง",
     "THRESHOLD_OR_ROUNDING_EDGE": "ตัวเลขใกล้เกณฑ์มากจนการปัดเศษมีผล",
     "FIGURE_NOT_FOUND": "หาตัวเลขที่ต้องใช้ไม่พบในรายงานที่ใช้ได้",
+    "NEGATIVE_CLAIM": "claim เชิงปฏิเสธ (ไม่ได้รับผลกระทบ / ไม่มีแรงกดดัน) ที่รายงานไม่ได้ระบุชัดว่าไม่มีผลหรือไม่มีสาระสำคัญ",
     "OTHER": "อื่น ๆ (อธิบายในช่องถัดไป)",
 }
 DEV_COLUMNS = [(H_CONF, 13), (H_UTYPE, 26), (H_UNOTE, 40), (H_SECOND, 14)]
@@ -86,7 +102,29 @@ def _addendum_sheet(wb):
     ws.column_dimensions["A"].width, ws.column_dimensions["B"].width = 28, 120
 
 
-def export(out: str, claim_paths=(DEV_PATH,)) -> int:
+def _subset_file(claim_paths, ids: list[str], tmp: str) -> str:
+    """Claim records of `ids` only (same fields), so a blind second-review
+    workbook carries just those claims. Order follows `ids`."""
+    rows = {}
+    for p in claim_paths:
+        with open(p, encoding="utf-8") as f:
+            for line in f:
+                if line.strip():
+                    r = json.loads(line)
+                    rows[r["claim_id"]] = line if line.endswith("\n") else line + "\n"
+    unknown = [i for i in ids if i not in rows]
+    if unknown:
+        raise SystemExit(f"unknown claim ids: {unknown}")
+    path = os.path.join(tmp, "subset.jsonl")
+    with open(path, "w", encoding="utf-8") as f:
+        f.writelines(rows[i] for i in ids)
+    return path
+
+
+def export(out: str, claim_paths=(DEV_PATH,), ids: list[str] | None = None) -> int:
+    if ids:
+        with tempfile.TemporaryDirectory() as tmp:
+            return export(out, (_subset_file(claim_paths, ids, tmp),))
     claims = [c for p in claim_paths for c in load_claims(p)]
     if any(c.split != "development" for c in claims):
         raise SystemExit("dev workbook: only development claims")
@@ -116,8 +154,36 @@ def export(out: str, claim_paths=(DEV_PATH,)) -> int:
     return n
 
 
+def dev_eligible_filings(claim, filings: list[dict]) -> list[dict]:
+    """Development evidence rule: same company, allowed form, filed on or before
+    the cutoff -- e.g. the prior-year 10-Q a year-over-year balance comparison
+    needs, which the system's retrieval set (latest 10-K + 2 latest 10-Qs)
+    leaves out."""
+    forms = {form for src in claim.allowed_sources for form in SOURCE_FORMS.get(src, ())}
+    return sorted((f for f in filings if f["company"] == claim.company and f["form"] in forms and f["filed"] <= claim.as_of_date),
+                  key=lambda f: f["filed"])
+
+
+@contextlib.contextmanager
+def _dev_evidence_rule():
+    gold_rule = aw.eligible_filings
+    aw.eligible_filings = dev_eligible_filings
+    try:
+        yield gold_rule
+    finally:
+        aw.eligible_filings = gold_rule
+
+
 def read_dev(path: str, claim_paths=(DEV_PATH,)) -> list[dict]:
-    annotations = aw.read_workbook(path, list(claim_paths))  # all gold-workflow validation
+    with _dev_evidence_rule() as system_rule:
+        annotations = aw.read_workbook(path, list(claim_paths))  # all gold-workflow validation, wider evidence rule
+    claims = {c.claim_id: c for p in claim_paths for c in load_claims(p)}
+    manifest = aw.load_manifest()
+    outside = {}
+    for a in annotations:
+        system_set = {f["accession_number"] for f in system_rule(claims[a.claim_id], manifest)}
+        cited = [e["accession_number"] for e in a.supporting_evidence + a.contradictory_evidence]
+        outside[a.claim_id] = sorted({x for x in cited if x not in system_set})
     wb = load_workbook(path, data_only=False)
     cs = wb["Claims"]
     col = {cell.value: cell.column - 1 for cell in cs[1]}
@@ -141,14 +207,26 @@ def read_dev(path: str, claim_paths=(DEV_PATH,)) -> list[dict]:
     errors += [f"{cid}: confidence is required for a labelled claim" for cid in sorted(labelled) if not extra[cid]["confidence"]]
     if errors:
         raise SchemaError("workbook has problems; nothing was written:\n  " + "\n  ".join(errors))
-    return [{**vars(a), "split": "development", "dev_addendum_version": DEV_ADDENDUM_VERSION, **extra[a.claim_id]} for a in annotations]
+    return [{**vars(a), "split": "development", "dev_addendum_version": DEV_ADDENDUM_VERSION, **extra[a.claim_id],
+             "evidence_outside_system_corpus": outside[a.claim_id]} for a in annotations]
 
 
-def import_dev(path: str, annotation_dir: str = DEV_ANNOTATION_DIR, claim_paths=(DEV_PATH,)) -> str:
+def import_dev(path: str, annotation_dir: str = DEV_ANNOTATION_DIR, claim_paths=(DEV_PATH,), version: str | None = None) -> str:
+    """`version` (e.g. "v2") writes <reviewer>.<version>.jsonl next to the
+    earlier file, which is never replaced, and records the version and the
+    source workbook's sha256 in every row."""
     rows = read_dev(path, claim_paths)
     if not rows:
         raise SchemaError("no labelled claims in the workbook")
-    target = os.path.join(annotation_dir, f"{rows[0]['reviewer_id']}.jsonl")
+    if version is not None:
+        if not version.replace("-", "").replace("_", "").isalnum():
+            raise SchemaError(f"version {version!r}: letters, digits, - and _ only")
+        import hashlib
+        with open(path, "rb") as f:
+            src = hashlib.sha256(f.read()).hexdigest()
+        rows = [{**r, "annotation_version": version, "source_workbook_sha256": src} for r in rows]
+    name = rows[0]["reviewer_id"] + (f".{version}" if version else "")
+    target = os.path.join(annotation_dir, f"{name}.jsonl")
     if os.path.exists(target):
         raise SchemaError(f"{target} already exists; annotations are not overwritten")
     os.makedirs(annotation_dir, exist_ok=True)
@@ -163,16 +241,20 @@ def main(argv=None):
     sub = ap.add_subparsers(dest="cmd", required=True)
     ex = sub.add_parser("export")
     ex.add_argument("--out", default=os.path.join(DATASET_DIR, "workbooks", "dev_annotation_workbook.xlsx"))
+    ex.add_argument("--ids", nargs="+", help="export only these development claim ids (blind second review)")
     im = sub.add_parser("import")
     im.add_argument("workbook")
+    im.add_argument("--version", help="write <reviewer>.<version>.jsonl beside earlier versions (e.g. v2)")
+    for p in (ex, im):
+        p.add_argument("--claims", default=DEV_PATH, help="development claims file (e.g. datasets/development_cases_dev-v0.2.jsonl)")
     args = ap.parse_args(argv)
     try:
         if args.cmd == "export":
             if os.path.exists(args.out):
                 raise SystemExit(f"{args.out} exists; choose another --out (a filled copy may be there)")
-            print(f"wrote {export(args.out)} claims to {args.out}")
+            print(f"wrote {export(args.out, (args.claims,), ids=args.ids)} claims to {args.out}")
         else:
-            print(f"wrote {import_dev(args.workbook)}")
+            print(f"wrote {import_dev(args.workbook, claim_paths=(args.claims,), version=args.version)}")
     except SchemaError as e:
         raise SystemExit(str(e))
 

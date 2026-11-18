@@ -1,0 +1,80 @@
+{
+  "experiment_id": "a3v2.1-dev-v0.2",
+  "description": "A3 v2.1 on dev-v0.2 (72 claims): A3 v2.0 plus deterministic reporting-period normalisation and duration-aware compatibility (a3v2.periods, a3v2-periods-1.0), period-aware evidence review (review prompts 0.2), period compatibility in the reconciliation table, and period derivations from filed XBRL facts. A2 baseline unchanged (its cached requests are reused). A3v2_1_RG replays A3v2_1_R from the response cache. Same model, retrieval and budgets as a3v2_dev_v0_2.json (A3 v2.0, preserved).",
+  "dataset": {
+    "split": "development",
+    "development_path": "datasets/development_cases_dev-v0.2.jsonl"
+  },
+  "common": {
+    "llm": {
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 4,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    }
+  },
+  "approaches": [
+    {
+      "name": "A2_rag_numeric",
+      "kind": "financial_verification",
+      "description": "A2 baseline: RAG + deterministic numeric verification"
+    },
+    {
+      "name": "A3v2_1_R",
+      "description": "A3 v2.1: evidence reviewer with period compatibility; v1 guards only",
+      "overrides": {
+        "contradiction": {
+          "max_hypotheses": 3,
+          "top_k_per_query": 3
+        },
+        "review": {
+          "enabled": true
+        },
+        "guard": {
+          "enabled": false
+        },
+        "periods": {
+          "enabled": true
+        }
+      }
+    },
+    {
+      "name": "A3v2_1_RG",
+      "description": "A3v2_1_R + deterministic reconciliation guard (cache-only replay of A3v2_1_R)",
+      "replay_of": "A3v2_1_R",
+      "overrides": {
+        "contradiction": {
+          "max_hypotheses": 3,
+          "top_k_per_query": 3
+        },
+        "review": {
+          "enabled": true
+        },
+        "guard": {
+          "enabled": true
+        },
+        "periods": {
+          "enabled": true
+        }
+      }
+    }
+  ]
+}

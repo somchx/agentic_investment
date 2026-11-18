@@ -31,6 +31,57 @@ def qnorm(text: str | None) -> str:
     return _norm((text or "").translate(_TYPOGRAPHIC))
 
 
+# Quote check 1.1 (A3 v2.2 preparation; not used by v2.0-v2.1.1, which keep exact
+# substring matching). A model often quotes a table by stitching rows ("Revenue
+# $ 139,996 $ 120,810 16% Operating expenses 31,100 ...", skipping a row) or by
+# joining excerpts with "...". Such a quote is accepted when
+#   FRAGMENTS  every "..."-separated fragment (>= MIN_QUOTE_CHARS) is in the passage, in order, or
+#   NUMBERS    it carries >= 2 figures (bare years do not count), all of them appear in the passage in the same order,
+#              and at least half of its words (>= 4 letters) appear in the passage.
+# Anything else stays NOT_IN_PASSAGE.
+QUOTE_CHECK_V11 = "a3v2-quote-check-1.1"
+_FIGURE = re.compile(r"\d[\d,]*(?:\.\d+)?")
+_WORD = re.compile(r"[A-Za-z]{4,}")
+
+
+_YEAR = re.compile(r"^(19|20)\d\d$")
+
+
+def _figures(text: str) -> list[str]:
+    """Figures of >= 2 digits; bare years (1900-2099) are labels, not figures."""
+    out = [f.replace(",", "") for f in _FIGURE.findall(text or "") if len(f.replace(",", "").replace(".", "")) >= 2]
+    return [f for f in out if not _YEAR.match(f)]
+
+
+def _in_order(needles: list[str], hay: list[str]) -> bool:
+    it = iter(hay)
+    return all(any(n == h for h in it) for n in needles)
+
+
+def tolerant_quote_status(quote: str, passage: str) -> str:
+    """VERIFIED | VERIFIED_FRAGMENTS | VERIFIED_NUMBERS | TOO_SHORT | NOT_IN_PASSAGE (quote check 1.1)."""
+    q, p = qnorm(quote), qnorm(passage)
+    if len(q) < MIN_QUOTE_CHARS:
+        return "TOO_SHORT"
+    if q in p:
+        return "VERIFIED"
+    parts = [x.strip() for x in re.split(r"\.\.\.|\u2026", q) if x.strip()]
+    if len(parts) > 1 and all(len(x) >= MIN_QUOTE_CHARS for x in parts):
+        pos = 0
+        for x in parts:
+            pos = p.find(x, pos)
+            if pos < 0:
+                break
+            pos += len(x)
+        else:
+            return "VERIFIED_FRAGMENTS"
+    figs = _figures(q)
+    words = [w.lower() for w in _WORD.findall(q)]
+    if len(figs) >= 2 and _in_order(figs, _figures(p)) and (not words or sum(w in p for w in words) * 2 >= len(words)):
+        return "VERIFIED_NUMBERS"
+    return "NOT_IN_PASSAGE"
+
+
 def _shift_year(d: str, years: int = -1) -> str:
     x = date.fromisoformat(d)
     try:
@@ -94,9 +145,21 @@ def check_evidence(ledger, claim, period: ClaimPeriod, evidence_id: str, quote: 
         issues.append("FUTURE_EVIDENCE")
     if unit.kind in ("filing_passage", "xbrl_fact") and not unit.accession_number:
         issues.append("NO_FILING_IDENTITY")
-    pstat = period_status(unit_period_end(unit), period)
-    if pstat == "OTHER_PERIOD":
-        issues.append("PERIOD_MISMATCH")
+    compat = None
+    if period.get("version"):  # A3 v2.1: normalised period and duration-aware compatibility
+        from .periods import PERIODS_VERSION_V11, compatibility, evidence_period, temporal_class
+        ev = evidence_period(unit, quote, period, ledger)
+        compat = {**compatibility(period, ev), "evidence_period": ev}
+        if period["version"] == PERIODS_VERSION_V11:
+            compat["temporal"] = temporal_class(quote) if unit.kind == "filing_passage" and quote else (
+                "HISTORICAL_FACT" if unit.kind != "filing_passage" else "NOT_CHECKED")
+        pstat = compat["status"]
+        if pstat == "MISMATCH":
+            issues.append("PERIOD_MISMATCH")
+    else:
+        pstat = period_status(unit_period_end(unit), period)
+        if pstat == "OTHER_PERIOD":
+            issues.append("PERIOD_MISMATCH")
     qstat = "NOT_CHECKED"
     if quote is not None:
         q = quote or ""
@@ -112,8 +175,11 @@ def check_evidence(ledger, claim, period: ClaimPeriod, evidence_id: str, quote: 
             qstat = "VERIFIED" if not q.strip() or any(value_in_quote(v, q) for v in unit.values or []) else "XBRL_VALUE_NOT_IN_QUOTE"
         if qstat not in ("VERIFIED", "NOT_CHECKED"):
             issues.append(qstat if qstat != "NOT_IN_PASSAGE" else "QUOTE_NOT_IN_PASSAGE")
-    return {"evidence_id": evidence_id, "exists": True, "kind": unit.kind, "company_ok": company_ok, "filed_by_cutoff": filed_ok,
-            "period_status": pstat, "quote_status": qstat, "issues": issues}
+    out = {"evidence_id": evidence_id, "exists": True, "kind": unit.kind, "company_ok": company_ok, "filed_by_cutoff": filed_ok,
+           "period_status": pstat, "quote_status": qstat, "issues": issues}
+    if compat is not None:
+        out["period_compatibility"] = compat
+    return out
 
 
 def check_citations(ledger, claim, period: ClaimPeriod, items: list) -> tuple[list[dict], list[dict]]:
@@ -130,3 +196,40 @@ def check_citations(ledger, claim, period: ClaimPeriod, items: list) -> tuple[li
         row = {"evidence_id": c["evidence_id"], "quote": it.get("quote") or "", "issues": c["issues"], "period_status": c["period_status"]}
         (excluded if c["issues"] else kept).append(row)
     return kept, excluded
+
+
+_DECIDING = ("ENTAILS", "CONTRADICTS")
+_NON_RESULT = ("FORWARD_LOOKING_OR_RISK", "MANAGEMENT_INTENT", "OTHER_CONTEXT", "DEFINITION")
+
+
+def revalidate_quotes_v11(findings: list[dict], excerpt_of, period: dict) -> tuple[list[dict], list[str]]:
+    """Quote check 1.1 applied to validated findings, for the guard only: a finding downgraded only because its
+    key quote was not found verbatim is re-checked with `tolerant_quote_status`; if it now passes, the rest of the
+    reviewer's validation chain (period, temporal class, non-result evidence) is re-applied from the recorded
+    per-evidence checks. `excerpt_of(evidence_id)` returns the passage text. The reviewer's own findings, and so the
+    reconciliation request, are unchanged."""
+    out, restored = [], []
+    historical = (period or {}).get("orientation") == "historical"
+    for f in findings:
+        if f.get("validation_status") != "KEY_QUOTE_NOT_IN_EVIDENCE":
+            out.append(f)
+            continue
+        q = [c for c in f.get("checks") or [] if c.get("quote_status") == "VERIFIED" or
+             tolerant_quote_status(f.get("key_quote") or "", excerpt_of(c.get("evidence_id")) or "") in ("VERIFIED", "VERIFIED_FRAGMENTS", "VERIFIED_NUMBERS")]
+        if not q:
+            out.append(f)
+            continue
+        rel = f["declared_relation"]
+        temporal = [(c.get("period_compatibility") or {}).get("temporal") for c in q]
+        status = ("PERIOD_MISMATCH" if any(c.get("period_status") == "MISMATCH" for c in q) else
+                  "PERIOD_UNKNOWN" if any(c.get("period_status") == "UNKNOWN" for c in q) else
+                  "FORWARD_LOOKING_FOR_HISTORICAL_CLAIM" if historical and rel in _DECIDING and "FORWARD_LOOKING" in temporal else
+                  "TEMPORAL_MIXED_OR_UNCLEAR" if historical and rel in _DECIDING and "MIXED_OR_UNCLEAR" in temporal else "VALID")
+        relation, down = rel, None
+        if rel in _DECIDING and status != "VALID":
+            relation, down = "RELATED_NOT_DECIDING", status
+        elif rel in _DECIDING and f.get("evidence_type") in _NON_RESULT:
+            relation, down = "RELATED_NOT_DECIDING", f"NON_RESULT_EVIDENCE:{f['evidence_type']}"
+        out.append({**f, "relation": relation, "validation_status": status, "downgraded_reason": down, "quote_check": "1.1"})
+        restored.append(f"{f['finding_id']}:{status}")
+    return out, restored

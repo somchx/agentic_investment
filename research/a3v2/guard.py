@@ -25,19 +25,45 @@ the reviewer found deciding and that passed every deterministic check.
 Invalid citations are excluded first and the rules run on what remains. A
 rejected change keeps A2's label and citations. The reviewer's labels are
 inputs, not truths: the guard can only be as right as the findings it gets,
-which is why every finding and decision is written to the trace."""
+which is why every finding and decision is written to the trace.
 
-from . import GUARD_VERSION
+Guard 0.2 (A3 v2.2 preparation; selected per approach with guard.version) adds
+two deterministic rules and changes nothing else; 0.1 stays the default:
+  G3  a deciding finding must be self-contained: every evidence id its
+      justification names (E<n>) must be among the finding's evidence_ids,
+      otherwise it cannot decide (INVALID_DECIDING_EVIDENCE:UNCITED_REFERENCE
+      when no other finding decides)
+  G6  CONFLICTING_DECIDING_EVIDENCE also blocks a change to CONTRADICTED when a
+      valid ENTAILS finding exists (0.1 checked only changes to SUPPORTED)
+Guard 0.3 (exploratory, after the offline replay of 0.2) replaces G3 by
+  G3b a deciding finding may name other evidence in its justification only if
+      that evidence is among the surviving final citations (kept after the
+      deterministic checks); naming anything else makes it non-deciding
+and leaves G6 out (G6 is available as a separate rule for ablations)."""
+
+import re
+
+from . import GUARD_VERSION, GUARD_VERSION_V02, GUARD_VERSION_V03
 from .checks import check_citations
 from .schemas import GuardDecision
 
 DECISIVE = ("SUPPORTED", "CONTRADICTED")
 NUMERIC_DECISIVE = {"NUMERIC_FALSE": "CONTRADICTED", "NUMERIC_ALL_TRUE": "SUPPORTED"}
 RELATION_FOR = {"SUPPORTED": "ENTAILS", "CONTRADICTED": "CONTRADICTS"}
+OPPOSITE = {"ENTAILS": "CONTRADICTS", "CONTRADICTS": "ENTAILS"}
+GUARD_RULES = {"0.1": (), "0.2": ("G3", "G6"), "0.3": ("G3b",)}
+GUARD_VERSIONS = {"0.1": GUARD_VERSION, "0.2": GUARD_VERSION_V02, "0.3": GUARD_VERSION_V03}
+EVIDENCE_REF = re.compile(r"\bE\d+\b")
 
 
 def _valid(f: dict) -> bool:
     return f.get("validation_status") == "VALID"
+
+
+def uncited_references(f: dict) -> list[str]:
+    """Evidence ids named in a finding's justification but absent from its evidence_ids (G3)."""
+    own = set(f.get("evidence_ids") or [])
+    return sorted({r for r in EVIDENCE_REF.findall(f.get("justification") or "") if r not in own})
 
 
 def _numeric_basis(rule: str | None, checks: list[dict], label: str) -> list[str]:
@@ -50,17 +76,21 @@ def _numeric_basis(rule: str | None, checks: list[dict], label: str) -> list[str
 
 def decide(*, initial_label: str, proposed_label: str, initial_rule: str | None, initial_checks: list[dict],
            supporting: list, contradicting: list, assessments: list[dict], counter_numeric: list[dict],
-           findings: list[dict], ledger, claim, period) -> GuardDecision:
+           findings: list[dict], ledger, claim, period, version: str = "0.1", citation_check=check_citations) -> GuardDecision:
+    """`citation_check` is replaceable only so an offline replay can feed the recorded citation checks back in."""
+    if version not in GUARD_RULES:
+        raise ValueError(f"unknown guard version {version!r}")
+    rules = GUARD_RULES[version]
     trace: list[str] = []
     cited = list(supporting or []) + list(contradicting or [])
-    kept, excluded = check_citations(ledger, claim, period, cited)
+    kept, excluded = citation_check(ledger, claim, period, cited)
     kept_ids = {c["evidence_id"] for c in kept}
     if excluded:
         trace.append(f"excluded {len(excluded)} citation(s): " + ", ".join(f"{e['evidence_id']}({'/'.join(e['issues'])})" for e in excluded))
 
     def out(final, outcome, reason, deciding=(), basis=()):
         trace.append(f"{outcome}: {reason}")
-        return {"version": GUARD_VERSION, "initial_label": initial_label, "proposed_label": proposed_label, "final_label": final,
+        return {"version": GUARD_VERSIONS[version], "initial_label": initial_label, "proposed_label": proposed_label, "final_label": final,
                 "outcome": outcome, "reason_code": reason, "excluded_citations": excluded, "deciding_findings": list(deciding),
                 "initial_basis": list(basis), "rule_trace": trace}
 
@@ -89,15 +119,27 @@ def decide(*, initial_label: str, proposed_label: str, initial_rule: str | None,
     numeric_ids = {e for n in counter_numeric or [] if n.get("status") == ("TRUE" if want == "ENTAILS" else "FALSE")
                    for e in n.get("evidence_ids") or []}
     valid_deciding = [f for f in findings if _valid(f) and f["relation"] == want]
+    not_self_contained = []
+    if "G3" in rules or "G3b" in rules:
+        allowed = set() if "G3" in rules else kept_ids
+        not_self_contained = [f for f in valid_deciding if set(uncited_references(f)) - allowed]
+        if not_self_contained:
+            trace.append("G3 not self-contained: " + ", ".join(f"{f['finding_id']} names {'/'.join(uncited_references(f))}"
+                                                               for f in not_self_contained))
+        valid_deciding = [f for f in valid_deciding if f not in not_self_contained]
     cited_deciding = [f for f in valid_deciding if set(f["evidence_ids"]) & (kept_ids | numeric_ids)]
-    if proposed_label == "SUPPORTED":
-        conflicting = [f["finding_id"] for f in findings if _valid(f) and f["relation"] == "CONTRADICTS"]
+    if proposed_label == "SUPPORTED" or "G6" in rules:
+        conflicting = [f["finding_id"] for f in findings if _valid(f) and f["relation"] == OPPOSITE[want]]
         if conflicting:
             return out(initial_label, "REJECT", "CONFLICTING_DECIDING_EVIDENCE", basis=conflicting)
     if cited_deciding:
         return out(proposed_label, "ACCEPT", "DECIDING_EVIDENCE_CITED", deciding=[f["finding_id"] for f in cited_deciding])
     if valid_deciding:
         return out(initial_label, "REJECT", "DECIDING_EVIDENCE_NOT_CITED", deciding=[f["finding_id"] for f in valid_deciding])
+
+    if not_self_contained:
+        return out(initial_label, "REJECT", "INVALID_DECIDING_EVIDENCE:UNCITED_REFERENCE",
+                   deciding=[f["finding_id"] for f in not_self_contained])
 
     # no valid deciding evidence: name the most specific reason
     downgraded = [f for f in findings if f.get("declared_relation") == want and f.get("downgraded_reason")]

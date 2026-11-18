@@ -1,0 +1,194 @@
+{
+  "experiment_id": "a3v2.2-dev-v0.2",
+  "description": "A3 v2.2 (development) on dev-v0.2: A3 v2.1.1 plus guard 0.3 (G3b), quote check 1.1 for the guard, and an isolated decidability classifier call (prompt 0.1) whose record gates decisive changes (G1 + G4 scope) and downgrades evaluative SUPPORTED answers without a criterion (D-sup), plus A3-side numeric checks of A2 (N1 validity, N2 window free cash flow). Per-claim LLM-call budget 5 (was 4) for the extra call, shared by all arms. A2 and the reviewer, reconciliation and planning requests are byte-identical to v2.1.1, so on dev-v0.2 every request is served by the cache. DEVELOPMENT ONLY: the v2.2 rules were designed on dev-v0.2; this run checks that the pipeline reproduces the offline replay. A3v2_2c adds the contribution test (item \u0e02; rules 0.1b chosen after the dev run). Per-claim LLM-call budget 6.",
+  "dataset": {
+    "split": "development",
+    "development_path": "datasets/development_cases_dev-v0.2.jsonl"
+  },
+  "common": {
+    "llm": {
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    }
+  },
+  "approaches": [
+    {
+      "name": "A1_conventional_rag",
+      "kind": "conventional_rag",
+      "description": "claim -> retrieval -> LLM -> verdict"
+    },
+    {
+      "name": "A2_rag_numeric",
+      "kind": "financial_verification",
+      "description": "A2 baseline: RAG + deterministic numeric verification"
+    },
+    {
+      "name": "SR_self_reflection",
+      "kind": "self_reflection",
+      "description": "A2 + self-critique and revision, no new retrieval",
+      "overrides": {
+        "reflection": {
+          "max_items": 3
+        }
+      }
+    },
+    {
+      "name": "A3v2_1_1_R",
+      "description": "A3 v2.1.1: evidence reviewer with period compatibility 1.1 and statement-time checks; v1 guards only",
+      "overrides": {
+        "contradiction": {
+          "max_hypotheses": 3,
+          "top_k_per_query": 3
+        },
+        "review": {
+          "enabled": true,
+          "max_output_tokens": 4096
+        },
+        "guard": {
+          "enabled": false
+        },
+        "periods": {
+          "enabled": true,
+          "version": "1.1"
+        }
+      }
+    },
+    {
+      "name": "A3v2_1_1_RG",
+      "description": "A3v2_1_1_R + deterministic reconciliation guard (cache-only replay of A3v2_1_1_R)",
+      "replay_of": "A3v2_1_1_R",
+      "overrides": {
+        "contradiction": {
+          "max_hypotheses": 3,
+          "top_k_per_query": 3
+        },
+        "review": {
+          "enabled": true,
+          "max_output_tokens": 4096
+        },
+        "guard": {
+          "enabled": true
+        },
+        "periods": {
+          "enabled": true,
+          "version": "1.1"
+        }
+      }
+    },
+    {
+      "name": "A3v2_2",
+      "description": "A3 v2.2: v2.1.1 reviewer + guard 0.3 (G3b) + quote check 1.1 + decidability gate (G1, G4) + D-sup + numeric checks N1/N2",
+      "overrides": {
+        "contradiction": {
+          "max_hypotheses": 3,
+          "top_k_per_query": 3
+        },
+        "review": {
+          "enabled": true,
+          "max_output_tokens": 4096
+        },
+        "guard": {
+          "enabled": true,
+          "version": "0.3"
+        },
+        "periods": {
+          "enabled": true,
+          "version": "1.1"
+        },
+        "quote_check": "1.1",
+        "decidability": {
+          "name": "llm_0.1",
+          "scope_gate": true,
+          "downgrade": "supported"
+        },
+        "numeric_checks": "0.1"
+      }
+    },
+    {
+      "name": "A3v2_2c",
+      "description": "A3 v2.2c: A3 v2.2 + deterministic main-driver / largest-factor test (contribution extraction prompt 0.1, rules 0.1b, post hoc)",
+      "overrides": {
+        "contradiction": {
+          "max_hypotheses": 3,
+          "top_k_per_query": 3
+        },
+        "review": {
+          "enabled": true,
+          "max_output_tokens": 4096
+        },
+        "guard": {
+          "enabled": true,
+          "version": "0.3"
+        },
+        "periods": {
+          "enabled": true,
+          "version": "1.1"
+        },
+        "quote_check": "1.1",
+        "decidability": {
+          "name": "llm_0.1",
+          "scope_gate": true,
+          "downgrade": "supported"
+        },
+        "numeric_checks": "0.1",
+        "contribution": "0.1b"
+      }
+    },
+    {
+      "name": "A3v2_2e",
+      "description": "A3 v2.2 + E1 evidence coverage: a final SUPPORTED / CONTRADICTED needs a validated finding, a valid A2 numeric rule or an A3 deterministic check",
+      "overrides": {
+        "contradiction": {
+          "max_hypotheses": 3,
+          "top_k_per_query": 3
+        },
+        "review": {
+          "enabled": true,
+          "max_output_tokens": 4096
+        },
+        "guard": {
+          "enabled": true,
+          "version": "0.3"
+        },
+        "periods": {
+          "enabled": true,
+          "version": "1.1"
+        },
+        "quote_check": "1.1",
+        "decidability": {
+          "name": "llm_0.1",
+          "scope_gate": true,
+          "downgrade": "supported"
+        },
+        "numeric_checks": "0.1",
+        "coverage": "0.1"
+      }
+    }
+  ],
+  "api_retry": {
+    "max_retries": 5,
+    "base_s": 2.0,
+    "max_s": 60.0,
+    "jitter": true
+  }
+}

@@ -26,7 +26,8 @@ from . import A3V2_VERSION, GRAPH_VERSION
 from .derived import run_computation
 from .guard import decide
 from .interfaces import DefaultAnalyzer, NotAssessedDecidability
-from .prompts import RECONCILIATION_INSTRUCTION_V2
+from . import A3V21_VERSION, A3V211_VERSION, A3V22_VERSION
+from .prompts import RECONCILIATION_INSTRUCTION_V2, RECONCILIATION_INSTRUCTION_V21, RECONCILIATION_INSTRUCTION_V211
 from .reviewer import review
 
 
@@ -53,7 +54,23 @@ def analyze_claim(state: V2State, runtime: Runtime[V2Context]) -> dict:
     v1._require(state, "analyze_claim", "model_verdict")
     run = runtime.context.run
     analysis = runtime.context.analyzer.analyze(run.claim, state["model_verdict"], run.retriever.filings)
-    analysis["decidability"] = runtime.context.decidability.assess(run.claim, analysis["assertions"], [])
+    if _v21(run.cfg):  # normalised reporting period (a3v2.periods) for the claim and its assertions
+        from .periods import VERSIONS, normalize_claim_period
+        p = normalize_claim_period(run.claim, VERSIONS[_pv(run.cfg)])
+        analysis["claim_period"] = p
+        for a in analysis["assertions"]:
+            if a.get("type") == "claim" or not (a.get("numeric") or {}).get("period_end"):
+                a["period_end"] = p["end"]
+            a["comparison_end"] = p["comparison"]["end"]
+            a["period_start"], a["period_months"], a["period_kind"] = p["start"], p["months"], p["kind"]
+    if (run.cfg.get("decidability") or {}).get("name") == "llm_0.1":  # A3 v2.2: classifier record, read by the guard only
+        from .decidability import assess_with_llm
+        rec = assess_with_llm(run)
+        analysis["decidability_record"] = rec
+        analysis["decidability"] = [{"assertion_id": "A0", "status": rec["status"], "predicate_type": rec["predicate_type"],
+                                     "reason": rec.get("note") or ""}]
+    else:
+        analysis["decidability"] = runtime.context.decidability.assess(run.claim, analysis["assertions"], [])
     comps = [run_computation(run.ledger, run.claim, c) for c in analysis["computations"]]
     run.stages.append({"stage": "analyze_claim", "analysis": analysis, "computations": comps})
     return {"v2_analysis": analysis, "v2_computations": comps,
@@ -91,11 +108,16 @@ def reconcile_v2(state: V2State, runtime: Runtime[V2Context]) -> dict:
     t0 = time.monotonic()
     v1._require(state, "reconcile_v2", "contradiction_hypotheses", "counterevidence", "counter_numeric", "v2_review")
     v = state["model_verdict"]
-    table = [{k: f[k] for k in ("assertion_id", "evidence_ids", "relation", "declared_relation", "evidence_type", "definition_mismatch",
-                                 "validation_status", "justification")} for f in state["v2_review"]["findings"]]
+    rcfg = runtime.context.run.cfg
+    keys = ("assertion_id", "evidence_ids", "relation", "declared_relation", "evidence_type", "definition_mismatch",
+            "validation_status", "justification") + (("period_compatibility",) if _v21(rcfg) else ()) + \
+        (("statement_time",) if _pv(rcfg) == "1.1" else ())
+    table = [{k: f.get(k) for k in keys} for f in state["v2_review"]["findings"]]
+    instruction = (RECONCILIATION_INSTRUCTION_V211 if _pv(rcfg) == "1.1" else RECONCILIATION_INSTRUCTION_V21 if _v21(rcfg)
+                   else RECONCILIATION_INSTRUCTION_V2)
     try:
         final = runtime.context.run.ask(
-            "reconciliation", RECONCILIATION_INSTRUCTION_V2,
+            "reconciliation", instruction,
             {"initial_verdict": {"label": state["initial_verdict"]["label"], "claim_type": v.get("claim_type")},
              "hypotheses": state["contradiction_hypotheses"], "counter_evidence": state["counterevidence"],
              "counter_numeric": state["counter_numeric"], "assertions": state["v2_analysis"]["assertions"], "evidence_review": table},
@@ -112,10 +134,69 @@ def reconciliation_guard(state: V2State, runtime: Runtime[V2Context]) -> dict:
     t0 = time.monotonic()
     v1._require(state, "reconciliation_guard", "final_verdict", "financial_verification", "v2_review")
     run, fv = runtime.context.run, state["financial_verification"]
+    findings = state["v2_review"]["findings"]
+    if run.cfg.get("quote_check") == "1.1":  # A3 v2.2: tolerant key-quote check, for the guard's inputs only
+        from .checks import revalidate_quotes_v11
+        findings, restored = revalidate_quotes_v11(findings, lambda i: getattr(run.ledger.get(i), "excerpt", "") if i else "",
+                                                   state["v2_review"]["claim_period"])
     d = decide(initial_label=fv["label"], proposed_label=state["final_verdict"], initial_rule=fv["rule"], initial_checks=fv["checks"],
                supporting=state["final_supporting"], contradicting=state["final_contradicting"],
                assessments=state.get("contradiction_assessment") or [], counter_numeric=state.get("counter_numeric") or [],
-               findings=state["v2_review"]["findings"], ledger=run.ledger, claim=run.claim, period=state["v2_review"]["claim_period"])
+               findings=findings, ledger=run.ledger, claim=run.claim, period=state["v2_review"]["claim_period"],
+               version=run.cfg["guard"].get("version") or "0.1")
+    rec = (state["v2_analysis"] or {}).get("decidability_record")
+    if rec is not None:  # A3 v2.2 phase 1: G1 (+G4) gate on accepted changes, D / D-sup downgrade
+        from .decidability import apply_phase1
+        dcfg = run.cfg["decidability"]
+        label, why = apply_phase1(fv["label"], d["final_label"], rec, findings, bool(dcfg.get("scope_gate")), dcfg.get("downgrade") or False)
+        d = {**d, "decidability_gate": {"record": rec, "reason": why, "label_before": d["final_label"], "label_after": label}}
+        if why:
+            d["rule_trace"] = d["rule_trace"] + [f"decidability: {why} ({d['final_label']} -> {label})"]
+            if label == fv["label"] and d["final_label"] != fv["label"]:
+                d["outcome"], d["reason_code"] = "REJECT", f"DECIDABILITY:{why}"
+            elif why.endswith("DOWNGRADE_NO_CRITERION"):
+                d["reason_code"] = d["reason_code"] + "+DOWNGRADE_NO_CRITERION"
+            d["final_label"] = label
+    if run.cfg.get("numeric_checks") == "0.1":  # A3 v2.2: N1 validity of A2's numeric rule, N2 window free cash flow
+        from .numeric_checks import apply_numeric_checks, fcf_direction_check, numeric_validity
+        from .periods import derive_for_claim
+        period = state["v2_review"]["claim_period"]
+        validity = numeric_validity(fv["rule"], fv["checks"], period, run.claim.as_of_date, rec)
+        fcf = fcf_direction_check(run.claim.claim, run.claim.company, run.claim.as_of_date, period)
+        if fcf.get("status") in ("TRUE", "FALSE"):  # register the window figures as evidence for the trace
+            fcf["evidence_ids"] = [x["evidence_id"] for m in ("OperatingCashFlow", "CapitalExpenditure")
+                                   for x in derive_for_claim(run.ledger, run.claim, period, m)]
+        label, why = apply_numeric_checks(d["final_label"], fv["rule"], validity, fcf, findings, rec)
+        d = {**d, "numeric_checks": {"validity": validity, "fcf": {k: v for k, v in fcf.items() if k != "inputs"},
+                                     "reason": why, "label_before": d["final_label"], "label_after": label}}
+        if why:
+            d["rule_trace"] = d["rule_trace"] + [f"numeric checks: {why} ({d['final_label']} -> {label})"]
+            d["reason_code"] = d["reason_code"] + "+" + why
+            if label != fv["label"] and d["outcome"] == "REJECT":
+                d["outcome"] = "ACCEPT"
+            d["final_label"] = label
+    if run.cfg.get("contribution") == "0.1b" and rec is not None:  # A3 v2.2c: deterministic main-driver / largest-factor test
+        from .contribution import apply_contribution_b, assess_contribution
+        verdict = assess_contribution(run, rec, state["v2_review"].get("reviewed_evidence_ids") or [])
+        label, why = apply_contribution_b(d["final_label"], verdict)
+        d = {**d, "contribution": {**verdict, "reason": why, "label_before": d["final_label"], "label_after": label}}
+        if why:
+            d["rule_trace"] = d["rule_trace"] + [f"contribution: {why} ({d['final_label']} -> {label})"]
+            d["reason_code"] = d["reason_code"] + "+" + why
+            if label != fv["label"] and d["outcome"] == "REJECT":
+                d["outcome"] = "ACCEPT"
+            d["final_label"] = label
+    if run.cfg.get("coverage") == "0.1":  # A3 v2.2 E1: a decisive final label needs a validated basis
+        from .numeric_checks import apply_coverage, evidence_basis
+        nc = d.get("numeric_checks") or {}
+        det = any(k in d["reason_code"] for k in ("N1_", "N2_", "C_TRUE", "C_FALSE"))
+        basis = evidence_basis(d["final_label"], findings, fv["rule"], nc.get("validity") or [], det)
+        label, why = apply_coverage(d["final_label"], basis)
+        d = {**d, "coverage": {"basis": basis, "reason": why, "label_before": d["final_label"], "label_after": label}}
+        if why:
+            d["rule_trace"] = d["rule_trace"] + [f"coverage: {why} ({d['final_label']} -> {label})"]
+            d["reason_code"] = d["reason_code"] + "+" + why
+            d["final_label"] = label
     out = {"v2_guard": d, "final_verdict": d["final_label"]}
     if d["outcome"] == "REJECT":
         out.update({"final_supporting": fv["supporting"], "final_contradicting": fv["contradicting"]})
@@ -129,6 +210,15 @@ def reconciliation_guard(state: V2State, runtime: Runtime[V2Context]) -> dict:
     run.stages.append({"stage": "reconciliation_guard", **d})
     return {**out, "investigation": investigation,
             **v1._step(runtime, "reconciliation_guard", t0, outcome=d["outcome"], reason=d["reason_code"], label=d["final_label"])}
+
+
+def _v21(cfg) -> bool:
+    return bool((cfg.get("periods") or {}).get("enabled"))
+
+
+def _pv(cfg) -> str | None:
+    """periods rule version of an approach ('1.0' = A3 v2.1, '1.1' = A3 v2.1.1), None when off."""
+    return ((cfg.get("periods") or {}).get("version") or "1.0") if _v21(cfg) else None
 
 
 def v1_route(target):
@@ -178,9 +268,12 @@ def run(claim, cfg, llm, run_id=None, analyzer=None, decidability=None, graph=No
     Not registered in experiments.RUNNERS: scripts/run_experiment.py cannot
     start a (paid) v2 run by accident."""
     r = ClaimRun(claim, cfg, llm, run_id)
-    graph = graph or build_v2_graph(bool(cfg["review"]["enabled"]), bool(cfg["guard"]["enabled"]))
+    # when the LLM client retries transient errors itself, the graph does not retry again
+    graph = graph or build_v2_graph(bool(cfg["review"]["enabled"]), bool(cfg["guard"]["enabled"]),
+                                    retry=None if getattr(llm, "retry", None) else LLM_RETRY)
     ctx = V2Context(run=r, analyzer=analyzer or DefaultAnalyzer(), decidability=decidability or NotAssessedDecidability())
     final = graph.invoke(initial_state(claim), context=ctx)
     final["trace"]["graph"]["graph_version"] = GRAPH_VERSION
-    final["trace"]["a3v2_version"] = A3V2_VERSION
+    final["trace"]["a3v2_version"] = A3V22_VERSION if (cfg.get("decidability") or {}).get("name") == "llm_0.1" else \
+        {None: A3V2_VERSION, "1.0": A3V21_VERSION, "1.1": A3V211_VERSION}[_pv(cfg)]
     return final["prediction"], final["trace"]
