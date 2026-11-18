@@ -1,0 +1,1908 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:A3v2_1_1_RG:GOLD-WMT-02:2fb84e54",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3v2_1_1_RG",
+  "approach_kind": "contradiction_aware_v2",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "review": {
+      "enabled": true,
+      "max_output_tokens": 4096,
+      "passage_chars": 1200,
+      "allow_partial_period": false
+    },
+    "guard": {
+      "enabled": true
+    },
+    "analyzer": {
+      "name": "default"
+    },
+    "decidability": {
+      "name": "not_assessed"
+    },
+    "periods": {
+      "enabled": true,
+      "version": "1.1"
+    },
+    "name": "A3v2_1_1_RG",
+    "kind": "contradiction_aware_v2",
+    "description": "A3v2_1_1_R + deterministic reconciliation guard (cache-only replay of A3v2_1_1_R)",
+    "versions": {
+      "a3v2": "a3v2-0.2.1-dev",
+      "review_prompts": "a3v2-review-prompts-0.3",
+      "guard": "a3v2-guard-0.1",
+      "graph": "langgraph-claims-a3v2-0.1",
+      "periods": "a3v2-periods-1.1"
+    },
+    "replay_of": "A3v2_1_1_R"
+  },
+  "config_hash": "84aba6df744a9382",
+  "claim": {
+    "claim_id": "GOLD-WMT-02",
+    "company": "WMT",
+    "claim": "Walmart's operating income for the quarter ended July 31, 2026 was higher than in the same quarter a year earlier.",
+    "as_of_date": "2026-09-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2027 Q2"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-07-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "operating income increased $1.4 billion and $1.6 billion for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "Three Months Ended July 31, Six Months Ended July 31, (Amounts in millions) 2026 2025 2026 2025 Net sales $ 186,100 $ 175,750 $ 361,784 $ 339,731 Percentage change from comparable period 5.9 % 4.8 % 6.5 % 3.7 % Operating income $ 9,383 $ 7,286 $ 16,876 $ 14,421 Percentage change from comparable period 28.8 % (8.2) % 17.0 % (2.4) %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Walmart's operating income for the quarter ended July 31, 2026 was higher than in the same quarter a year earlier. Evidence E5 provides a clear table showing operating income for the three months ended July 31, 2026 was $9,383 million compared to $7,286 million for the three months ended July 31, 2025, representing a 28.8% increase. Evidence E1 confirms this by stating that \"operating income increased $1.4 billion...for the three...months ended July 31, 2026...when compared to the same periods in the previous fiscal year.\" The difference of $9,383M - $7,286M = $2,097M is approximately $2.1 billion (note: there's a slight discrepancy with the $1.4B stated in E1, but both sources confirm an increase). The claim is fully supported by the evidence.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_ALL_TRUE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-07-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-07-31",
+            "basis": "quarter",
+            "level": 9383000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2026-05-01",
+                "period_end": "2026-07-31",
+                "value": 9383000000.0,
+                "filed": "2026-08-28",
+                "form": "10-Q",
+                "accession_number": "0000104169-26-000154",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 7286000000.0,
+            "prior_period_end": "2025-07-31",
+            "yoy_change": 0.2878122426571507,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "analyze_claim",
+      "analysis": {
+        "assertions": [
+          {
+            "assertion_id": "A0",
+            "text": "Walmart's operating income for the quarter ended July 31, 2026 was higher than in the same quarter a year earlier.",
+            "type": "claim",
+            "period_end": "2026-07-31",
+            "comparison_end": "2025-07-31",
+            "period_start": "2026-05-01",
+            "period_months": 3,
+            "period_kind": "duration"
+          },
+          {
+            "assertion_id": "N1",
+            "type": "numeric",
+            "numeric": {
+              "metric": "OperatingIncome",
+              "measure": "yoy_growth",
+              "period_basis": "quarter",
+              "period_end": "2026-07-31",
+              "comparison": "increase",
+              "threshold": null,
+              "stated_value": null
+            },
+            "text": "OperatingIncome yoy_growth increase None",
+            "period_end": "2026-07-31",
+            "comparison_end": "2025-07-31",
+            "period_start": "2026-05-01",
+            "period_months": 3,
+            "period_kind": "duration"
+          }
+        ],
+        "computations": [],
+        "claim_period": {
+          "version": "a3v2-periods-1.1",
+          "kind": "duration",
+          "start": "2026-05-01",
+          "end": "2026-07-31",
+          "months": 3,
+          "label": "3M ended 2026-07-31",
+          "fiscal_year": 2027,
+          "source": "text_date",
+          "comparison": {
+            "start": "2025-05-01",
+            "end": "2025-07-31"
+          },
+          "notes": [],
+          "period_end": "2026-07-31",
+          "comparison_end": "2025-07-31",
+          "basis": "quarter",
+          "orientation": "historical",
+          "years": [
+            2025,
+            2026,
+            2027
+          ]
+        },
+        "analyzer": "default-whole-claim-0.1",
+        "decidability": [
+          {
+            "assertion_id": "A0",
+            "status": "NOT_ASSESSED",
+            "reason": "decidability check not implemented yet"
+          },
+          {
+            "assertion_id": "N1",
+            "status": "NOT_ASSESSED",
+            "reason": "decidability check not implemented yet"
+          }
+        ]
+      },
+      "computations": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Was the operating income increase driven by one-time items, restructuring charges, or non-recurring gains that would make the comparison less meaningful?",
+          "search_query": "operating income one-time non-recurring restructuring charges gains losses special items Q2 2026 2025",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Did acquisitions, divestitures, or discontinued operations significantly impact the operating income comparison between the two periods?",
+          "search_query": "acquisitions divestitures discontinued operations segment changes operating income Q2 2026 2025",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Are there segment-level disclosures showing that the consolidated operating income increase masks significant declines in major business segments?",
+          "search_query": "segment operating income Walmart U.S. Sam's Club International Q2 three months July 2026 2025",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "operating income one-time non-recurring restructuring charges gains losses special items Q2 2026 2025",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "acquisitions divestitures discontinued operations segment changes operating income Q2 2026 2025",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "segment operating income Walmart U.S. Sam's Club International Q2 three months July 2026 2025",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "evidence_review",
+      "version": "a3v2-review-prompts-0.1",
+      "claim_period": {
+        "version": "a3v2-periods-1.1",
+        "kind": "duration",
+        "start": "2026-05-01",
+        "end": "2026-07-31",
+        "months": 3,
+        "label": "3M ended 2026-07-31",
+        "fiscal_year": 2027,
+        "source": "text_date",
+        "comparison": {
+          "start": "2025-05-01",
+          "end": "2025-07-31"
+        },
+        "notes": [],
+        "period_end": "2026-07-31",
+        "comparison_end": "2025-07-31",
+        "basis": "quarter",
+        "orientation": "historical",
+        "years": [
+          2025,
+          2026,
+          2027
+        ]
+      },
+      "assertions": [
+        {
+          "assertion_id": "A0",
+          "text": "Walmart's operating income for the quarter ended July 31, 2026 was higher than in the same quarter a year earlier.",
+          "type": "claim",
+          "period_end": "2026-07-31",
+          "comparison_end": "2025-07-31",
+          "period_start": "2026-05-01",
+          "period_months": 3,
+          "period_kind": "duration"
+        },
+        {
+          "assertion_id": "N1",
+          "type": "numeric",
+          "numeric": {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-07-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "text": "OperatingIncome yoy_growth increase None",
+          "period_end": "2026-07-31",
+          "comparison_end": "2025-07-31",
+          "period_start": "2026-05-01",
+          "period_months": 3,
+          "period_kind": "duration"
+        }
+      ],
+      "reviewed_evidence_ids": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "E9",
+        "E7",
+        "E8",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "findings": [
+        {
+          "finding_id": "R1",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E7",
+            "E8"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Operating income $ 9,383 $ 7,286",
+          "justification": "E7 shows operating income of $9,383 million for the three months ended July 31, 2026. E8 shows operating income of $7,286 million for the three months ended July 31, 2025. Since $9,383M > $7,286M, this directly entails that operating income for Q2 FY2027 was higher than the same quarter a year earlier. Both evidence items have period_status EXACT_MATCH.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2026-05-01",
+                  "end": "2026-07-31",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "comparison",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-05-01",
+                  "end": "2025-07-31",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R2",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E9"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "0.2878122426571507",
+          "justification": "E9 is a derived metric showing year-over-year growth of operating income for the quarter ended July 31, 2026 of approximately 28.78% (0.288 as a ratio). A positive growth rate entails that operating income increased. Period_status is COMPATIBLE_AFTER_VERIFIED_DERIVATION.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E9",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2026-05-01",
+                  "end": "2026-07-31",
+                  "months": [
+                    3
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "OperatingIncome"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R3",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E1"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "operating income increased $1.4 billion and $1.6 billion for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year",
+          "justification": "This passage explicitly states that operating income increased $1.4 billion for the three months ended July 31, 2026 compared to the same period in the previous fiscal year. This directly entails the assertion. However, period_status is UNKNOWN because the passage covers both three and six month periods.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": "PERIOD_MISMATCH",
+          "checks": [
+            {
+              "evidence_id": "E1",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "DURATION_DIFFERS:6M_vs_3M",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-07-31",
+                  "months": [
+                    6
+                  ],
+                  "markers": [
+                    "YTD6"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R4",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E5"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended July 31, 2026 2025 Operating income $ 9,383 $ 7,286 Percentage change from comparable period 28.8 %",
+          "justification": "This table shows operating income of $9,383M for three months ended July 31, 2026 versus $7,286M for the same period in 2025, with a 28.8% increase. This entails that operating income was higher in Q2 FY2027 than Q2 FY2026. Period_status is UNKNOWN because the passage covers both three and six month periods.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "checks": [
+            {
+              "evidence_id": "E5",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-07-31",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025,
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R5",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E7",
+            "E8"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Operating income $ 9,383 $ 7,286",
+          "justification": "E7 shows operating income of $9,383 million for Q2 FY2027 and E8 shows $7,286 million for Q2 FY2026. The increase from $7,286M to $9,383M represents a positive year-over-year growth, entailing the numeric assertion of an increase. Both have period_status EXACT_MATCH.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2026-05-01",
+                  "end": "2026-07-31",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "comparison",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-05-01",
+                  "end": "2025-07-31",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R6",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E9"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "0.2878122426571507",
+          "justification": "E9 directly provides the year-over-year growth metric for operating income for the quarter ended July 31, 2026, showing a positive growth rate of approximately 28.78%. This entails an increase in operating income. Period_status is COMPATIBLE_AFTER_VERIFIED_DERIVATION.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E9",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2026-05-01",
+                  "end": "2026-07-31",
+                  "months": [
+                    3
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "OperatingIncome"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R7",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E1"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "operating income increased $1.4 billion and $1.6 billion for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year",
+          "justification": "This passage explicitly states operating income increased for the three months ended July 31, 2026 compared to the prior year, directly entailing a positive year-over-year growth. Period_status is UNKNOWN due to the passage covering multiple periods.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": "PERIOD_MISMATCH",
+          "checks": [
+            {
+              "evidence_id": "E1",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "DURATION_DIFFERS:6M_vs_3M",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-07-31",
+                  "months": [
+                    6
+                  ],
+                  "markers": [
+                    "YTD6"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R8",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E5"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended July 31, 2026 2025 Operating income $ 9,383 $ 7,286 Percentage change from comparable period 28.8 %",
+          "justification": "The table shows a 28.8% increase in operating income for the three months ended July 31, 2026 versus 2025, directly entailing positive year-over-year growth. Period_status is UNKNOWN because the passage covers both three and six month periods.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "checks": [
+            {
+              "evidence_id": "E5",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-07-31",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025,
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        }
+      ],
+      "dropped_findings": [],
+      "llm_called": true,
+      "period_derivations": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_ALL_TRUE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E11",
+              "quote": "The increases for both the three and six months ended July 31, 2026 were partially offset by lapping charges of $0.4 billion related to certain legal matters for the same periods in the previous fiscal year.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000154",
+              "form": "10-Q",
+              "filed": "2026-08-28",
+              "period_end": "2026-07-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+              "locator": "10-Q 0000104169-26-000154:72013-73129"
+            },
+            {
+              "evidence_id": "E11",
+              "quote": "Other gains and losses for the three and six months ended July 31, 2026 consisted of net losses of $1.2 billion and $0.9 billion, respectively, compared to net gains of $2.7 billion and $2.1 billion for the same periods in the previous fiscal year.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000154",
+              "form": "10-Q",
+              "filed": "2026-08-28",
+              "period_end": "2026-07-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+              "locator": "10-Q 0000104169-26-000154:72013-73129"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E13",
+              "quote": "Goodwill recorded in fiscal 2025 relates to the acquisition of VIZIO Holding Corp. in December 2024 within the Walmart U.S. segment.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:258991-260127"
+            },
+            {
+              "evidence_id": "E15",
+              "quote": "the impact of acquisitions, divestitures, store or club closures and other strategic decisions",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000154",
+              "form": "10-Q",
+              "filed": "2026-08-28",
+              "period_end": "2026-07-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+              "locator": "10-Q 0000104169-26-000154:118607-119807"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E16",
+              "quote": "Operating income 9,383 7,286 16,876 14,421",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000154",
+              "form": "10-Q",
+              "filed": "2026-08-28",
+              "period_end": "2026-07-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+              "locator": "10-Q 0000104169-26-000154:46031-47147"
+            },
+            {
+              "evidence_id": "E17",
+              "quote": "Operating income $ 485 $ 314 $ 1,000 $ 843",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000154",
+              "form": "10-Q",
+              "filed": "2026-08-28",
+              "period_end": "2026-07-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+              "locator": "10-Q 0000104169-26-000154:81545-82704"
+            },
+            {
+              "evidence_id": "E18",
+              "quote": "Operating income $ 1,439 $ 1,234 $ 3,041 $ 2,527",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000154",
+              "form": "10-Q",
+              "filed": "2026-08-28",
+              "period_end": "2026-07-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+              "locator": "10-Q 0000104169-26-000154:78107-79259"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation_guard",
+      "version": "a3v2-guard-0.1",
+      "initial_label": "SUPPORTED",
+      "proposed_label": "SUPPORTED",
+      "final_label": "SUPPORTED",
+      "outcome": "NO_CHANGE",
+      "reason_code": "NO_CHANGE",
+      "excluded_citations": [
+        {
+          "evidence_id": "E1",
+          "quote": "operating income increased $1.4 billion and $1.6 billion for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year.",
+          "issues": [
+            "PERIOD_MISMATCH"
+          ],
+          "period_status": "MISMATCH"
+        }
+      ],
+      "deciding_findings": [],
+      "initial_basis": [],
+      "rule_trace": [
+        "excluded 1 citation(s): E1(PERIOD_MISMATCH)",
+        "NO_CHANGE: NO_CHANGE"
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "b4292c306ea0f9861c65ed0d4ac7a761e4c52943c19bc175e2396546c28b4f36",
+      "source": "cache",
+      "input_tokens": 3884,
+      "output_tokens": 672,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-07-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "operating income increased $1.4 billion and $1.6 billion for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "Three Months Ended July 31, Six Months Ended July 31, (Amounts in millions) 2026 2025 2026 2025 Net sales $ 186,100 $ 175,750 $ 361,784 $ 339,731 Percentage change from comparable period 5.9 % 4.8 % 6.5 % 3.7 % Operating income $ 9,383 $ 7,286 $ 16,876 $ 14,421 Percentage change from comparable period 28.8 % (8.2) % 17.0 % (2.4) %"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Walmart's operating income for the quarter ended July 31, 2026 was higher than in the same quarter a year earlier. Evidence E5 provides a clear table showing operating income for the three months ended July 31, 2026 was $9,383 million compared to $7,286 million for the three months ended July 31, 2025, representing a 28.8% increase. Evidence E1 confirms this by stating that \"operating income increased $1.4 billion...for the three...months ended July 31, 2026...when compared to the same periods in the previous fiscal year.\" The difference of $9,383M - $7,286M = $2,097M is approximately $2.1 billion (note: there's a slight discrepancy with the $1.4B stated in E1, but both sources confirm an increase). The claim is fully supported by the evidence.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "549aa13d32e1cb15c6dbb097d863052ec952a52620ab83593be3a6c2e56de18d",
+      "source": "cache",
+      "input_tokens": 5344,
+      "output_tokens": 303,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Was the operating income increase driven by one-time items, restructuring charges, or non-recurring gains that would make the comparison less meaningful?",
+            "search_query": "operating income one-time non-recurring restructuring charges gains losses special items Q2 2026 2025",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Did acquisitions, divestitures, or discontinued operations significantly impact the operating income comparison between the two periods?",
+            "search_query": "acquisitions divestitures discontinued operations segment changes operating income Q2 2026 2025",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Are there segment-level disclosures showing that the consolidated operating income increase masks significant declines in major business segments?",
+            "search_query": "segment operating income Walmart U.S. Sam's Club International Q2 three months July 2026 2025",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "evidence_review",
+      "tool": "submit_evidence_review",
+      "request_key": "b21987d574574fd89d37a0374ea7cc532592db1dcfc4a6260efbc3bf5bd24ee8",
+      "source": "cache",
+      "input_tokens": 8553,
+      "output_tokens": 1467,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "findings": [
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E7",
+              "E8"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Operating income $ 9,383 $ 7,286",
+            "justification": "E7 shows operating income of $9,383 million for the three months ended July 31, 2026. E8 shows operating income of $7,286 million for the three months ended July 31, 2025. Since $9,383M > $7,286M, this directly entails that operating income for Q2 FY2027 was higher than the same quarter a year earlier. Both evidence items have period_status EXACT_MATCH."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E9"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "0.2878122426571507",
+            "justification": "E9 is a derived metric showing year-over-year growth of operating income for the quarter ended July 31, 2026 of approximately 28.78% (0.288 as a ratio). A positive growth rate entails that operating income increased. Period_status is COMPATIBLE_AFTER_VERIFIED_DERIVATION."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E1"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "operating income increased $1.4 billion and $1.6 billion for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year",
+            "justification": "This passage explicitly states that operating income increased $1.4 billion for the three months ended July 31, 2026 compared to the same period in the previous fiscal year. This directly entails the assertion. However, period_status is UNKNOWN because the passage covers both three and six month periods."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E5"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Three Months Ended July 31, 2026 2025 Operating income $ 9,383 $ 7,286 Percentage change from comparable period 28.8 %",
+            "justification": "This table shows operating income of $9,383M for three months ended July 31, 2026 versus $7,286M for the same period in 2025, with a 28.8% increase. This entails that operating income was higher in Q2 FY2027 than Q2 FY2026. Period_status is UNKNOWN because the passage covers both three and six month periods."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E7",
+              "E8"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Operating income $ 9,383 $ 7,286",
+            "justification": "E7 shows operating income of $9,383 million for Q2 FY2027 and E8 shows $7,286 million for Q2 FY2026. The increase from $7,286M to $9,383M represents a positive year-over-year growth, entailing the numeric assertion of an increase. Both have period_status EXACT_MATCH."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E9"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "0.2878122426571507",
+            "justification": "E9 directly provides the year-over-year growth metric for operating income for the quarter ended July 31, 2026, showing a positive growth rate of approximately 28.78%. This entails an increase in operating income. Period_status is COMPATIBLE_AFTER_VERIFIED_DERIVATION."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E1"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "operating income increased $1.4 billion and $1.6 billion for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year",
+            "justification": "This passage explicitly states operating income increased for the three months ended July 31, 2026 compared to the prior year, directly entailing a positive year-over-year growth. Period_status is UNKNOWN due to the passage covering multiple periods."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E5"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Three Months Ended July 31, 2026 2025 Operating income $ 9,383 $ 7,286 Percentage change from comparable period 28.8 %",
+            "justification": "The table shows a 28.8% increase in operating income for the three months ended July 31, 2026 versus 2025, directly entailing positive year-over-year growth. Period_status is UNKNOWN because the passage covers both three and six month periods."
+          }
+        ]
+      },
+      "isolated_conversation": true,
+      "prompt_version": "a3v2-review-prompts-0.3"
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "f01ecabac4a78f6171f773627c5a63b0dd8358d337910b76161665ff0fac7992",
+      "source": "cache",
+      "input_tokens": 11522,
+      "output_tokens": 1165,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E11",
+                "quote": "The increases for both the three and six months ended July 31, 2026 were partially offset by lapping charges of $0.4 billion related to certain legal matters for the same periods in the previous fiscal year."
+              },
+              {
+                "evidence_id": "E11",
+                "quote": "Other gains and losses for the three and six months ended July 31, 2026 consisted of net losses of $1.2 billion and $0.9 billion, respectively, compared to net gains of $2.7 billion and $2.1 billion for the same periods in the previous fiscal year."
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E13",
+                "quote": "Goodwill recorded in fiscal 2025 relates to the acquisition of VIZIO Holding Corp. in December 2024 within the Walmart U.S. segment."
+              },
+              {
+                "evidence_id": "E15",
+                "quote": "the impact of acquisitions, divestitures, store or club closures and other strategic decisions"
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E16",
+                "quote": "Operating income 9,383 7,286 16,876 14,421"
+              },
+              {
+                "evidence_id": "E17",
+                "quote": "Operating income $ 485 $ 314 $ 1,000 $ 843"
+              },
+              {
+                "evidence_id": "E18",
+                "quote": "Operating income $ 1,439 $ 1,234 $ 3,041 $ 2,527"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E7",
+            "quote": "Operating income $ 9,383 $ 7,286 $ 16,876 $ 14,421"
+          },
+          {
+            "evidence_id": "E8",
+            "quote": "Operating income $ 9,383 $ 7,286 $ 16,876 $ 14,421"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "operating income increased $1.4 billion and $1.6 billion for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The initial verdict of SUPPORTED remains unchanged. The evidence clearly shows that Walmart's consolidated operating income for the three months ended July 31, 2026 was $9,383 million compared to $7,286 million for the same period in 2025, representing a $2,097 million increase (28.8% growth).\n\nAll three challenges were refuted:\n\nH1 (One-time items): Evidence E11 shows that the Q2 2026 period actually benefited from lapping $0.4 billion in legal charges from the prior year, meaning the prior year had unfavorable one-time items that made the comparison MORE favorable, not less. Additionally, \"Other gains and losses\" were net losses in 2026 versus net gains in 2025, meaning non-operating items worked against the operating income comparison, not in favor of it.\n\nH2 (Acquisitions impact): Evidence E13 indicates the VIZIO acquisition occurred in December 2024 (fiscal 2025), which would have affected both comparison periods similarly by Q2 FY2027. No evidence suggests acquisitions or divestitures materially distorted the Q2 2026 vs Q2 2025 operating income comparison.\n\nH3 (Segment declines): Evidence E16, E17, and E18 show that all three major segments had operating income increases: Walmart U.S. (consolidated figures), Sam's Club U.S. ($485M vs $314M), and Walmart International ($1,439M vs $1,234M). There were no significant segment declines masked by the consolidated increase.\n\nThe evidence review confirms that E7 and E8 are VALID evidence with EXACT_MATCH period compatibility and ENTAILS relation to the claim.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Walmart's operating income for the quarter ended July 31, 2026 was higher than in the same quarter a year earlier. FY2027 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "operating income one-time non-recurring restructuring charges gains losses special items Q2 2026 2025",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "acquisitions divestitures discontinued operations segment changes operating income Q2 2026 2025",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "segment operating income Walmart U.S. Sam's Club International Q2 three months July 2026 2025",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-07-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-07-31",
+            "basis": "quarter",
+            "level": 9383000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2026-05-01",
+                "period_end": "2026-07-31",
+                "value": 9383000000.0,
+                "filed": "2026-08-28",
+                "form": "10-Q",
+                "accession_number": "0000104169-26-000154",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 7286000000.0,
+            "prior_period_end": "2025-07-31",
+            "yoy_change": 0.2878122426571507,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-26-000154",
+        "filed": "2026-08-28",
+        "report_date": "2026-07-31",
+        "primary_document": "wmt-20260731.htm",
+        "sha256": "488e112c91cc568d7f13e503392dfb6a2cb22c850a899a4996298f6dda1d2b7a"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-26-000102",
+        "filed": "2026-05-29",
+        "report_date": "2026-04-30",
+        "primary_document": "wmt-20260430.htm",
+        "sha256": "54008c776605c2f20715ffaab32a55799d40d33165976f5e6db60fffeac6b804"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0000104169-26-000055",
+        "filed": "2026-03-13",
+        "report_date": "2026-01-31",
+        "primary_document": "wmt-20260131.htm",
+        "sha256": "ff21adcf33cdbd952b13b9065347bd542c637705ddde19ddeb1f0cdc732a5198"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 687
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:77348-78307",
+      "excerpt": "ng expenses as a percentage of net sales increased 72 and 64 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year. The increase for the three months ended July 31, 2026 was primarily driven by higher self-insured general liability claims expense, increased depreciation related to our capital investments and higher associate healthcare benefit costs related to increased enrollment and medical cost inflation. The increase for the six months ended July 31, 2026 was primarily driven by higher associate healthcare benefit costs, increased depreciation related to our capital investments and higher self-insured general liability claims expense. As a result of the factors discussed above, operating income increased $1.4 billion and $1.6 billion for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:76399-77548",
+      "excerpt": "nded July 31, 2026, respectively. This growth reflects continued strength in customer and Walmart+ member engagement with omnichannel offerings, which was primarily driven by store-fulfilled delivery. Membership and other income increased 15.6% and 30.4% for the three and six months ended July 31, 2026, respectively, primarily driven by double-digit percentage growth in membership fee revenue from Walmart+. Growth during the six months ended July 31, 2026 also reflects increases in certain miscellaneous items. Gross profit rate increased 158 and 95 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily driven by tariff refunds, partially offset by price investments and higher fuel costs within our supply chain. Gross profit rate also benefited from continued growth in higher margin businesses, including advertising. Operating expenses as a percentage of net sales increased 72 and 64 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:83477-84638",
+      "excerpt": "-year membership term. Gross profit rate increased 45 and 11 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily due to tariff refunds, partially offset by price investments and increased eCommerce shipping and fulfillment costs, driven by club-fulfilled delivery. Operating expenses as a percentage of net sales decreased 26 and 13 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year. The decreases for both the three and six months ended July 31, 2026 were primarily driven by higher fuel sales, offset by continued technology investments and higher self-insured general liability claims expense. As a result of the factors discussed above, operating income increased $0.2 billion for both the three and six months ended July 31, 2026, when compared to the same periods in the previous fiscal year. Liquidity and Capital Resources Liquidity The strength and stability of our operations have historically supplied us with a significant source of liquidity.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:71180-72213",
+      "excerpt": "individually material. Gross profit rate increased 96 and 53 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily driven by tariff refunds, partially offset by price investments and higher fuel costs within our supply chain. Gross profit rate also benefited from continued growth in higher margin businesses, including advertising. Operating expenses as a percentage of net sales increased 11 and 22 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year. The increase for the three months ended July 31, 2026 was primarily driven by higher self-insured general liability claims expense influenced by rising costs to resolve claims across retail and related industries, increased depreciation related to our capital investments and higher associate healthcare benefit costs related to increased enrollment and medical cost inflation.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:58432-59629",
+      "excerpt": "higher margin areas, such as digital advertising. Our objective over the long-term is to achieve operating income leverage, which we define as growing operating income at a faster rate than net sales. Three Months Ended July 31, Six Months Ended July 31, (Amounts in millions) 2026 2025 2026 2025 Net sales $ 186,100 $ 175,750 $ 361,784 $ 339,731 Percentage change from comparable period 5.9 % 4.8 % 6.5 % 3.7 % Operating income $ 9,383 $ 7,286 $ 16,876 $ 14,421 Percentage change from comparable period 28.8 % (8.2) % 17.0 % (2.4) % Percentage of net sales Gross profit (1) 25.4 % 24.5 % 24.9 % 24.3 % Operating expenses 21.4 % 21.2 % 21.3 % 21.1 % Operating income 5.0 % 4.1 % 4.7 % 4.2 % (1) Gross profit defined as net sales less cost of sales. Gross profit as a percentage of net sales (\"gross profit rate\") increased 96 and 53 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year, primarily due to tariff refunds, partially offset by price investments and higher fuel costs within our supply chain. Gross profit rate also benefited from continued growth in higher margin businesses, including advertising.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:82504-83677",
+      "excerpt": "ally, higher fuel sales, driven by higher fuel prices and volumes, positively impacted comparable sales by 4.2% and 3.2% for the three and six months ended July 31, 2026, respectively. Sam's Club U.S. eCommerce net sales positively contributed approximately 3.1% to comparable sales for both the three and six months ended July 31, 2026, reflecting continued strength in member engagement with omnichannel offerings, such as club-fulfilled delivery. Membership and other income increased 6.0% and 8.5% for the three and six months ended July 31, 2026, when compared to the same periods in the previous fiscal year. The increases were primarily due to growth in the membership base and Plus penetration. Growth during the six months ended July 31, 2026 also reflects increases in certain miscellaneous items. As previously reported, Sam's Club U.S. increased its annual membership fees, effective May 1, 2026. Membership fees are deferred and recognized ratably over the one-year membership term. Gross profit rate increased 45 and 11 basis points for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": "2026-05-01",
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/0000104169-26-000154-index.htm",
+      "locator": "OperatingIncome 2026-05-01..2026-07-31",
+      "excerpt": null,
+      "values": [
+        9383000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": "2025-05-01",
+      "period_end": "2025-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/0000104169-26-000154-index.htm",
+      "locator": "OperatingIncome 2025-05-01..2025-07-31",
+      "excerpt": null,
+      "values": [
+        7286000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "WMT",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": null,
+      "locator": "OperatingIncome yoy_growth quarter @ 2026-07-31",
+      "excerpt": null,
+      "values": [
+        9383000000.0,
+        7286000000.0,
+        0.2878122426571507
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000102",
+      "form": "10-Q",
+      "filed": "2026-05-29",
+      "period_start": null,
+      "period_end": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000102/wmt-20260430.htm",
+      "locator": "10-Q 0000104169-26-000102:65256-66401",
+      "excerpt": "the same period in the previous fiscal year, primarily driven by higher depreciation related to our capital investments, certain business reorganization charges of $0.2 billion within the Walmart U.S. segment and Corporate and support related to strategic efforts to align our global platforms, as well as higher associate healthcare benefit costs related to increased enrollment and medical cost inflation in the U.S. Other gains and losses consist of certain non-operating items, such as the change in the fair value of our investments and gains or losses on business dispositions, which by their nature can fluctuate from period to period. Other gains and losses for the three months ended April 30, 2026 consisted of net gains of $0.3 billion, compared to net losses of $0.6 billion for the same period in the previous fiscal year. These net gains and losses primarily consisted of changes in fair value of our equity and other investments driven by changes in their underlying stock prices. Our effective income tax rate was 23.2% for the three months ended April 30, 2026, compared to 22.6% for the same period in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:72013-73129",
+      "excerpt": "cross retail and related industries, increased depreciation related to our capital investments and higher associate healthcare benefit costs related to increased enrollment and medical cost inflation. The increase for the six months ended July 31, 2026 was primarily driven by increased depreciation related to our capital investments, higher associate healthcare benefit costs and higher self-insured general liability claims expense. The increases for both the three and six months ended July 31, 2026 were partially offset by lapping charges of $0.4 billion related to certain legal matters for the same periods in the previous fiscal year. Other gains and losses consist of certain non-operating items, such as the change in the fair value of our investments and gains or losses on business dispositions, which by their nature can fluctuate from period to period. Other gains and losses for the three and six months ended July 31, 2026 consisted of net losses of $1.2 billion and $0.9 billion, respectively, compared to net gains of $2.7 billion and $2.1 billion for the same periods in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:180802-181959",
+      "excerpt": "combined with higher operating income, offset by an increase in average total assets due to higher purchases of property and equipment. ROI was 15.1% and 15.5% for fiscal 2026 and 2025, respectively. The decrease in ROI was primarily due to an increase in average invested capital due to higher purchases of property and equipment. ROI benefited from increased operating income due to improved business performance, which was partially offset by the incremental non-cash share-based compensation charge at PhonePe as well as certain legal matters and other business restructuring charges. Capital Allocation Our strategy includes allocating the majority of our capital to higher-return areas focused on automation such as eCommerce, supply chain and store and club investments. The following table provides additional detail regarding our capital expenditures: (Amounts in millions) Fiscal Years Ended January 31, Allocation of Capital Expenditures 2026 2025 Supply chain, customer-facing initiatives, technology and other $ 16,468 $ 14,603 Store and club remodels 5,571 5,552 New stores and clubs, including expansions and relocations 1,406 450 Total U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:258991-260127",
+      "excerpt": "related to goodwill during fiscal 2026, fiscal 2025 or fiscal 2024. The following table reflects goodwill activity, by reportable segment, for fiscal 2026 and 2025: (Amounts in millions) Walmart U.S. Walmart International Sam's Club U.S. Total Balances as of February 1, 2024 $ 3,364 $ 24,428 $ 321 $ 28,113 Changes in currency translation and other — ( 696 ) — ( 696 ) Acquisitions (1) 1,375 — — 1,375 Balances as of January 31, 2025 4,739 23,732 321 28,792 Changes in currency translation and other 53 ( 119 ) — ( 66 ) Acquisitions — 9 — 9 Balances as of January 31, 2026 $ 4,792 $ 23,622 $ 321 $ 28,735 (1) Goodwill recorded in fiscal 2025 relates to the acquisition of VIZIO Holding Corp. in December 2024 within the Walmart U.S. segment. Intangible assets are recorded in other long-term assets in the Company's Consolidated Balance Sheets . As of January 31, 2026 and 2025, the Company had $ 4.3 billion and $ 4.5 billion, respectively, in indefinite-lived intangible assets which primarily consists of acquired trade names. There were no significant impairment charges related to intangible assets for fiscal 2026, 2025 or 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:189917-191036",
+      "excerpt": "net loss of $0.8 billion in fiscal 2026 and 2025, respectively, primarily driven by changes in the fair value of our equity and other investments due to fluctuations in their underlying stock prices. 38 Our effective income tax rate was 24.4%, 23.4%, and 25.5% for fiscal 2026, 2025 and 2024, respectively. The increase in effective income tax rate in fiscal 2026 compared to fiscal 2025 is primarily due to the share-based compensation charge recorded at the Company's PhonePe subsidiary, which provided no tax benefit. The decrease in effective tax rate in fiscal 2025 compared to fiscal 2024 is primarily due to the tax impact on changes in fair value of our investments. Our effective income tax rate may also fluctuate as a result of various factors, including changes in our assessment of unrecognized tax benefits, valuation allowances, business operations, acquisitions, investments, entry into new businesses and geographies, intercompany transactions, changes in tax law, changes in the administrative practices, principles, and interpretations related to tax, and the mix and size of earnings among our U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:118607-119807",
+      "excerpt": "etitors' entry into and expansion in Walmart's markets or lines of business, and competitive pressures. Operating Factors • the amount of Walmart's net sales and operating expenses denominated in U.S. dollar and various foreign currencies; • the financial performance of Walmart and each of its segments, including the amount of Walmart's cash flow during various periods; • customer transaction and average ticket in Walmart's stores and clubs and on its eCommerce platforms; • the mix of merchandise Walmart sells and its customers purchase; • the availability of goods from suppliers and the cost of goods acquired from suppliers; • the effectiveness of the implementation and operation of Walmart's strategies, plans, programs and initiatives; • the financial and operational impacts of our investments in eCommerce, technology, talent and automation; • supply chain disruption and production, labor shortages and increases in labor costs; • the impact of acquisitions, divestitures, store or club closures and other strategic decisions; • Walmart's ability to successfully integrate acquired businesses; • unexpected changes in Walmart's objectives and plans; • the amount of inventory shrinkage",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:46031-47147",
+      "excerpt": ",950 71,516 Operating income 9,383 7,286 16,876 14,421 Interest, net 171 675 791 1,219 Other (gains) and losses 1,200 ( 2,708 ) 925 ( 2,111 ) Income before income taxes $ 8,012 $ 9,319 $ 15,160 $ 15,313 (1) Total fuel-related cost of sales and operating, selling, general and administrative expenses for Sam's Club U.S. were $ 3.4 billion and $ 2.3 billion for the three months ended July 31, 2026 and 2025, respectively, and $ 6.1 billion and $ 4.5 billion for the six months ended July 31, 2026 and 2025, respectively. (2) Includes other income from corporate campus facilities and miscellaneous items. 14 Table of Contents Depreciation and amortization and capital expenditures for the Company's segments, as well as for Corporate and support, are as follows: Three Months Ended July 31, Six Months Ended July 31, (Amounts in millions) 2026 2025 2026 2025 Walmart U.S. Depreciation and amortization $ 2,602 $ 2,299 $ 5,111 $ 4,539 Capital expenditures 5,442 4,775 10,453 8,547 Walmart International Depreciation and amortization $ 632 $ 572 $ 1,263 $ 1,121 Capital expenditures 991 746 1,812 1,227 Sam's Club U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:81545-82704",
+      "excerpt": "rcentage change from comparable period 4.5 % 6.0 % 4.2 % 5.8 % Operating income $ 485 $ 314 $ 1,000 $ 843 (1) We believe the Excluding Fuel information is useful to investors because it permits investors to understand the effect of the Sam's Club U.S. segment's fuel sales on its results of operations, which are impacted by the volatility of fuel prices. Volatility in fuel prices may continue to impact the operating results of the Sam's Club U.S. segment in the future. Net sales for the Sam's Club U.S. segment increased $2.1 billion or 8.8% and $3.4 billion or 7.5% for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year. The increases were primarily due to comparable sales, including fuel, of 8.6% and 7.3% for the three and six months ended July 31, 2026, respectively, with growth in transactions and unit volumes, reflecting strength in grocery and general merchandise. Additionally, higher fuel sales, driven by higher fuel prices and volumes, positively impacted comparable sales by 4.2% and 3.2% for the three and six months ended July 31, 2026, respectively. Sam's Club U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_start": null,
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/wmt-20260731.htm",
+      "locator": "10-Q 0000104169-26-000154:78107-79259",
+      "excerpt": "discussed above, operating income increased $1.4 billion and $1.6 billion for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year. 22 Table of Contents Walmart International Segment Three Months Ended July 31, Six Months Ended July 31, (Dollar amounts and retail square feet in millions) 2026 2025 2026 2025 Net sales $ 35,198 $ 31,201 $ 70,308 $ 60,955 Percentage change from comparable period 12.8 % 5.5 % 15.3 % 2.6 % Membership and other income 426 381 851 760 Gross profit 7,539 6,729 14,962 13,019 Operating expenses 6,526 5,876 12,772 11,252 Operating income $ 1,439 $ 1,234 $ 3,041 $ 2,527 Percentage of net sales Gross profit 21.4 % 21.6 % 21.3 % 21.4 % Operating expenses 18.5 % 18.8 % 18.2 % 18.5 % Operating income 4.1 % 4.0 % 4.3 % 4.1 % Unit counts at period end 5,783 5,591 5,783 5,591 Retail square feet at period end 278 274 278 274 Net sales for the Walmart International segment increased $4.0 billion or 12.8% and $9.4 billion or 15.3% for the three and six months ended July 31, 2026, respectively, when compared to the same periods in the previous fiscal year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E7",
+      "quote": "Operating income $ 9,383 $ 7,286 $ 16,876 $ 14,421",
+      "valid": true,
+      "issues": [],
+      "kind": "xbrl_fact",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_end": "2026-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/0000104169-26-000154-index.htm",
+      "locator": "OperatingIncome 2026-05-01..2026-07-31"
+    },
+    {
+      "evidence_id": "E8",
+      "quote": "Operating income $ 9,383 $ 7,286 $ 16,876 $ 14,421",
+      "valid": true,
+      "issues": [],
+      "kind": "xbrl_fact",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_end": "2025-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000154/0000104169-26-000154-index.htm",
+      "locator": "OperatingIncome 2025-05-01..2025-07-31"
+    },
+    {
+      "evidence_id": "E9",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0000104169-26-000154",
+      "form": "10-Q",
+      "filed": "2026-08-28",
+      "period_end": "2026-07-31",
+      "source_url": null,
+      "locator": "OperatingIncome yoy_growth quarter @ 2026-07-31"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 29303,
+    "output": 3607
+  },
+  "latency_ms": 11,
+  "estimated_cost_usd": 0.142014,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_ALL_TRUE",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "analyze_claim",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "assertions": 2,
+        "computations": 0,
+        "period_source": "text_date"
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "evidence_review",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "findings": 8,
+        "deciding": 4,
+        "downgraded": 4
+      },
+      {
+        "node": "reconcile_v2",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_ALL_TRUE"
+      },
+      {
+        "node": "reconciliation_guard",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "outcome": "NO_CHANGE",
+        "reason": "NO_CHANGE",
+        "label": "SUPPORTED"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "analyze_claim",
+      "generate_hypotheses",
+      "counter_investigation",
+      "evidence_review",
+      "reconcile_v2",
+      "apply_guards",
+      "reconciliation_guard",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-a3v2-0.1"
+  },
+  "a3v2_version": "a3v2-0.2.1-dev"
+}

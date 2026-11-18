@@ -1,0 +1,2247 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:A3v2_1_1_RG:GOLD-NFLX-01:822c0f05",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3v2_1_1_RG",
+  "approach_kind": "contradiction_aware_v2",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "review": {
+      "enabled": true,
+      "max_output_tokens": 4096,
+      "passage_chars": 1200,
+      "allow_partial_period": false
+    },
+    "guard": {
+      "enabled": true
+    },
+    "analyzer": {
+      "name": "default"
+    },
+    "decidability": {
+      "name": "not_assessed"
+    },
+    "periods": {
+      "enabled": true,
+      "version": "1.1"
+    },
+    "name": "A3v2_1_1_RG",
+    "kind": "contradiction_aware_v2",
+    "description": "A3v2_1_1_R + deterministic reconciliation guard (cache-only replay of A3v2_1_1_R)",
+    "versions": {
+      "a3v2": "a3v2-0.2.1-dev",
+      "review_prompts": "a3v2-review-prompts-0.3",
+      "guard": "a3v2-guard-0.1",
+      "graph": "langgraph-claims-a3v2-0.1",
+      "periods": "a3v2-periods-1.1"
+    },
+    "replay_of": "A3v2_1_1_R"
+  },
+  "config_hash": "84aba6df744a9382",
+  "claim": {
+    "claim_id": "GOLD-NFLX-01",
+    "company": "NFLX",
+    "claim": "Netflix's revenues for the quarter ended September 30, 2026 increased by more than 15% year over year.",
+    "as_of_date": "2026-11-01",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q3"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 0.15,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Revenues for the three months ended September 30, 2026 increased 12% as compared to the three months ended September 30, 2025"
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Three Months Ended Change September 30, 2026 September 30, 2025 Q3'26 vs. Q3'25 (in thousands, except percentages) Revenues $ 12,874,176 $ 11,510,307 $ 1,363,869 12 %"
+          }
+        ],
+        "reasoning_summary": "The claim states that Netflix's revenues for the quarter ended September 30, 2026 increased by more than 15% year over year. However, evidence E2 explicitly shows that revenues for Q3 2026 were $12,874,176 thousand compared to $11,510,307 thousand for Q3 2025, representing a 12% increase. This 12% growth rate is less than the claimed \"more than 15%\" threshold. The evidence directly contradicts the claim's numeric assertion.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NUMERIC_FALSE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 0.15,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-09-30",
+            "basis": "quarter",
+            "level": 12874176000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-07-01",
+                "period_end": "2026-09-30",
+                "value": 12874176000.0,
+                "filed": "2026-10-21",
+                "form": "10-Q",
+                "accession_number": "0001065280-26-000291",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 11510307000.0,
+            "prior_period_end": "2025-09-30",
+            "yoy_change": 0.11849110540665857,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "analyze_claim",
+      "analysis": {
+        "assertions": [
+          {
+            "assertion_id": "A0",
+            "text": "Netflix's revenues for the quarter ended September 30, 2026 increased by more than 15% year over year.",
+            "type": "claim",
+            "period_end": "2026-09-30",
+            "comparison_end": "2025-09-30",
+            "period_start": "2026-07-01",
+            "period_months": 3,
+            "period_kind": "duration"
+          },
+          {
+            "assertion_id": "N1",
+            "type": "numeric",
+            "numeric": {
+              "metric": "Revenue",
+              "measure": "yoy_growth",
+              "period_basis": "quarter",
+              "period_end": "2026-09-30",
+              "comparison": ">",
+              "threshold": 0.15,
+              "stated_value": null
+            },
+            "text": "Revenue yoy_growth > 0.15",
+            "period_end": "2026-09-30",
+            "comparison_end": "2025-09-30",
+            "period_start": "2026-07-01",
+            "period_months": 3,
+            "period_kind": "duration"
+          }
+        ],
+        "computations": [],
+        "claim_period": {
+          "version": "a3v2-periods-1.1",
+          "kind": "duration",
+          "start": "2026-07-01",
+          "end": "2026-09-30",
+          "months": 3,
+          "label": "3M ended 2026-09-30",
+          "fiscal_year": 2026,
+          "source": "text_date",
+          "comparison": {
+            "start": "2025-07-01",
+            "end": "2025-09-30"
+          },
+          "notes": [],
+          "period_end": "2026-09-30",
+          "comparison_end": "2025-09-30",
+          "basis": "quarter",
+          "orientation": "historical",
+          "years": [
+            2025,
+            2026
+          ]
+        },
+        "analyzer": "default-whole-claim-0.1",
+        "decidability": [
+          {
+            "assertion_id": "A0",
+            "status": "NOT_ASSESSED",
+            "reason": "decidability check not implemented yet"
+          },
+          {
+            "assertion_id": "N1",
+            "status": "NOT_ASSESSED",
+            "reason": "decidability check not implemented yet"
+          }
+        ]
+      },
+      "computations": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Could there be a different revenue figure or calculation method (e.g., constant currency, adjusted revenue) that shows growth exceeding 15%?",
+          "search_query": "revenue constant currency adjusted foreign exchange Q3 2026 September 30 2026 growth rate percentage",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Could there be a restatement or correction of the Q3 2025 or Q3 2026 revenue figures that would change the calculated growth rate?",
+          "search_query": "restatement restated correction revised revenue Q3 2025 Q3 2026 September 30",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Could the 12% figure be rounded and the actual growth rate be closer to or above 15%?",
+          "search_query": "revenue growth rate Q3 2026 September 30 2026 year over year percentage precise",
+          "numeric_check": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">=",
+            "threshold": 0.15,
+            "stated_value": null
+          }
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "revenue constant currency adjusted foreign exchange Q3 2026 September 30 2026 growth rate percentage",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "restatement restated correction revised revenue Q3 2025 Q3 2026 September 30",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "revenue growth rate Q3 2026 September 30 2026 year over year percentage precise",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H3",
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-09-30",
+            "basis": "quarter",
+            "level": 12874176000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-07-01",
+                "period_end": "2026-09-30",
+                "value": 12874176000.0,
+                "filed": "2026-10-21",
+                "form": "10-Q",
+                "accession_number": "0001065280-26-000291",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 11510307000.0,
+            "prior_period_end": "2025-09-30",
+            "yoy_change": 0.11849110540665857,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "evidence_review",
+      "version": "a3v2-review-prompts-0.1",
+      "claim_period": {
+        "version": "a3v2-periods-1.1",
+        "kind": "duration",
+        "start": "2026-07-01",
+        "end": "2026-09-30",
+        "months": 3,
+        "label": "3M ended 2026-09-30",
+        "fiscal_year": 2026,
+        "source": "text_date",
+        "comparison": {
+          "start": "2025-07-01",
+          "end": "2025-09-30"
+        },
+        "notes": [],
+        "period_end": "2026-09-30",
+        "comparison_end": "2025-09-30",
+        "basis": "quarter",
+        "orientation": "historical",
+        "years": [
+          2025,
+          2026
+        ]
+      },
+      "assertions": [
+        {
+          "assertion_id": "A0",
+          "text": "Netflix's revenues for the quarter ended September 30, 2026 increased by more than 15% year over year.",
+          "type": "claim",
+          "period_end": "2026-09-30",
+          "comparison_end": "2025-09-30",
+          "period_start": "2026-07-01",
+          "period_months": 3,
+          "period_kind": "duration"
+        },
+        {
+          "assertion_id": "N1",
+          "type": "numeric",
+          "numeric": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 0.15,
+            "stated_value": null
+          },
+          "text": "Revenue yoy_growth > 0.15",
+          "period_end": "2026-09-30",
+          "comparison_end": "2025-09-30",
+          "period_start": "2026-07-01",
+          "period_months": 3,
+          "period_kind": "duration"
+        }
+      ],
+      "reviewed_evidence_ids": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "E9",
+        "E7",
+        "E8",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "findings": [
+        {
+          "finding_id": "R1",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E2"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended Change September 30, 2026 September 30, 2025 Q3'26 vs. Q3'25 (in thousands, except percentages) Revenues $ 12,874,176 $ 11,510,307 $ 1,363,869 12 % Revenues for the three months ended September 30, 2026 increased 12% as compared to the three months ended September 30, 2025",
+          "justification": "This passage explicitly states that revenues for the three months ended September 30, 2026 increased 12% year over year compared to the three months ended September 30, 2025. Since 12% is less than 15%, this contradicts the claim that revenues increased by more than 15%.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E2",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025,
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R2",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E7",
+            "E8"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "12874176000.0 and 11510307000.0",
+          "justification": "E7 shows Q3 2026 revenue of $12,874,176,000 and E8 shows Q3 2025 revenue of $11,510,307,000. The year-over-year growth is (12,874,176 - 11,510,307) / 11,510,307 = 11.85%, which is less than 15%. This contradicts the claim.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2026-07-01",
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "comparison",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-07-01",
+                  "end": "2025-09-30",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R3",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E9"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "0.11849110540665857",
+          "justification": "This derived metric shows the revenue year-over-year growth for the quarter ended September 30, 2026 as approximately 0.1185 or 11.85%, which is less than 15% (0.15). This contradicts the claim that revenues increased by more than 15%.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E9",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2026-07-01",
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "Revenue"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R4",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E2"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended Change September 30, 2026 September 30, 2025 Q3'26 vs. Q3'25 (in thousands, except percentages) Revenues $ 12,874,176 $ 11,510,307 $ 1,363,869 12 % Revenues for the three months ended September 30, 2026 increased 12% as compared to the three months ended September 30, 2025",
+          "justification": "This passage states that Q3 2026 revenues increased 12% year over year. Since 0.12 < 0.15, this contradicts the numeric assertion that revenue yoy_growth > 0.15.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E2",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025,
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R5",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E7",
+            "E8"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "12874176000.0 and 11510307000.0",
+          "justification": "E7 shows Q3 2026 revenue of $12,874,176,000 and E8 shows Q3 2025 revenue of $11,510,307,000. The calculated growth rate is 11.85%, which is less than 15%. This contradicts the numeric assertion.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2026-07-01",
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "comparison",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-07-01",
+                  "end": "2025-09-30",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R6",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E9"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "0.11849110540665857",
+          "justification": "This derived metric directly shows the revenue year-over-year growth rate as 0.1185 (11.85%), which is less than 0.15 (15%). This contradicts the numeric assertion that revenue yoy_growth > 0.15.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E9",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2026-07-01",
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "Revenue"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R7",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E4"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Six months ended June 30, 2026 as compared to the six months ended June 30, 2025 Six Months Ended Change June 30, 2026 June 30, 2025 YTD'26 vs. YTD'25 (in thousands, except percentages) Revenues $ 24,809,695 $ 21,621,967 $ 3,187,728 15 %",
+          "justification": "This evidence shows revenue growth of 15% for the six months ended June 30, 2026, which is a different period than the three months ended September 30, 2026. The period mismatch means this does not decide the claim about Q3 2026.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E4",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-06-30",
+                  "months": [
+                    6
+                  ],
+                  "markers": [
+                    "YTD6"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025,
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R8",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E4"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Six months ended June 30, 2026 as compared to the six months ended June 30, 2025 Six Months Ended Change June 30, 2026 June 30, 2025 YTD'26 vs. YTD'25 (in thousands, except percentages) Revenues $ 24,809,695 $ 21,621,967 $ 3,187,728 15 %",
+          "justification": "This shows 15% revenue growth for the six months ended June 30, 2026, which is a different period than the quarter ended September 30, 2026. The period mismatch means this does not decide the numeric assertion about Q3 2026.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E4",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-06-30",
+                  "months": [
+                    6
+                  ],
+                  "markers": [
+                    "YTD6"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025,
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R9",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E13"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended Change September 30, 2026 September 30, 2025 Q3'26 vs. Q3'25 (in thousands, except percentages) United States and Canada (UCAN) $ 5,628,215 $ 5,071,781 $ 556,434 11 % Europe, Middle East, and Africa (EMEA) 4,106,572 3,699,052 407,520 11 % Latin America (LATAM) 1,602,603 1,370,913 231,690 17 % Asia-Pacific (APAC) 1,536,786 1,368,561 168,225 12 % Total Revenues $ 12,874,176 $ 11,510,307 $ 1,363,869 12 %",
+          "justification": "This passage provides regional revenue breakdown for Q3 2026 vs Q3 2025, showing total revenues increased 12% year over year. Since 12% < 15%, this contradicts the claim.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E13",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025,
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R10",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E13"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended Change September 30, 2026 September 30, 2025 Q3'26 vs. Q3'25 (in thousands, except percentages) Total Revenues $ 12,874,176 $ 11,510,307 $ 1,363,869 12 %",
+          "justification": "This passage shows total revenues for Q3 2026 vs Q3 2025 with a 12% increase. Since 0.12 < 0.15, this contradicts the numeric assertion.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "checks": [
+            {
+              "evidence_id": "E13",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025,
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R11",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E17"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Net income fo r the three months ended September 30, 2026 increased by $1,117 million as compared to the prior comparative period, primarily due to a $1,210 million increase in operating income, driven by a $1,364 million increase in revenues",
+          "justification": "This passage states that revenues increased by $1,364 million for the three months ended September 30, 2026 compared to the prior year period. Combined with the base revenue of $11,510,307 thousand from E8, this represents a 11.85% increase, which is less than 15%.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E17",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R12",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E17"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Net income fo r the three months ended September 30, 2026 increased by $1,117 million as compared to the prior comparative period, primarily due to a $1,210 million increase in operating income, driven by a $1,364 million increase in revenues",
+          "justification": "This passage indicates a $1,364 million increase in revenues for Q3 2026 vs Q3 2025. With the prior year base of $11,510,307 thousand, this represents approximately 11.85% growth, which is less than 15%.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E17",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        }
+      ],
+      "dropped_findings": [],
+      "llm_called": true,
+      "period_derivations": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_FALSE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E11",
+              "quote": "Three Months Ended Change September 30, 2026 September 30, 2025 Q3'26 vs. Q3'25 As Reported Constant Currency Adjustment Hedging (Gains) Losses Included in Revenues Constant Currency Revenues As Reported Hedging (Gains) Losses Included in Revenues Revenues Less Hedging Impact Reported Change Constant Currency Change",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-26-000291",
+              "form": "10-Q",
+              "filed": "2026-10-21",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
+              "locator": "10-Q 0001065280-26-000291:78641-79841"
+            },
+            {
+              "evidence_id": "E11",
+              "quote": "Total Revenues $ 12,874,176 $ 11,510,307 $ 1,363,869 12 %",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-26-000291",
+              "form": "10-Q",
+              "filed": "2026-10-21",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
+              "locator": "10-Q 0001065280-26-000291:78641-79841"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E9",
+              "quote": "yoy_change: 0.11849110540665857",
+              "valid": true,
+              "issues": [],
+              "kind": "derived_metric",
+              "accession_number": "0001065280-26-000291",
+              "form": "10-Q",
+              "filed": "2026-10-21",
+              "period_end": "2026-09-30",
+              "source_url": null,
+              "locator": "Revenue yoy_growth quarter @ 2026-09-30"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation_guard",
+      "version": "a3v2-guard-0.1",
+      "initial_label": "CONTRADICTED",
+      "proposed_label": "CONTRADICTED",
+      "final_label": "CONTRADICTED",
+      "outcome": "NO_CHANGE",
+      "reason_code": "NO_CHANGE",
+      "excluded_citations": [],
+      "deciding_findings": [],
+      "initial_basis": [],
+      "rule_trace": [
+        "NO_CHANGE: NO_CHANGE"
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "6429c831dc1031eaf10980ef1309f15f30b93cc31e28c6daeb189dd659fc3c02",
+      "source": "cache",
+      "input_tokens": 4159,
+      "output_tokens": 488,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 0.15,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Revenues for the three months ended September 30, 2026 increased 12% as compared to the three months ended September 30, 2025"
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Three Months Ended Change September 30, 2026 September 30, 2025 Q3'26 vs. Q3'25 (in thousands, except percentages) Revenues $ 12,874,176 $ 11,510,307 $ 1,363,869 12 %"
+          }
+        ],
+        "reasoning_summary": "The claim states that Netflix's revenues for the quarter ended September 30, 2026 increased by more than 15% year over year. However, evidence E2 explicitly shows that revenues for Q3 2026 were $12,874,176 thousand compared to $11,510,307 thousand for Q3 2025, representing a 12% increase. This 12% growth rate is less than the claimed \"more than 15%\" threshold. The evidence directly contradicts the claim's numeric assertion.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "dd2c9c58c3966051dcafea7cdf9955bc799bb79ec695c9166428b72f7e9e838e",
+      "source": "cache",
+      "input_tokens": 5246,
+      "output_tokens": 384,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Could there be a different revenue figure or calculation method (e.g., constant currency, adjusted revenue) that shows growth exceeding 15%?",
+            "search_query": "revenue constant currency adjusted foreign exchange Q3 2026 September 30 2026 growth rate percentage",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Could there be a restatement or correction of the Q3 2025 or Q3 2026 revenue figures that would change the calculated growth rate?",
+            "search_query": "restatement restated correction revised revenue Q3 2025 Q3 2026 September 30",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Could the 12% figure be rounded and the actual growth rate be closer to or above 15%?",
+            "search_query": "revenue growth rate Q3 2026 September 30 2026 year over year percentage precise",
+            "numeric_check": {
+              "metric": "Revenue",
+              "measure": "yoy_growth",
+              "period_basis": "quarter",
+              "period_end": "2026-09-30",
+              "comparison": ">=",
+              "threshold": 0.15,
+              "stated_value": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "stage": "evidence_review",
+      "tool": "submit_evidence_review",
+      "request_key": "06e565468f10e5987ce2618c016fc2702c9c508d03393dc93e02597dbc265747",
+      "source": "cache",
+      "input_tokens": 8513,
+      "output_tokens": 2660,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "findings": [
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E2"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Three Months Ended Change September 30, 2026 September 30, 2025 Q3'26 vs. Q3'25 (in thousands, except percentages) Revenues $ 12,874,176 $ 11,510,307 $ 1,363,869 12 % Revenues for the three months ended September 30, 2026 increased 12% as compared to the three months ended September 30, 2025",
+            "justification": "This passage explicitly states that revenues for the three months ended September 30, 2026 increased 12% year over year compared to the three months ended September 30, 2025. Since 12% is less than 15%, this contradicts the claim that revenues increased by more than 15%.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E7",
+              "E8"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "12874176000.0 and 11510307000.0",
+            "justification": "E7 shows Q3 2026 revenue of $12,874,176,000 and E8 shows Q3 2025 revenue of $11,510,307,000. The year-over-year growth is (12,874,176 - 11,510,307) / 11,510,307 = 11.85%, which is less than 15%. This contradicts the claim.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E9"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "0.11849110540665857",
+            "justification": "This derived metric shows the revenue year-over-year growth for the quarter ended September 30, 2026 as approximately 0.1185 or 11.85%, which is less than 15% (0.15). This contradicts the claim that revenues increased by more than 15%.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E2"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Three Months Ended Change September 30, 2026 September 30, 2025 Q3'26 vs. Q3'25 (in thousands, except percentages) Revenues $ 12,874,176 $ 11,510,307 $ 1,363,869 12 % Revenues for the three months ended September 30, 2026 increased 12% as compared to the three months ended September 30, 2025",
+            "justification": "This passage states that Q3 2026 revenues increased 12% year over year. Since 0.12 < 0.15, this contradicts the numeric assertion that revenue yoy_growth > 0.15.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E7",
+              "E8"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "12874176000.0 and 11510307000.0",
+            "justification": "E7 shows Q3 2026 revenue of $12,874,176,000 and E8 shows Q3 2025 revenue of $11,510,307,000. The calculated growth rate is 11.85%, which is less than 15%. This contradicts the numeric assertion.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E9"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "0.11849110540665857",
+            "justification": "This derived metric directly shows the revenue year-over-year growth rate as 0.1185 (11.85%), which is less than 0.15 (15%). This contradicts the numeric assertion that revenue yoy_growth > 0.15.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E4"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Six months ended June 30, 2026 as compared to the six months ended June 30, 2025 Six Months Ended Change June 30, 2026 June 30, 2025 YTD'26 vs. YTD'25 (in thousands, except percentages) Revenues $ 24,809,695 $ 21,621,967 $ 3,187,728 15 %",
+            "justification": "This evidence shows revenue growth of 15% for the six months ended June 30, 2026, which is a different period than the three months ended September 30, 2026. The period mismatch means this does not decide the claim about Q3 2026.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E4"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Six months ended June 30, 2026 as compared to the six months ended June 30, 2025 Six Months Ended Change June 30, 2026 June 30, 2025 YTD'26 vs. YTD'25 (in thousands, except percentages) Revenues $ 24,809,695 $ 21,621,967 $ 3,187,728 15 %",
+            "justification": "This shows 15% revenue growth for the six months ended June 30, 2026, which is a different period than the quarter ended September 30, 2026. The period mismatch means this does not decide the numeric assertion about Q3 2026.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E13"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Three Months Ended Change September 30, 2026 September 30, 2025 Q3'26 vs. Q3'25 (in thousands, except percentages) United States and Canada (UCAN) $ 5,628,215 $ 5,071,781 $ 556,434 11 % Europe, Middle East, and Africa (EMEA) 4,106,572 3,699,052 407,520 11 % Latin America (LATAM) 1,602,603 1,370,913 231,690 17 % Asia-Pacific (APAC) 1,536,786 1,368,561 168,225 12 % Total Revenues $ 12,874,176 $ 11,510,307 $ 1,363,869 12 %",
+            "justification": "This passage provides regional revenue breakdown for Q3 2026 vs Q3 2025, showing total revenues increased 12% year over year. Since 12% < 15%, this contradicts the claim.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E13"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Three Months Ended Change September 30, 2026 September 30, 2025 Q3'26 vs. Q3'25 (in thousands, except percentages) Total Revenues $ 12,874,176 $ 11,510,307 $ 1,363,869 12 %",
+            "justification": "This passage shows total revenues for Q3 2026 vs Q3 2025 with a 12% increase. Since 0.12 < 0.15, this contradicts the numeric assertion.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E17"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Net income fo r the three months ended September 30, 2026 increased by $1,117 million as compared to the prior comparative period, primarily due to a $1,210 million increase in operating income, driven by a $1,364 million increase in revenues",
+            "justification": "This passage states that revenues increased by $1,364 million for the three months ended September 30, 2026 compared to the prior year period. Combined with the base revenue of $11,510,307 thousand from E8, this represents a 11.85% increase, which is less than 15%.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E17"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Net income fo r the three months ended September 30, 2026 increased by $1,117 million as compared to the prior comparative period, primarily due to a $1,210 million increase in operating income, driven by a $1,364 million increase in revenues",
+            "justification": "This passage indicates a $1,364 million increase in revenues for Q3 2026 vs Q3 2025. With the prior year base of $11,510,307 thousand, this represents approximately 11.85% growth, which is less than 15%.",
+            "definition_mismatch": false
+          }
+        ]
+      },
+      "isolated_conversation": true,
+      "prompt_version": "a3v2-review-prompts-0.3"
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "2ae0df3904c9287a91d850aa77b8abcebb63a480be1ba034f99f07975cab9e11",
+      "source": "cache",
+      "input_tokens": 11996,
+      "output_tokens": 1018,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E11",
+                "quote": "Three Months Ended Change September 30, 2026 September 30, 2025 Q3'26 vs. Q3'25 As Reported Constant Currency Adjustment Hedging (Gains) Losses Included in Revenues Constant Currency Revenues As Reported Hedging (Gains) Losses Included in Revenues Revenues Less Hedging Impact Reported Change Constant Currency Change"
+              },
+              {
+                "evidence_id": "E11",
+                "quote": "Total Revenues $ 12,874,176 $ 11,510,307 $ 1,363,869 12 %"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E9",
+                "quote": "yoy_change: 0.11849110540665857"
+              }
+            ]
+          }
+        ],
+        "label": "CONTRADICTED",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Revenues for the three months ended September 30, 2026 increased 12% as compared to the three months ended September 30, 2025"
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Three Months Ended Change September 30, 2026 September 30, 2025 Q3'26 vs. Q3'25 (in thousands, except percentages) Revenues $ 12,874,176 $ 11,510,307 $ 1,363,869 12 %"
+          },
+          {
+            "evidence_id": "E7",
+            "quote": "Revenues $ 12,874,176"
+          },
+          {
+            "evidence_id": "E8",
+            "quote": "Revenues $ 11,510,307"
+          },
+          {
+            "evidence_id": "E9",
+            "quote": "yoy_change: 0.11849110540665857"
+          },
+          {
+            "evidence_id": "E13",
+            "quote": "Total Revenues $ 12,874,176 $ 11,510,307 $ 1,363,869 12 %"
+          }
+        ],
+        "reasoning_summary": "All three challenges have been investigated and none support overturning the initial verdict:\n\nH1 (Constant Currency): Evidence E11 shows that even on a constant currency basis, the reported change remains 12% for Q3 2026 vs Q3 2025. The constant currency methodology does not result in growth exceeding 15%. This challenge is refuted.\n\nH2 (Restatement): No evidence was found of any restatement or correction to the Q3 2025 or Q3 2026 revenue figures. This challenge has no relevant evidence.\n\nH3 (Rounding): The computed figure E9 shows the precise year-over-year growth rate as 0.11849 (11.849%), confirming that the 12% figure in the filing is accurately rounded and the actual growth is well below 15%. This challenge is refuted.\n\nThe evidence consistently and unambiguously shows that Netflix's Q3 2026 revenues increased by approximately 11.85% (reported as 12%) year over year, which is less than the claimed \"more than 15%\". Multiple evidence sources (E2, E7, E8, E9, E13) from the official 10-Q filing all confirm this 12% growth rate. The claim is therefore contradicted by the evidence.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Netflix's revenues for the quarter ended September 30, 2026 increased by more than 15% year over year. 2026 Q3",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "revenue constant currency adjusted foreign exchange Q3 2026 September 30 2026 growth rate percentage",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "restatement restated correction revised revenue Q3 2025 Q3 2026 September 30",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "revenue growth rate Q3 2026 September 30 2026 year over year percentage precise",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 0.15,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-09-30",
+            "basis": "quarter",
+            "level": 12874176000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-07-01",
+                "period_end": "2026-09-30",
+                "value": 12874176000.0,
+                "filed": "2026-10-21",
+                "form": "10-Q",
+                "accession_number": "0001065280-26-000291",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 11510307000.0,
+            "prior_period_end": "2025-09-30",
+            "yoy_change": 0.11849110540665857,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H3",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">=",
+            "threshold": 0.15,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-09-30",
+            "basis": "quarter",
+            "level": 12874176000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-07-01",
+                "period_end": "2026-09-30",
+                "value": 12874176000.0,
+                "filed": "2026-10-21",
+                "form": "10-Q",
+                "accession_number": "0001065280-26-000291",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 11510307000.0,
+            "prior_period_end": "2025-09-30",
+            "yoy_change": 0.11849110540665857,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001065280-26-000291",
+        "filed": "2026-10-21",
+        "report_date": "2026-09-30",
+        "primary_document": "nflx-20260930.htm",
+        "sha256": "9b888ecc26f7c842e281e903ebab448a4244b41272bca5cd38b4ccf142eee286"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001065280-26-000212",
+        "filed": "2026-07-17",
+        "report_date": "2026-06-30",
+        "primary_document": "nflx-20260630.htm",
+        "sha256": "0505f7d52b0ee3212251acf0f7c57670655288ae8f0cda6b7dd86607af59b495"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001065280-26-000034",
+        "filed": "2026-01-23",
+        "report_date": "2025-12-31",
+        "primary_document": "nflx-20251231.htm",
+        "sha256": "264db6ba1f54f59e834ad0d3bc192e5f346ca59764af4c9c6422056a8b8e3574"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 586
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
+      "locator": "10-Q 0001065280-26-000291:90478-91634",
+      "excerpt": "the corresponding period in 2025. Nine months ended September 30, 2026 as compared to the nine months ended September 30, 2025 Nine Months Ended Change September 30, 2026 September 30, 2025 YTD’26 vs. YTD’25 (in thousands, except percentages) Interest and other income (expense) $ 2,946,833 $ 126,986 $ 2,819,847 2,221 % As a percentage of revenues 8 % — % Interest and other income (expense) increased in the nine months ended September 30, 2026, primarily due to a $2.8 billion termination fee received in connection with the termination of the WBD transaction in the first quarter of 2026. See Note 6 Acquisitions for further information. 33 Table of Contents Provision for Income Taxes Three months ended September 30, 2026 as compared to the three months ended September 30, 2025 Three Months Ended Change September 30, 2026 September 30, 2025 Q3’26 vs. Q3’25 (in thousands, except percentages) Provision for income taxes $ 652,978 $ 562,494 $ 90,484 16 % Effective tax rate 15 % 18 % Nine months ended September 30, 2026 as compared to the nine months ended September 30, 2025 Nine Months Ended Change September 30, 2026 September 30, 2025 YTD’26 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
+      "locator": "10-Q 0001065280-26-000291:74623-75530",
+      "excerpt": "ces, and various other sources. Three months ended September 30, 2026 as compared to the three months ended September 30, 2025 Three Months Ended Change September 30, 2026 September 30, 2025 Q3’26 vs. Q3’25 (in thousands, except percentages) Revenues $ 12,874,176 $ 11,510,307 $ 1,363,869 12 % Revenues for the three months ended September 30, 2026 increased 12% as compared to the three months ended September 30, 2025, primarily due to the growth in subscription revenue of $1,057 million, which reflects increases in memberships and pricing, and an increase of $256 million in advertising revenue. The $1,364 million increase in revenues includes a favorable impact of $101 million from changes in foreign exchange rates, net of hedging. Nine months ended September 30, 2026 as compared to the nine months ended September 30, 2025 Nine Months Ended Change September 30, 2026 September 30, 2025 YTD’26 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
+      "locator": "10-Q 0001065280-26-000291:89748-90678",
+      "excerpt": "gn currency denominated balances, gains and losses on certain derivative instruments, interest earned on cash, cash equivalents and short-term investments, and miscellaneous other income and expenses. Three months ended September 30, 2026 as compared to the three months ended September 30, 2025 Three Months Ended Change September 30, 2026 September 30, 2025 Q3’26 vs. Q3’25 (in thousands, except percentages) Interest and other income (expense) $ 43,006 $ 36,457 $ 6,549 18 % As a percentage of revenues — % — % Interest and other income (expense) increased in the three months ended September 30, 2026 primarily due to a $3 million increase in interest income earned in the three months ended September 30, 2026 as compared to the corresponding period in 2025. Nine months ended September 30, 2026 as compared to the nine months ended September 30, 2025 Nine Months Ended Change September 30, 2026 September 30, 2025 YTD’26 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+      "locator": "10-Q 0001065280-26-000212:73884-74983",
+      "excerpt": "ges) Revenues $ 12,559,938 $ 11,079,166 $ 1,480,772 13 % Six months ended June 30, 2026 as compared to the six months ended June 30, 2025 Six Months Ended Change June 30, 2026 June 30, 2025 YTD’26 vs. YTD’25 (in thousands, except percentages) Revenues $ 24,809,695 $ 21,621,967 $ 3,187,728 15 % Revenues for the three and six months ended June 30, 2026 increased 13% and 15% as compared to the three and six months ended June 30, 2025, respectively, primarily due to the growth in memberships, price increases, and increased advertising revenue. Additionally, revenues for the three and six months ended June 30, 2026 as compared to the same periods in 2025, were impacted by favorable changes in foreign exchange rates, net of hedging. The following tables summarize revenues by region for the three and six months ended June 30, 2026 and 2025. Total revenues are inclusive of hedging gains (losses) of $(48) million and $(180) million for the three and six months ended June 30, 2026, respectively, and $(37) million and $127 million for the three and six months ended June 30, 2025, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
+      "locator": "10-Q 0001065280-26-000291:88126-89107",
+      "excerpt": "detail on our debt obligations. Three months ended September 30, 2026 as compared to the three months ended September 30, 2025 Three Months Ended Change September 30, 2026 September 30, 2025 Q3’26 vs. Q3’25 (in thousands, except percentages) Interest expense $ 184,701 $ 175,294 $ 9,407 5 % As a percentage of revenues 1 % 2 % Nine months ended September 30, 2026 as compared to the nine months ended September 30, 2025 Nine Months Ended Change September 30, 2026 September 30, 2025 YTD’26 vs. YTD’25 (in thousands, except percentages) Interest expense $ 622,463 $ 542,115 $ 80,348 15 % As a percentage of revenues 2 % 2 % Interest expense, net of hedging impacts, primarily consisted of interest on our Notes of $184 million and $535 million for the three and nine months ended September 30, 2026, respectively. The increase in interest expense for the three months ended September 30, 2026 as compared to the three months ended September 30, 2025 was due to the increase in debt.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
+      "locator": "10-Q 0001065280-26-000291:100224-101403",
+      "excerpt": "ables summarize our cash flows: Three months ended September 30, 2026 as compared to the three months ended September 30, 2025 Three Months Ended Change September 30, 2026 September 30, 2025 Q3’26 vs. Q3’25 (in thousands, except percentages) Net cash provided by operating activities $ 3,162,279 $ 2,825,174 $ 337,105 12 % Net cash provided by (used in) investing activities (331,311) 43,871 (375,182) (855) % Net cash used in financing activities (3,754,972) (1,737,029) 2,017,943 116 % Net cash provided by operating activities for the three months ended September 30, 2026 increased $337 million as compared to the corresponding period in 2025, primarily driven by a $1,117 million increase in net income and a $437 million increase in adjustments for non-cash expenses, partially offset by $780 million in unfavorable changes in working capital and a $437 million increase in payments for content assets. Net cash used in investing activities for the three months ended September 30, 2026 increased $375 million as compared to the corresponding period in 2025, primarily due to a net decrease of $225 million in cash flows from maturities, sales and purchases of investments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_start": "2026-07-01",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/0001065280-26-000291-index.htm",
+      "locator": "Revenue 2026-07-01..2026-09-30",
+      "excerpt": null,
+      "values": [
+        12874176000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_start": "2025-07-01",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/0001065280-26-000291-index.htm",
+      "locator": "Revenue 2025-07-01..2025-09-30",
+      "excerpt": null,
+      "values": [
+        11510307000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "NFLX",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2026-09-30",
+      "excerpt": null,
+      "values": [
+        12874176000.0,
+        11510307000.0,
+        0.11849110540665857
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+      "locator": "10-Q 0001065280-26-000212:76401-77576",
+      "excerpt": "currency fluctuations. However, this non-GAAP financial measure should be considered in addition to, not as a substitute for, or superior to other financial measures prepared in accordance with GAAP. In order to exclude the effect of foreign currency rate fluctuations on revenue, we calculate current period revenue assuming foreign exchange rates had remained constant with foreign exchange rates from each of the corresponding months of the prior-year period and exclude the impact of hedging gains or losses realized as revenues. Constant currency percentage change in revenues is calculated as the percentage change between current period constant currency revenue and the prior comparative period revenue. The impact of hedging gains or losses is excluded from both the current and prior periods. The tables below summarize constant currency revenues by region for the three and six months ended June 30, 2026 and the constant currency percentage change in revenues by region for the three and six months ended June 30, 2026 as compared to the three and six months ended June 30, 2025: Three Months Ended Three Months Ended Change June 30, 2026 June 30, 2025 Q2’26 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
+      "locator": "10-Q 0001065280-26-000291:78641-79841",
+      "excerpt": "percentage change between current period constant currency revenue and the prior comparative period revenue. The impact of hedging gains or losses is excluded from both the current and prior periods. The tables below summarize constant currency revenues by region for the three and nine months ended September 30, 2026 and the constant currency percentage change in revenues by region for the three and nine months ended September 30, 2026 as compared to the three and nine months ended September 30, 2025: Three Months Ended Three Months Ended Change September 30, 2026 September 30, 2025 Q3’26 vs. Q3’25 As Reported Constant Currency Adjustment Hedging (Gains) Losses Included in Revenues Constant Currency Revenues As Reported Hedging (Gains) Losses Included in Revenues Revenues Less Hedging Impact Reported Change Constant Currency Change (in thousands, except percentages) UCAN $ 5,628,215 $ 7,492 $ (7,928) $ 5,627,779 $ 5,071,781 $ (2,196) $ 5,069,585 11 % 11 % EMEA 4,106,572 22,863 17,038 4,146,473 3,699,052 113,580 3,812,632 11 % 9 % LATAM 1,602,603 (53,448) 12,849 1,562,004 1,370,913 26,300 1,397,213 17 % 12 % APAC 1,536,786 50,803 (21,246) 1,566,343 1,368,561 (8,319) 1,360,242 12 %",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
+      "locator": "10-Q 0001065280-26-000291:78038-78841",
+      "excerpt": "currency fluctuations. However, this non-GAAP financial measure should be considered in addition to, not as a substitute for, or superior to other financial measures prepared in accordance with GAAP. In order to exclude the effect of foreign currency rate fluctuations on revenue, we calculate current period revenue assuming foreign exchange rates had remained constant with foreign exchange rates from each of the corresponding months of the prior-year period and exclude the impact of hedging gains or losses realized as revenues. Constant currency percentage change in revenues is calculated as the percentage change between current period constant currency revenue and the prior comparative period revenue. The impact of hedging gains or losses is excluded from both the current and prior periods.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
+      "locator": "10-Q 0001065280-26-000291:76752-77490",
+      "excerpt": "rivative financial instruments. Three months ended September 30, 2026 as compared to the three months ended September 30, 2025 Three Months Ended Change September 30, 2026 September 30, 2025 Q3’26 vs. Q3’25 (in thousands, except percentages) United States and Canada (UCAN) $ 5,628,215 $ 5,071,781 $ 556,434 11 % Europe, Middle East, and Africa (EMEA) 4,106,572 3,699,052 407,520 11 % Latin America (LATAM) 1,602,603 1,370,913 231,690 17 % Asia-Pacific (APAC) 1,536,786 1,368,561 168,225 12 % Total Revenues $ 12,874,176 $ 11,510,307 $ 1,363,869 12 % 28 Table of Contents Nine months ended September 30, 2026 as compared to the nine months ended September 30, 2025 Nine Months Ended Change September 30, 2026 September 30, 2025 YTD’26 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
+      "locator": "10-Q 0001065280-26-000291:86268-87414",
+      "excerpt": "$ 3,000,513 $ 2,501,090 $ 499,423 20 % As a percentage of revenues 8 % 8 % The increase in technology and development expenses was primarily due to a $383 million increase in personnel-related costs. General and Administrative General and administrative expenses consist primarily of payroll, stock-based compensation, facilities, and other related expenses for corporate personnel. General and administrative expenses also include professional fees and other general corporate expenses. 31 Table of Contents Three months ended September 30, 2026 as compared to the three months ended September 30, 2025 Three Months Ended Change September 30, 2026 September 30, 2025 Q3’26 vs. Q3’25 (in thousands, except percentages) General and administrative $ 466,367 $ 457,931 $ 8,436 2 % As a percentage of revenues 4 % 4 % General and administrative expenses for the three months ended September 30, 2026 as compared to the three months ended September 30, 2025 remained relatively flat. Nine months ended September 30, 2026 as compared to the nine months ended September 30, 2025 Nine Months Ended Change September 30, 2026 September 30, 2025 YTD’26 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
+      "locator": "10-Q 0001065280-26-000291:85282-86468",
+      "excerpt": "expenses for technology personnel responsible for making improvements to our service offerings, including testing, maintaining and modifying our user interface, our recommendations and infrastructure. Technology and development expenses also include costs associated with general use computer hardware and software. Three months ended September 30, 2026 as compared to the three months ended September 30, 2025 Three Months Ended Change September 30, 2026 September 30, 2025 Q3’26 vs. Q3’25 (in thousands, except percentages) Technology and development $ 1,033,142 $ 853,584 $ 179,558 21 % As a percentage of revenues 8 % 7 % The increase in technology and development expenses was primarily due to a $136 million increase in personnel-related costs. Nine months ended September 30, 2026 as compared to the nine months ended September 30, 2025 Nine Months Ended Change September 30, 2026 September 30, 2025 YTD’26 vs. YTD’25 (in thousands, except percentages) Technology and development $ 3,000,513 $ 2,501,090 $ 499,423 20 % As a percentage of revenues 8 % 8 % The increase in technology and development expenses was primarily due to a $383 million increase in personnel-related costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
+      "locator": "10-Q 0001065280-26-000291:83440-84566",
+      "excerpt": "Sales and marketing expenses consist primarily of expenses for promotional activities such as digital and television advertising, and certain payments made to marketing and advertising sales partners. Our marketing partners include consumer electronics manufacturers, multichannel video programming distributors, mobile operators, and internet service providers. Our advertising sales partners include advertising technology providers and advertising agencies. Sales and marketing expenses also include payroll, stock-based compensation, facilities, and other related expenses for personnel that support advertising sales and marketing activities. Three months ended September 30, 2026 as compared to the three months ended September 30, 2025 Three Months Ended Change September 30, 2026 September 30, 2025 Q3’26 vs. Q3’25 (in thousands, except percentages) Sales and marketing $ 837,051 $ 786,295 $ 50,756 6 % As a percentage of revenues 7 % 7 % The increase in sales and marketing expenses was primarily driven by a $42 million increase in personnel-related costs, primarily due to the growth in advertising sales headcount.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
+      "locator": "10-Q 0001065280-26-000291:72712-73909",
+      "excerpt": "nal details on our use of constant currency revenue. Operating margin for the three months ended September 30, 2026 increased by over six percentage points as compared to the prior comparative period. The increase in operating margin was driven by a decrease in cost of revenues and revenue growth outpacing the growth in sales and marketing and general and administrative expenses, partially offset by technology and development expenses growing at a faster rate than revenues. Net income fo r the three months ended September 30, 2026 increased by $1,117 million as compared to the prior comparative period, primarily due to a $1,210 million increase in operating income, driven by a $1,364 million increase in revenues and an $85 million decrease in cost of revenues. The impact of higher operating income was partially offset by a $90 million increase in the provision for income taxes. 27 Table of Contents Revenues We primarily derive revenues from monthly subscription fees for services related to streaming content to our members. We offer a variety of streaming plans, including our ad-supported subscription, with multiple pricing tiers that vary by country and the features of the plan.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
+      "locator": "10-Q 0001065280-26-000291:81463-82648",
+      "excerpt": "ily related to our global content delivery network (“Open Connect”). We have built our own Open Connect network to help us efficiently stream a high volume of content to our members over the internet. Delivery expenses, therefore, include equipment costs related to Open Connect, payroll and related personnel expenses and all third-party costs, such as cloud computing costs, associated with delivering content over the internet. Other operating costs include customer service and payment processing fees, including those we pay to our integrated payment partners, as well as other costs incurred in making our content available to members. Three months ended September 30, 2026 as compared to the three months ended September 30, 2025 Three Months Ended Change September 30, 2026 September 30, 2025 Q3’26 vs. Q3’25 (in thousands, except percentages) Cost of revenues $ 6,079,016 $ 6,164,250 $ (85,234) (1) % As a percentage of revenues 47 % 54 % The decrease in cost of revenues was primarily due to a decrease in other cost of revenues, driven by lower non-income tax expenses as the prior year period includes a $619 million expense related to non-income tax assessments in Brazil.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E2",
+      "quote": "Revenues for the three months ended September 30, 2026 increased 12% as compared to the three months ended September 30, 2025",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
+      "locator": "10-Q 0001065280-26-000291:74623-75530"
+    },
+    {
+      "evidence_id": "E7",
+      "quote": "Revenues $ 12,874,176",
+      "valid": true,
+      "issues": [],
+      "kind": "xbrl_fact",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/0001065280-26-000291-index.htm",
+      "locator": "Revenue 2026-07-01..2026-09-30"
+    },
+    {
+      "evidence_id": "E8",
+      "quote": "Revenues $ 11,510,307",
+      "valid": true,
+      "issues": [],
+      "kind": "xbrl_fact",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/0001065280-26-000291-index.htm",
+      "locator": "Revenue 2025-07-01..2025-09-30"
+    },
+    {
+      "evidence_id": "E9",
+      "quote": "yoy_change: 0.11849110540665857",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_end": "2026-09-30",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2026-09-30"
+    },
+    {
+      "evidence_id": "E13",
+      "quote": "Total Revenues $ 12,874,176 $ 11,510,307 $ 1,363,869 12 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001065280-26-000291",
+      "form": "10-Q",
+      "filed": "2026-10-21",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000291/nflx-20260930.htm",
+      "locator": "10-Q 0001065280-26-000291:76752-77490"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 29914,
+    "output": 4550
+  },
+  "latency_ms": 37,
+  "estimated_cost_usd": 0.157992,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 24,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_FALSE",
+        "checks": [
+          "FALSE"
+        ]
+      },
+      {
+        "node": "analyze_claim",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "assertions": 2,
+        "computations": 0,
+        "period_source": "text_date"
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "evidence_review",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "findings": 12,
+        "deciding": 9,
+        "downgraded": 1
+      },
+      {
+        "node": "reconcile_v2",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "CONTRADICTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_FALSE"
+      },
+      {
+        "node": "reconciliation_guard",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "outcome": "NO_CHANGE",
+        "reason": "NO_CHANGE",
+        "label": "CONTRADICTED"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "analyze_claim",
+      "generate_hypotheses",
+      "counter_investigation",
+      "evidence_review",
+      "reconcile_v2",
+      "apply_guards",
+      "reconciliation_guard",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-a3v2-0.1"
+  },
+  "a3v2_version": "a3v2-0.2.1-dev"
+}

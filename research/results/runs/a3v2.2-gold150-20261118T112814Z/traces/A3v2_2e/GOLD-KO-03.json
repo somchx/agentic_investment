@@ -1,0 +1,1852 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:A3v2_2e:GOLD-KO-03:d1384ef2",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3v2_2e",
+  "approach_kind": "contradiction_aware_v2",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "review": {
+      "enabled": true,
+      "max_output_tokens": 4096,
+      "passage_chars": 1200,
+      "allow_partial_period": false
+    },
+    "guard": {
+      "enabled": true,
+      "version": "0.3"
+    },
+    "analyzer": {
+      "name": "default"
+    },
+    "decidability": {
+      "name": "llm_0.1",
+      "scope_gate": true,
+      "downgrade": "supported"
+    },
+    "periods": {
+      "enabled": true,
+      "version": "1.1"
+    },
+    "quote_check": "1.1",
+    "numeric_checks": "0.1",
+    "coverage": "0.1",
+    "name": "A3v2_2e",
+    "kind": "contradiction_aware_v2",
+    "description": "A3 v2.2 + E1 evidence coverage: a final SUPPORTED / CONTRADICTED needs a validated finding, a valid A2 numeric rule or an A3 deterministic check",
+    "versions": {
+      "a3v2": "a3v2-0.3.0-dev",
+      "review_prompts": "a3v2-review-prompts-0.3",
+      "guard": "a3v2-guard-0.3",
+      "graph": "langgraph-claims-a3v2-0.1",
+      "periods": "a3v2-periods-1.1",
+      "decidability": "a3v2-decidability-0.1-draft",
+      "decidability_prompt": "a3v2-decidability-prompt-0.1",
+      "quote_check": "a3v2-quote-check-1.1",
+      "coverage": "a3v2-coverage-0.1",
+      "numeric_checks": "a3v2-numeric-checks-0.1"
+    }
+  },
+  "config_hash": "5bf41b202ff248b0",
+  "claim": {
+    "claim_id": "GOLD-KO-03",
+    "company": "KO",
+    "claim": "Coca-Cola's net operating revenues for fiscal year 2025 grew by more than 5% compared with fiscal year 2024.",
+    "as_of_date": "2026-03-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.05,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Net operating revenues were $47,941 million in 2025, compared to $47,061 million in 2024, an increase of $880 million, or 2%."
+          }
+        ],
+        "reasoning_summary": "The claim states that Coca-Cola's net operating revenues for fiscal year 2025 grew by more than 5% compared with fiscal year 2024. Evidence E2, from the 10-K filing for the period ending December 31, 2025, explicitly states that net operating revenues were $47,941 million in 2025 compared to $47,061 million in 2024, representing an increase of $880 million, or 2%. This 2% growth rate is clearly less than the claimed \"more than 5%\" threshold. The evidence directly contradicts the claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NUMERIC_FALSE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.05,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 47941000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 47941000000.0,
+                "filed": "2026-02-20",
+                "form": "10-K",
+                "accession_number": "0001628280-26-010047",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 47061000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.018699135164998618,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "analyze_claim",
+      "analysis": {
+        "assertions": [
+          {
+            "assertion_id": "A0",
+            "text": "Coca-Cola's net operating revenues for fiscal year 2025 grew by more than 5% compared with fiscal year 2024.",
+            "type": "claim",
+            "period_end": "2025-12-31",
+            "comparison_end": "2024-12-31",
+            "period_start": "2025-01-01",
+            "period_months": 12,
+            "period_kind": "duration"
+          },
+          {
+            "assertion_id": "N1",
+            "type": "numeric",
+            "numeric": {
+              "metric": "Revenue",
+              "measure": "yoy_growth",
+              "period_basis": "annual",
+              "period_end": "2025-12-31",
+              "comparison": ">",
+              "threshold": 0.05,
+              "stated_value": null
+            },
+            "text": "Revenue yoy_growth > 0.05",
+            "period_end": "2025-12-31",
+            "comparison_end": "2024-12-31",
+            "period_start": "2025-01-01",
+            "period_months": 12,
+            "period_kind": "duration"
+          }
+        ],
+        "computations": [],
+        "claim_period": {
+          "version": "a3v2-periods-1.1",
+          "kind": "duration",
+          "start": "2025-01-01",
+          "end": "2025-12-31",
+          "months": 12,
+          "label": "FY2025",
+          "fiscal_year": 2025,
+          "source": "text_fiscal",
+          "comparison": {
+            "start": "2024-01-01",
+            "end": "2024-12-31"
+          },
+          "notes": [],
+          "period_end": "2025-12-31",
+          "comparison_end": "2024-12-31",
+          "basis": "annual",
+          "orientation": "historical",
+          "years": [
+            2024,
+            2025
+          ]
+        },
+        "analyzer": "default-whole-claim-0.1",
+        "decidability_record": {
+          "assertion_id": "A0",
+          "predicate_type": "MEASURABLE",
+          "criterion_source": "CLAIM_STATES",
+          "required_evidence": [
+            {
+              "kind": "NUMERIC_FACT",
+              "scope": {
+                "entity": null,
+                "segment": null,
+                "region": null,
+                "metric": "net operating revenues"
+              }
+            }
+          ],
+          "status": "DECIDABLE",
+          "issues": [],
+          "version": "a3v2-decidability-0.1-draft",
+          "evaluative_terms": [],
+          "scope": {
+            "segment": null,
+            "region": null,
+            "metric": "net operating revenues"
+          },
+          "contribution": {
+            "type": "NONE",
+            "component": null,
+            "total": null
+          },
+          "note": "The claim makes a measurable assertion about year-over-year revenue growth exceeding a specific threshold (5%), which can be verified by comparing net operating revenues figures from FY2025 and FY2024 filings.",
+          "prompt_version": "a3v2-decidability-prompt-0.1"
+        },
+        "decidability": [
+          {
+            "assertion_id": "A0",
+            "status": "DECIDABLE",
+            "predicate_type": "MEASURABLE",
+            "reason": "The claim makes a measurable assertion about year-over-year revenue growth exceeding a specific threshold (5%), which can be verified by comparing net operating revenues figures from FY2025 and FY2024 filings."
+          }
+        ]
+      },
+      "computations": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Could there be a different definition of 'net operating revenues' or an adjusted/organic revenue growth metric that excludes certain items and shows growth exceeding 5%?",
+          "search_query": "organic revenue growth adjusted revenue excluding currency acquisitions divestitures comparable constant currency 2025 2024",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Could the fiscal year 2025 period be different from the calendar year 2025, with a different period end date that would show different revenue figures?",
+          "search_query": "fiscal year 2025 fiscal period year end December 2025 2024 annual period",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Could there be a restatement or correction of the 2024 or 2025 revenue figures that would change the growth rate calculation?",
+          "search_query": "restatement restated correction revised revenue 2024 2025 prior period adjustment",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "organic revenue growth adjusted revenue excluding currency acquisitions divestitures comparable constant currency 2025 2024",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "fiscal year 2025 fiscal period year end December 2025 2024 annual period",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "restatement restated correction revised revenue 2024 2025 prior period adjustment",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "evidence_review",
+      "version": "a3v2-review-prompts-0.1",
+      "claim_period": {
+        "version": "a3v2-periods-1.1",
+        "kind": "duration",
+        "start": "2025-01-01",
+        "end": "2025-12-31",
+        "months": 12,
+        "label": "FY2025",
+        "fiscal_year": 2025,
+        "source": "text_fiscal",
+        "comparison": {
+          "start": "2024-01-01",
+          "end": "2024-12-31"
+        },
+        "notes": [],
+        "period_end": "2025-12-31",
+        "comparison_end": "2024-12-31",
+        "basis": "annual",
+        "orientation": "historical",
+        "years": [
+          2024,
+          2025
+        ]
+      },
+      "assertions": [
+        {
+          "assertion_id": "A0",
+          "text": "Coca-Cola's net operating revenues for fiscal year 2025 grew by more than 5% compared with fiscal year 2024.",
+          "type": "claim",
+          "period_end": "2025-12-31",
+          "comparison_end": "2024-12-31",
+          "period_start": "2025-01-01",
+          "period_months": 12,
+          "period_kind": "duration"
+        },
+        {
+          "assertion_id": "N1",
+          "type": "numeric",
+          "numeric": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.05,
+            "stated_value": null
+          },
+          "text": "Revenue yoy_growth > 0.05",
+          "period_end": "2025-12-31",
+          "comparison_end": "2024-12-31",
+          "period_start": "2025-01-01",
+          "period_months": 12,
+          "period_kind": "duration"
+        }
+      ],
+      "reviewed_evidence_ids": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "E9",
+        "E7",
+        "E8",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "findings": [
+        {
+          "finding_id": "R1",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E7",
+            "E8"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "47941000000.0",
+          "justification": "E7 shows net operating revenues for FY2025 were $47,941 million and E8 shows FY2024 revenues were $47,061 million. The growth rate is ($47,941 - $47,061) / $47,061 = $880 / $47,061 = 1.87%, which is less than 5%. This contradicts the assertion that revenues grew by more than 5%.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-01-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "XBRL_VALUE_NOT_IN_QUOTE",
+              "issues": [
+                "XBRL_VALUE_NOT_IN_QUOTE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "comparison",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2024-01-01",
+                  "end": "2024-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R2",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E2"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Net operating revenues were $47,941 million in 2025, compared to $47,061 million in 2024, an increase of $880 million, or 2%.",
+          "justification": "This passage explicitly states that net operating revenues for 2025 increased by 2% compared to 2024. This is an EXACT_MATCH period statement that directly contradicts the claim that revenues grew by more than 5%.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E2",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "markers": [],
+                  "source": "filing_default_10K",
+                  "form": "10-K",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R3",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E9"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "0.018699135164998618",
+          "justification": "This derived metric shows the year-over-year revenue growth rate for FY2025 was approximately 1.87% (0.0187 as a ratio), which is less than 5%. This contradicts the assertion.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E9",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-01-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "Revenue"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R4",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E1"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "During the three months ended September 26, 2025, net operating revenues were $12,455 million, compared to $11,854 million during the three months ended September 27, 2024, an increase of $601 million, or 5%.",
+          "justification": "This evidence shows a 5% increase for the three months ended September 26, 2025 (Q3 2025), not for the full fiscal year 2025. The period is MISMATCH (3 months vs 12 months), so it does not decide the claim about full year performance.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E1",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-09-26",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R5",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E7",
+            "E8"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "47941000000.0",
+          "justification": "E7 shows FY2025 revenues of $47,941 million and E8 shows FY2024 revenues of $47,061 million. The growth rate is ($47,941 - $47,061) / $47,061 = 0.0187 or 1.87%, which is not greater than 0.05 (5%). This contradicts the numeric assertion.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-01-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "XBRL_VALUE_NOT_IN_QUOTE",
+              "issues": [
+                "XBRL_VALUE_NOT_IN_QUOTE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "comparison",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2024-01-01",
+                  "end": "2024-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R6",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E2"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Net operating revenues were $47,941 million in 2025, compared to $47,061 million in 2024, an increase of $880 million, or 2%.",
+          "justification": "This passage explicitly states that net operating revenues for 2025 increased by 2% compared to 2024, which means the growth rate is 0.02, not greater than 0.05. This contradicts the numeric assertion.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E2",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "markers": [],
+                  "source": "filing_default_10K",
+                  "form": "10-K",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R7",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E9"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "0.018699135164998618",
+          "justification": "This derived metric directly shows the revenue year-over-year growth rate for FY2025 was approximately 0.0187 (1.87%), which is not greater than 0.05 (5%). This contradicts the numeric assertion.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E9",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-01-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "Revenue"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        }
+      ],
+      "dropped_findings": [],
+      "llm_called": true,
+      "period_derivations": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_FALSE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E13",
+              "quote": "Our fourth quarter and our fiscal year end on December 31 regardless of the day of the week on which December 31 falls.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000021344-25-000061",
+              "form": "10-Q",
+              "filed": "2025-07-24",
+              "period_end": "2025-06-27",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134425000061/ko-20250627.htm",
+              "locator": "10-Q 0000021344-25-000061:14364-15546"
+            },
+            {
+              "evidence_id": "E14",
+              "quote": "Our fourth quarter and our fiscal year end on December 31 regardless of the day of the week on which December 31 falls.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-25-046054",
+              "form": "10-Q",
+              "filed": "2025-10-23",
+              "period_end": "2025-09-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+              "locator": "10-Q 0001628280-25-046054:14411-15607"
+            },
+            {
+              "evidence_id": "E15",
+              "quote": "within 120 days after the end of the fiscal year ended December 31, 2025",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-010047",
+              "form": "10-K",
+              "filed": "2026-02-20",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+              "locator": "10-K 0001628280-26-010047:550047-551082"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation_guard",
+      "version": "a3v2-guard-0.3",
+      "initial_label": "CONTRADICTED",
+      "proposed_label": "CONTRADICTED",
+      "final_label": "CONTRADICTED",
+      "outcome": "NO_CHANGE",
+      "reason_code": "NO_CHANGE",
+      "excluded_citations": [],
+      "deciding_findings": [],
+      "initial_basis": [],
+      "rule_trace": [
+        "NO_CHANGE: NO_CHANGE"
+      ],
+      "decidability_gate": {
+        "record": {
+          "assertion_id": "A0",
+          "predicate_type": "MEASURABLE",
+          "criterion_source": "CLAIM_STATES",
+          "required_evidence": [
+            {
+              "kind": "NUMERIC_FACT",
+              "scope": {
+                "entity": null,
+                "segment": null,
+                "region": null,
+                "metric": "net operating revenues"
+              }
+            }
+          ],
+          "status": "DECIDABLE",
+          "issues": [],
+          "version": "a3v2-decidability-0.1-draft",
+          "evaluative_terms": [],
+          "scope": {
+            "segment": null,
+            "region": null,
+            "metric": "net operating revenues"
+          },
+          "contribution": {
+            "type": "NONE",
+            "component": null,
+            "total": null
+          },
+          "note": "The claim makes a measurable assertion about year-over-year revenue growth exceeding a specific threshold (5%), which can be verified by comparing net operating revenues figures from FY2025 and FY2024 filings.",
+          "prompt_version": "a3v2-decidability-prompt-0.1"
+        },
+        "reason": null,
+        "label_before": "CONTRADICTED",
+        "label_after": "CONTRADICTED"
+      },
+      "numeric_checks": {
+        "validity": [],
+        "fcf": {
+          "status": "NOT_APPLICABLE"
+        },
+        "reason": null,
+        "label_before": "CONTRADICTED",
+        "label_after": "CONTRADICTED"
+      },
+      "coverage": {
+        "basis": [
+          "VALID_FINDING",
+          "A2_NUMERIC_RULE"
+        ],
+        "reason": null,
+        "label_before": "CONTRADICTED",
+        "label_after": "CONTRADICTED"
+      }
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "788235335917b0bb49c22e99bf847bf0cb8daa16b11f2622d1231824a933c652",
+      "source": "cache",
+      "input_tokens": 3853,
+      "output_tokens": 419,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.05,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Net operating revenues were $47,941 million in 2025, compared to $47,061 million in 2024, an increase of $880 million, or 2%."
+          }
+        ],
+        "reasoning_summary": "The claim states that Coca-Cola's net operating revenues for fiscal year 2025 grew by more than 5% compared with fiscal year 2024. Evidence E2, from the 10-K filing for the period ending December 31, 2025, explicitly states that net operating revenues were $47,941 million in 2025 compared to $47,061 million in 2024, representing an increase of $880 million, or 2%. This 2% growth rate is clearly less than the claimed \"more than 5%\" threshold. The evidence directly contradicts the claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "decidability",
+      "tool": "classify_claim",
+      "request_key": "3f75a8061611327db3ef549f11360cba630d88851144bfe22ed70677ca05f071",
+      "source": "live",
+      "input_tokens": 1510,
+      "output_tokens": 237,
+      "stop_reason": "tool_use",
+      "latency_ms": 4231,
+      "output": {
+        "predicate_type": "MEASURABLE",
+        "evaluative_terms": [],
+        "criterion_source": "CLAIM_STATES",
+        "scope": {
+          "metric": "net operating revenues",
+          "region": null,
+          "segment": null
+        },
+        "contribution": {
+          "type": "NONE"
+        },
+        "required_evidence": [
+          "NUMERIC_FACT"
+        ],
+        "note": "The claim makes a measurable assertion about year-over-year revenue growth exceeding a specific threshold (5%), which can be verified by comparing net operating revenues figures from FY2025 and FY2024 filings."
+      },
+      "isolated_conversation": true,
+      "prompt_version": "a3v2-decidability-prompt-0.1"
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "fd47b0b3a55967e8098abce821a414bc0757270c0b57ef52c28da60b283c7263",
+      "source": "cache",
+      "input_tokens": 4820,
+      "output_tokens": 316,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Could there be a different definition of 'net operating revenues' or an adjusted/organic revenue growth metric that excludes certain items and shows growth exceeding 5%?",
+            "search_query": "organic revenue growth adjusted revenue excluding currency acquisitions divestitures comparable constant currency 2025 2024",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Could the fiscal year 2025 period be different from the calendar year 2025, with a different period end date that would show different revenue figures?",
+            "search_query": "fiscal year 2025 fiscal period year end December 2025 2024 annual period",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Could there be a restatement or correction of the 2024 or 2025 revenue figures that would change the growth rate calculation?",
+            "search_query": "restatement restated correction revised revenue 2024 2025 prior period adjustment",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "evidence_review",
+      "tool": "submit_evidence_review",
+      "request_key": "173a78bd7b4151fdcb69b0cba58a9f6e9eade573d81180b658fdc97ac2a3c6dd",
+      "source": "cache",
+      "input_tokens": 7788,
+      "output_tokens": 1208,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "findings": [
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E7",
+              "E8"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "47941000000.0",
+            "justification": "E7 shows net operating revenues for FY2025 were $47,941 million and E8 shows FY2024 revenues were $47,061 million. The growth rate is ($47,941 - $47,061) / $47,061 = $880 / $47,061 = 1.87%, which is less than 5%. This contradicts the assertion that revenues grew by more than 5%.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E2"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Net operating revenues were $47,941 million in 2025, compared to $47,061 million in 2024, an increase of $880 million, or 2%.",
+            "justification": "This passage explicitly states that net operating revenues for 2025 increased by 2% compared to 2024. This is an EXACT_MATCH period statement that directly contradicts the claim that revenues grew by more than 5%.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E9"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "0.018699135164998618",
+            "justification": "This derived metric shows the year-over-year revenue growth rate for FY2025 was approximately 1.87% (0.0187 as a ratio), which is less than 5%. This contradicts the assertion.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E1"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "During the three months ended September 26, 2025, net operating revenues were $12,455 million, compared to $11,854 million during the three months ended September 27, 2024, an increase of $601 million, or 5%.",
+            "justification": "This evidence shows a 5% increase for the three months ended September 26, 2025 (Q3 2025), not for the full fiscal year 2025. The period is MISMATCH (3 months vs 12 months), so it does not decide the claim about full year performance.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E7",
+              "E8"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "47941000000.0",
+            "justification": "E7 shows FY2025 revenues of $47,941 million and E8 shows FY2024 revenues of $47,061 million. The growth rate is ($47,941 - $47,061) / $47,061 = 0.0187 or 1.87%, which is not greater than 0.05 (5%). This contradicts the numeric assertion.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E2"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Net operating revenues were $47,941 million in 2025, compared to $47,061 million in 2024, an increase of $880 million, or 2%.",
+            "justification": "This passage explicitly states that net operating revenues for 2025 increased by 2% compared to 2024, which means the growth rate is 0.02, not greater than 0.05. This contradicts the numeric assertion.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E9"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "0.018699135164998618",
+            "justification": "This derived metric directly shows the revenue year-over-year growth rate for FY2025 was approximately 0.0187 (1.87%), which is not greater than 0.05 (5%). This contradicts the numeric assertion.",
+            "definition_mismatch": false
+          }
+        ]
+      },
+      "isolated_conversation": true,
+      "prompt_version": "a3v2-review-prompts-0.3"
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "d91b336fd5c4c590a21b19f973da0aa50eb950e9a28273eb750c415b470dcf0d",
+      "source": "cache",
+      "input_tokens": 10073,
+      "output_tokens": 873,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E13",
+                "quote": "Our fourth quarter and our fiscal year end on December 31 regardless of the day of the week on which December 31 falls."
+              },
+              {
+                "evidence_id": "E14",
+                "quote": "Our fourth quarter and our fiscal year end on December 31 regardless of the day of the week on which December 31 falls."
+              },
+              {
+                "evidence_id": "E15",
+                "quote": "within 120 days after the end of the fiscal year ended December 31, 2025"
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "CONTRADICTED",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Net operating revenues were $47,941 million in 2025, compared to $47,061 million in 2024, an increase of $880 million, or 2%."
+          }
+        ],
+        "reasoning_summary": "The claim states that Coca-Cola's net operating revenues for fiscal year 2025 grew by more than 5% compared with fiscal year 2024. \n\nEvidence E2 from the 10-K filing for the period ending December 31, 2025 explicitly states that net operating revenues were $47,941 million in 2025 compared to $47,061 million in 2024, representing an increase of $880 million, or 2%. This 2% growth rate is clearly less than the claimed \"more than 5%\" threshold.\n\nI investigated three potential challenges to this verdict:\n\nH1 (Organic/Adjusted Revenue): I searched for evidence of alternative revenue metrics (organic, constant currency, adjusted) that might show higher growth. The retrieved evidence (E10, E11, E12) discusses factors impacting revenue growth rates (volume, price/mix, currency, acquisitions/divestitures) but does not present any alternative revenue growth metric showing growth exceeding 5%. No relevant evidence supports this challenge.\n\nH2 (Fiscal Year Definition): I investigated whether Coca-Cola's fiscal year 2025 might differ from calendar year 2025. Evidence E13, E14, and E15 all confirm that Coca-Cola's fiscal year ends on December 31, matching the calendar year. This challenge is refuted.\n\nH3 (Restatements): I searched for any restatements or corrections to the 2024 or 2025 revenue figures. The retrieved evidence (E16, E17, E18) discusses IRS tax litigation matters but contains no information about revenue restatements or corrections. No relevant evidence supports this challenge.\n\nThe evidence review confirms that E2 is a valid CONTRADICTS relationship with EXACT_MATCH period compatibility and HISTORICAL_FACT statement time. The verdict remains CONTRADICTED.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Coca-Cola's net operating revenues for fiscal year 2025 grew by more than 5% compared with fiscal year 2024. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "organic revenue growth adjusted revenue excluding currency acquisitions divestitures comparable constant currency 2025 2024",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "fiscal year 2025 fiscal period year end December 2025 2024 annual period",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "restatement restated correction revised revenue 2024 2025 prior period adjustment",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.05,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 47941000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 47941000000.0,
+                "filed": "2026-02-20",
+                "form": "10-K",
+                "accession_number": "0001628280-26-010047",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 47061000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.018699135164998618,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-010047",
+        "filed": "2026-02-20",
+        "report_date": "2025-12-31",
+        "primary_document": "ko-20251231.htm",
+        "sha256": "7c344724ffd25824080de9272cf711543400cfcbbafb06b787fc482fa3d1a5e2"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-046054",
+        "filed": "2025-10-23",
+        "report_date": "2025-09-26",
+        "primary_document": "ko-20250926.htm",
+        "sha256": "2612cabb65b38975b2aba02ec4592e6ae4f7d7caf14dbe6a1b7ac733462aacde"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000021344-25-000061",
+        "filed": "2025-07-24",
+        "report_date": "2025-06-27",
+        "primary_document": "ko-20250627.htm",
+        "sha256": "3f67156032d834d87f984e719635dacabd06c34c9b8e6d6082f67b95c7ac40fd"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1187
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:134762-135587",
+      "excerpt": "to the differences between concentrate sales volume and unit case volume growth rates on a consolidated basis and for the individual operating segments during the nine months ended September 26, 2025. Additionally, the differences between concentrate sales volume and unit case volume growth rates for the operating segments were impacted by the timing of concentrate shipments. We expect the differences between concentrate sales volume and unit case volume growth rates to be minimal on a full year basis. 38 Net Operating Revenues Three Months Ended September 26, 2025 versus Three Months Ended September 27, 2024 During the three months ended September 26, 2025, net operating revenues were $12,455 million, compared to $11,854 million during the three months ended September 27, 2024, an increase of $601 million, or 5%.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:250033-251136",
+      "excerpt": "operations in the Philippines, Bangladesh and certain territories in India. Concentrate Sales Volume In 2025, worldwide concentrate sales volume grew 1% and unit case volume was even compared to 2024. The difference between concentrate sales volume and unit case volume growth rates for our Latin America operating segment was primarily due to the timing of concentrate shipments. Net Operating Revenues Net operating revenues were $47,941 million in 2025, compared to $47,061 million in 2024, an increase of $880 million, or 2%. The following table illustrates, on a percentage basis, the estimated impact of the factors resulting in the increase (decrease) in net operating revenues on a consolidated basis and for each of our operating segments: Percent Change 2025 versus 2024 Volume 1 Price/Mix Foreign Currency Exchange Rate Fluctuations Acquisitions & Divestitures 2 Total Consolidated 1 % 4 % (2) % (1) % 2 % EMEA 4 2 — (1) 5 Latin America (1) 11 (12) — (2) North America (1) 5 — — 4 Asia Pacific 1 4 (3) (1) 1 Bottling Investments — 2 (2) (7) (8) Note: Certain rows may not add due to rounding.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0000021344-25-000061",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134425000061/ko-20250627.htm",
+      "locator": "10-Q 0000021344-25-000061:122779-123824",
+      "excerpt": "rs or consumers and is not based on average daily sales. Each of our quarters, other than the fourth quarter, ends on the Friday closest to the last day of the corresponding quarterly calendar period. As a result, the first quarter of 2025 had two fewer days when compared to the first quarter of 2024, and the fourth quarter of 2025 will have one additional day when compared to the fourth quarter of 2024. 5 After considering the impact of structural changes, unit case volume for Bottling Investments for the three and six months ended June 27, 2025 decreased 2% and 1%, respectively. 6 After considering the impact of structural changes, concentrate sales volume for Asia Pacific for the six months ended June 27, 2025 grew 1%. Unit Case Volume Although a significant portion of our Company’s net operating revenues is not based directly on unit case volume, we believe unit case volume performance is one of the indicators of the underlying strength of the Coca-Cola system because it measures demand for our products at the consumer level.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:128652-129710",
+      "excerpt": "rs or consumers and is not based on average daily sales. Each of our quarters, other than the fourth quarter, ends on the Friday closest to the last day of the corresponding quarterly calendar period. As a result, the first quarter of 2025 had two fewer days when compared to the first quarter of 2024, and the fourth quarter of 2025 will have one additional day when compared to the fourth quarter of 2024. 5 After considering the impact of structural changes, unit case volume for Bottling Investments for the three and nine months ended September 26, 2025 increased 5% and 1%, respectively. 6 After considering the impact of structural changes, concentrate sales volume for Asia Pacific for the nine months ended September 26, 2025 was even. Unit Case Volume Although a significant portion of our Company’s net operating revenues is not based directly on unit case volume, we believe unit case volume performance is one of the indicators of the underlying strength of the Coca-Cola system because it measures demand for our products at the consumer level.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:135387-136455",
+      "excerpt": "he three months ended September 26, 2025, net operating revenues were $12,455 million, compared to $11,854 million during the three months ended September 27, 2024, an increase of $601 million, or 5%. The following table illustrates, on a percentage basis, the estimated impact of the factors resulting in the increase (decrease) in net operating revenues on a consolidated basis and for each of our operating segments: Percent Change 2025 versus 2024 Volume 1 Price, Product & Geographic Mix Foreign Currency Fluctuations Acquisitions & Divestitures 2 Total Consolidated — % 6 % — % — % 5 % Europe, Middle East & Africa 3 4 3 — 10 Latin America (3) 7 (8) — (4) North America (2) 6 — — 4 Asia Pacific (1) 8 4 — 11 Bottling Investments 5 1 (2) (2) 2 Note: Certain rows may not add due to rounding. 1 Represents the percent change in net operating revenues attributable to the increase (decrease) in concentrate sales volume for our geographic operating segments (expressed in unit case equivalents) after considering the impact of acquisitions and divestitures, if any.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:255598-256779",
+      "excerpt": "en evaluating the Company’s performance. Refer to the heading “Structural Changes, Acquired Brands and Newly Licensed Brands” above for additional information related to acquisitions and divestitures. Net operating revenue growth rates are impacted by sales volume; price/mix; foreign currency exchange rate fluctuations; and acquisitions and divestitures. The size and timing of acquisitions and divestitures are not consistent from period to period. Based on current spot rates and our hedging coverage in place, we expect foreign currency exchange rate fluctuations will have a favorable impact on our full year 2026 net operating revenues. 46 Information about our net operating revenues by operating segment and Corporate as a percentage of Company net operating revenues is as follows: Year Ended December 31, 2025 2024 EMEA 22.6 % 21.8 % Latin America 13.2 13.8 North America 40.8 40.1 Asia Pacific 11.1 10.9 Bottling Investments 12.0 13.2 Corporate 0.3 0.2 Total 100.0 % 100.0 % The percentage contribution of each operating segment fluctuates over time due to net operating revenues in some operating segments growing at a faster rate compared to other operating segments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/0001628280-26-010047-index.htm",
+      "locator": "Revenue 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        47941000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/0001628280-26-010047-index.htm",
+      "locator": "Revenue 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        47061000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "KO",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "Revenue yoy_growth annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        47941000000.0,
+        47061000000.0,
+        0.018699135164998618
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:144385-145543",
+      "excerpt": "t on our Europe, Middle East and Africa; Asia Pacific; and Bottling Investments operating segments. Refer to the heading “Liquidity, Capital Resources and Financial Position — Foreign Exchange” below. 40 Net operating revenue growth rates are impacted by sales volume; price, product and geographic mix; foreign currency exchange rate fluctuations; and acquisitions and divestitures. The size and timing of acquisitions and divestitures are not consistent from period to period. Based on current spot rates and our hedging coverage in place, we expect foreign currency exchange rate fluctuations will have an unfavorable impact on our full year 2025 net operating revenues. Gross Profit Margin Gross profit margin is a ratio calculated by dividing gross profit by net operating revenues. Management believes gross profit margin provides investors with useful information related to the profitability of our business prior to considering all of the selling, general and administrative expenses and other operating charges incurred. Management uses this measure in making financial, operating and planning decisions and in evaluating the Company’s performance.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0000021344-25-000061",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134425000061/ko-20250627.htm",
+      "locator": "10-Q 0000021344-25-000061:138599-139730",
+      "excerpt": "the British pound, South African rand, Kenyan shilling and Japanese yen, which had a favorable impact on our Europe, Middle East and Africa; Asia Pacific; and Bottling Investments operating segments. Refer to the heading “Liquidity, Capital Resources and Financial Position — Foreign Exchange” below. 39 Net operating revenue growth rates are impacted by sales volume; price, product and geographic mix; foreign currency exchange rate fluctuations; and acquisitions and divestitures. The size and timing of acquisitions and divestitures are not consistent from period to period. Based on current spot rates and our hedging coverage in place, we expect foreign currency exchange rate fluctuations will have an unfavorable impact on our full year 2025 net operating revenues. Gross Profit Margin Gross profit margin is a ratio calculated by dividing gross profit by net operating revenues. Management believes gross profit margin provides investors with useful information related to the profitability of our business prior to considering all of the selling, general and administrative expenses and other operating charges incurred.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:254689-255798",
+      "excerpt": "tion — Foreign Exchange” below. “Acquisitions and divestitures” generally refers to acquisitions and divestitures of brands or businesses, some of which the Company considers to be structural changes. The impact of acquisitions and divestitures is the difference between the change in net operating revenues and the change in what our net operating revenues would have been if we removed the net operating revenues associated with an acquisition or a divestiture from either the current year or the prior year, as applicable. Management believes that quantifying the impact that acquisitions and divestitures had on the Company’s net operating revenues provides investors with useful information to enhance their understanding of the Company’s net operating revenue performance by improving their ability to compare our year-to-year results. Management considers the impact of acquisitions and divestitures when evaluating the Company’s performance. Refer to the heading “Structural Changes, Acquired Brands and Newly Licensed Brands” above for additional information related to acquisitions and divestitures.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0000021344-25-000061",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134425000061/ko-20250627.htm",
+      "locator": "10-Q 0000021344-25-000061:14364-15546",
+      "excerpt": "cted for the year ending December 31, 2025. Sales of our ready-to-drink beverages are somewhat seasonal, with the second and third calendar quarters typically accounting for the highest sales volumes. The volume of sales in the beverage business may be affected by weather conditions. Each of our quarterly reporting periods, other than the fourth quarter, ends on the Friday closest to the last day of the corresponding quarterly calendar period. The second quarter of 2025 and the second quarter of 2024 ended on June 27, 2025 and June 28, 2024, respectively. Our fourth quarter and our fiscal year end on December 31 regardless of the day of the week on which December 31 falls. Advertising Costs The Company’s accounting policy related to advertising costs for annual reporting purposes is to expense production costs of print, radio, television and other advertisements as of the first date the advertisements take place. All other marketing expenditures are expensed in the annual period in which the expenditure is incurred. For quarterly reporting purposes, we allocate our estimated full year marketing expenditures that benefit multiple quarters to each of those quarters.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:14411-15607",
+      "excerpt": "n have been included. Operating results for the three and nine months ended September 26, 2025 are not necessarily indicative of the results that may be expected for the year ending December 31, 2025. Sales of our ready-to-drink beverages are somewhat seasonal, with the second and third calendar quarters typically accounting for the highest sales volumes. The volume of sales in the beverage business may be affected by weather conditions. Each of our quarterly reporting periods, other than the fourth quarter, ends on the Friday closest to the last day of the corresponding quarterly calendar period. The third quarter of 2025 and the third quarter of 2024 ended on September 26, 2025 and September 27, 2024, respectively. Our fourth quarter and our fiscal year end on December 31 regardless of the day of the week on which December 31 falls. Advertising Costs The Company’s accounting policy related to advertising costs for annual reporting purposes is to expense production costs of print, radio, television and other advertisements as of the first date the advertisements take place. All other marketing expenditures are expensed in the annual period in which the expenditure is incurred.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:550047-551082",
+      "excerpt": "filed with the SEC within 120 days after the end of the fiscal year ended December 31, 2025. See Item X. in Part I of this report for information regarding executive officers of the Company. ITEM 11. EXECUTIVE COMPENSATION The information required by this item is incorporated by reference to the Company’s 2026 Proxy Statement to be filed with the SEC within 120 days after the end of the fiscal year ended December 31, 2025. ITEM 12. SECURITY OWNERSHIP OF CERTAIN BENEFICIAL OWNERS AND MANAGEMENT AND RELATED STOCKHOLDER MATTERS The information required by this item is incorporated by reference to the Company’s 2026 Proxy Statement to be filed with the SEC within 120 days after the end of the fiscal year ended December 31, 2025. ITEM 13. CERTAIN RELATIONSHIPS AND RELATED TRANSACTIONS, AND DIRECTOR INDEPENDENCE The information required by this item is incorporated by reference to the Company’s 2026 Proxy Statement to be filed with the SEC within 120 days after the end of the fiscal year ended December 31, 2025. 124 ITEM 14.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:201324-202330",
+      "excerpt": "Company’s matter for litigation, the Company was forced to either accept the IRS’ newly imposed tax assessment and pay the full amount of the asserted tax or litigate the matter in the federal courts. The matter remains subject to the IRS’ litigation designation, preventing the Company from any attempt to settle or otherwise mutually resolve the matter with the IRS. The Company consequently initiated litigation by filing a petition in the Tax Court in December 2015, challenging the tax adjustments enumerated in the Notice. Prior to trial, the IRS increased its transfer pricing adjustment by $385 million, resulting in an additional tax adjustment of $135 million. The Company obtained a summary judgment in its favor on a different matter related to Mexican foreign tax credits, which thereafter effectively reduced the IRS’ potential tax adjustment by $138 million. The trial was held in the Tax Court from March through May 2018, and final post-trial briefs were filed and exchanged in April 2019.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:176495-177532",
+      "excerpt": "he matter in the federal courts. The matter remains subject to the IRS’ litigation designation, preventing the Company from any attempt to settle or otherwise mutually resolve the matter with the IRS. The Company consequently initiated litigation by filing a petition in the Tax Court in December 2015, challenging the tax adjustments enumerated in the Notice. Prior to trial, the IRS increased its transfer pricing adjustment by $ 385 million, resulting in an additional tax adjustment of $ 135 million. The Company obtained a summary judgment in its favor on a different matter related to Mexican foreign tax credits, which thereafter effectively reduced the IRS’ potential tax adjustment by $ 138 million. The trial was held in the Tax Court from March through May 2018, and final post-trial briefs were filed and exchanged in April 2019. On November 18, 2020, the Tax Court issued the Opinion in which it predominantly sided with the IRS but agreed with the Company that dividends previously paid by the foreign licensees to the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:56884-57912",
+      "excerpt": "Company’s matter for litigation, the Company was forced to either accept the IRS’ newly imposed tax assessment and pay the full amount of the asserted tax or litigate the matter in the federal courts. The matter remains subject to the IRS’ litigation designation, preventing the Company from any attempt to settle or otherwise mutually resolve the matter with the IRS. The Company consequently initiated litigation by filing a petition in the U.S. Tax Court (“Tax Court”) in December 2015, challenging the tax adjustments enumerated in the Notice. Prior to trial, the IRS increased its transfer pricing adjustment by $ 385 million, resulting in an additional tax adjustment of $ 135 million. The Company obtained a summary judgment in its favor on a different matter related to Mexican foreign tax credits, which thereafter effectively reduced the IRS’ potential tax adjustment by $ 138 million. The trial was held in the Tax Court from March through May 2018, and final post-trial briefs were filed and exchanged in April 2019.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E2",
+      "quote": "Net operating revenues were $47,941 million in 2025, compared to $47,061 million in 2024, an increase of $880 million, or 2%.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:250033-251136"
+    },
+    {
+      "evidence_id": "E9",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "Revenue yoy_growth annual @ 2025-12-31"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 28044,
+    "output": 3053
+  },
+  "latency_ms": 4271,
+  "estimated_cost_usd": 0.129927,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_FALSE",
+        "checks": [
+          "FALSE"
+        ]
+      },
+      {
+        "node": "analyze_claim",
+        "status": "ok",
+        "duration_ms": 4244,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "assertions": 2,
+        "computations": 0,
+        "period_source": "text_fiscal"
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 11,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "evidence_review",
+        "status": "ok",
+        "duration_ms": 5,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "findings": 7,
+        "deciding": 6,
+        "downgraded": 0
+      },
+      {
+        "node": "reconcile_v2",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 5,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "CONTRADICTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 5,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_FALSE"
+      },
+      {
+        "node": "reconciliation_guard",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 5,
+        "retrieval_queries_so_far": 4,
+        "outcome": "NO_CHANGE",
+        "reason": "NO_CHANGE",
+        "label": "CONTRADICTED"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 10,
+        "llm_calls_so_far": 5,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "analyze_claim",
+      "generate_hypotheses",
+      "counter_investigation",
+      "evidence_review",
+      "reconcile_v2",
+      "apply_guards",
+      "reconciliation_guard",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-a3v2-0.1"
+  },
+  "a3v2_version": "a3v2-0.3.0-dev"
+}

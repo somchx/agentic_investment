@@ -1,0 +1,789 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:SR_self_reflection:GOLD-TSLA-03:05f2d198",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "SR_self_reflection",
+  "approach_kind": "self_reflection",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": true,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "SR_self_reflection",
+    "kind": "self_reflection",
+    "description": "A2 + self-critique and revision, no new retrieval"
+  },
+  "config_hash": "166d47be253b74e9",
+  "claim": {
+    "claim_id": "GOLD-TSLA-03",
+    "company": "TSLA",
+    "claim": "Tesla's automotive revenues for the quarter ended June 30, 2026 increased year over year.",
+    "as_of_date": "2026-08-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q2"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E6",
+            "quote": "Automotive sales revenue increased $4.22 billion, or 27%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025"
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Cost of automotive sales revenue increased $3.30 billion, or 24%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025, due to the increase in deliveries year over year"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Tesla's automotive revenues for the quarter ended June 30, 2026 increased year over year. Evidence E6 directly supports this claim, stating that \"Automotive sales revenue increased $4.22 billion, or 27%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025.\" This is a clear year-over-year increase in automotive revenues for Q2 2026. Evidence E2 provides additional corroboration by noting the corresponding increase in cost of automotive sales revenue due to increased deliveries year over year. The claim is fully supported by the evidence.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_ALL_TRUE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-06-30",
+            "basis": "quarter",
+            "level": 28236000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 28236000000.0,
+                "filed": "2026-07-23",
+                "form": "10-Q",
+                "accession_number": "0001628280-26-049270",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 22496000000.0,
+            "prior_period_end": "2025-06-30",
+            "yoy_change": 0.25515647226173543,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "self_critique",
+      "weaknesses": [
+        {
+          "weakness_id": "W1",
+          "critique": "The claim refers to 'automotive revenues' broadly, but the evidence specifically cites 'Automotive sales revenue' (E6). Tesla's automotive segment may include other revenue streams beyond just 'sales.' Evidence E1 and E2 reference 'services and other revenue' as a separate component within the automotive & services segment. If 'automotive revenues' is meant to encompass the entire automotive & services segment rather than just automotive sales, I should verify whether the total segment revenue also increased year over year. However, E6 shows 'Total automotive & services and other segment revenue' increased from $19,707M to $25,097M (27% increase) for Q2, which would still support the claim even under this broader interpretation."
+        },
+        {
+          "weakness_id": "W2",
+          "critique": "The evidence shows automotive sales revenue increased 27% year over year, but this is accompanied by a decrease in gross margin from 17.2% to 16.9% (E1, E3). This suggests the revenue increase may have come with unfavorable business dynamics such as pricing pressure, unfavorable sales mix, or currency headwinds mentioned in E1. While the claim only asserts that revenues increased (which is true), the quality and profitability of that revenue growth appears to have deteriorated, which could be relevant context for evaluating the claim's materiality."
+        },
+        {
+          "weakness_id": "W3",
+          "critique": "The evidence indicates that automotive sales revenue includes 'regulatory credits revenue' as a component (mentioned in E3 as decreasing). The 27% increase in automotive sales revenue could theoretically be driven by changes in regulatory credit recognition rather than core vehicle sales. However, E6 states the increase was 'due to an increase of approximately 25% in cash deliveries,' which suggests the revenue growth is primarily driven by volume rather than regulatory credits or other non-operational factors. This mitigates but does not entirely eliminate the concern about revenue composition."
+        }
+      ]
+    },
+    {
+      "stage": "revision",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_ALL_TRUE",
+      "assessments": [
+        {
+          "item_id": "W1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E6",
+              "quote": "Automotive sales revenue increased $4.22 billion, or 27%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-049270",
+              "form": "10-Q",
+              "filed": "2026-07-23",
+              "period_end": "2026-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+              "locator": "10-Q 0001628280-26-049270:98094-99002"
+            },
+            {
+              "evidence_id": "E6",
+              "quote": "Total automotive & services and other segment revenue 25,097 19,707 5,390 27 %",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-049270",
+              "form": "10-Q",
+              "filed": "2026-07-23",
+              "period_end": "2026-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+              "locator": "10-Q 0001628280-26-049270:98094-99002"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "Gross margin for total automotive decreased from 17.2% to 16.9% in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-049270",
+              "form": "10-Q",
+              "filed": "2026-07-23",
+              "period_end": "2026-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+              "locator": "10-Q 0001628280-26-049270:102438-103575"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E6",
+              "quote": "Automotive sales revenue increased $4.22 billion, or 27%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025, due to an increase of approximately 25% in cash deliveries",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-049270",
+              "form": "10-Q",
+              "filed": "2026-07-23",
+              "period_end": "2026-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+              "locator": "10-Q 0001628280-26-049270:98094-99002"
+            },
+            {
+              "evidence_id": "E3",
+              "quote": "The fluctuations are primarily due to the changes in automotive sales revenue and cost of automotive sales revenue and a decrease in regulatory credits revenue",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-049270",
+              "form": "10-Q",
+              "filed": "2026-07-23",
+              "period_end": "2026-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+              "locator": "10-Q 0001628280-26-049270:103375-104481"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "f7134a02d0ea5dff400e650d633e4f78c0de63d2a642cbece25bbbc3e1be2d94",
+      "source": "cache",
+      "input_tokens": 4098,
+      "output_tokens": 507,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E6",
+            "quote": "Automotive sales revenue increased $4.22 billion, or 27%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025"
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Cost of automotive sales revenue increased $3.30 billion, or 24%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025, due to the increase in deliveries year over year"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Tesla's automotive revenues for the quarter ended June 30, 2026 increased year over year. Evidence E6 directly supports this claim, stating that \"Automotive sales revenue increased $4.22 billion, or 27%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025.\" This is a clear year-over-year increase in automotive revenues for Q2 2026. Evidence E2 provides additional corroboration by noting the corresponding increase in cost of automotive sales revenue due to increased deliveries year over year. The claim is fully supported by the evidence.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "self_critique",
+      "tool": "submit_self_critique",
+      "request_key": "f42ed0d84e913a6ccbe65a8367cfe481c97b91bddd80d0a1f03d4037991c8399",
+      "source": "live",
+      "input_tokens": 4762,
+      "output_tokens": 499,
+      "stop_reason": "tool_use",
+      "latency_ms": 11963,
+      "output": {
+        "weaknesses": [
+          {
+            "weakness_id": "W1",
+            "critique": "The claim refers to 'automotive revenues' broadly, but the evidence specifically cites 'Automotive sales revenue' (E6). Tesla's automotive segment may include other revenue streams beyond just 'sales.' Evidence E1 and E2 reference 'services and other revenue' as a separate component within the automotive & services segment. If 'automotive revenues' is meant to encompass the entire automotive & services segment rather than just automotive sales, I should verify whether the total segment revenue also increased year over year. However, E6 shows 'Total automotive & services and other segment revenue' increased from $19,707M to $25,097M (27% increase) for Q2, which would still support the claim even under this broader interpretation."
+          },
+          {
+            "weakness_id": "W2",
+            "critique": "The evidence shows automotive sales revenue increased 27% year over year, but this is accompanied by a decrease in gross margin from 17.2% to 16.9% (E1, E3). This suggests the revenue increase may have come with unfavorable business dynamics such as pricing pressure, unfavorable sales mix, or currency headwinds mentioned in E1. While the claim only asserts that revenues increased (which is true), the quality and profitability of that revenue growth appears to have deteriorated, which could be relevant context for evaluating the claim's materiality."
+          },
+          {
+            "weakness_id": "W3",
+            "critique": "The evidence indicates that automotive sales revenue includes 'regulatory credits revenue' as a component (mentioned in E3 as decreasing). The 27% increase in automotive sales revenue could theoretically be driven by changes in regulatory credit recognition rather than core vehicle sales. However, E6 states the increase was 'due to an increase of approximately 25% in cash deliveries,' which suggests the revenue growth is primarily driven by volume rather than regulatory credits or other non-operational factors. This mitigates but does not entirely eliminate the concern about revenue composition."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "revision",
+      "tool": "submit_revision",
+      "request_key": "d52e49278c2a186c9b6e29eaa9912135af2bcf7412e9f77f912b1fe1f6add253",
+      "source": "live",
+      "input_tokens": 6122,
+      "output_tokens": 884,
+      "stop_reason": "tool_use",
+      "latency_ms": 12810,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "W1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E6",
+                "quote": "Automotive sales revenue increased $4.22 billion, or 27%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025"
+              },
+              {
+                "evidence_id": "E6",
+                "quote": "Total automotive & services and other segment revenue 25,097 19,707 5,390 27 %"
+              }
+            ]
+          },
+          {
+            "item_id": "W2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": [
+              {
+                "evidence_id": "E1",
+                "quote": "Gross margin for total automotive decreased from 17.2% to 16.9% in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025"
+              }
+            ]
+          },
+          {
+            "item_id": "W3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E6",
+                "quote": "Automotive sales revenue increased $4.22 billion, or 27%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025, due to an increase of approximately 25% in cash deliveries"
+              },
+              {
+                "evidence_id": "E3",
+                "quote": "The fluctuations are primarily due to the changes in automotive sales revenue and cost of automotive sales revenue and a decrease in regulatory credits revenue"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E6",
+            "quote": "Automotive sales revenue increased $4.22 billion, or 27%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025"
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Cost of automotive sales revenue increased $3.30 billion, or 24%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025, due to the increase in deliveries year over year"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After reviewing the weaknesses, my verdict remains SUPPORTED. W1 is refuted because the evidence clearly shows both automotive sales revenue and the broader automotive & services segment revenue increased 27% year over year for Q2 2026, so regardless of how \"automotive revenues\" is interpreted, the claim holds. W2 raises the issue of declining gross margins, but this does not contradict the claim that revenues increased - it merely provides context about profitability. The claim makes no assertion about margin quality, only about revenue direction. W3 is refuted because E6 explicitly attributes the revenue increase to a 25% increase in cash deliveries, and E3 notes regulatory credits actually decreased, meaning the core revenue growth was even stronger than the headline figure. The claim that Tesla's automotive revenues increased year over year for Q2 2026 is unambiguously supported by the evidence.",
+        "change_reason": "No change. All three weaknesses were either refuted by the evidence or not relevant to the specific claim being made. The evidence clearly and directly supports that automotive revenues increased year over year for the quarter ended June 30, 2026."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Tesla's automotive revenues for the quarter ended June 30, 2026 increased year over year. 2026 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-06-30",
+            "basis": "quarter",
+            "level": 28236000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 28236000000.0,
+                "filed": "2026-07-23",
+                "form": "10-Q",
+                "accession_number": "0001628280-26-049270",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 22496000000.0,
+            "prior_period_end": "2025-06-30",
+            "yoy_change": 0.25515647226173543,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-049270",
+        "filed": "2026-07-23",
+        "report_date": "2026-06-30",
+        "primary_document": "tsla-20260630.htm",
+        "sha256": "d73ba014ab80bb4e7b180ed03f9d8466465fd90bb783306ebea031b466399dac"
+      },
+      {
+        "form": "10-K/A",
+        "accession_number": "0001104659-26-053166",
+        "filed": "2026-04-30",
+        "report_date": "2025-12-31",
+        "primary_document": "tm2611837d1_10ka.htm",
+        "sha256": "5e3060d44a986e45b9ddee1e40e56b241fd5353d3990bccd3b1ebff25267cbc9"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-026673",
+        "filed": "2026-04-23",
+        "report_date": "2026-03-31",
+        "primary_document": "tsla-20260331.htm",
+        "sha256": "8feb8360434320e3d86a4c7028701fab77db791dcf7e548fb968f070ecb1d1a8"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-003952",
+        "filed": "2026-01-29",
+        "report_date": "2025-12-31",
+        "primary_document": "tsla-20251231.htm",
+        "sha256": "442a79e7a2099ddb16af0bdb92a78873cbdcd683613875724e17115f012cbce5"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 909
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:102438-103575",
+      "excerpt": "s revenue increased $4.45 billion, or 18%, in the six months ended June 30, 2026 as compared to the six months ended June 30, 2025, due to the increase in deliveries year over year as discussed above. Average cost per unit was relatively consistent due to unfavorable sales mix and a negative impact from the weakening of the United States dollar when compared to foreign currencies year over year, offset by favorable impacts related to warranty adjustments and tariffs. Cost of services and other revenue increased $1.05 billion, or 37%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025. Cost of services and other revenue increased $1.92 billion, or 35%, in the six months ended June 30, 2026 as compared to the six months ended June 30, 2025. These increases were primarily due to increases in used vehicle sales volume, cost related to non-warranty maintenance services and collision revenue and cost of paid Supercharging sessions. Gross margin for total automotive decreased from 17.2% to 16.9% in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:101639-102638",
+      "excerpt": "$ 6,885 $ 5,133 Gross margin total automotive 16.9 % 17.2 % 18.7 % 16.8 % Gross profit total automotive & services and other segment $ 4,111 $ 3,032 $ 7,879 $ 5,400 Gross margin total automotive & services and other segment 16.4 % 15.4 % 17.5 % 14.9 % Gross profit energy generation and storage segment $ 640 $ 846 $ 1,592 $ 1,631 Gross margin energy generation and storage segment 20.4 % 30.3 % 28.7 % 29.6 % Total gross profit $ 4,751 $ 3,878 $ 9,471 $ 7,031 Total gross margin 16.8 % 17.2 % 18.7 % 16.8 % Automotive & Services and Other Segment Cost of automotive sales revenue increased $3.30 billion, or 24%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025, due to the increase in deliveries year over year as discussed above. Cost of automotive sales revenue increased $4.45 billion, or 18%, in the six months ended June 30, 2026 as compared to the six months ended June 30, 2025, due to the increase in deliveries year over year as discussed above.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:103375-104481",
+      "excerpt": "ue and cost of paid Supercharging sessions. Gross margin for total automotive decreased from 17.2% to 16.9% in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025. Gross margin for total automotive increased from 16.8% to 18.7% in the six months ended June 30, 2026 as compared to the six months ended June 30, 2025. The fluctuations are primarily due to the changes in automotive sales revenue and cost of automotive sales revenue and a decrease in regulatory credits revenue, as discussed above. 32 Table of Contents Gross margin for total automotive & services and other segment increased from 15.4% to 16.4% in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025. Gross margin for total automotive & services and other segment increased from 14.9% to 17.5% in the six months ended June 30, 2026 as compared to the six months ended June 30, 2025. The changes in gross margin were primarily due to the changes in automotive sales gross margin, as discussed above, as well as from an improvement in services and other gross margin.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:83573-84643",
+      "excerpt": "through the second quarter. We are focused on ramping the production, increasing the market penetration of our energy storage products and developing our solar manufacturing and battery technologies. During the three and six months ended June 30, 2026, we recognized total revenues of $28.24 billion and $50.62 billion, respectively, representing increases of $5.74 billion and $8.79 billion, respectively, compared to the same periods in the prior year. During the three and six months ended June 30, 2026, our net income attributable to common stockholders was $1.11 billion and $1.59 billion, respectively, representing a decrease of $58 million and an increase of $10 million, respectively, compared to the same periods in the prior year. We continue to ramp production and build and optimize our manufacturing capacity, expand our operations while focusing on further cost reductions and operational efficiencies, including through vertical integration of our battery and semiconductor supply chains, to enable increased deliveries and deployments of our products.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:105975-107175",
+      "excerpt": "189 million and $334 million, respectively. R&D expenses as a percentage of revenue increased from 7% to 8% in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025. R&D expenses as a percentage of revenue increased from 7% to 9% in the six months ended June 30, 2026 as compared to the six months ended June 30, 2025. These increases were primarily due to higher R&D expenses and increases in total revenues in the current periods. Selling, General and Administrative Expense Three Months Ended June 30, Change Six Months Ended June 30, Change (Dollars in millions) 2026 2025 $ % 2026 2025 $ % Selling, general and administrative $ 1,982 $ 1,366 $ 616 45 % $ 3,815 $ 2,617 $ 1,198 46 % As a percentage of revenues 7 % 6 % 8 % 6 % Selling, general and administrative (“SG&A”) expenses increased $616 million, or 45%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025, driven by a $283 million increase in stock-based compensation primarily related to the 2025 CEO Performance Award, a $134 million increase in employee and labor costs, including professional services, a $109 million increase in operating expenses includin",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:98094-99002",
+      "excerpt": "d other 4,581 3,046 1,535 50 % 8,326 5,684 2,642 46 % Total automotive & services and other segment revenue 25,097 19,707 5,390 27 % 45,076 36,312 8,764 24 % Energy generation and storage segment revenue 3,139 2,789 350 13 % 5,547 5,519 28 1 % Total revenues $ 28,236 $ 22,496 $ 5,740 26 % $ 50,623 $ 41,831 $ 8,792 21 % Automotive & Services and Other Segment Automotive sales revenue increased $4.22 billion, or 27%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025, due to an increase of approximately 25% in cash deliveries. Automotive sales revenue increased $6.77 billion, or 24%, in the six months ended June 30, 2026 as compared to the six months ended June 30, 2025, due to an increase of approximately 18% in cash deliveries, in part from bringing down all of our vehicle factories simultaneously for the changeover to the New Model Y in the prior period.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": "2026-04-01",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/0001628280-26-049270-index.htm",
+      "locator": "Revenue 2026-04-01..2026-06-30",
+      "excerpt": null,
+      "values": [
+        28236000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": "2025-04-01",
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/0001628280-26-049270-index.htm",
+      "locator": "Revenue 2025-04-01..2025-06-30",
+      "excerpt": null,
+      "values": [
+        22496000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "TSLA",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2026-06-30",
+      "excerpt": null,
+      "values": [
+        28236000000.0,
+        22496000000.0,
+        0.25515647226173543
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E6",
+      "quote": "Automotive sales revenue increased $4.22 billion, or 27%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:98094-99002"
+    },
+    {
+      "evidence_id": "E2",
+      "quote": "Cost of automotive sales revenue increased $3.30 billion, or 24%, in the three months ended June 30, 2026 as compared to the three months ended June 30, 2025, due to the increase in deliveries year over year",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:101639-102638"
+    },
+    {
+      "evidence_id": "E9",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_end": "2026-06-30",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2026-06-30"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 14982,
+    "output": 1890
+  },
+  "latency_ms": 24794,
+  "estimated_cost_usd": 0.073296,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "self_reflection",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 4
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_ALL_TRUE",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "self_critique",
+        "status": "ok",
+        "duration_ms": 11969,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "weaknesses": 3
+      },
+      {
+        "node": "revise",
+        "status": "ok",
+        "duration_ms": 12817,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_ALL_TRUE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 12,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "self_critique",
+      "revise",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

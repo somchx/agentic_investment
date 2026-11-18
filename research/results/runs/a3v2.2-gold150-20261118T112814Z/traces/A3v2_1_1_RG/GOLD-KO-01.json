@@ -1,0 +1,1830 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:A3v2_1_1_RG:GOLD-KO-01:7762065d",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3v2_1_1_RG",
+  "approach_kind": "contradiction_aware_v2",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "review": {
+      "enabled": true,
+      "max_output_tokens": 4096,
+      "passage_chars": 1200,
+      "allow_partial_period": false
+    },
+    "guard": {
+      "enabled": true
+    },
+    "analyzer": {
+      "name": "default"
+    },
+    "decidability": {
+      "name": "not_assessed"
+    },
+    "periods": {
+      "enabled": true,
+      "version": "1.1"
+    },
+    "name": "A3v2_1_1_RG",
+    "kind": "contradiction_aware_v2",
+    "description": "A3v2_1_1_R + deterministic reconciliation guard (cache-only replay of A3v2_1_1_R)",
+    "versions": {
+      "a3v2": "a3v2-0.2.1-dev",
+      "review_prompts": "a3v2-review-prompts-0.3",
+      "guard": "a3v2-guard-0.1",
+      "graph": "langgraph-claims-a3v2-0.1",
+      "periods": "a3v2-periods-1.1"
+    },
+    "replay_of": "A3v2_1_1_R"
+  },
+  "config_hash": "84aba6df744a9382",
+  "claim": {
+    "claim_id": "GOLD-KO-01",
+    "company": "KO",
+    "claim": "Coca-Cola's net operating revenues for the quarter ended October 2, 2026 increased year over year.",
+    "as_of_date": "2026-11-01",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q3"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-02",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "During the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Coca-Cola's net operating revenues for the quarter ended October 2, 2026 increased year over year. Evidence E3 directly supports this claim by stating that net operating revenues for the three months ended October 2, 2026 were $13,380 million compared to $12,455 million for the three months ended September 26, 2025 (the prior year quarter), representing an increase of $925 million or 7%. This is a clear year-over-year increase in net operating revenues for the quarter in question.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_ALL_TRUE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-02",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-10-02",
+            "basis": "quarter",
+            "level": 13380000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-07-04",
+                "period_end": "2026-10-02",
+                "value": 13380000000.0,
+                "filed": "2026-10-28",
+                "form": "10-Q",
+                "accession_number": "0001628280-26-067844",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 12455000000.0,
+            "prior_period_end": "2025-09-26",
+            "yoy_change": 0.07426736250501806,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "analyze_claim",
+      "analysis": {
+        "assertions": [
+          {
+            "assertion_id": "A0",
+            "text": "Coca-Cola's net operating revenues for the quarter ended October 2, 2026 increased year over year.",
+            "type": "claim",
+            "period_end": "2026-10-02",
+            "comparison_end": "2025-10-02",
+            "period_start": "2026-07-04",
+            "period_months": 3,
+            "period_kind": "duration"
+          },
+          {
+            "assertion_id": "N1",
+            "type": "numeric",
+            "numeric": {
+              "metric": "Revenue",
+              "measure": "yoy_growth",
+              "period_basis": "quarter",
+              "period_end": "2026-10-02",
+              "comparison": "increase",
+              "threshold": null,
+              "stated_value": null
+            },
+            "text": "Revenue yoy_growth increase None",
+            "period_end": "2026-10-02",
+            "comparison_end": "2025-10-02",
+            "period_start": "2026-07-04",
+            "period_months": 3,
+            "period_kind": "duration"
+          }
+        ],
+        "computations": [],
+        "claim_period": {
+          "version": "a3v2-periods-1.1",
+          "kind": "duration",
+          "start": "2026-07-04",
+          "end": "2026-10-02",
+          "months": 3,
+          "label": "3M ended 2026-10-02",
+          "fiscal_year": 2026,
+          "source": "text_date",
+          "comparison": {
+            "start": "2025-07-04",
+            "end": "2025-10-02"
+          },
+          "notes": [],
+          "period_end": "2026-10-02",
+          "comparison_end": "2025-10-02",
+          "basis": "quarter",
+          "orientation": "historical",
+          "years": [
+            2025,
+            2026
+          ]
+        },
+        "analyzer": "default-whole-claim-0.1",
+        "decidability": [
+          {
+            "assertion_id": "A0",
+            "status": "NOT_ASSESSED",
+            "reason": "decidability check not implemented yet"
+          },
+          {
+            "assertion_id": "N1",
+            "status": "NOT_ASSESSED",
+            "reason": "decidability check not implemented yet"
+          }
+        ]
+      },
+      "computations": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Were there any restatements, corrections, or adjustments to the reported net operating revenues for Q3 2026 or Q3 2025 that would affect the year-over-year comparison?",
+          "search_query": "restatement correction adjustment revision net operating revenues Q3 2026 2025 October September"
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Did the quarter ended October 2, 2026 have a different number of days than the quarter ended September 26, 2025, which could affect the revenue comparison on a non-comparable basis?",
+          "search_query": "third quarter days October 2 2026 September 26 2025 calendar period comparable"
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Were there significant acquisitions, divestitures, or structural changes that affected net operating revenues in Q3 2026 versus Q3 2025, making the comparison not truly organic?",
+          "search_query": "acquisition divestiture structural changes net operating revenues third quarter 2026 2025 organic"
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "restatement correction adjustment revision net operating revenues Q3 2026 2025 October September",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "third quarter days October 2 2026 September 26 2025 calendar period comparable",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "acquisition divestiture structural changes net operating revenues third quarter 2026 2025 organic",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "evidence_review",
+      "version": "a3v2-review-prompts-0.1",
+      "claim_period": {
+        "version": "a3v2-periods-1.1",
+        "kind": "duration",
+        "start": "2026-07-04",
+        "end": "2026-10-02",
+        "months": 3,
+        "label": "3M ended 2026-10-02",
+        "fiscal_year": 2026,
+        "source": "text_date",
+        "comparison": {
+          "start": "2025-07-04",
+          "end": "2025-10-02"
+        },
+        "notes": [],
+        "period_end": "2026-10-02",
+        "comparison_end": "2025-10-02",
+        "basis": "quarter",
+        "orientation": "historical",
+        "years": [
+          2025,
+          2026
+        ]
+      },
+      "assertions": [
+        {
+          "assertion_id": "A0",
+          "text": "Coca-Cola's net operating revenues for the quarter ended October 2, 2026 increased year over year.",
+          "type": "claim",
+          "period_end": "2026-10-02",
+          "comparison_end": "2025-10-02",
+          "period_start": "2026-07-04",
+          "period_months": 3,
+          "period_kind": "duration"
+        },
+        {
+          "assertion_id": "N1",
+          "type": "numeric",
+          "numeric": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-02",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "text": "Revenue yoy_growth increase None",
+          "period_end": "2026-10-02",
+          "comparison_end": "2025-10-02",
+          "period_start": "2026-07-04",
+          "period_months": 3,
+          "period_kind": "duration"
+        }
+      ],
+      "reviewed_evidence_ids": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "E9",
+        "E7",
+        "E8",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "findings": [
+        {
+          "finding_id": "R1",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E7",
+            "E8"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "$13,380 million vs $12,455 million",
+          "justification": "E7 shows net operating revenues of $13,380 million for the three months ended October 2, 2026 (period_status: EXACT_MATCH). E8 shows net operating revenues of $12,455 million for the three months ended September 26, 2025 (period_status: EXACT_MATCH, which is the comparison period). Since $13,380M > $12,455M, revenues increased year over year.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2026-07-04",
+                  "end": "2026-10-02",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "comparison",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-06-28",
+                  "end": "2025-09-26",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R2",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E9"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "0.07426736250501806",
+          "justification": "E9 is a derived metric showing revenue year-over-year growth of approximately 7.4% for the quarter ended October 2, 2026 (period_status: COMPATIBLE_AFTER_VERIFIED_DERIVATION). A positive growth rate confirms that revenues increased year over year.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E9",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2026-07-04",
+                  "end": "2026-10-02",
+                  "months": [
+                    3
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "Revenue"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R3",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E3"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "During the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%.",
+          "justification": "E3 explicitly states that for the three months ended October 2, 2026, net operating revenues increased by $925 million or 7% compared to the three months ended September 26, 2025. This directly confirms the year-over-year increase in revenues for the claim period.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E3",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-10-02",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025,
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R4",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E11"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "During the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%.",
+          "justification": "E11 explicitly states that for the three months ended October 2, 2026 (period_status: EXACT_MATCH), net operating revenues increased by $925 million or 7% compared to the prior year period. This directly confirms the year-over-year revenue increase.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "checks": [
+            {
+              "evidence_id": "E11",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-10-02",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025,
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R5",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E7",
+            "E8"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "$13,380 million vs $12,455 million",
+          "justification": "E7 and E8 provide the exact revenue figures for the claim period and comparison period with EXACT_MATCH status. The increase from $12,455M to $13,380M confirms positive year-over-year revenue growth.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2026-07-04",
+                  "end": "2026-10-02",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "comparison",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-06-28",
+                  "end": "2025-09-26",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R6",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E9"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "0.07426736250501806",
+          "justification": "E9 is a derived metric with period_status COMPATIBLE_AFTER_VERIFIED_DERIVATION showing the revenue year-over-year growth rate of approximately 7.4% for the quarter ended October 2, 2026. This directly measures the year-over-year revenue growth.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E9",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2026-07-04",
+                  "end": "2026-10-02",
+                  "months": [
+                    3
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "Revenue"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R7",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E3"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "During the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%.",
+          "justification": "E3 explicitly states the year-over-year revenue increase of 7% for the three months ended October 2, 2026, which directly confirms positive revenue growth.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E3",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-10-02",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025,
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R8",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E11"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "During the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%.",
+          "justification": "E11 explicitly states the 7% year-over-year revenue increase for the three months ended October 2, 2026 (period_status: EXACT_MATCH), directly confirming positive revenue growth.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "checks": [
+            {
+              "evidence_id": "E11",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-10-02",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025,
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        }
+      ],
+      "dropped_findings": [],
+      "llm_called": true,
+      "period_derivations": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_ALL_TRUE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "Each of our quarters, other than the fourth quarter, ends on the Friday closest to the last day of the corresponding quarterly calendar period.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-067844",
+              "form": "10-Q",
+              "filed": "2026-10-28",
+              "period_end": "2026-10-02",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+              "locator": "10-Q 0001628280-26-067844:122538-123594"
+            },
+            {
+              "evidence_id": "E6",
+              "quote": "The third quarter of 2026 and the third quarter of 2025 ended on October 2, 2026 and September 26, 2025, respectively.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-067844",
+              "form": "10-Q",
+              "filed": "2026-10-28",
+              "period_end": "2026-10-02",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+              "locator": "10-Q 0001628280-26-067844:14277-15296"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E11",
+              "quote": "Percent Change 2026 versus 2025 Volume 1 Price/Mix Foreign Currency Fluctuations Acquisitions & Divestitures 2 Total Consolidated 7 % 1 % 1 % (1) % 7 %",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-067844",
+              "form": "10-Q",
+              "filed": "2026-10-28",
+              "period_end": "2026-10-02",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+              "locator": "10-Q 0001628280-26-067844:129392-130409"
+            },
+            {
+              "evidence_id": "E5",
+              "quote": "In May 2025, the Company refranchised our bottling operations in certain territories in India... Additionally, in October 2025, the Company sold our finished product operations in Nigeria.",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-067844",
+              "form": "10-Q",
+              "filed": "2026-10-28",
+              "period_end": "2026-10-02",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+              "locator": "10-Q 0001628280-26-067844:117107-118235"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation_guard",
+      "version": "a3v2-guard-0.1",
+      "initial_label": "SUPPORTED",
+      "proposed_label": "SUPPORTED",
+      "final_label": "SUPPORTED",
+      "outcome": "NO_CHANGE",
+      "reason_code": "NO_CHANGE",
+      "excluded_citations": [
+        {
+          "evidence_id": "E11",
+          "quote": "During the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%.",
+          "issues": [
+            "QUOTE_NOT_IN_PASSAGE"
+          ],
+          "period_status": "EXACT_MATCH"
+        }
+      ],
+      "deciding_findings": [],
+      "initial_basis": [],
+      "rule_trace": [
+        "excluded 1 citation(s): E11(QUOTE_NOT_IN_PASSAGE)",
+        "NO_CHANGE: NO_CHANGE"
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "0576122a33c5029695b763b67306a32a39dd888d246fa074387e75bef4c45360",
+      "source": "cache",
+      "input_tokens": 3643,
+      "output_tokens": 425,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-02",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "During the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Coca-Cola's net operating revenues for the quarter ended October 2, 2026 increased year over year. Evidence E3 directly supports this claim by stating that net operating revenues for the three months ended October 2, 2026 were $13,380 million compared to $12,455 million for the three months ended September 26, 2025 (the prior year quarter), representing an increase of $925 million or 7%. This is a clear year-over-year increase in net operating revenues for the quarter in question.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "6f1d1f791daf82c5bc5ed504940f115ad7ceb59fb357a287071b45a229b231bb",
+      "source": "cache",
+      "input_tokens": 4622,
+      "output_tokens": 320,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Were there any restatements, corrections, or adjustments to the reported net operating revenues for Q3 2026 or Q3 2025 that would affect the year-over-year comparison?",
+            "search_query": "restatement correction adjustment revision net operating revenues Q3 2026 2025 October September"
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Did the quarter ended October 2, 2026 have a different number of days than the quarter ended September 26, 2025, which could affect the revenue comparison on a non-comparable basis?",
+            "search_query": "third quarter days October 2 2026 September 26 2025 calendar period comparable"
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Were there significant acquisitions, divestitures, or structural changes that affected net operating revenues in Q3 2026 versus Q3 2025, making the comparison not truly organic?",
+            "search_query": "acquisition divestiture structural changes net operating revenues third quarter 2026 2025 organic"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "evidence_review",
+      "tool": "submit_evidence_review",
+      "request_key": "0a6579172d1c5ca713c683d23fc6456afae144021b2470073377f4e0e78992d7",
+      "source": "cache",
+      "input_tokens": 7959,
+      "output_tokens": 1496,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "findings": [
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E7",
+              "E8"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "$13,380 million vs $12,455 million",
+            "justification": "E7 shows net operating revenues of $13,380 million for the three months ended October 2, 2026 (period_status: EXACT_MATCH). E8 shows net operating revenues of $12,455 million for the three months ended September 26, 2025 (period_status: EXACT_MATCH, which is the comparison period). Since $13,380M > $12,455M, revenues increased year over year.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E9"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "0.07426736250501806",
+            "justification": "E9 is a derived metric showing revenue year-over-year growth of approximately 7.4% for the quarter ended October 2, 2026 (period_status: COMPATIBLE_AFTER_VERIFIED_DERIVATION). A positive growth rate confirms that revenues increased year over year.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E3"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "During the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%.",
+            "justification": "E3 explicitly states that for the three months ended October 2, 2026, net operating revenues increased by $925 million or 7% compared to the three months ended September 26, 2025. This directly confirms the year-over-year increase in revenues for the claim period.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E11"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "During the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%.",
+            "justification": "E11 explicitly states that for the three months ended October 2, 2026 (period_status: EXACT_MATCH), net operating revenues increased by $925 million or 7% compared to the prior year period. This directly confirms the year-over-year revenue increase.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E7",
+              "E8"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "$13,380 million vs $12,455 million",
+            "justification": "E7 and E8 provide the exact revenue figures for the claim period and comparison period with EXACT_MATCH status. The increase from $12,455M to $13,380M confirms positive year-over-year revenue growth.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E9"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "0.07426736250501806",
+            "justification": "E9 is a derived metric with period_status COMPATIBLE_AFTER_VERIFIED_DERIVATION showing the revenue year-over-year growth rate of approximately 7.4% for the quarter ended October 2, 2026. This directly measures the year-over-year revenue growth.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E3"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "During the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%.",
+            "justification": "E3 explicitly states the year-over-year revenue increase of 7% for the three months ended October 2, 2026, which directly confirms positive revenue growth.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E11"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "During the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%.",
+            "justification": "E11 explicitly states the 7% year-over-year revenue increase for the three months ended October 2, 2026 (period_status: EXACT_MATCH), directly confirming positive revenue growth.",
+            "definition_mismatch": false
+          }
+        ]
+      },
+      "isolated_conversation": true,
+      "prompt_version": "a3v2-review-prompts-0.3"
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "4d08c4517cd9a48b8f354dec7fd284ce3f4bf01e7e568c8645076da959bbc606",
+      "source": "cache",
+      "input_tokens": 10377,
+      "output_tokens": 1072,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E1",
+                "quote": "Each of our quarters, other than the fourth quarter, ends on the Friday closest to the last day of the corresponding quarterly calendar period."
+              },
+              {
+                "evidence_id": "E6",
+                "quote": "The third quarter of 2026 and the third quarter of 2025 ended on October 2, 2026 and September 26, 2025, respectively."
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E11",
+                "quote": "Percent Change 2026 versus 2025 Volume 1 Price/Mix Foreign Currency Fluctuations Acquisitions & Divestitures 2 Total Consolidated 7 % 1 % 1 % (1) % 7 %"
+              },
+              {
+                "evidence_id": "E5",
+                "quote": "In May 2025, the Company refranchised our bottling operations in certain territories in India... Additionally, in October 2025, the Company sold our finished product operations in Nigeria."
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "During the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%."
+          },
+          {
+            "evidence_id": "E11",
+            "quote": "During the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After investigating potential challenges to the initial verdict, I found:\n\nH1 (Restatements): No relevant evidence was found regarding any restatements, corrections, or adjustments to the reported net operating revenues for Q3 2026 or Q3 2025.\n\nH2 (Different number of days): This challenge is REFUTED. While the evidence confirms that quarters end on the Friday closest to the last day of the corresponding quarterly calendar period (E1, E6), and Q3 2026 ended October 2, 2026 while Q3 2025 ended September 26, 2025, both quarters represent standard three-month periods. The evidence from the original packet (E1) noted that the first quarter of 2026 had six additional days compared to Q1 2025, but this does not apply to Q3. The quarters are comparable for revenue comparison purposes.\n\nH3 (Acquisitions/divestitures): This challenge is REFUTED. While E5 confirms there were some structural changes (India refranchising in May 2025 and Nigeria sale in October 2025), E11 shows that acquisitions and divestitures had only a -1% impact on the consolidated 7% revenue growth for Q3 2026. The vast majority of the 7% increase came from volume (7%), price/mix (1%), and foreign currency (1%). The claim does not assert that the increase was organic or exclude structural changes—it simply states that revenues increased year over year, which is factually correct.\n\nThe initial verdict of SUPPORTED remains correct. The evidence clearly establishes that net operating revenues for Q3 2026 ($13,380 million) increased compared to Q3 2025 ($12,455 million), representing a 7% or $925 million increase.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Coca-Cola's net operating revenues for the quarter ended October 2, 2026 increased year over year. 2026 Q3",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "restatement correction adjustment revision net operating revenues Q3 2026 2025 October September",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "third quarter days October 2 2026 September 26 2025 calendar period comparable",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "acquisition divestiture structural changes net operating revenues third quarter 2026 2025 organic",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-10-02",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-10-02",
+            "basis": "quarter",
+            "level": 13380000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-07-04",
+                "period_end": "2026-10-02",
+                "value": 13380000000.0,
+                "filed": "2026-10-28",
+                "form": "10-Q",
+                "accession_number": "0001628280-26-067844",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 12455000000.0,
+            "prior_period_end": "2025-09-26",
+            "yoy_change": 0.07426736250501806,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-067844",
+        "filed": "2026-10-28",
+        "report_date": "2026-10-02",
+        "primary_document": "ko-20261002.htm",
+        "sha256": "1760b755d646b79f39136d6a5d91dc307542fe13869527998158a5a6e63d304f"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-050503",
+        "filed": "2026-07-29",
+        "report_date": "2026-07-03",
+        "primary_document": "ko-20260703.htm",
+        "sha256": "912506ad356ed21407d4e52d2ff672acdf7d8bca6af7e9ef0f38ce8941081c07"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-010047",
+        "filed": "2026-02-20",
+        "report_date": "2025-12-31",
+        "primary_document": "ko-20251231.htm",
+        "sha256": "7c344724ffd25824080de9272cf711543400cfcbbafb06b787fc482fa3d1a5e2"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1170
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:122538-123594",
+      "excerpt": "rs or consumers and is not based on average daily sales. Each of our quarters, other than the fourth quarter, ends on the Friday closest to the last day of the corresponding quarterly calendar period. As a result, the first quarter of 2026 had six additional days when compared to the first quarter of 2025, and the fourth quarter of 2026 will have six fewer days when compared to the fourth quarter of 2025. 5 After considering the impact of structural changes, unit case volume for Bottling Investments for the three and nine months ended October 2, 2026 increased 10% and 7%, respectively. 6 After considering the impact of divestiture activities, worldwide concentrate sales volume for the three months ended October 2, 2026 increased 7%. Unit Case Volume Although a significant portion of our Company’s net operating revenues is not based directly on unit case volume, we believe unit case volume performance is one of the indicators of the underlying strength of the Coca-Cola system because it measures demand for our products at the consumer level.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050503",
+      "form": "10-Q",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-07-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+      "locator": "10-Q 0001628280-26-050503:119126-120194",
+      "excerpt": "rs or consumers and is not based on average daily sales. Each of our quarters, other than the fourth quarter, ends on the Friday closest to the last day of the corresponding quarterly calendar period. As a result, the first quarter of 2026 had six additional days when compared to the first quarter of 2025, and the fourth quarter of 2026 will have six fewer days when compared to the fourth quarter of 2025. 5 After considering the impact of structural changes, unit case volume for Bottling Investments for the three and six months ended July 3, 2026 increased 8% and 6%, respectively. 6 After considering the impact of structural changes, concentrate sales volume for Asia Pacific for both the three and six months ended July 3, 2026 increased 11%. 33 Unit Case Volume Although a significant portion of our Company’s net operating revenues is not based directly on unit case volume, we believe unit case volume performance is one of the indicators of the underlying strength of the Coca-Cola system because it measures demand for our products at the consumer level.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:128800-129592",
+      "excerpt": "ended October 2, 2026. Additionally, the differences between concentrate sales volume and unit case volume growth rates for the operating segments were impacted by the timing of concentrate shipments. We generally expect the differences between concentrate sales volume and unit case volume growth rates to be minimal on a full year basis; however, for the full year 2026 we currently expect worldwide concentrate sales volume growth to be slightly behind unit case volume growth. 36 Net Operating Revenues Three Months Ended October 2, 2026 versus Three Months Ended September 26, 2025 During the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:127838-129000",
+      "excerpt": "ate Sales Volume During the three months ended October 2, 2026, worldwide concentrate sales volume increased 6% and unit case volume increased 5% compared to the three months ended September 26, 2025. During the nine months ended October 2, 2026, worldwide concentrate sales volume increased 6% and unit case volume increased 4% compared to the nine months ended September 26, 2025. Concentrate sales volume growth is calculated based on the amount sold during the reporting periods, which is impacted by the number of days. Conversely, unit case volume growth is calculated based on average daily sales, which is not impacted by the number of days in the reporting periods. The first quarter of 2026 had six additional days when compared to the first quarter of 2025, which contributed to the differences between concentrate sales volume and unit case volume growth rates on a consolidated basis and for the individual operating segments during the nine months ended October 2, 2026. Additionally, the differences between concentrate sales volume and unit case volume growth rates for the operating segments were impacted by the timing of concentrate shipments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:117107-118235",
+      "excerpt": "sold. Typically, the Company has not reported unit case volume or recognized concentrate sales volume related to a licensed brand in periods prior to the beginning of the term of a license agreement. Therefore, in the year that a license agreement is entered into, the unit case volume and concentrate sales volume related to a licensed brand are incremental to prior year volume. We generally do not consider the licensing of a brand to be a structural change. In May 2025, the Company refranchised our bottling operations in certain territories in India. The impact of this refranchising has been included as a structural change in our analysis of net operating revenues on a consolidated basis as well as for the Bottling Investments and Asia Pacific operating segments for the nine months ended October 2, 2026. Additionally, in October 2025, the Company sold our finished product operations in Nigeria. The impact of this sale has been included as a divestiture in our analysis of net operating revenues on a consolidated basis as well as for the EMEA operating segment for the three and nine months ended October 2, 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:14277-15296",
+      "excerpt": "included in our consolidated financial statements. In the opinion of management, all adjustments (including normal recurring accruals) considered necessary for a fair presentation have been included. Operating results for the three and nine months ended October 2, 2026 are not necessarily indicative of the results that may be expected for the year ending December 31, 2026. Sales of our ready-to-drink beverages are somewhat seasonal, with the second and third calendar quarters typically accounting for the highest sales volumes. The volume of sales in the beverage business may be affected by weather conditions. Each of our quarterly reporting periods, other than the fourth quarter, ends on the Friday closest to the last day of the corresponding quarterly calendar period. The third quarter of 2026 and the third quarter of 2025 ended on October 2, 2026 and September 26, 2025, respectively. Our fourth quarter and our fiscal year end on December 31 regardless of the day of the week on which December 31 falls.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": "2026-07-04",
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/0001628280-26-067844-index.htm",
+      "locator": "Revenue 2026-07-04..2026-10-02",
+      "excerpt": null,
+      "values": [
+        13380000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": "2025-06-28",
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/0001628280-26-067844-index.htm",
+      "locator": "Revenue 2025-06-28..2025-09-26",
+      "excerpt": null,
+      "values": [
+        12455000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "KO",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2026-10-02",
+      "excerpt": null,
+      "values": [
+        13380000000.0,
+        12455000000.0,
+        0.07426736250501806
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:134536-135568",
+      "excerpt": "en evaluating the Company’s performance. Refer to the heading “Structural Changes, Acquired Brands and Newly Licensed Brands” above for additional information related to acquisitions and divestitures. Nine Months Ended October 2, 2026 versus Nine Months Ended September 26, 2025 During the nine months ended October 2, 2026, net operating revenues were $39,232 million, compared to $36,119 million during the nine months ended September 26, 2025, an increase of $3,113 million, or 9%. The following table illustrates, on a percentage basis, the estimated impact of the factors resulting in the increase (decrease) in net operating revenues on a consolidated basis and for each of our operating segments: Percent Change 2026 versus 2025 Volume 1 Price/Mix Foreign Currency Fluctuations Acquisitions & Divestitures 2 Total Consolidated 6 % 1 % 2 % (1) % 9 % EMEA 4 2 3 (3) 6 Latin America 6 4 8 — 18 North America 5 2 — — 7 Asia Pacific 10 (6) (1) — 3 Bottling Investments 10 1 2 (1) 11 Note: Certain rows may not add due to rounding.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:129392-130409",
+      "excerpt": "g the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%. The following table illustrates, on a percentage basis, the estimated impact of the factors resulting in the increase (decrease) in net operating revenues on a consolidated basis and for each of our operating segments: Percent Change 2026 versus 2025 Volume 1 Price/Mix Foreign Currency Fluctuations Acquisitions & Divestitures 2 Total Consolidated 7 % 1 % 1 % (1) % 7 % EMEA 6 1 — (3) 4 Latin America 8 7 9 — 25 North America 2 1 — — 3 Asia Pacific 8 (2) (3) — 4 Bottling Investments 10 3 1 — 13 Note: Certain rows may not add due to rounding. 1 Represents the percent change in net operating revenues attributable to the increase (decrease) in concentrate sales volume for our geographic operating segments (expressed in unit case equivalents) after considering the impact of acquisitions and divestitures, if any.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:143458-144493",
+      "excerpt": "to the refranchising of our bottling operations in certain territories in India. Refer to Note 2 of Notes to Consolidated Financial Statements for additional information on our divestiture activities. Refer to Note 9 of Notes to Consolidated Financial Statements for additional information on the tax litigation. Refer to Note 15 of Notes to Consolidated Financial Statements for additional information on the impairment charge. Operating Income and Operating Margin Information about our operating income contribution by operating segment and Corporate on a percentage basis is as follows: Three Months Ended Nine Months Ended October 2, 2026 September 26, 2025 October 2, 2026 September 26, 2025 EMEA 26.2 % 27.5 % 27.7 % 29.3 % Latin America 25.8 22.5 25.0 23.1 North America 39.6 42.2 37.5 38.9 Asia Pacific 12.6 13.2 13.0 15.0 Bottling Investments 4.6 1.4 3.6 2.0 Corporate (8.8) (6.8) (6.8) (8.3) Total 100.0 % 100.0 % 100.0 % 100.0 % Operating margin is a ratio calculated by dividing operating income by net operating revenues.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:182721-183866",
+      "excerpt": "cted stock issued to employees. The net impact of the Company’s issuances of stock and share repurchases during the nine months ended September 26, 2025 resulted in a net cash outflow of $401 million. Dividends During the nine months ended October 2, 2026 and September 26, 2025, the Company paid dividends of $6,842 million and $4,391 million, respectively. As a result of the timing of our quarterly reporting periods as well as our dividend payment dates, the Company paid all of the 2026 third quarterly dividend in the third quarter and paid substantially all of the 2025 third quarterly dividend in the fourth quarter. Our Board of Directors approved the Company’s regular quarterly dividend of $0.53 per share at its October 2026 meeting. This dividend is payable on December 15, 2026 to shareowners of record as of the close of business on December 1, 2026. Proceeds from Sale of a Noncontrolling Interest During the nine months ended September 26, 2025, the Company received proceeds of $1,277 million from the sale of a noncontrolling interest. Refer to Note 11 of Notes to Consolidated Financial Statements for additional information.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050503",
+      "form": "10-Q",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-07-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+      "locator": "10-Q 0001628280-26-050503:14364-15551",
+      "excerpt": "entation have been included. Operating results for the three and six months ended July 3, 2026 are not necessarily indicative of the results that may be expected for the year ending December 31, 2026. Sales of our ready-to-drink beverages are somewhat seasonal, with the second and third calendar quarters typically accounting for the highest sales volumes. The volume of sales in the beverage business may be affected by weather conditions. Each of our quarterly reporting periods, other than the fourth quarter, ends on the Friday closest to the last day of the corresponding quarterly calendar period. The second quarter of 2026 and the second quarter of 2025 ended on July 3, 2026 and June 27, 2025, respectively. Our fourth quarter and our fiscal year end on December 31 regardless of the day of the week on which December 31 falls. Advertising Costs The Company’s accounting policy related to advertising costs for annual reporting purposes is to expense production costs of print, radio, television and other advertisements as of the first date the advertisements take place. All other marketing expenditures are expensed in the annual period in which the expenditure is incurred.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:180087-181160",
+      "excerpt": "debt with maturities of 90 days or less, $500 million of payments related to commercial paper and short-term debt with maturities greater than 90 days and payments of long-term debt of $1,634 million. During the nine months ended September 26, 2025, the Company had issuances of debt of $4,854 million, which consisted of $764 million of net issuances of commercial paper and short-term debt with maturities of 90 days or less, $3,442 million of issuances of commercial paper and short-term debt with maturities greater than 90 days and long-term debt issuances of $648 million, net of related discounts and issuance costs. The Company made payments of debt of $4,166 million during the nine months ended September 26, 2025, which consisted of $3,427 million of payments related to commercial paper and short-term debt with maturities greater than 90 days and payments of long-term debt of $739 million. Issuances of Stock The issuances of stock during the nine months ended October 2, 2026 and September 26, 2025 were related to the exercise of stock options by employees.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:133623-134736",
+      "excerpt": "n — Foreign Exchange” below. 37 “Acquisitions and divestitures” generally refers to acquisitions and divestitures of brands or businesses, some of which the Company considers to be structural changes. The impact of acquisitions and divestitures is the difference between the change in net operating revenues and the change in what our net operating revenues would have been if we removed the net operating revenues associated with an acquisition or a divestiture from either the current year or the prior year, as applicable. Management believes that quantifying the impact that acquisitions and divestitures had on the Company’s net operating revenues provides investors with useful information to enhance their understanding of the Company’s net operating revenue performance by improving their ability to compare our period-to-period results. Management considers the impact of acquisitions and divestitures when evaluating the Company’s performance. Refer to the heading “Structural Changes, Acquired Brands and Newly Licensed Brands” above for additional information related to acquisitions and divestitures.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:254689-255798",
+      "excerpt": "tion — Foreign Exchange” below. “Acquisitions and divestitures” generally refers to acquisitions and divestitures of brands or businesses, some of which the Company considers to be structural changes. The impact of acquisitions and divestitures is the difference between the change in net operating revenues and the change in what our net operating revenues would have been if we removed the net operating revenues associated with an acquisition or a divestiture from either the current year or the prior year, as applicable. Management believes that quantifying the impact that acquisitions and divestitures had on the Company’s net operating revenues provides investors with useful information to enhance their understanding of the Company’s net operating revenue performance by improving their ability to compare our year-to-year results. Management considers the impact of acquisitions and divestitures when evaluating the Company’s performance. Refer to the heading “Structural Changes, Acquired Brands and Newly Licensed Brands” above for additional information related to acquisitions and divestitures.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050503",
+      "form": "10-Q",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-07-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+      "locator": "10-Q 0001628280-26-050503:130564-131616",
+      "excerpt": "what our net operating revenues would have been if we removed the net operating revenues associated with an acquisition or a divestiture from either the current year or the prior year, as applicable. Management believes that quantifying the impact that acquisitions and divestitures had on the Company’s net operating revenues provides investors with useful information to enhance their understanding of the Company’s net operating revenue performance by improving their ability to compare our period-to-period results. Management considers the impact of acquisitions and divestitures when evaluating the Company’s performance. Refer to the heading “Structural Changes, Acquired Brands and Newly Licensed Brands” above for additional information related to acquisitions and divestitures. Six Months Ended July 3, 2026 versus Six Months Ended June 27, 2025 During the six months ended July 3, 2026, net operating revenues were $25,852 million, compared to $23,664 million during the six months ended June 27, 2025, an increase of $2,188 million, or 9%.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E3",
+      "quote": "During the three months ended October 2, 2026, net operating revenues were $13,380 million, compared to $12,455 million during the three months ended September 26, 2025, an increase of $925 million, or 7%.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_end": "2026-10-02",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/ko-20261002.htm",
+      "locator": "10-Q 0001628280-26-067844:128800-129592"
+    },
+    {
+      "evidence_id": "E9",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001628280-26-067844",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_end": "2026-10-02",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2026-10-02"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 26601,
+    "output": 3313
+  },
+  "latency_ms": 51,
+  "estimated_cost_usd": 0.129498,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 33,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_ALL_TRUE",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "analyze_claim",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "assertions": 2,
+        "computations": 0,
+        "period_source": "text_date"
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 5,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "evidence_review",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "findings": 8,
+        "deciding": 6,
+        "downgraded": 2
+      },
+      {
+        "node": "reconcile_v2",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_ALL_TRUE"
+      },
+      {
+        "node": "reconciliation_guard",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "outcome": "NO_CHANGE",
+        "reason": "NO_CHANGE",
+        "label": "SUPPORTED"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 5,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "analyze_claim",
+      "generate_hypotheses",
+      "counter_investigation",
+      "evidence_review",
+      "reconcile_v2",
+      "apply_guards",
+      "reconciliation_guard",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-a3v2-0.1"
+  },
+  "a3v2_version": "a3v2-0.2.1-dev"
+}

@@ -1,0 +1,344 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:A2_rag_numeric:GOLD-NFLX-09:3ed9c630",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A2_rag_numeric",
+  "approach_kind": "financial_verification",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A2_rag_numeric",
+    "kind": "financial_verification",
+    "description": "A2 baseline: RAG + deterministic numeric verification"
+  },
+  "config_hash": "d5298a61c0ae91f8",
+  "claim": {
+    "claim_id": "GOLD-NFLX-09",
+    "company": "NFLX",
+    "claim": "The increase in Netflix's marketing expenses in 2025 was driven mainly by higher advertising expenses.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E5",
+            "quote": "The increase in sales and marketing expenses for the year ended December 31, 2025 as compared to the year ended December 31, 2024 was primarily driven by a $222 million increase in marketing expenses, coupled with a $149 million increase in personnel-related costs due to the growth in advertising sales headcount."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that the increase in Netflix's marketing expenses in 2025 was driven mainly by higher advertising expenses. Evidence E5 from the 10-K filing for the year ended December 31, 2025 directly supports this claim. It states that the increase in sales and marketing expenses was \"primarily driven by a $222 million increase in marketing expenses, coupled with a $149 million increase in personnel-related costs.\" Since the $222 million increase in marketing expenses is larger than the $149 million increase in personnel-related costs, marketing expenses were indeed the main driver of the overall increase. This is a qualitative/interpretive claim about the primary driver of an expense increase, with no specific numeric assertions to verify beyond what the filing explicitly states.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "11f2708fa8ed29ac22b723bb55b1ef8de5084a67ad8e926393d69ba4239cc7a1",
+      "source": "cache",
+      "input_tokens": 3772,
+      "output_tokens": 401,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E5",
+            "quote": "The increase in sales and marketing expenses for the year ended December 31, 2025 as compared to the year ended December 31, 2024 was primarily driven by a $222 million increase in marketing expenses, coupled with a $149 million increase in personnel-related costs due to the growth in advertising sales headcount."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that the increase in Netflix's marketing expenses in 2025 was driven mainly by higher advertising expenses. Evidence E5 from the 10-K filing for the year ended December 31, 2025 directly supports this claim. It states that the increase in sales and marketing expenses was \"primarily driven by a $222 million increase in marketing expenses, coupled with a $149 million increase in personnel-related costs.\" Since the $222 million increase in marketing expenses is larger than the $149 million increase in personnel-related costs, marketing expenses were indeed the main driver of the overall increase. This is a qualitative/interpretive claim about the primary driver of an expense increase, with no specific numeric assertions to verify beyond what the filing explicitly states.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "The increase in Netflix's marketing expenses in 2025 was driven mainly by higher advertising expenses. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001065280-26-000034",
+        "filed": "2026-01-23",
+        "report_date": "2025-12-31",
+        "primary_document": "nflx-20251231.htm",
+        "sha256": "264db6ba1f54f59e834ad0d3bc192e5f346ca59764af4c9c6422056a8b8e3574"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001065280-25-000406",
+        "filed": "2025-10-22",
+        "report_date": "2025-09-30",
+        "primary_document": "nflx-20250930.htm",
+        "sha256": "9e2c369ba736b28d3588f03f051713dbf46e0c891c14458e44a6130da36ef525"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001065280-25-000323",
+        "filed": "2025-07-18",
+        "report_date": "2025-06-30",
+        "primary_document": "nflx-20250630.htm",
+        "sha256": "7c432d127f3be833dfe0f628ebaff2ca41ef55f8ef1016539f1d536fef64c618"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 569
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:77592-78549",
+      "excerpt": "rketing expenses was primarily driven by a $104 million increase in marketing expenses, coupled with a $41 million increase in personnel-related costs due to the growth in advertising sales headcount. 28 Table of Contents Nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024 Nine Months Ended Change September 30, 2025 September 30, 2024 YTD'25 vs. YTD'24 (in thousands, except percentages) Sales and marketing $ 2,187,930 $ 1,941,350 $ 246,580 13 % As a percentage of revenues 7 % 7 % The increase in sales and marketing expenses was primarily driven by a $114 million increase in personnel-related costs due to the growth in advertising sales headcount, coupled with a $98 million increase in other marketing expenses, and a $44 million increase in expenses incurred in connection with our advertising offering, including increased payments to advertising sales partners and other advertising distribution expenses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:74464-75562",
+      "excerpt": "turers, multichannel video programming distributors, mobile operators, and internet service providers. Our advertising sales partners include advertising technology providers and advertising agencies. Sales and marketing expenses also include payroll, stock-based compensation, facilities, and other related expenses for personnel that support advertising sales and marketing activities. Three months ended June 30, 2025 as compared to the three months ended June 30, 2024 Three Months Ended Change June 30, 2025 June 30, 2024 Q2'25 vs. Q2'24 (in thousands, except percentages) Sales and marketing $ 713,265 $ 644,084 $ 69,181 11 % As a percentage of revenues 6 % 7 % The increase in sales and marketing expenses was primarily driven by a $40 million increase in personnel-related costs due to the growth in advertising sales headcount, coupled with a $19 million increase in expenses incurred in connection with our advertising offering, including increased payments to advertising sales partners and other advertising distribution expenses, and a $12 million increase in other marketing expenses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:75362-76217",
+      "excerpt": "onnection with our advertising offering, including increased payments to advertising sales partners and other advertising distribution expenses, and a $12 million increase in other marketing expenses. Six months ended June 30, 2025 as compared to the six months ended June 30, 2024 Six Months Ended Change June 30, 2025 June 30, 2024 YTD'25 vs. YTD'24 (in thousands, except percentages) Sales and marketing $ 1,401,635 $ 1,298,424 $ 103,211 8 % As a percentage of revenues 6 % 7 % The increase in sales and marketing expenses was primarily driven by a $73 million increase in personnel-related costs due to the growth in advertising sales headcount, coupled with a $42 million increase in expenses incurred in connection with our advertising offering, including increased payments to advertising sales partners and other advertising distribution expenses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:76615-77792",
+      "excerpt": "Sales and marketing expenses consist primarily of expenses for promotional activities such as digital and television advertising, and certain payments made to marketing and advertising sales partners. Our marketing partners include consumer electronics manufacturers, multichannel video programming distributors, mobile operators, and internet service providers. Our advertising sales partners include advertising technology providers and advertising agencies. Sales and marketing expenses also include payroll, stock-based compensation, facilities, and other related expenses for personnel that support advertising sales and marketing activities. Three months ended September 30, 2025 as compared to the three months ended September 30, 2024 Three Months Ended Change September 30, 2025 September 30, 2024 Q3'25 vs. Q3'24 (in thousands, except percentages) Sales and marketing $ 786,295 $ 642,926 $ 143,369 22 % As a percentage of revenues 7 % 7 % The increase in sales and marketing expenses was primarily driven by a $104 million increase in marketing expenses, coupled with a $41 million increase in personnel-related costs due to the growth in advertising sales headcount.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:112855-113986",
+      "excerpt": "payroll, stock-based compensation, facilities, and other related expenses for personnel that support advertising sales and marketing activities. Year Ended December 31, Change 2025 2024 2023 2025 vs. 2024 (in thousands, except percentages) Sales and marketing $ 3,301,306 $ 2,917,554 $ 2,657,883 $ 383,752 13 % As a percentage of revenues 7 % 7 % 8 % The increase in sales and marketing expenses for the year ended December 31, 2025 as compared to the year ended December 31, 2024 was primarily driven by a $222 million increase in marketing expenses, coupled with a $149 million increase in personnel-related costs due to the growth in advertising sales headcount. Technology and Development Technology and development expenses consist primarily of payroll, stock-based compensation, facilities, and other related expenses for technology personnel responsible for making improvements to our service offerings, including testing, maintaining and modifying our user interface, our recommendations and infrastructure. Technology and development expenses also include costs associated with general use computer hardware and software.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:75667-76815",
+      "excerpt": "il on our non-income tax matters. Nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024 Nine Months Ended Change September 30, 2025 September 30, 2024 YTD'25 vs. YTD'24 (in thousands, except percentages) Cost of revenues $ 16,752,708 $ 15,271,100 $ 1,481,608 10 % As a percentage of revenues 51 % 53 % The increase in cost of revenues was primarily due to an increase in other cost of revenues, driven primarily by the accrual of a loss of $619 million related to non-income tax assessments in Brazil, coupled with a $518 million increase in content amortization relating to our existing and new content. We do not expect that non-income taxes incurred in Brazil will materially impact our results of operations in future periods. See Note 8 Commitments and Contingencies in the accompanying notes to our consolidated financial statements for further detail on our non-income tax matters. Sales and Marketing Sales and marketing expenses consist primarily of expenses for promotional activities such as digital and television advertising, and certain payments made to marketing and advertising sales partners.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E5",
+      "quote": "The increase in sales and marketing expenses for the year ended December 31, 2025 as compared to the year ended December 31, 2024 was primarily driven by a $222 million increase in marketing expenses, coupled with a $149 million increase in personnel-related costs due to the growth in advertising sales headcount.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:112855-113986"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 3772,
+    "output": 401
+  },
+  "latency_ms": 2,
+  "estimated_cost_usd": 0.017331,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "financial_verification",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

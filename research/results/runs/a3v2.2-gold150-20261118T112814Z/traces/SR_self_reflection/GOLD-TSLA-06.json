@@ -1,0 +1,730 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:SR_self_reflection:GOLD-TSLA-06:4e329843",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "SR_self_reflection",
+  "approach_kind": "self_reflection",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": true,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "SR_self_reflection",
+    "kind": "self_reflection",
+    "description": "A2 + self-critique and revision, no new retrieval"
+  },
+  "config_hash": "166d47be253b74e9",
+  "claim": {
+    "claim_id": "GOLD-TSLA-06",
+    "company": "TSLA",
+    "claim": "The decline in Tesla's automotive revenues in 2025 was driven primarily by lower average selling prices.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Automotive sales revenue decreased $6.66 billion, or 9%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, due a decrease of approximately 8% in cash deliveries and a lower average selling price per unit driven by sales mix and higher customer incentives such as attractive financing options."
+          },
+          {
+            "evidence_id": "E6",
+            "quote": "Gross margin for total automotive decreased from 18.5% to 16.8% in the six months ended June 30, 2025 as compared to the six months ended June 30, 2024 primarily due to lower average selling price per unit and a decrease in regulatory credits revenue as described above."
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Additionally, there was a decrease in one-time FSD recognition compared to the prior period and a lower average selling price per unit driven by sales mix and higher customer incentives such as attractive financing options."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that the decline in Tesla's automotive revenues in 2025 was driven primarily by lower average selling prices. Evidence E1 directly supports this claim, showing that automotive sales revenue decreased $6.66 billion (9%) in 2025 compared to 2024, and explicitly attributes this to \"a decrease of approximately 8% in cash deliveries and a lower average selling price per unit driven by sales mix and higher customer incentives.\" The evidence indicates that lower average selling prices was one of two main drivers (along with the 8% decrease in deliveries). Additional supporting evidence from quarterly reports (E2, E3, E4, E6) consistently mentions lower average selling prices as a key factor throughout 2025. While the evidence shows both volume decline (8%) and pricing decline contributed to the 9% revenue decrease, the filing explicitly identifies lower average selling prices as a primary driver, which supports the claim's assertion that it was \"driven primarily\" by this factor.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 94827000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 94827000000.0,
+                "filed": "2026-01-29",
+                "form": "10-K",
+                "accession_number": "0001628280-26-003952",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 97690000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": -0.029306991503736307,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "self_critique",
+      "weaknesses": [
+        {
+          "weakness_id": "W1",
+          "critique": "The claim states lower average selling prices was the 'primary' driver, but E1 shows automotive sales revenue declined 9% due to both an 8% decrease in cash deliveries AND lower average selling prices. Mathematically, if volume declined 8% and total revenue declined 9%, the price effect appears to be only about 1% (9% - 8% = 1%), suggesting volume decline was actually the larger contributor. The word 'primarily' may not be supported if the volume effect (8%) was larger than the pricing effect (~1%)."
+        },
+        {
+          "weakness_id": "W2",
+          "critique": "E1 also mentions that automotive regulatory credits revenue decreased $770 million (28%) in 2025. While this is a separate line item from automotive sales revenue, it is still part of total automotive revenues. The claim refers to 'automotive revenues' broadly, which could include regulatory credits. If so, the decline in regulatory credits is another significant factor not mentioned in the claim's attribution to pricing."
+        },
+        {
+          "weakness_id": "W3",
+          "critique": "E2 mentions 'a decrease in one-time FSD recognition compared to the prior period' as a factor affecting automotive sales revenue in Q3 2025. This suggests that revenue recognition timing for Full Self-Driving software also contributed to the decline, which is neither a volume nor a pricing effect. This additional factor weakens the claim that pricing was the 'primary' driver."
+        }
+      ]
+    },
+    {
+      "stage": "revision",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED",
+      "assessments": [
+        {
+          "item_id": "W1",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "Automotive sales revenue decreased $6.66 billion, or 9%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, due a decrease of approximately 8% in cash deliveries and a lower average selling price per unit",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003952",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+              "locator": "10-K 0001628280-26-003952:180912-181979"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "Automotive sales revenue decreased $6.66 billion, or 9%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003952",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+              "locator": "10-K 0001628280-26-003952:180912-181979"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [
+            {
+              "evidence_id": "E2",
+              "quote": "Additionally, there was a decrease in one-time FSD recognition compared to the prior period and a lower average selling price per unit",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-25-045968",
+              "form": "10-Q",
+              "filed": "2025-10-23",
+              "period_end": "2025-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045968/tsla-20250930.htm",
+              "locator": "10-Q 0001628280-25-045968:97879-98878"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "0b24e988f4020292bde068a9568db76da4e223c28fd2a8d2c295de5758d71983",
+      "source": "cache",
+      "input_tokens": 3935,
+      "output_tokens": 683,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Automotive sales revenue decreased $6.66 billion, or 9%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, due a decrease of approximately 8% in cash deliveries and a lower average selling price per unit driven by sales mix and higher customer incentives such as attractive financing options."
+          },
+          {
+            "evidence_id": "E6",
+            "quote": "Gross margin for total automotive decreased from 18.5% to 16.8% in the six months ended June 30, 2025 as compared to the six months ended June 30, 2024 primarily due to lower average selling price per unit and a decrease in regulatory credits revenue as described above."
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Additionally, there was a decrease in one-time FSD recognition compared to the prior period and a lower average selling price per unit driven by sales mix and higher customer incentives such as attractive financing options."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that the decline in Tesla's automotive revenues in 2025 was driven primarily by lower average selling prices. Evidence E1 directly supports this claim, showing that automotive sales revenue decreased $6.66 billion (9%) in 2025 compared to 2024, and explicitly attributes this to \"a decrease of approximately 8% in cash deliveries and a lower average selling price per unit driven by sales mix and higher customer incentives.\" The evidence indicates that lower average selling prices was one of two main drivers (along with the 8% decrease in deliveries). Additional supporting evidence from quarterly reports (E2, E3, E4, E6) consistently mentions lower average selling prices as a key factor throughout 2025. While the evidence shows both volume decline (8%) and pricing decline contributed to the 9% revenue decrease, the filing explicitly identifies lower average selling prices as a primary driver, which supports the claim's assertion that it was \"driven primarily\" by this factor.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "self_critique",
+      "tool": "submit_self_critique",
+      "request_key": "0e333800a8cd45b1549f37c32399f03389f98801225b87568b340464bf946005",
+      "source": "live",
+      "input_tokens": 4940,
+      "output_tokens": 389,
+      "stop_reason": "tool_use",
+      "latency_ms": 9301,
+      "output": {
+        "weaknesses": [
+          {
+            "weakness_id": "W1",
+            "critique": "The claim states lower average selling prices was the 'primary' driver, but E1 shows automotive sales revenue declined 9% due to both an 8% decrease in cash deliveries AND lower average selling prices. Mathematically, if volume declined 8% and total revenue declined 9%, the price effect appears to be only about 1% (9% - 8% = 1%), suggesting volume decline was actually the larger contributor. The word 'primarily' may not be supported if the volume effect (8%) was larger than the pricing effect (~1%)."
+          },
+          {
+            "weakness_id": "W2",
+            "critique": "E1 also mentions that automotive regulatory credits revenue decreased $770 million (28%) in 2025. While this is a separate line item from automotive sales revenue, it is still part of total automotive revenues. The claim refers to 'automotive revenues' broadly, which could include regulatory credits. If so, the decline in regulatory credits is another significant factor not mentioned in the claim's attribution to pricing."
+          },
+          {
+            "weakness_id": "W3",
+            "critique": "E2 mentions 'a decrease in one-time FSD recognition compared to the prior period' as a factor affecting automotive sales revenue in Q3 2025. This suggests that revenue recognition timing for Full Self-Driving software also contributed to the decline, which is neither a volume nor a pricing effect. This additional factor weakens the claim that pricing was the 'primary' driver."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "revision",
+      "tool": "submit_revision",
+      "request_key": "d6ca37335e28616fcf671207cd0cf4a4cbdd94e0c60ab60362dcb0149aab90a1",
+      "source": "live",
+      "input_tokens": 6080,
+      "output_tokens": 959,
+      "stop_reason": "tool_use",
+      "latency_ms": 13157,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "W1",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E1",
+                "quote": "Automotive sales revenue decreased $6.66 billion, or 9%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, due a decrease of approximately 8% in cash deliveries and a lower average selling price per unit"
+              }
+            ]
+          },
+          {
+            "item_id": "W2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E1",
+                "quote": "Automotive sales revenue decreased $6.66 billion, or 9%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024"
+              }
+            ]
+          },
+          {
+            "item_id": "W3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": [
+              {
+                "evidence_id": "E2",
+                "quote": "Additionally, there was a decrease in one-time FSD recognition compared to the prior period and a lower average selling price per unit"
+              }
+            ]
+          }
+        ],
+        "label": "CONTRADICTED",
+        "verdict_changed": true,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Automotive sales revenue decreased $6.66 billion, or 9%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, due a decrease of approximately 8% in cash deliveries and a lower average selling price per unit driven by sales mix and higher customer incentives"
+          }
+        ],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Automotive sales revenue decreased $6.66 billion, or 9%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, due a decrease of approximately 8% in cash deliveries and a lower average selling price per unit"
+          }
+        ],
+        "reasoning_summary": "The claim states that the decline in Tesla's automotive revenues in 2025 was driven \"primarily\" by lower average selling prices. However, E1 shows that automotive sales revenue declined 9% due to TWO factors: (1) an 8% decrease in cash deliveries, and (2) lower average selling prices. Mathematically, if volume declined 8% and total revenue declined 9%, the pricing effect accounts for only approximately 1 percentage point of the 9% decline, while volume accounts for 8 percentage points. This means volume decline was the substantially larger contributor (8% out of 9%), not pricing (1% out of 9%). The claim's assertion that pricing was the \"primary\" driver is contradicted by the evidence, which shows volume decline was actually the dominant factor. W2 is refuted because E1 clearly discusses \"automotive sales revenue\" as distinct from regulatory credits revenue, and the claim reasonably refers to automotive sales revenue. W3 lacks full-year evidence as E2 only discusses Q3 2025, not the full year 2025.",
+        "change_reason": "Upon critical review, the mathematical relationship between the 8% volume decline and 9% total revenue decline reveals that volume was the primary driver (contributing ~8 percentage points) while pricing was secondary (contributing ~1 percentage point). The claim's assertion that pricing was \"primarily\" responsible is materially contradicted by the evidence showing volume decline was the larger factor."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "The decline in Tesla's automotive revenues in 2025 was driven primarily by lower average selling prices. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 94827000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 94827000000.0,
+                "filed": "2026-01-29",
+                "form": "10-K",
+                "accession_number": "0001628280-26-003952",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 97690000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": -0.029306991503736307,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-003952",
+        "filed": "2026-01-29",
+        "report_date": "2025-12-31",
+        "primary_document": "tsla-20251231.htm",
+        "sha256": "442a79e7a2099ddb16af0bdb92a78873cbdcd683613875724e17115f012cbce5"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-045968",
+        "filed": "2025-10-23",
+        "report_date": "2025-09-30",
+        "primary_document": "tsla-20250930.htm",
+        "sha256": "cc264bfe1648e78c3de92fb9c81bbe3b42815942f491c0536e61f9bb84fe90e7"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-035806",
+        "filed": "2025-07-24",
+        "report_date": "2025-06-30",
+        "primary_document": "tsla-20250630.htm",
+        "sha256": "52ed29d209255825d33858fafd29c17ca342a5d62f315c0aa6001676aa5220b0"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 732
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:180912-181979",
+      "excerpt": "buyout revenue. Additionally, automotive leasing revenue includes direct sales-type leasing programs where we recognize all revenue associated with the sales-type lease upon delivery to the customer. Services and other revenue consists of sales of used vehicles, non-warranty maintenance services and collision, paid Supercharging sessions, automotive insurance business revenue, part sales and retail merchandise sales. 2025 compared to 2024 Automotive sales revenue decreased $6.66 billion, or 9%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, due a decrease of approximately 8% in cash deliveries and a lower average selling price per unit driven by sales mix and higher customer incentives such as attractive financing options. Automotive regulatory credits revenue decreased $770 million, or 28%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024. Fluctuations in automotive regulatory credits are impacted by our supply of credits, subject to changes in regulation, production and sales.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-045968",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045968/tsla-20250930.htm",
+      "locator": "10-Q 0001628280-25-045968:97879-98878",
+      "excerpt": "her models and a decrease of approximately 49,000 combined Model 3 and Model Y cash deliveries in part from bringing down all of our vehicle factories simultaneously for the changeover to New Model Y. Additionally, there was a decrease in one-time FSD recognition compared to the prior period and a lower average selling price per unit driven by sales mix and higher customer incentives such as attractive financing options. Automotive regulatory credits revenue decreased $322 million, or 44%, in the three months ended September 30, 2025 as compared to the three months ended September 30, 2024. Automotive regulatory credits revenue decreased $620 million, or 30%, in the nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024. Fluctuations in automotive regulatory credits are impacted by our supply of credits, subject to changes in regulation, production and sales. Furthermore, we are impacted by the demand for credits by other automobile manufacturers.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-035806",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025035806/tsla-20250630.htm",
+      "locator": "10-Q 0001628280-25-035806:87479-88554",
+      "excerpt": "and Model Y cash deliveries in part from bringing down all of our vehicle factories simultaneously for the changeover to New Model Y and a decrease of approximately 16,000 deliveries of other models. Additionally, we had a lower average selling price per unit driven by sales mix and higher customer incentives such as attractive financing options. Automotive regulatory credits revenue decreased $451 million, or 51%, in the three months ended June 30, 2025 as compared to the three months ended June 30, 2024. Automotive regulatory credits revenue decreased $298 million, or 22%, in the six months ended June 30, 2025 as compared to the six months ended June 30, 2024. Fluctuations in automotive regulatory credits are impacted by our supply of credits, subject to changes in regulation, production and sales. Furthermore, we are impacted by the demand for credits by other automobile manufacturers. 29 Table of Contents Services and other revenue increased $438 million, or 17%, in the three months ended June 30, 2025 as compared to the three months ended June 30, 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-035806",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025035806/tsla-20250630.htm",
+      "locator": "10-Q 0001628280-25-035806:86495-87679",
+      "excerpt": ") % Services and other 3,046 2,608 438 17 % 5,684 4,896 788 16 % Total automotive & services and other segment revenue 19,707 22,486 (2,779) (12) % 36,312 42,152 (5,840) (14) % Energy generation and storage segment revenue 2,789 3,014 (225) (7) % 5,519 4,649 870 19 % Total revenues $ 22,496 $ 25,500 $ (3,004) (12) % $ 41,831 $ 46,801 $ (4,970) (11) % Automotive & Services and Other Segment Automotive sales revenue decreased $2.74 billion, or 15%, in the three months ended June 30, 2025 as compared to the three months ended June 30, 2024, due to a decrease of approximately 45,000 combined Model 3 and Model Y cash deliveries and a decrease of approximately 12,000 deliveries of other models. Additionally, we had a lower average selling price per unit driven by sales mix. Automotive sales revenue decreased $6.28 billion, or 18%, in the six months ended June 30, 2025 as compared to the six months ended June 30, 2024, due to a decrease of approximately 95,000 combined Model 3 and Model Y cash deliveries in part from bringing down all of our vehicle factories simultaneously for the changeover to New Model Y and a decrease of approximately 16,000 deliveries of other models.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-045968",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045968/tsla-20250930.htm",
+      "locator": "10-Q 0001628280-25-045968:106922-107885",
+      "excerpt": "to 7% in the nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024, primarily due to higher R&D expenses and a decrease in total revenues in the current period. Selling, General and Administrative Expense Three Months Ended September 30, Change Nine Months Ended September 30, Change (Dollars in millions) 2025 2024 $ % 2025 2024 $ % Selling, general and administrative $ 1,562 $ 1,186 $ 376 32 % $ 4,179 $ 3,837 $ 342 9 % As a percentage of revenues 6 % 5 % 6 % 5 % Selling, general and administrative (“SG&A”) expenses increased $376 million, or 32%, in the three months ended September 30, 2025 as compared to the three months ended September 30, 2024, driven by a $168 million increase in operating expenses including legal charges, a $151 million increase in employee and labor costs, including professional services, a $38 million increase in stock-based compensation and a $25 million increase in marketing expenses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-035806",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025035806/tsla-20250630.htm",
+      "locator": "10-Q 0001628280-25-035806:92042-93218",
+      "excerpt": "30, 2025 as compared to the six months ended June 30, 2024. The increases in cost of services and other revenue are generally in line with the changes in services and other revenue as described above. Gross margin for total automotive decreased from 18.5% to 17.2% in the three months ended June 30, 2025 as compared to the three months ended June 30, 2024 primarily due to a decrease in regulatory credits revenue, as discussed above. Gross margin for total automotive decreased from 18.5% to 16.8% in the six months ended June 30, 2025 as compared to the six months ended June 30, 2024 primarily due to lower average selling price per unit and a decrease in regulatory credits revenue as described above. Gross margin for total automotive & services and other segment decreased from 17.1% to 15.4% in the three months ended June 30, 2025 as compared to the three months ended June 30, 2024. Gross margin for total automotive & services and other segment decreased from 16.9% to 14.9% in the six months ended June 30, 2025 as compared to the six months ended June 30, 2024. The changes in gross margin are primarily due to the automotive gross margin factors discussed above.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/0001628280-26-003952-index.htm",
+      "locator": "Revenue 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        94827000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/0001628280-26-003952-index.htm",
+      "locator": "Revenue 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        97690000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "TSLA",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "Revenue yoy_growth annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        94827000000.0,
+        97690000000.0,
+        -0.029306991503736307
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "Automotive sales revenue decreased $6.66 billion, or 9%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, due a decrease of approximately 8% in cash deliveries and a lower average selling price per unit driven by sales mix and higher customer incentives",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:180912-181979"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 14955,
+    "output": 2031
+  },
+  "latency_ms": 22480,
+  "estimated_cost_usd": 0.07533,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "self_reflection",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "mixed"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "self_critique",
+        "status": "ok",
+        "duration_ms": 9306,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "weaknesses": 3
+      },
+      {
+        "node": "revise",
+        "status": "ok",
+        "duration_ms": 13167,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "model_final_label": "CONTRADICTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 11,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "self_critique",
+      "revise",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

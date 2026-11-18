@@ -1,0 +1,590 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:SR_self_reflection:GOLD-WMT-11:167aba18",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "SR_self_reflection",
+  "approach_kind": "self_reflection",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": true,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "SR_self_reflection",
+    "kind": "self_reflection",
+    "description": "A2 + self-critique and revision, no new retrieval"
+  },
+  "config_hash": "166d47be253b74e9",
+  "claim": {
+    "claim_id": "GOLD-WMT-11",
+    "company": "WMT",
+    "claim": "Walmart's fiscal 2026 results show that tariffs did not pressure its profitability.",
+    "as_of_date": "2026-03-31",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "INSUFFICIENT_EVIDENCE",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs."
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "changes in tax and trade policies, including tariffs, trade barriers, other restrictions on the exportation and importation of goods and government regulations affecting trade between the U.S. and other countries where we source many of the products we sell can impact, and have impacted, our business and profit margins"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs."
+          }
+        ],
+        "reasoning_summary": "The claim asserts that tariffs did not pressure Walmart's profitability in fiscal 2026. However, the evidence directly contradicts this assertion. Evidence E2 explicitly states that changes in tax and trade policies, including tariffs, \"can impact, and have impacted, our business and profit margins\" and confirms \"We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs.\" The passage describes these impacts as including \"increases in the costs at which we purchase merchandise and the prices at which we sell such merchandise to our customers.\" Both E1 and E2 confirm that Walmart experienced impacts from incremental import tariffs during fiscal 2026, and E2 specifically mentions impacts to \"profit margins.\" This directly contradicts the claim that tariffs did not pressure profitability. The claim is purely interpretive/qualitative (no specific numeric thresholds stated), so there are no numeric assertions to track.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "self_critique",
+      "weaknesses": [
+        {
+          "weakness_id": "W1",
+          "critique": "The evidence states that tariffs 'can impact, and have impacted, our business and profit margins' but this is in a risk factors section describing potential impacts. The phrase 'can impact' suggests possibility rather than definitively stating that profitability was actually pressured. The evidence confirms tariffs had impacts during fiscal 2026, but doesn't quantify whether those impacts were material enough to constitute 'pressure' on profitability, or whether Walmart successfully mitigated them through pricing, sourcing changes, or other strategies."
+        },
+        {
+          "weakness_id": "W2",
+          "critique": "The evidence does not provide actual profitability metrics for fiscal 2026. Evidence E3 shows consolidated net income increased from $19,436M in fiscal 2025 to $21,893M in fiscal 2026, and diluted EPS increased from $2.40 to $2.73. If profitability actually improved year-over-year despite tariff impacts, one could argue that tariffs did not 'pressure' profitability in the sense that profitability still grew. The claim might be interpreted as saying profitability was not negatively affected overall, even if tariffs had some impact that was offset by other factors."
+        },
+        {
+          "weakness_id": "W3",
+          "critique": "The evidence passages are from risk factor disclosures (E1, E2) which are forward-looking and describe potential impacts rather than quantifying actual realized impacts on profitability. The statement 'We experienced the impacts noted above' refers back to impacts on 'business and profit margins' but doesn't specify the magnitude or whether net profitability was actually reduced. The company might have experienced tariff impacts but successfully passed costs to customers or offset them operationally, meaning profitability wasn't ultimately 'pressured' in a material way."
+        }
+      ]
+    },
+    {
+      "stage": "revision",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "W1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E2",
+              "quote": "We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:118619-119761"
+            },
+            {
+              "evidence_id": "E2",
+              "quote": "changes in tax and trade policies, including tariffs, trade barriers, other restrictions on the exportation and importation of goods and government regulations affecting trade between the U.S. and other countries where we source many of the products we sell can impact, and have impacted, our business and profit margins",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:118619-119761"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W2",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E3",
+              "quote": "Consolidated net income attributable to Walmart $ 21,893 $ 19,436 $ 15,511",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:279716-280916"
+            },
+            {
+              "evidence_id": "E3",
+              "quote": "Diluted 2.73 2.4",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:279716-280916"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E2",
+              "quote": "We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:118619-119761"
+            },
+            {
+              "evidence_id": "E2",
+              "quote": "our results of operations and financial performance could be impacted. We experienced the impacts noted above during fiscal 2026",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000104169-26-000055",
+              "form": "10-K",
+              "filed": "2026-03-13",
+              "period_end": "2026-01-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+              "locator": "10-K 0000104169-26-000055:118619-119761"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "13f196ed58e29f25373e21075ab4a63a8ca441e579a25db35f7e7d6171468edb",
+      "source": "cache",
+      "input_tokens": 3614,
+      "output_tokens": 525,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs."
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "changes in tax and trade policies, including tariffs, trade barriers, other restrictions on the exportation and importation of goods and government regulations affecting trade between the U.S. and other countries where we source many of the products we sell can impact, and have impacted, our business and profit margins"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs."
+          }
+        ],
+        "reasoning_summary": "The claim asserts that tariffs did not pressure Walmart's profitability in fiscal 2026. However, the evidence directly contradicts this assertion. Evidence E2 explicitly states that changes in tax and trade policies, including tariffs, \"can impact, and have impacted, our business and profit margins\" and confirms \"We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs.\" The passage describes these impacts as including \"increases in the costs at which we purchase merchandise and the prices at which we sell such merchandise to our customers.\" Both E1 and E2 confirm that Walmart experienced impacts from incremental import tariffs during fiscal 2026, and E2 specifically mentions impacts to \"profit margins.\" This directly contradicts the claim that tariffs did not pressure profitability. The claim is purely interpretive/qualitative (no specific numeric thresholds stated), so there are no numeric assertions to track.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "self_critique",
+      "tool": "submit_self_critique",
+      "request_key": "427dde1548675807d3dd0fc9933633cff012945d6e250e9ecce200767259a7c2",
+      "source": "live",
+      "input_tokens": 4116,
+      "output_tokens": 471,
+      "stop_reason": "tool_use",
+      "latency_ms": 10809,
+      "output": {
+        "weaknesses": [
+          {
+            "weakness_id": "W1",
+            "critique": "The evidence states that tariffs 'can impact, and have impacted, our business and profit margins' but this is in a risk factors section describing potential impacts. The phrase 'can impact' suggests possibility rather than definitively stating that profitability was actually pressured. The evidence confirms tariffs had impacts during fiscal 2026, but doesn't quantify whether those impacts were material enough to constitute 'pressure' on profitability, or whether Walmart successfully mitigated them through pricing, sourcing changes, or other strategies."
+          },
+          {
+            "weakness_id": "W2",
+            "critique": "The evidence does not provide actual profitability metrics for fiscal 2026. Evidence E3 shows consolidated net income increased from $19,436M in fiscal 2025 to $21,893M in fiscal 2026, and diluted EPS increased from $2.40 to $2.73. If profitability actually improved year-over-year despite tariff impacts, one could argue that tariffs did not 'pressure' profitability in the sense that profitability still grew. The claim might be interpreted as saying profitability was not negatively affected overall, even if tariffs had some impact that was offset by other factors."
+          },
+          {
+            "weakness_id": "W3",
+            "critique": "The evidence passages are from risk factor disclosures (E1, E2) which are forward-looking and describe potential impacts rather than quantifying actual realized impacts on profitability. The statement 'We experienced the impacts noted above' refers back to impacts on 'business and profit margins' but doesn't specify the magnitude or whether net profitability was actually reduced. The company might have experienced tariff impacts but successfully passed costs to customers or offset them operationally, meaning profitability wasn't ultimately 'pressured' in a material way."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "revision",
+      "tool": "submit_revision",
+      "request_key": "e44bee668b7b34aa689e8d1eb35e6e0d07c427974d8627f6142dec5f61cd308b",
+      "source": "live",
+      "input_tokens": 5422,
+      "output_tokens": 915,
+      "stop_reason": "tool_use",
+      "latency_ms": 15121,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "W1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E2",
+                "quote": "We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs."
+              },
+              {
+                "evidence_id": "E2",
+                "quote": "changes in tax and trade policies, including tariffs, trade barriers, other restrictions on the exportation and importation of goods and government regulations affecting trade between the U.S. and other countries where we source many of the products we sell can impact, and have impacted, our business and profit margins"
+              }
+            ]
+          },
+          {
+            "item_id": "W2",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E3",
+                "quote": "Consolidated net income attributable to Walmart $ 21,893 $ 19,436 $ 15,511"
+              },
+              {
+                "evidence_id": "E3",
+                "quote": "Diluted 2.73 2.4"
+              }
+            ]
+          },
+          {
+            "item_id": "W3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E2",
+                "quote": "We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs."
+              },
+              {
+                "evidence_id": "E2",
+                "quote": "our results of operations and financial performance could be impacted. We experienced the impacts noted above during fiscal 2026"
+              }
+            ]
+          }
+        ],
+        "label": "INSUFFICIENT_EVIDENCE",
+        "verdict_changed": true,
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "Upon reconsideration, I am changing my verdict from CONTRADICTED to INSUFFICIENT_EVIDENCE. While E2 confirms that tariffs \"have impacted, our business and profit margins\" and that Walmart \"experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs,\" the evidence does not quantify the magnitude or net effect of these impacts on profitability. Critically, E3 shows that consolidated net income attributable to Walmart actually increased from $19,436M in fiscal 2025 to $21,893M in fiscal 2026, and diluted EPS increased from $2.40 to $2.73. This represents substantial profitability growth despite the acknowledged tariff impacts. The claim states that tariffs \"did not pressure\" profitability. While the evidence confirms tariffs had some impact, it does not establish whether this impact constituted meaningful \"pressure\" on profitability, especially given that overall profitability metrics improved year-over-year. The tariff impacts may have been successfully mitigated through pricing, operational efficiency, or other factors. The evidence neither definitively supports nor contradicts whether tariffs \"pressured\" profitability when considering the net outcome. W1 is refuted because the text clearly states impacts were experienced, not just potential. W2 is supported by the actual profitability data showing improvement. W3 is refuted because the filing explicitly states impacts were experienced during fiscal 2026, not just potential future impacts.",
+        "change_reason": "The initial verdict failed to consider that profitability actually increased in fiscal 2026 despite tariff impacts. The evidence confirms tariffs had impacts but does not establish whether those impacts constituted \"pressure\" on profitability given the overall improvement in net income and EPS. Without quantification of the tariff impact magnitude or evidence that profitability was negatively affected on net, the evidence is insufficient to contradict the claim."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Walmart's fiscal 2026 results show that tariffs did not pressure its profitability. FY2026",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0000104169-26-000055",
+        "filed": "2026-03-13",
+        "report_date": "2026-01-31",
+        "primary_document": "wmt-20260131.htm",
+        "sha256": "ff21adcf33cdbd952b13b9065347bd542c637705ddde19ddeb1f0cdc732a5198"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-25-000191",
+        "filed": "2025-12-03",
+        "report_date": "2025-10-31",
+        "primary_document": "wmt-20251031.htm",
+        "sha256": "597beae47a734bdb9d783d57da34f64e74fb621dfc2cf468155d98c3834da775"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000104169-25-000137",
+        "filed": "2025-08-29",
+        "report_date": "2025-07-31",
+        "primary_document": "wmt-20250731.htm",
+        "sha256": "ddf97372638e65396cf04c50768eaac8f904dba64fdd76419834d8ed5187ebbd"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 708
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:119561-120350",
+      "excerpt": "licies have on our business, our results of operations and financial performance could be impacted. We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs. We expect the dynamic tariff environment to continue, including in fiscal 2027, and cannot predict with certainty the future impact that this environment will have on our results of operations or financial performance, which could be material. We are subject to income taxes, other taxes and tax collection and reporting obligations in both the U.S. and the foreign jurisdictions in which we currently operate or have historically operated. The determination of our worldwide provision for income taxes and current and deferred tax assets and liabilities requires judgment and estimation.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:118619-119761",
+      "excerpt": "operating segments generated approximately 82% of our consolidated net sales. A significant portion of the general merchandise we sell in our U.S. stores and clubs is manufactured in other countries. Significant changes in tax and trade policies, including tariffs, trade barriers, other restrictions on the exportation and importation of goods and government regulations affecting trade between the U.S. and other countries where we source many of the products we sell can impact, and have impacted, our business and profit margins, including through increases in the costs at which we purchase merchandise and the prices at which we sell such merchandise to our customers, and the costs we incur in pursuing our strategic initiatives, including those set forth under the headings Strategic Risks and Operational Risks above in this Item 1A. If we are unable to successfully manage the various impacts that changes in these tax and trade policies have on our business, our results of operations and financial performance could be impacted. We experienced the impacts noted above during fiscal 2026 as a result of incremental import tariffs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-26-000055",
+      "form": "10-K",
+      "filed": "2026-03-13",
+      "period_start": null,
+      "period_end": "2026-01-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416926000055/wmt-20260131.htm",
+      "locator": "10-K 0000104169-26-000055:279716-280916",
+      "excerpt": "e to Walmart is based on the weighted-average common shares outstanding during the relevant period adjusted for the dilutive effect of share-based awards as determined under the treasury stock method. The Company did not have significant share-based awards outstanding that were antidilutive and not included in the calculation of diluted net income per common share attributable to Walmart for fiscal 2026, 2025 and 2024. The following table provides a reconciliation of the numerators and denominators used to determine basic and diluted net income per common share attributable to Walmart: Fiscal Years Ended January 31, (Amounts in millions, except per share data) 2026 2025 2024 Numerator Consolidated net income $ 22,270 $ 20,157 $ 16,270 Consolidated net income attributable to noncontrolling interest ( 377 ) ( 721 ) ( 759 ) Consolidated net income attributable to Walmart $ 21,893 $ 19,436 $ 15,511 Denominator Weighted-average common shares outstanding, basic 7,983 8,041 8,077 Dilutive impact of share-based awards 39 40 31 Weighted-average common shares outstanding, diluted 8,022 8,081 8,108 Net income per common share attributable to Walmart Basic $ 2.74 $ 2.42 $ 1.92 Diluted 2.73 2.4",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000191",
+      "form": "10-Q",
+      "filed": "2025-12-03",
+      "period_start": null,
+      "period_end": "2025-10-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000191/wmt-20251031.htm",
+      "locator": "10-Q 0000104169-25-000191:18485-19359",
+      "excerpt": "on the Company's disclosures. The amendments only impact disclosures and are not expected to have an impact on the Company's financial condition and results of operations. 9 Table of Contents Note 2. Net Income Per Common Share Basic net income per common share attributable to Walmart is based on the weighted-average common shares outstanding during the relevant period. Diluted net income per common share attributable to Walmart is based on the weighted-average common shares outstanding during the relevant period adjusted for the dilutive effect of share-based awards as determined under the treasury stock method. The Company did not have significant share-based awards outstanding that were antidilutive and not included in the calculation of diluted net income per common share attributable to Walmart for the three and nine months ended October 31, 2025 and 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000137",
+      "form": "10-Q",
+      "filed": "2025-08-29",
+      "period_start": null,
+      "period_end": "2025-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000137/wmt-20250731.htm",
+      "locator": "10-Q 0000104169-25-000137:17527-18397",
+      "excerpt": "on the Company's disclosures. The amendments only impact disclosures and are not expected to have an impact on the Company's financial condition and results of operations. 8 Table of Contents Note 2. Net Income Per Common Share Basic net income per common share attributable to Walmart is based on the weighted-average common shares outstanding during the relevant period. Diluted net income per common share attributable to Walmart is based on the weighted-average common shares outstanding during the relevant period adjusted for the dilutive effect of share-based awards as determined under the treasury stock method. The Company did not have significant share-based awards outstanding that were antidilutive and not included in the calculation of diluted net income per common share attributable to Walmart for the three and six months ended July 31, 2025 and 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "WMT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000104169-25-000137",
+      "form": "10-Q",
+      "filed": "2025-08-29",
+      "period_start": null,
+      "period_end": "2025-07-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000137/wmt-20250731.htm",
+      "locator": "10-Q 0000104169-25-000137:112636-113836",
+      "excerpt": "nvestment Matters, the India Antitrust Matter, and the liabilities, losses, expenses and costs that Walmart may incur in connection with such matters; • in Part I, Item 2 \" Management's Discussion and Analysis of Financial Condition and Results of Operations \": statements under the caption \" Overview \" regarding future changes to our business and our expectations about the potential impacts on our business, financial position, results of operations or cash flows as a result of macroeconomic factors such as geopolitical conditions, tariffs and trade restrictions, supply chain disruptions, volatility in employment trends and consumer confidence; statements under the caption \" Overview \" relating to the possible impact of inflationary pressures and volatility in currency exchange rates on the results, including net sales and operating income, of Walmart and the Walmart International segment, as well as our sourcing, pricing, merchandising, inventory management and other strategies in response to cost increases; a statement under the caption \" Overview \" relating to management's expectations regarding the timing of cash tax payments; statements under the caption \" Company Performance M",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 13152,
+    "output": 1911
+  },
+  "latency_ms": 25957,
+  "estimated_cost_usd": 0.068121,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "self_reflection",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "self_critique",
+        "status": "ok",
+        "duration_ms": 10818,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "weaknesses": 3
+      },
+      {
+        "node": "revise",
+        "status": "ok",
+        "duration_ms": 15133,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "model_final_label": "INSUFFICIENT_EVIDENCE"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 10,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "self_critique",
+      "revise",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

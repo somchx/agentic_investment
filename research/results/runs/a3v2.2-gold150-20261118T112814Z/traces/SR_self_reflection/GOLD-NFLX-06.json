@@ -1,0 +1,559 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:SR_self_reflection:GOLD-NFLX-06:2814b98c",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "SR_self_reflection",
+  "approach_kind": "self_reflection",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": true,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "SR_self_reflection",
+    "kind": "self_reflection",
+    "description": "A2 + self-critique and revision, no new retrieval"
+  },
+  "config_hash": "166d47be253b74e9",
+  "claim": {
+    "claim_id": "GOLD-NFLX-06",
+    "company": "NFLX",
+    "claim": "Netflix's revenue growth in 2025 was driven primarily by membership growth, price increases and higher advertising revenue.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Revenues for the year ended December 31, 2025 increased 16% as compared to the year ended December 31, 2024, primarily due to the growth in memberships, price increases, and increased advertising revenue"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Netflix's revenue growth in 2025 was driven primarily by membership growth, price increases and higher advertising revenue. This is a purely interpretive claim about the drivers/causes of revenue growth, not a numeric claim about specific figures or growth rates.\n\nEvidence E3, from Netflix's 10-K filing for the period ending December 31, 2025 (filed January 23, 2026), directly supports this claim. It explicitly states: \"Revenues for the year ended December 31, 2025 increased 16% as compared to the year ended December 31, 2024, primarily due to the growth in memberships, price increases, and increased advertising revenue.\"\n\nThis passage identifies the exact same three primary drivers mentioned in the claim:\n1. Membership growth (\"growth in memberships\")\n2. Price increases (\"price increases\")\n3. Higher advertising revenue (\"increased advertising revenue\")\n\nThe filing uses the word \"primarily\" to describe these drivers, which aligns with the claim's use of \"primarily.\" Additional supporting evidence from quarterly filings (E4) confirms the same drivers for both Q3 2025 and the nine-month period ending September 30, 2025.\n\nSince the filing explicitly attributes the revenue growth to these three factors as the primary drivers, the claim is fully supported.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "self_critique",
+      "weaknesses": [
+        {
+          "weakness_id": "W1",
+          "critique": "The evidence passage E3 mentions that revenue growth was 'partially offset by unfavorable changes in foreign exchange rates, net of hedging.' This indicates that foreign exchange had a negative impact on revenue growth. While the claim correctly identifies the three primary positive drivers, it doesn't acknowledge that FX headwinds partially offset these gains. However, since the filing explicitly states these three factors were the 'primary' drivers and FX was only a partial offset, the claim remains accurate in identifying what primarily drove the growth."
+        },
+        {
+          "weakness_id": "W2",
+          "critique": "The claim uses the term 'membership growth' while the filing uses 'growth in memberships.' While these are semantically equivalent, I should verify there's no material distinction. The evidence consistently uses 'memberships' or 'paying memberships' throughout multiple passages (E1, E2, E3, E4), so 'membership growth' is an accurate paraphrase of 'growth in memberships.' No weakness identified here."
+        },
+        {
+          "weakness_id": "W3",
+          "critique": "The claim states 'higher advertising revenue' as a driver, while the filing states 'increased advertising revenue.' These are synonymous terms describing the same phenomenon - advertising revenue grew year-over-year. The evidence in E4 and E5 confirms advertising-related activities increased (advertising sales headcount growth, advertising offering expenses), which supports that advertising revenue indeed increased. No material weakness identified here."
+        }
+      ]
+    },
+    {
+      "stage": "revision",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "W1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E3",
+              "quote": "Revenues for the year ended December 31, 2025 increased 16% as compared to the year ended December 31, 2024, primarily due to the growth in memberships, price increases, and increased advertising revenue, partially offset by unfavorable changes in foreign exchange rates, net of hedging.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-26-000034",
+              "form": "10-K",
+              "filed": "2026-01-23",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+              "locator": "10-K 0001065280-26-000034:106405-107592"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E3",
+              "quote": "primarily due to the growth in memberships, price increases, and increased advertising revenue",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-26-000034",
+              "form": "10-K",
+              "filed": "2026-01-23",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+              "locator": "10-K 0001065280-26-000034:106405-107592"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E3",
+              "quote": "primarily due to the growth in memberships, price increases, and increased advertising revenue",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-26-000034",
+              "form": "10-K",
+              "filed": "2026-01-23",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+              "locator": "10-K 0001065280-26-000034:106405-107592"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "89d1d9d9f61bf6a8d188eae257a6ea1d8b23764a8d85016baa191a01f6cb45c5",
+      "source": "cache",
+      "input_tokens": 3909,
+      "output_tokens": 503,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Revenues for the year ended December 31, 2025 increased 16% as compared to the year ended December 31, 2024, primarily due to the growth in memberships, price increases, and increased advertising revenue"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Netflix's revenue growth in 2025 was driven primarily by membership growth, price increases and higher advertising revenue. This is a purely interpretive claim about the drivers/causes of revenue growth, not a numeric claim about specific figures or growth rates.\n\nEvidence E3, from Netflix's 10-K filing for the period ending December 31, 2025 (filed January 23, 2026), directly supports this claim. It explicitly states: \"Revenues for the year ended December 31, 2025 increased 16% as compared to the year ended December 31, 2024, primarily due to the growth in memberships, price increases, and increased advertising revenue.\"\n\nThis passage identifies the exact same three primary drivers mentioned in the claim:\n1. Membership growth (\"growth in memberships\")\n2. Price increases (\"price increases\")\n3. Higher advertising revenue (\"increased advertising revenue\")\n\nThe filing uses the word \"primarily\" to describe these drivers, which aligns with the claim's use of \"primarily.\" Additional supporting evidence from quarterly filings (E4) confirms the same drivers for both Q3 2025 and the nine-month period ending September 30, 2025.\n\nSince the filing explicitly attributes the revenue growth to these three factors as the primary drivers, the claim is fully supported.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "self_critique",
+      "tool": "submit_self_critique",
+      "request_key": "c68c6fac57c89aec3f14bc9b38bc3ce883e29375e505e69c544ee111757325f9",
+      "source": "live",
+      "input_tokens": 4415,
+      "output_tokens": 389,
+      "stop_reason": "tool_use",
+      "latency_ms": 9598,
+      "output": {
+        "weaknesses": [
+          {
+            "weakness_id": "W1",
+            "critique": "The evidence passage E3 mentions that revenue growth was 'partially offset by unfavorable changes in foreign exchange rates, net of hedging.' This indicates that foreign exchange had a negative impact on revenue growth. While the claim correctly identifies the three primary positive drivers, it doesn't acknowledge that FX headwinds partially offset these gains. However, since the filing explicitly states these three factors were the 'primary' drivers and FX was only a partial offset, the claim remains accurate in identifying what primarily drove the growth."
+          },
+          {
+            "weakness_id": "W2",
+            "critique": "The claim uses the term 'membership growth' while the filing uses 'growth in memberships.' While these are semantically equivalent, I should verify there's no material distinction. The evidence consistently uses 'memberships' or 'paying memberships' throughout multiple passages (E1, E2, E3, E4), so 'membership growth' is an accurate paraphrase of 'growth in memberships.' No weakness identified here."
+          },
+          {
+            "weakness_id": "W3",
+            "critique": "The claim states 'higher advertising revenue' as a driver, while the filing states 'increased advertising revenue.' These are synonymous terms describing the same phenomenon - advertising revenue grew year-over-year. The evidence in E4 and E5 confirms advertising-related activities increased (advertising sales headcount growth, advertising offering expenses), which supports that advertising revenue indeed increased. No material weakness identified here."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "revision",
+      "tool": "submit_revision",
+      "request_key": "71ba4be52888d13bbbf4d7a05b9193741b6977765e479a919a347789b8460803",
+      "source": "live",
+      "input_tokens": 5556,
+      "output_tokens": 938,
+      "stop_reason": "tool_use",
+      "latency_ms": 14179,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "W1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E3",
+                "quote": "Revenues for the year ended December 31, 2025 increased 16% as compared to the year ended December 31, 2024, primarily due to the growth in memberships, price increases, and increased advertising revenue, partially offset by unfavorable changes in foreign exchange rates, net of hedging."
+              }
+            ]
+          },
+          {
+            "item_id": "W2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E3",
+                "quote": "primarily due to the growth in memberships, price increases, and increased advertising revenue"
+              }
+            ]
+          },
+          {
+            "item_id": "W3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E3",
+                "quote": "primarily due to the growth in memberships, price increases, and increased advertising revenue"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Revenues for the year ended December 31, 2025 increased 16% as compared to the year ended December 31, 2024, primarily due to the growth in memberships, price increases, and increased advertising revenue"
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "Revenues for the three and nine months ended September 30, 2025 increased 17% and 15% as compared to the three and nine months ended September 30, 2024, respectively, primarily due to the growth in memberships, price increases, and increased advertising revenue."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After critically reviewing the initial verdict, all three potential weaknesses are refuted:\n\nW1 (FX impact): While E3 does mention that unfavorable FX changes \"partially offset\" revenue growth, this does not contradict the claim. The claim states what \"primarily\" drove revenue growth, and the filing explicitly confirms the three factors (membership growth, price increases, and advertising revenue) were the \"primary\" drivers. The FX headwinds were an offsetting factor, not a primary driver, so the claim's focus on the primary positive drivers is accurate and complete for its stated purpose.\n\nW2 (Membership terminology): The claim's use of \"membership growth\" is semantically equivalent to the filing's \"growth in memberships.\" Both refer to the same phenomenon - an increase in the number of members/memberships. This is not a material distinction.\n\nW3 (Advertising revenue terminology): The claim's \"higher advertising revenue\" and the filing's \"increased advertising revenue\" are synonymous. Both describe advertising revenue growing year-over-year as a driver of overall revenue growth.\n\nThe evidence from E3 (full-year 2025 10-K) and E4 (Q3 and nine-month 2025 10-Q) consistently and explicitly states that the three factors mentioned in the claim were the primary drivers of revenue growth in 2025. The claim is fully supported and the verdict remains SUPPORTED.",
+        "change_reason": "No change. All potential weaknesses were refuted upon examination. The filing explicitly attributes 2025 revenue growth primarily to the three drivers stated in the claim, with consistent confirmation across multiple reporting periods."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Netflix's revenue growth in 2025 was driven primarily by membership growth, price increases and higher advertising revenue. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001065280-26-000034",
+        "filed": "2026-01-23",
+        "report_date": "2025-12-31",
+        "primary_document": "nflx-20251231.htm",
+        "sha256": "264db6ba1f54f59e834ad0d3bc192e5f346ca59764af4c9c6422056a8b8e3574"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001065280-25-000406",
+        "filed": "2025-10-22",
+        "report_date": "2025-09-30",
+        "primary_document": "nflx-20250930.htm",
+        "sha256": "9e2c369ba736b28d3588f03f051713dbf46e0c891c14458e44a6130da36ef525"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001065280-25-000323",
+        "filed": "2025-07-18",
+        "report_date": "2025-06-30",
+        "primary_document": "nflx-20250630.htm",
+        "sha256": "7c432d127f3be833dfe0f628ebaff2ca41ef55f8ef1016539f1d536fef64c618"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 569
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000323",
+      "form": "10-Q",
+      "filed": "2025-07-18",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323/nflx-20250630.htm",
+      "locator": "10-Q 0001065280-25-000323:64483-65621",
+      "excerpt": "paying memberships and average monthly revenue per paying membership. (2) See the “Non-GAAP Constant Currency Information” section below for additional details on our use of constant currency revenue. Operating margin for the three months ended June 30, 2025 increased by approximately seven percentage points as compared to the prior comparative period. The increase in operating margin was primarily driven by revenue growth outpacing the growth in cost of revenues, as well as by a slower rate of growth in sales and marketing and general and administrative expenses relative to revenue growth. Net income fo r the three months ended June 30, 2025 increased $978 million as compared to the prior comparative period, primarily due to a $1,172 million increase in operating income, driven by a $1,520 million increase in revenues and partially offset by a $151 million increase in cost of revenues primarily due to the increase in content amortization. The impact of higher operating income was partially offset by a $57 million decrease in foreign exchange gains and losses and a $140 million increase in the provision for income taxes.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:65795-66966",
+      "excerpt": "paying memberships and average monthly revenue per paying membership. (2) See the “Non-GAAP Constant Currency Information” section below for additional details on our use of constant currency revenue. Operating margin for the three months ended September 30, 2025 decreased by approximately one percentage point as compared to the prior comparative period. The decrease in operating margin was primarily driven by the growth in cost of revenues and sales and marketing expenses outpacing the growth in revenues, partially offset by a slower rate of growth in technology and development expenses and general and administrative expenses relative to revenue growth. Net income fo r the three months ended September 30, 2025 increased $183 million as compared to the prior comparative period, primarily due to a $339 million increase in operating income, driven by a $1,686 million increase in revenues and partially offset by a $1,044 million increase in cost of revenues primarily due to the increase in other cost of revenues and content amortization. The impact of higher operating income was partially offset by a $223 million increase in the provision for income taxes.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:106405-107592",
+      "excerpt": "han monthly membership fees were not a material component of revenues for the years ended December 31, 2025, 2024, and 2023. 20 Table of Contents Year Ended December 31, Change 2025 2024 2023 2025 vs. 2024 (in thousands, except percentages) Revenues $ 45,183,036 $ 39,000,966 $ 33,723,297 $ 6,182,070 16 % Revenues for the year ended December 31, 2025 increased 16% as compared to the year ended December 31, 2024, primarily due to the growth in memberships, price increases, and increased advertising revenue, partially offset by unfavorable changes in foreign exchange rates, net of hedging. The following table summarizes streaming revenues by region for the years ended December 31, 2025, 2024 and 2023. Total streaming revenues are inclusive of hedging gains (losses) of $(91) million and $124 million for the years ended December 31, 2025 and 2024, respectively. No hedging gains and losses were recognized in total streaming revenues for the year ended December 31, 2023. See Note 8 Derivative Financial Instruments and Hedging Activities to the consolidated financial statements for further information regarding the Company’s derivative and non-derivative financial instruments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:67716-68888",
+      "excerpt": "other sources. Revenues earned from sources other than monthly membership fees were not a material component of revenues for the three and nine months ended September 30, 2025 and September 30, 2024. Three months ended September 30, 2025 as compared to the three months ended September 30, 2024 Three Months Ended Change September 30, 2025 September 30, 2024 Q3'25 vs. Q3'24 (in thousands, except percentages) Revenues $ 11,510,307 $ 9,824,703 $ 1,685,604 17 % Nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024 Nine Months Ended Change September 30, 2025 September 30, 2024 YTD'25 vs. YTD'24 (in thousands, except percentages) Revenues $ 33,132,274 $ 28,754,453 $ 4,377,821 15 % Revenues for the three and nine months ended September 30, 2025 increased 17% and 15% as compared to the three and nine months ended September 30, 2024, respectively, primarily due to the growth in memberships, price increases, and increased advertising revenue. Additionally, revenues for the nine months ended September 30, 2025 as compared to the same period in 2024 were unfavorably impacted by changes in foreign exchange rates, net of hedging.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:77592-78549",
+      "excerpt": "rketing expenses was primarily driven by a $104 million increase in marketing expenses, coupled with a $41 million increase in personnel-related costs due to the growth in advertising sales headcount. 28 Table of Contents Nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024 Nine Months Ended Change September 30, 2025 September 30, 2024 YTD'25 vs. YTD'24 (in thousands, except percentages) Sales and marketing $ 2,187,930 $ 1,941,350 $ 246,580 13 % As a percentage of revenues 7 % 7 % The increase in sales and marketing expenses was primarily driven by a $114 million increase in personnel-related costs due to the growth in advertising sales headcount, coupled with a $98 million increase in other marketing expenses, and a $44 million increase in expenses incurred in connection with our advertising offering, including increased payments to advertising sales partners and other advertising distribution expenses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:104489-105621",
+      "excerpt": "s performance. (2) We discontinued our DVD-by-mail service in the year ended December 31, 2023. The discontinuance of our DVD business had an immaterial impact on our operations and financial results. (3) See the “ Non-GAAP Constant Currency Information” section below for additional details on our use of constant currency revenue. Operating margin for the year ended December 31, 2025 increased by approximately three percentage points as compared to the prior comparative period, primarily driven by the growth in revenues outpacing the growth in cost of revenues, sales and marketing, and general and administrative expenses. Net income for the year ended December 31, 2025 increased $2,270 million as compared to the prior comparative period, primarily due to a $2,909 million increase in operating income, driven by a $6,182 million increase in revenues and partially offset by a $2,237 million increase in cost of revenues primarily due to the increase in content amortization and other cost of revenues. The impact of higher operating income was partially offset by a $487 million increase in the provision for income taxes.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E3",
+      "quote": "Revenues for the year ended December 31, 2025 increased 16% as compared to the year ended December 31, 2024, primarily due to the growth in memberships, price increases, and increased advertising revenue",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001065280-26-000034",
+      "form": "10-K",
+      "filed": "2026-01-23",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm",
+      "locator": "10-K 0001065280-26-000034:106405-107592"
+    },
+    {
+      "evidence_id": "E4",
+      "quote": "Revenues for the three and nine months ended September 30, 2025 increased 17% and 15% as compared to the three and nine months ended September 30, 2024, respectively, primarily due to the growth in memberships, price increases, and increased advertising revenue.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001065280-25-000406",
+      "form": "10-Q",
+      "filed": "2025-10-22",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "locator": "10-Q 0001065280-25-000406:67716-68888"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 13880,
+    "output": 1830
+  },
+  "latency_ms": 23807,
+  "estimated_cost_usd": 0.06909,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "self_reflection",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "self_critique",
+        "status": "ok",
+        "duration_ms": 9616,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "weaknesses": 3
+      },
+      {
+        "node": "revise",
+        "status": "ok",
+        "duration_ms": 14186,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 8,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "self_critique",
+      "revise",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

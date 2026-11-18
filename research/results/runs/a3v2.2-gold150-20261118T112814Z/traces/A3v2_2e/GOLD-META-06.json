@@ -1,0 +1,2114 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:A3v2_2e:GOLD-META-06:35131fa8",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3v2_2e",
+  "approach_kind": "contradiction_aware_v2",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "review": {
+      "enabled": true,
+      "max_output_tokens": 4096,
+      "passage_chars": 1200,
+      "allow_partial_period": false
+    },
+    "guard": {
+      "enabled": true,
+      "version": "0.3"
+    },
+    "analyzer": {
+      "name": "default"
+    },
+    "decidability": {
+      "name": "llm_0.1",
+      "scope_gate": true,
+      "downgrade": "supported"
+    },
+    "periods": {
+      "enabled": true,
+      "version": "1.1"
+    },
+    "quote_check": "1.1",
+    "numeric_checks": "0.1",
+    "coverage": "0.1",
+    "name": "A3v2_2e",
+    "kind": "contradiction_aware_v2",
+    "description": "A3 v2.2 + E1 evidence coverage: a final SUPPORTED / CONTRADICTED needs a validated finding, a valid A2 numeric rule or an A3 deterministic check",
+    "versions": {
+      "a3v2": "a3v2-0.3.0-dev",
+      "review_prompts": "a3v2-review-prompts-0.3",
+      "guard": "a3v2-guard-0.3",
+      "graph": "langgraph-claims-a3v2-0.1",
+      "periods": "a3v2-periods-1.1",
+      "decidability": "a3v2-decidability-0.1-draft",
+      "decidability_prompt": "a3v2-decidability-prompt-0.1",
+      "quote_check": "a3v2-quote-check-1.1",
+      "coverage": "a3v2-coverage-0.1",
+      "numeric_checks": "a3v2-numeric-checks-0.1"
+    }
+  },
+  "config_hash": "5bf41b202ff248b0",
+  "claim": {
+    "claim_id": "GOLD-META-06",
+    "company": "META",
+    "claim": "Meta's advertising revenue growth in the quarter ended September 30, 2026 was driven more by a higher average price per ad than by more ad impressions.",
+    "as_of_date": "2026-11-01",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q3"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Advertising revenue in the three and nine months ended September 30, 2026 increased $12.98 billion, or 26%, and $39.41 billion, or 29%, respectively, compared to the same periods in 2025, due to increases in ad impressions delivered and average price per ad. During the three and nine months ended September 30, 2026, ad impressions delivered increased by 10% and 14%, respectively, year-over-year"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "During the three and nine months ended September 30, 2026, the average price per ad increased by 14% and 13%, respectively, year-over-year"
+          }
+        ],
+        "reasoning_summary": "The claim states that Meta's advertising revenue growth in Q3 2026 was driven MORE by higher average price per ad than by more ad impressions. However, the evidence contradicts this. According to E3, for the three months ended September 30, 2026: ad impressions delivered increased by 10% year-over-year, while E1 shows the average price per ad increased by 14% year-over-year. While the price per ad increase (14%) was indeed larger than the impressions increase (10%), the mathematical contribution to revenue growth tells a different story. Revenue growth from these two factors is multiplicative: (1.10) × (1.14) ≈ 1.254 or about 25.4% total growth, which aligns with the reported 26% advertising revenue growth in E3. In a multiplicative relationship, when comparing 10% vs 14% growth rates, the 10% impressions growth contributes approximately 10/24 ≈ 42% of the total growth, while the 14% price growth contributes approximately 14/24 ≈ 58% of the total growth. This means price per ad did contribute more (58% vs 42%), so the claim is actually SUPPORTED by the math. However, I need to reconsider: the claim is about what \"drove\" the growth more. With impressions at +10% and price at +14%, price did increase more in percentage terms and would contribute more to the overall 26% growth mathematically. Therefore, the claim appears to be SUPPORTED, not contradicted.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-09-30",
+            "basis": "quarter",
+            "level": 64601000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-07-01",
+                "period_end": "2026-09-30",
+                "value": 64601000000.0,
+                "filed": "2026-10-22",
+                "form": "10-Q",
+                "accession_number": "0001628280-26-066773",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 51242000000.0,
+            "prior_period_end": "2025-09-30",
+            "yoy_change": 0.2607041099098396,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "analyze_claim",
+      "analysis": {
+        "assertions": [
+          {
+            "assertion_id": "A0",
+            "text": "Meta's advertising revenue growth in the quarter ended September 30, 2026 was driven more by a higher average price per ad than by more ad impressions.",
+            "type": "claim",
+            "period_end": "2026-09-30",
+            "comparison_end": "2025-09-30",
+            "period_start": "2026-07-01",
+            "period_months": 3,
+            "period_kind": "duration"
+          },
+          {
+            "assertion_id": "N1",
+            "type": "numeric",
+            "numeric": {
+              "metric": "Revenue",
+              "measure": "yoy_growth",
+              "period_basis": "quarter",
+              "period_end": "2026-09-30",
+              "comparison": "increase",
+              "stated_value": null,
+              "threshold": null
+            },
+            "text": "Revenue yoy_growth increase None",
+            "period_end": "2026-09-30",
+            "comparison_end": "2025-09-30",
+            "period_start": "2026-07-01",
+            "period_months": 3,
+            "period_kind": "duration"
+          }
+        ],
+        "computations": [],
+        "claim_period": {
+          "version": "a3v2-periods-1.1",
+          "kind": "duration",
+          "start": "2026-07-01",
+          "end": "2026-09-30",
+          "months": 3,
+          "label": "3M ended 2026-09-30",
+          "fiscal_year": 2026,
+          "source": "text_date",
+          "comparison": {
+            "start": "2025-07-01",
+            "end": "2025-09-30"
+          },
+          "notes": [],
+          "period_end": "2026-09-30",
+          "comparison_end": "2025-09-30",
+          "basis": "quarter",
+          "orientation": "historical",
+          "years": [
+            2025,
+            2026
+          ]
+        },
+        "analyzer": "default-whole-claim-0.1",
+        "decidability_record": {
+          "assertion_id": "A0",
+          "predicate_type": "CAUSAL",
+          "criterion_source": "CLAIM_STATES",
+          "required_evidence": [
+            {
+              "kind": "NUMERIC_FACT",
+              "scope": {
+                "entity": null,
+                "segment": null,
+                "region": null,
+                "metric": "advertising revenue growth"
+              }
+            },
+            {
+              "kind": "EXPLICIT_CAUSAL_STATEMENT",
+              "scope": {
+                "entity": null,
+                "segment": null,
+                "region": null,
+                "metric": "advertising revenue growth"
+              }
+            }
+          ],
+          "status": "DECIDABLE",
+          "issues": [],
+          "version": "a3v2-decidability-0.1-draft",
+          "evaluative_terms": [],
+          "scope": {
+            "segment": null,
+            "region": null,
+            "metric": "advertising revenue growth"
+          },
+          "contribution": {
+            "type": "LARGEST_FACTOR",
+            "component": "higher average price per ad",
+            "total": "advertising revenue growth"
+          },
+          "note": "The claim asserts that price per ad was a larger driver than ad impressions for advertising revenue growth, requiring either explicit causal statements or numeric facts showing the relative contributions of price vs. volume to revenue growth.",
+          "prompt_version": "a3v2-decidability-prompt-0.1"
+        },
+        "decidability": [
+          {
+            "assertion_id": "A0",
+            "status": "DECIDABLE",
+            "predicate_type": "CAUSAL",
+            "reason": "The claim asserts that price per ad was a larger driver than ad impressions for advertising revenue growth, requiring either explicit causal statements or numeric facts showing the relative contributions of price vs. volume to revenue growth."
+          }
+        ]
+      },
+      "computations": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Does Meta's filing explicitly state which factor (price or impressions) contributed MORE to advertising revenue growth in Q3 2026, potentially contradicting the mathematical inference?",
+          "search_query": "advertising revenue driven primarily contributed price impressions Q3 2026 third quarter factors"
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Is there a different methodology for determining relative contribution (e.g., sequential decomposition or variance analysis) that would show impressions contributed more than price?",
+          "search_query": "advertising revenue growth decomposition analysis contribution price impressions variance sequential"
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Did other factors (currency, mix effects, or one-time items) materially affect the price or impressions metrics such that the simple percentage comparison is misleading about true drivers?",
+          "search_query": "average price per ad foreign currency exchange geographic mix Reels monetize offset partially Q3 2026"
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "advertising revenue driven primarily contributed price impressions Q3 2026 third quarter factors",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "advertising revenue growth decomposition analysis contribution price impressions variance sequential",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "average price per ad foreign currency exchange geographic mix Reels monetize offset partially Q3 2026",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "evidence_review",
+      "version": "a3v2-review-prompts-0.1",
+      "claim_period": {
+        "version": "a3v2-periods-1.1",
+        "kind": "duration",
+        "start": "2026-07-01",
+        "end": "2026-09-30",
+        "months": 3,
+        "label": "3M ended 2026-09-30",
+        "fiscal_year": 2026,
+        "source": "text_date",
+        "comparison": {
+          "start": "2025-07-01",
+          "end": "2025-09-30"
+        },
+        "notes": [],
+        "period_end": "2026-09-30",
+        "comparison_end": "2025-09-30",
+        "basis": "quarter",
+        "orientation": "historical",
+        "years": [
+          2025,
+          2026
+        ]
+      },
+      "assertions": [
+        {
+          "assertion_id": "A0",
+          "text": "Meta's advertising revenue growth in the quarter ended September 30, 2026 was driven more by a higher average price per ad than by more ad impressions.",
+          "type": "claim",
+          "period_end": "2026-09-30",
+          "comparison_end": "2025-09-30",
+          "period_start": "2026-07-01",
+          "period_months": 3,
+          "period_kind": "duration"
+        },
+        {
+          "assertion_id": "N1",
+          "type": "numeric",
+          "numeric": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": null
+          },
+          "text": "Revenue yoy_growth increase None",
+          "period_end": "2026-09-30",
+          "comparison_end": "2025-09-30",
+          "period_start": "2026-07-01",
+          "period_months": 3,
+          "period_kind": "duration"
+        }
+      ],
+      "reviewed_evidence_ids": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "E9",
+        "E7",
+        "E8",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "findings": [
+        {
+          "finding_id": "R1",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E1"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CAUSE",
+          "definition_mismatch": false,
+          "key_quote": "During the three and nine months ended September 30, 2026, the average price per ad increased by 14% and 13%, respectively, year-over-year",
+          "justification": "This passage explicitly states that for the three months ended September 30, 2026, the average price per ad increased by 14% year-over-year. Combined with the 10% increase in ad impressions from E3, this shows that the 14% price increase was arithmetically larger than the 10% impression increase, establishing that price contributed more to advertising revenue growth than impressions did.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": "PERIOD_MISMATCH",
+          "checks": [
+            {
+              "evidence_id": "E1",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "DURATION_DIFFERS:9M_vs_3M",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-09-30",
+                  "months": [
+                    9
+                  ],
+                  "markers": [
+                    "YTD9"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R2",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E3"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CAUSE",
+          "definition_mismatch": false,
+          "key_quote": "During the three and nine months ended September 30, 2026, ad impressions delivered increased by 10% and 14%, respectively, year-over-year",
+          "justification": "This passage states that for the three months ended September 30, 2026, ad impressions increased by 10% year-over-year. Combined with the 14% price increase from E1, this establishes that the price increase (14%) was larger than the impression increase (10%), confirming that price drove more of the advertising revenue growth than impressions.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": "PERIOD_MISMATCH",
+          "checks": [
+            {
+              "evidence_id": "E3",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "DURATION_DIFFERS:9M_vs_3M",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-09-30",
+                  "months": [
+                    9
+                  ],
+                  "markers": [
+                    "YTD9"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R3",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E10"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CAUSE",
+          "definition_mismatch": false,
+          "key_quote": "Ad impressions delivered across our Family of Apps in the third quarter of 2026 increased 10% year-over-year, and our average price per ad in the third quarter of 2026 increased 14% year-over-year.",
+          "justification": "This passage directly states both metrics for Q3 2026: ad impressions increased 10% and average price per ad increased 14% year-over-year. Since 14% > 10%, this arithmetically establishes that price contributed more to advertising revenue growth than impressions.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E10",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R4",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E18"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CAUSE",
+          "definition_mismatch": false,
+          "key_quote": "Ad impressions delivered across our Family of Apps in the third quarter of 2026 increased 10% year-over-year, and our average price per ad in the third quarter of 2026 increased 14% year-over-year.",
+          "justification": "This passage from the Executive Overview states both metrics for the third quarter of 2026: impressions increased 10% and price per ad increased 14% year-over-year. The larger percentage increase in price (14%) versus impressions (10%) arithmetically establishes that price drove more of the advertising revenue growth.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E18",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R5",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E2"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "OTHER",
+          "definition_mismatch": false,
+          "key_quote": "three and six months ended June 30, 2026, the average price per ad increased by 12% in both periods, year-over-year",
+          "justification": "This evidence is for Q2 2026 (three months ended June 30, 2026), not Q3 2026 (ended September 30, 2026). The period_status is MISMATCH. While it provides context about trends in an earlier quarter, it does not decide the claim about Q3 2026.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E2",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "PERIOD_MISMATCH",
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-06-30",
+                  "months": [
+                    6
+                  ],
+                  "markers": [
+                    "YTD6"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R6",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E6"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "OTHER",
+          "definition_mismatch": false,
+          "key_quote": "During the three and six months ended June 30, 2026, ad impressions delivered increased by 14% and 16%, respectively, year-over-year",
+          "justification": "This evidence is for Q2 2026 (three months ended June 30, 2026), not Q3 2026. The period_status is MISMATCH. While it shows ad impression and price trends for an earlier quarter, it does not decide the claim about Q3 2026.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E6",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-06-30",
+                  "months": [
+                    6
+                  ],
+                  "markers": [
+                    "YTD6"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R7",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E11"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "OTHER",
+          "definition_mismatch": false,
+          "key_quote": "Ad impressions delivered across our Family of Apps in the second quarter of 2026 increased 14% year-over-year, and our average price per ad in the second quarter of 2026 increased 12% year-over-year.",
+          "justification": "This evidence is for Q2 2026 (second quarter of 2026), not Q3 2026. The period_status is MISMATCH. It provides context about trends in an earlier quarter but does not decide the claim about Q3 2026.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E11",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-06-30",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R8",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E15"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "OTHER",
+          "definition_mismatch": false,
+          "key_quote": "In 2025, ad impressions delivered increased by 12%, as compared with an increase of 11% in 2024, year-over-year. In 2025, the average price per ad increased by 9%",
+          "justification": "This evidence is for the full year 2025, not Q3 2026. The period_status is MISMATCH. While it provides historical context, it does not decide the claim about Q3 2026.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E15",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "PERIOD_MISMATCH",
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "markers": [
+                    "FISCAL_YEAR"
+                  ],
+                  "source": "passage_marker",
+                  "form": "10-K",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R9",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E9"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "0.2607041099098396",
+          "justification": "This derived metric shows revenue year-over-year growth for the quarter ended September 30, 2026 was approximately 26.07% (or 0.2607 as a ratio). The period_status is COMPATIBLE_AFTER_VERIFIED_DERIVATION, confirming this is the correct period. This establishes the revenue growth rate for the claim period.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E9",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2026-07-01",
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "Revenue"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R10",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E7",
+            "E8"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "64601000000.0",
+          "justification": "E7 shows Q3 2026 revenue was $64.601 billion and E8 shows Q3 2025 revenue was $51.242 billion. The period_status for both is EXACT_MATCH. The year-over-year growth is (64.601 - 51.242) / 51.242 = 26.07%, establishing the revenue growth rate for the claim period.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2026-07-01",
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "XBRL_VALUE_NOT_IN_QUOTE",
+              "issues": [
+                "XBRL_VALUE_NOT_IN_QUOTE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "comparison",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-07-01",
+                  "end": "2025-09-30",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        }
+      ],
+      "dropped_findings": [],
+      "llm_called": true,
+      "period_derivations": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E10",
+              "quote": "Ad impressions delivered across our Family of Apps in the third quarter of 2026 increased 10% year-over-year, and our average price per ad in the third quarter of 2026 increased 14% year-over-year.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-066773",
+              "form": "10-Q",
+              "filed": "2026-10-22",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+              "locator": "10-Q 0001628280-26-066773:109598-110653"
+            },
+            {
+              "evidence_id": "E18",
+              "quote": "Ad impressions delivered across our Family of Apps in the third quarter of 2026 increased 10% year-over-year, and our average price per ad in the third quarter of 2026 increased 14% year-over-year.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-066773",
+              "form": "10-Q",
+              "filed": "2026-10-22",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+              "locator": "10-Q 0001628280-26-066773:108617-109798"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "The increases in average price per ad in the three and nine months ended September 30, 2026 were driven by an increase in advertising demand, which we believe is mostly due to ongoing improvements to our ad performance from our ad targeting and measurement tools. A favorable foreign currency exchange impact also contributed to the increase in the nine months ended September 30, 2026. These increases were partially offset by a higher number of ad impressions delivered, especially in geographies and in products, such as Reels, that monetize at lower rates.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-066773",
+              "form": "10-Q",
+              "filed": "2026-10-22",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+              "locator": "10-Q 0001628280-26-066773:135320-136499"
+            },
+            {
+              "evidence_id": "E17",
+              "quote": "Changes in foreign exchange rates had an unfavorable impact on our revenue in the three months ended September 30, 2026 compared to the same period in 2025.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-066773",
+              "form": "10-Q",
+              "filed": "2026-10-22",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+              "locator": "10-Q 0001628280-26-066773:136299-137452"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation_guard",
+      "version": "a3v2-guard-0.3",
+      "initial_label": "CONTRADICTED",
+      "proposed_label": "SUPPORTED",
+      "final_label": "SUPPORTED",
+      "outcome": "ACCEPT",
+      "reason_code": "DECIDING_EVIDENCE_CITED",
+      "excluded_citations": [
+        {
+          "evidence_id": "E3",
+          "quote": "During the three and nine months ended September 30, 2026, ad impressions delivered increased by 10% and 14%, respectively, year-over-year",
+          "issues": [
+            "PERIOD_MISMATCH"
+          ],
+          "period_status": "MISMATCH"
+        },
+        {
+          "evidence_id": "E1",
+          "quote": "During the three and nine months ended September 30, 2026, the average price per ad increased by 14% and 13%, respectively, year-over-year",
+          "issues": [
+            "PERIOD_MISMATCH"
+          ],
+          "period_status": "MISMATCH"
+        }
+      ],
+      "deciding_findings": [
+        "R3",
+        "R4"
+      ],
+      "initial_basis": [],
+      "rule_trace": [
+        "excluded 2 citation(s): E3(PERIOD_MISMATCH), E1(PERIOD_MISMATCH)",
+        "ACCEPT: DECIDING_EVIDENCE_CITED"
+      ],
+      "decidability_gate": {
+        "record": {
+          "assertion_id": "A0",
+          "predicate_type": "CAUSAL",
+          "criterion_source": "CLAIM_STATES",
+          "required_evidence": [
+            {
+              "kind": "NUMERIC_FACT",
+              "scope": {
+                "entity": null,
+                "segment": null,
+                "region": null,
+                "metric": "advertising revenue growth"
+              }
+            },
+            {
+              "kind": "EXPLICIT_CAUSAL_STATEMENT",
+              "scope": {
+                "entity": null,
+                "segment": null,
+                "region": null,
+                "metric": "advertising revenue growth"
+              }
+            }
+          ],
+          "status": "DECIDABLE",
+          "issues": [],
+          "version": "a3v2-decidability-0.1-draft",
+          "evaluative_terms": [],
+          "scope": {
+            "segment": null,
+            "region": null,
+            "metric": "advertising revenue growth"
+          },
+          "contribution": {
+            "type": "LARGEST_FACTOR",
+            "component": "higher average price per ad",
+            "total": "advertising revenue growth"
+          },
+          "note": "The claim asserts that price per ad was a larger driver than ad impressions for advertising revenue growth, requiring either explicit causal statements or numeric facts showing the relative contributions of price vs. volume to revenue growth.",
+          "prompt_version": "a3v2-decidability-prompt-0.1"
+        },
+        "reason": null,
+        "label_before": "SUPPORTED",
+        "label_after": "SUPPORTED"
+      },
+      "numeric_checks": {
+        "validity": [],
+        "fcf": {
+          "status": "NOT_APPLICABLE"
+        },
+        "reason": null,
+        "label_before": "SUPPORTED",
+        "label_after": "SUPPORTED"
+      },
+      "coverage": {
+        "basis": [
+          "VALID_FINDING"
+        ],
+        "reason": null,
+        "label_before": "SUPPORTED",
+        "label_after": "SUPPORTED"
+      }
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "cbad1e82aa493cb4bfe200e309805067886df154cc2b5ea9521d45772b48cd6f",
+      "source": "cache",
+      "input_tokens": 3941,
+      "output_tokens": 758,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "mixed",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Advertising revenue in the three and nine months ended September 30, 2026 increased $12.98 billion, or 26%, and $39.41 billion, or 29%, respectively, compared to the same periods in 2025, due to increases in ad impressions delivered and average price per ad. During the three and nine months ended September 30, 2026, ad impressions delivered increased by 10% and 14%, respectively, year-over-year"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "During the three and nine months ended September 30, 2026, the average price per ad increased by 14% and 13%, respectively, year-over-year"
+          }
+        ],
+        "reasoning_summary": "The claim states that Meta's advertising revenue growth in Q3 2026 was driven MORE by higher average price per ad than by more ad impressions. However, the evidence contradicts this. According to E3, for the three months ended September 30, 2026: ad impressions delivered increased by 10% year-over-year, while E1 shows the average price per ad increased by 14% year-over-year. While the price per ad increase (14%) was indeed larger than the impressions increase (10%), the mathematical contribution to revenue growth tells a different story. Revenue growth from these two factors is multiplicative: (1.10) × (1.14) ≈ 1.254 or about 25.4% total growth, which aligns with the reported 26% advertising revenue growth in E3. In a multiplicative relationship, when comparing 10% vs 14% growth rates, the 10% impressions growth contributes approximately 10/24 ≈ 42% of the total growth, while the 14% price growth contributes approximately 14/24 ≈ 58% of the total growth. This means price per ad did contribute more (58% vs 42%), so the claim is actually SUPPORTED by the math. However, I need to reconsider: the claim is about what \"drove\" the growth more. With impressions at +10% and price at +14%, price did increase more in percentage terms and would contribute more to the overall 26% growth mathematically. Therefore, the claim appears to be SUPPORTED, not contradicted.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "decidability",
+      "tool": "classify_claim",
+      "request_key": "e00101225c6cfe34421a2ccd78a29ac11fa8ddae124894554e1a4492a288ffc6",
+      "source": "live",
+      "input_tokens": 1514,
+      "output_tokens": 268,
+      "stop_reason": "tool_use",
+      "latency_ms": 4414,
+      "output": {
+        "predicate_type": "CAUSAL",
+        "evaluative_terms": [],
+        "criterion_source": "CLAIM_STATES",
+        "scope": {
+          "metric": "advertising revenue growth",
+          "region": null,
+          "segment": null
+        },
+        "contribution": {
+          "type": "LARGEST_FACTOR",
+          "component": "higher average price per ad",
+          "total": "advertising revenue growth"
+        },
+        "required_evidence": [
+          "NUMERIC_FACT",
+          "EXPLICIT_CAUSAL_STATEMENT"
+        ],
+        "note": "The claim asserts that price per ad was a larger driver than ad impressions for advertising revenue growth, requiring either explicit causal statements or numeric facts showing the relative contributions of price vs. volume to revenue growth."
+      },
+      "isolated_conversation": true,
+      "prompt_version": "a3v2-decidability-prompt-0.1"
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "7755c6e5bb53e6d81c0e1f019a010e733fd24ab038ae99b218c53d6f111a46c7",
+      "source": "cache",
+      "input_tokens": 5574,
+      "output_tokens": 287,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Does Meta's filing explicitly state which factor (price or impressions) contributed MORE to advertising revenue growth in Q3 2026, potentially contradicting the mathematical inference?",
+            "search_query": "advertising revenue driven primarily contributed price impressions Q3 2026 third quarter factors"
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Is there a different methodology for determining relative contribution (e.g., sequential decomposition or variance analysis) that would show impressions contributed more than price?",
+            "search_query": "advertising revenue growth decomposition analysis contribution price impressions variance sequential"
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Did other factors (currency, mix effects, or one-time items) materially affect the price or impressions metrics such that the simple percentage comparison is misleading about true drivers?",
+            "search_query": "average price per ad foreign currency exchange geographic mix Reels monetize offset partially Q3 2026"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "evidence_review",
+      "tool": "submit_evidence_review",
+      "request_key": "a6353384347cfaf14c3c1e1ed9e82647b7a89b87729eb0b33b2b332f273297e7",
+      "source": "cache",
+      "input_tokens": 8020,
+      "output_tokens": 1880,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "findings": [
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E1"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CAUSE",
+            "key_quote": "During the three and nine months ended September 30, 2026, the average price per ad increased by 14% and 13%, respectively, year-over-year",
+            "justification": "This passage explicitly states that for the three months ended September 30, 2026, the average price per ad increased by 14% year-over-year. Combined with the 10% increase in ad impressions from E3, this shows that the 14% price increase was arithmetically larger than the 10% impression increase, establishing that price contributed more to advertising revenue growth than impressions did."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E3"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CAUSE",
+            "key_quote": "During the three and nine months ended September 30, 2026, ad impressions delivered increased by 10% and 14%, respectively, year-over-year",
+            "justification": "This passage states that for the three months ended September 30, 2026, ad impressions increased by 10% year-over-year. Combined with the 14% price increase from E1, this establishes that the price increase (14%) was larger than the impression increase (10%), confirming that price drove more of the advertising revenue growth than impressions."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E10"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CAUSE",
+            "key_quote": "Ad impressions delivered across our Family of Apps in the third quarter of 2026 increased 10% year-over-year, and our average price per ad in the third quarter of 2026 increased 14% year-over-year.",
+            "justification": "This passage directly states both metrics for Q3 2026: ad impressions increased 10% and average price per ad increased 14% year-over-year. Since 14% > 10%, this arithmetically establishes that price contributed more to advertising revenue growth than impressions."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E18"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CAUSE",
+            "key_quote": "Ad impressions delivered across our Family of Apps in the third quarter of 2026 increased 10% year-over-year, and our average price per ad in the third quarter of 2026 increased 14% year-over-year.",
+            "justification": "This passage from the Executive Overview states both metrics for the third quarter of 2026: impressions increased 10% and price per ad increased 14% year-over-year. The larger percentage increase in price (14%) versus impressions (10%) arithmetically establishes that price drove more of the advertising revenue growth."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E2"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "OTHER",
+            "key_quote": "three and six months ended June 30, 2026, the average price per ad increased by 12% in both periods, year-over-year",
+            "justification": "This evidence is for Q2 2026 (three months ended June 30, 2026), not Q3 2026 (ended September 30, 2026). The period_status is MISMATCH. While it provides context about trends in an earlier quarter, it does not decide the claim about Q3 2026."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E6"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "OTHER",
+            "key_quote": "During the three and six months ended June 30, 2026, ad impressions delivered increased by 14% and 16%, respectively, year-over-year",
+            "justification": "This evidence is for Q2 2026 (three months ended June 30, 2026), not Q3 2026. The period_status is MISMATCH. While it shows ad impression and price trends for an earlier quarter, it does not decide the claim about Q3 2026."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E11"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "OTHER",
+            "key_quote": "Ad impressions delivered across our Family of Apps in the second quarter of 2026 increased 14% year-over-year, and our average price per ad in the second quarter of 2026 increased 12% year-over-year.",
+            "justification": "This evidence is for Q2 2026 (second quarter of 2026), not Q3 2026. The period_status is MISMATCH. It provides context about trends in an earlier quarter but does not decide the claim about Q3 2026."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E15"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "OTHER",
+            "key_quote": "In 2025, ad impressions delivered increased by 12%, as compared with an increase of 11% in 2024, year-over-year. In 2025, the average price per ad increased by 9%",
+            "justification": "This evidence is for the full year 2025, not Q3 2026. The period_status is MISMATCH. While it provides historical context, it does not decide the claim about Q3 2026."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E9"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "0.2607041099098396",
+            "justification": "This derived metric shows revenue year-over-year growth for the quarter ended September 30, 2026 was approximately 26.07% (or 0.2607 as a ratio). The period_status is COMPATIBLE_AFTER_VERIFIED_DERIVATION, confirming this is the correct period. This establishes the revenue growth rate for the claim period."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E7",
+              "E8"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "64601000000.0",
+            "justification": "E7 shows Q3 2026 revenue was $64.601 billion and E8 shows Q3 2025 revenue was $51.242 billion. The period_status for both is EXACT_MATCH. The year-over-year growth is (64.601 - 51.242) / 51.242 = 26.07%, establishing the revenue growth rate for the claim period."
+          }
+        ]
+      },
+      "isolated_conversation": true,
+      "prompt_version": "a3v2-review-prompts-0.3"
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "ebe0ec1e6dbf7a8412c236845d50b415d404a6bf63d35d6cab5dbb90880b4699",
+      "source": "cache",
+      "input_tokens": 11491,
+      "output_tokens": 1308,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E10",
+                "quote": "Ad impressions delivered across our Family of Apps in the third quarter of 2026 increased 10% year-over-year, and our average price per ad in the third quarter of 2026 increased 14% year-over-year."
+              },
+              {
+                "evidence_id": "E18",
+                "quote": "Ad impressions delivered across our Family of Apps in the third quarter of 2026 increased 10% year-over-year, and our average price per ad in the third quarter of 2026 increased 14% year-over-year."
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E1",
+                "quote": "The increases in average price per ad in the three and nine months ended September 30, 2026 were driven by an increase in advertising demand, which we believe is mostly due to ongoing improvements to our ad performance from our ad targeting and measurement tools. A favorable foreign currency exchange impact also contributed to the increase in the nine months ended September 30, 2026. These increases were partially offset by a higher number of ad impressions delivered, especially in geographies and in products, such as Reels, that monetize at lower rates."
+              },
+              {
+                "evidence_id": "E17",
+                "quote": "Changes in foreign exchange rates had an unfavorable impact on our revenue in the three months ended September 30, 2026 compared to the same period in 2025."
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": true,
+        "change_reason": "My initial verdict was CONTRADICTED, but upon reviewing the evidence more carefully, I realize this was an error in reasoning. The evidence actually SUPPORTS the claim. E10 and E18 both explicitly state that for Q3 2026, ad impressions increased 10% year-over-year while average price per ad increased 14% year-over-year. Since 14% > 10%, the price increase was arithmetically larger than the impressions increase. In a multiplicative revenue model (Revenue = Impressions × Price), when both factors grow, the factor with the larger percentage increase contributes more to overall growth. Here, price at +14% contributed more than impressions at +10% to the 26% advertising revenue growth. The evidence review confirms that E10 and E18 both ENTAIL the claim with EXACT_MATCH period compatibility and HISTORICAL_FACT statement time, making them valid supporting evidence.",
+        "supporting_evidence": [
+          {
+            "evidence_id": "E10",
+            "quote": "Ad impressions delivered across our Family of Apps in the third quarter of 2026 increased 10% year-over-year, and our average price per ad in the third quarter of 2026 increased 14% year-over-year."
+          },
+          {
+            "evidence_id": "E18",
+            "quote": "Ad impressions delivered across our Family of Apps in the third quarter of 2026 increased 10% year-over-year, and our average price per ad in the third quarter of 2026 increased 14% year-over-year."
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "During the three and nine months ended September 30, 2026, ad impressions delivered increased by 10% and 14%, respectively, year-over-year"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "During the three and nine months ended September 30, 2026, the average price per ad increased by 14% and 13%, respectively, year-over-year"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Meta's advertising revenue growth in Q3 2026 was driven MORE by higher average price per ad than by more ad impressions. The evidence clearly supports this claim. E10 and E18 (both with EXACT_MATCH period compatibility and marked as ENTAILS in the evidence review) explicitly state that for the third quarter of 2026, ad impressions increased 10% year-over-year while average price per ad increased 14% year-over-year. Since advertising revenue is the product of impressions and price per ad, and the price increase (14%) exceeded the impressions increase (10%), price mathematically contributed more to the overall 26% advertising revenue growth. In a multiplicative model, the relative contribution can be approximated: price contributed roughly 14/(10+14) ≈ 58% while impressions contributed roughly 10/(10+14) ≈ 42% of the growth drivers. Therefore, price drove more of the growth than impressions, exactly as the claim states. The challenges were refuted: H1 found no explicit statement contradicting the mathematical inference, H2 found no alternative methodology, and H3 confirmed that while mix effects existed, they don't change the fundamental comparison that 14% > 10%."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Meta's advertising revenue growth in the quarter ended September 30, 2026 was driven more by a higher average price per ad than by more ad impressions. 2026 Q3",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "advertising revenue driven primarily contributed price impressions Q3 2026 third quarter factors",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "advertising revenue growth decomposition analysis contribution price impressions variance sequential",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "average price per ad foreign currency exchange geographic mix Reels monetize offset partially Q3 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": "increase",
+            "stated_value": null,
+            "threshold": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-09-30",
+            "basis": "quarter",
+            "level": 64601000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-07-01",
+                "period_end": "2026-09-30",
+                "value": 64601000000.0,
+                "filed": "2026-10-22",
+                "form": "10-Q",
+                "accession_number": "0001628280-26-066773",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 51242000000.0,
+            "prior_period_end": "2025-09-30",
+            "yoy_change": 0.2607041099098396,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-066773",
+        "filed": "2026-10-22",
+        "report_date": "2026-09-30",
+        "primary_document": "meta-20260930.htm",
+        "sha256": "0ea75a9311407dc3202c051c3166c7dbc7f4714ee77d599691dcab16b75a916e"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-050705",
+        "filed": "2026-07-30",
+        "report_date": "2026-06-30",
+        "primary_document": "meta-20260630.htm",
+        "sha256": "6ed73c37a6bf6c45f5becbf56107d45228849955dd5c6d43e0cd3e0d5e6a4d24"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-003942",
+        "filed": "2026-01-29",
+        "report_date": "2025-12-31",
+        "primary_document": "meta-20251231.htm",
+        "sha256": "f78fe1cbc2a5c786cbb67362e22a79c19ae606f5cdbae9faed231f210a574053"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1525
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:135320-136499",
+      "excerpt": ". During the three and nine months ended September 30, 2026, the average price per ad increased by 14% and 13%, respectively, year-over-year, as compared with increases of 10% in both periods in 2025. The increases in average price per ad in the three and nine months ended September 30, 2026 were driven by an increase in advertising demand, which we believe is mostly due to ongoing improvements to our ad performance from our ad targeting and measurement tools. A favorable foreign currency exchange impact also contributed to the increase in the nine months ended September 30, 2026. These increases were partially offset by a higher number of ad impressions delivered, especially in geographies and in products, such as Reels, that monetize at lower rates. Other factors are discussed in the section entitled \"—Executive Overview of Third Quarter Results.\" In addition, the online commerce vertical was the largest contributor to the increase in advertising revenue in the three and nine months ended September 30, 2026 compared to the same periods in 2025. We anticipate that future advertising revenue will be driven by a combination of price and ad impressions delivered.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050705",
+      "form": "10-Q",
+      "filed": "2026-07-30",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm",
+      "locator": "10-Q 0001628280-26-050705:129017-130112",
+      "excerpt": "hree and six months ended June 30, 2026, the average price per ad increased by 12% in both periods, year-over-year, as compared with increases of 9% and 10%, respectively, in the same periods in 2025. The increases in average price per ad in the three and six months ended June 30, 2026 were driven by an increase in advertising demand, which we believe is mostly due to ongoing improvements to our ad performance from our ad targeting and measurement tools, and a favorable foreign currency exchange impact. These increases were partially offset by a higher number of ad impressions delivered, especially in geographies and in products, such as Reels, that monetize at lower rates. Other factors are discussed in the section entitled \"—Executive Overview of Second Quarter Results.\" In addition, the online commerce vertical was the largest contributor to the increase in advertising revenue in the three and six months ended June 30, 2026 compared to the same periods in 2025. We anticipate that future advertising revenue will be driven by a combination of price and ad impressions delivered.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:134377-135520",
+      "excerpt": "d September 30, 2026 increased $13.39 billion, or 26%, and $40.62 billion, or 29%, respectively, compared to the same periods in 2025. The increases were almost entirely driven by advertising revenue. Advertising Advertising revenue in the three and nine months ended September 30, 2026 increased $12.98 billion, or 26%, and $39.41 billion, or 29%, respectively, compared to the same periods in 2025, due to increases in ad impressions delivered and average price per ad. During the three and nine months ended September 30, 2026, ad impressions delivered increased by 10% and 14%, respectively, year-over-year, as compared with increases of 14% and 10%, respectively, in the same periods in 2025. Ad impressions delivered during the three and nine months ended September 30, 2026 grew in all regions, especially in Asia-Pacific, which was driven by increases in users and their engagement as well as the frequency of ads shown on our products. During the three and nine months ended September 30, 2026, the average price per ad increased by 14% and 13%, respectively, year-over-year, as compared with increases of 10% in both periods in 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:126376-127552",
+      "excerpt": "ember 2026 from 3.54 billion during September 2025. 39 Table of Contents • Average Revenue Per Person (ARPP). Our Family of Apps (FoA) revenue represents the substantial majority of our total revenue. We define ARPP as our FoA revenue during a given quarter, divided by the average of the number of DAP at the beginning and end of the quarter. ARPP: $12.29 $14.25 $12.36 $13.65 $14.46 $16.56 $15.66 $16.86 $17.72 During the third quarter of 2026, worldwide ARPP was $17.72, an increase of 23% from the third quarter of 2025. 40 Table of Contents Trends in Our Ad Impressions and Average Price Per Ad • Ad Impressions. Our advertising revenue is generated by displaying ad products on Facebook, Instagram, Messenger, and third-party mobile applications. Impressions are considered delivered when an ad is displayed to a user. _ _ Note: Our ad impressions growth by user geography in the charts above is geographically apportioned based on our estimation of the geographic location of our users when an ad impression is delivered. 41 Table of Contents • Average Price Per Ad. We calculate average price per ad as total advertising revenue divided by the number of ads delivered.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050705",
+      "form": "10-Q",
+      "filed": "2026-07-30",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm",
+      "locator": "10-Q 0001628280-26-050705:120584-121716",
+      "excerpt": "the second quarter of 2026, worldwide ARPP was $16.86, an increase of 24% from the second quarter of 2025. 37 Table of Contents Trends in Our Ad Impressions and Average Price Per Ad • Ad Impressions. Our advertising revenue is generated by displaying ad products on Facebook, Instagram, Messenger, and third-party mobile applications. Impressions are considered delivered when an ad is displayed to a user. _ _ Note: Our ad impressions growth by user geography in the charts above is geographically apportioned based on our estimation of the geographic location of our users when an ad impression is delivered. 38 Table of Contents • Average Price Per Ad. We calculate average price per ad as total advertising revenue divided by the number of ads delivered. _ _ Note: Our average price per ad growth by user geography in the charts above is geographically apportioned based on our estimation of the geographic location of our users when an ad impression is delivered. 39 Table of Contents Components of Results of Operations Revenue Family of Apps (FoA) Advertising . We generate substantially all of our revenue from advertising.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050705",
+      "form": "10-Q",
+      "filed": "2026-07-30",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm",
+      "locator": "10-Q 0001628280-26-050705:128079-129217",
+      "excerpt": "ended June 30, 2026 increased $13.22 billion, or 28%, and $27.23 billion, or 31%, respectively, compared to the same periods in 2025. The increases were almost entirely driven by advertising revenue. Advertising Advertising revenue in the three and six months ended June 30, 2026 increased $12.80 billion, or 27%, and $26.43 billion, or 30%, respectively, compared to the same periods in 2025, due to increases in ad impressions delivered and average price per ad. During the three and six months ended June 30, 2026, ad impressions delivered increased by 14% and 16%, respectively, year-over-year, as compared with increases of 11% and 8%, respectively, in the same periods in 2025. Ad impressions delivered during the three and six months ended June 30, 2026 grew in all regions, especially in Asia-Pacific, which was driven by increases in users and their engagement as well as the frequency of ads shown on our products. During the three and six months ended June 30, 2026, the average price per ad increased by 12% in both periods, year-over-year, as compared with increases of 9% and 10%, respectively, in the same periods in 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": "2026-07-01",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/0001628280-26-066773-index.htm",
+      "locator": "Revenue 2026-07-01..2026-09-30",
+      "excerpt": null,
+      "values": [
+        64601000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": "2025-07-01",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/0001628280-26-066773-index.htm",
+      "locator": "Revenue 2025-07-01..2025-09-30",
+      "excerpt": null,
+      "values": [
+        51242000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "META",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2026-09-30",
+      "excerpt": null,
+      "values": [
+        64601000000.0,
+        51242000000.0,
+        0.2607041099098396
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:109598-110653",
+      "excerpt": "e. Ad impressions delivered across our Family of Apps in the third quarter of 2026 increased 10% year-over-year, and our average price per ad in the third quarter of 2026 increased 14% year-over-year. Income from operations for the third quarter of 2026 was $12.99 billion, a decrease of $7.55 billion, or 37%, compared to the third quarter of 2025, driven by higher costs and expenses. The increase in costs and expenses was primarily due to increases in legal-related costs, including the $9.89 billion charge related to the August 2026 multistate attorneys general agreement; infrastructure expenses related to our data centers, technical infrastructure, and third-party cloud services; and third-party AI token costs. 34 Table of Contents Consolidated and Segment Results We report our financial results for our two reportable segments: Family of Apps (FoA) and Reality Labs (RL). FoA includes Facebook, Instagram, Messenger, WhatsApp, and other services. RL includes our virtual and augmented reality related consumer hardware, software, and content.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050705",
+      "form": "10-Q",
+      "filed": "2026-07-30",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm",
+      "locator": "10-Q 0001628280-26-050705:102788-103884",
+      "excerpt": "results between periods where certain items may vary independent of business performance, and allows for greater transparency with respect to key metrics used by management in operating our business. Executive Overview of Second Quarter Results Our mission is to build the future of human connection and the technology that makes it possible. Our financial results and key Family metrics for the second quarter of 2026 are set forth below. Total revenue for the second quarter of 2026 was $60.80 billion, an increase of 28% compared to the second quarter of 2025, due to an increase in advertising revenue. Revenue on a constant currency basis would have increased 27% compared to the second quarter of 2025. Ad impressions delivered across our Family of Apps in the second quarter of 2026 increased 14% year-over-year, and our average price per ad in the second quarter of 2026 increased 12% year-over-year. Income from operations for the second quarter of 2026 was $18.78 billion, a decrease of $1.67 billion, or 8%, compared to the second quarter of 2025, driven by higher costs and expenses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:327186-328301",
+      "excerpt": "section entitled \"—Executive Overview of Full Year 2025 Results.\" In addition, the online commerce vertical was the largest contributor to the increase in advertising revenue in 2025 compared to 2024. We anticipate that future advertising revenue will be driven by a combination of price and ad impressions delivered. Other revenue FoA other revenue in 2025 increased $862 million, or 50%, compared to 2024. The increase was mostly driven by paid messaging from WhatsApp and Meta Verified subscriptions. Reality Labs RL revenue in 2025 increased $61 million, or 3%, compared to 2024. The increase was driven by an increase in sales of AI glasses, partially offset by a decrease in Meta Quest sales. Revenue Seasonality Revenue is traditionally seasonally strong in the fourth quarter of each year due in part to seasonal holiday demand. We believe that this seasonality in both advertising revenue and RL consumer hardware sales affects our quarterly results, which generally reflect significant growth in revenue between the third and fourth quarters and a decline between the fourth and subsequent first quarters.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:308643-309812",
+      "excerpt": "in Our Ad Impressions and Average Price Per Ad • Ad Impressions. Our advertising revenue is generated by displaying ad products on Facebook, Instagram, Messenger, and third-party mobile applications. Impressions are considered delivered when an ad is displayed to a user. Note: Our ad impressions growth by user geography in the charts above is geographically apportioned based on our estimation of the geographic location of our users when an ad impression is delivered. 67 Table of Contents • Average Price Per Ad. We calculate average price per ad as total advertising revenue divided by the number of ads delivered. Note: Our average price per ad growth by user geography in the charts above is geographically apportioned based on our estimation of the geographic location of our users when an ad impression is delivered. 68 Table of Contents Critical Accounting Estimates Our consolidated financial statements are prepared in accordance with GAAP. The preparation of these consolidated financial statements requires us to make estimates and assumptions that affect the reported amounts of assets, liabilities, revenue, costs and expenses, and related disclosures.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:127352-128479",
+      "excerpt": "ion of our users when an ad impression is delivered. 41 Table of Contents • Average Price Per Ad. We calculate average price per ad as total advertising revenue divided by the number of ads delivered. _ _ Note: Our average price per ad growth by user geography in the charts above is geographically apportioned based on our estimation of the geographic location of our users when an ad impression is delivered. 42 Table of Contents Components of Results of Operations Revenue Family of Apps (FoA) Advertising . We generate substantially all of our revenue from advertising. Our advertising revenue is generated by displaying ad products on Facebook, Instagram, Messenger, and third-party mobile applications. Marketers pay for ad products either directly or through their relationships with advertising agencies or resellers, based on the number of impressions delivered or the number of actions, such as clicks, taken by users. We recognize revenue from the display of impression-based ads in the contracted period in which the impressions are delivered. Impressions are considered delivered when an ad is displayed to a user.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:326288-327386",
+      "excerpt": "compared to 2024 due to increases in ad impressions delivered and average price per ad. In 2025, ad impressions delivered increased by 12%, as compared with an increase of 11% in 2024, year-over-year. Ad impressions delivered during 2025 grew in all regions, especially in Asia-Pacific, which was driven by increases in users and their engagement on our products. In 2025, the average price per ad increased by 9%, as compared with an increase of 10% in 2024, year-over-year. The increase in average price per ad in 2025 was driven by an increase in advertising demand, which we believe is mostly due to ongoing improvements to our ad performance from our ad targeting and measurement tools. This increase was partially offset by a higher number of ad impressions delivered, especially in geographies and in products, such as Reels, that monetize at lower rates. Other factors are discussed in the section entitled \"—Executive Overview of Full Year 2025 Results.\" In addition, the online commerce vertical was the largest contributor to the increase in advertising revenue in 2025 compared to 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050705",
+      "form": "10-Q",
+      "filed": "2026-07-30",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm",
+      "locator": "10-Q 0001628280-26-050705:129912-131050",
+      "excerpt": "the three and six months ended June 30, 2026 compared to the same periods in 2025. We anticipate that future advertising revenue will be driven by a combination of price and ad impressions delivered. Other revenue FoA other revenue in the three and six months ended June 30, 2026 increased $424 million, or 73%, and $798 million, or 73%, respectively, compared to the same periods in 2025. The increases were primarily driven by paid messaging from WhatsApp and subscriptions. Reality Labs RL revenue in the three and six months ended June 30, 2026 increased $61 million, or 16%, and $51 million, or 7%, respectively, compared to the same periods in 2025. The increases were driven by higher sales of AI glasses, partially offset by lower Meta Quest sales. Foreign Exchange Impact on Revenue Changes in foreign exchange rates had a favorable impact on our revenue in the three and six months ended June 30, 2026 compared to the same periods in 2025. To calculate revenue on a constant currency basis, we translated revenue using the prior year's monthly exchange rates for our settlement or billing currencies other than the U.S. dollar.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:136299-137452",
+      "excerpt": "hree and nine months ended September 30, 2026 compared to the same periods in 2025. We anticipate that future advertising revenue will be driven by a combination of price and ad impressions delivered. Other revenue FoA other revenue in the three and nine months ended September 30, 2026 increased $407 million, or 59%, and $1.20 billion, or 67%, respectively, compared to the same periods in 2025. The increases were primarily driven by paid messaging from WhatsApp and subscriptions. Reality Labs RL revenue in the three months ended September 30, 2026 decreased $27 million, or 6%, compared to the same period in 2025. The decrease was driven by lower Meta Quest sales, partially offset by higher sales of AI glasses. RL revenue in the nine months ended September 30, 2026 increased $24 million, or 2%, compared to the same period in 2025. The increase was driven by higher sales of AI glasses, partially offset by lower Meta Quest sales. 45 Table of Contents Foreign Exchange Impact on Revenue Changes in foreign exchange rates had an unfavorable impact on our revenue in the three months ended September 30, 2026 compared to the same period in 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:108617-109798",
+      "excerpt": "y basis is provided for year-over-year comparison purposes, and investors should be cautioned that the effect of changing foreign currency exchange rates has an actual effect on our operating results. We believe this non-GAAP financial measure provides investors with useful supplemental information about the financial performance of our business, enables comparison of financial results between periods where certain items may vary independent of business performance, and allows for greater transparency with respect to key metrics used by management in operating our business. Executive Overview of Third Quarter Results Our mission is to build the future of human connection and the technology that makes it possible. Our financial results and key Family metrics for the third quarter of 2026 are set forth below. Total revenue for the third quarter of 2026 was $64.60 billion, an increase of 26% compared to the third quarter of 2025, due to an increase in advertising revenue. Ad impressions delivered across our Family of Apps in the third quarter of 2026 increased 10% year-over-year, and our average price per ad in the third quarter of 2026 increased 14% year-over-year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E10",
+      "quote": "Ad impressions delivered across our Family of Apps in the third quarter of 2026 increased 10% year-over-year, and our average price per ad in the third quarter of 2026 increased 14% year-over-year.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:109598-110653"
+    },
+    {
+      "evidence_id": "E18",
+      "quote": "Ad impressions delivered across our Family of Apps in the third quarter of 2026 increased 10% year-over-year, and our average price per ad in the third quarter of 2026 increased 14% year-over-year.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:108617-109798"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 30540,
+    "output": 4501
+  },
+  "latency_ms": 4501,
+  "estimated_cost_usd": 0.159135,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "mixed"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "analyze_claim",
+        "status": "ok",
+        "duration_ms": 4480,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "assertions": 2,
+        "computations": 0,
+        "period_source": "text_date"
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 7,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "evidence_review",
+        "status": "ok",
+        "duration_ms": 5,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "findings": 10,
+        "deciding": 4,
+        "downgraded": 2
+      },
+      {
+        "node": "reconcile_v2",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 5,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 5,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_TRUE_QUALITATIVE_UNCHANGED"
+      },
+      {
+        "node": "reconciliation_guard",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 5,
+        "retrieval_queries_so_far": 4,
+        "outcome": "ACCEPT",
+        "reason": "DECIDING_EVIDENCE_CITED",
+        "label": "SUPPORTED"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 5,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "analyze_claim",
+      "generate_hypotheses",
+      "counter_investigation",
+      "evidence_review",
+      "reconcile_v2",
+      "apply_guards",
+      "reconciliation_guard",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-a3v2-0.1"
+  },
+  "a3v2_version": "a3v2-0.3.0-dev"
+}

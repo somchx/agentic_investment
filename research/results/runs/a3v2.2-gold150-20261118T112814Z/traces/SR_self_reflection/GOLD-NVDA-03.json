@@ -1,0 +1,802 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:SR_self_reflection:GOLD-NVDA-03:067f1c3f",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "SR_self_reflection",
+  "approach_kind": "self_reflection",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": true,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "SR_self_reflection",
+    "kind": "self_reflection",
+    "description": "A2 + self-critique and revision, no new retrieval"
+  },
+  "config_hash": "166d47be253b74e9",
+  "claim": {
+    "claim_id": "GOLD-NVDA-03",
+    "company": "NVDA",
+    "claim": "NVIDIA's Data Center revenue for the quarter ended April 26, 2026 exceeded $40 billion.",
+    "as_of_date": "2026-06-10",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2027 Q1"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-04-26",
+            "comparison": ">",
+            "threshold": 40000000000,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E5",
+            "quote": "Three Months Ended Apr 26, 2026 Apr 27, 2025 (In millions) Revenue by Market Platform Data Center $ 75,246 $ 39,112"
+          },
+          {
+            "evidence_id": "E6",
+            "quote": "Apr 26, 2026 Jan 25, 2026 Apr 27, 2025 ($ in millions) Revenue by Market Platform (1) Data Center $ 75,246 $ 62,314 $ 39,112"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that NVIDIA's Data Center revenue for the quarter ended April 26, 2026 exceeded $40 billion. Evidence E5 and E6 both clearly show that Data Center revenue for the three months ended April 26, 2026 was $75,246 million (i.e., $75.246 billion). This amount significantly exceeds the $40 billion threshold stated in the claim. The evidence directly supports the claim with specific financial data from NVIDIA's 10-Q filing for the quarter ended April 26, 2026.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_ALL_TRUE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-04-26",
+            "comparison": ">",
+            "threshold": 40000000000,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-04-26",
+            "basis": "quarter",
+            "level": 81615000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-01-26",
+                "period_end": "2026-04-26",
+                "value": 81615000000.0,
+                "filed": "2026-05-20",
+                "form": "10-Q",
+                "accession_number": "0001045810-26-000052",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 44062000000.0,
+            "prior_period_end": "2025-04-27",
+            "yoy_change": 0.8522763378875221,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "self_critique",
+      "weaknesses": [
+        {
+          "weakness_id": "W1",
+          "critique": "The claim specifically asks about 'Data Center revenue' for the quarter ended April 26, 2026, and I verified it was $75,246 million ($75.246 billion), which exceeds $40 billion. However, I should note that the evidence shows this is presented as 'Revenue by Market Platform' with 'Data Center' as one platform. Evidence E5 includes a footnote stating 'In the first quarter of fiscal year 2027, we changed our presentation of revenue by market platform, and the comparable period has been recast.' This presentation change could potentially affect how Data Center revenue is defined or categorized, though the evidence does not suggest the $75,246 million figure is incorrect or misleading."
+        },
+        {
+          "weakness_id": "W2",
+          "critique": "The numeric_checks show total revenue of $81,615 million for the quarter, while Data Center revenue was $75,246 million. I should verify this is internally consistent. Looking at E5 and E6, they show Data Center at $75,246 million and Edge Computing at $6,369 million, which sum to $81,615 million total revenue. This confirms Data Center is a segment/platform within total revenue, not the total itself. The claim is specifically about Data Center revenue exceeding $40 billion, which is clearly supported."
+        },
+        {
+          "weakness_id": "W3",
+          "critique": "Evidence E6 further breaks down Data Center revenue into 'Hyperscale' ($37,869 million) and 'AI Clouds, Industrial, & Enterprise' ($37,377 million), which sum to $75,246 million. This sub-categorization is consistent with the Data Center total. However, I should note that the presentation change mentioned in the footnote means the definition or composition of 'Data Center' may have changed from prior periods, though this does not affect whether the Q1 FY2027 Data Center revenue exceeded $40 billion - it clearly did at $75.246 billion."
+        }
+      ]
+    },
+    {
+      "stage": "revision",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_ALL_TRUE",
+      "assessments": [
+        {
+          "item_id": "W1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E5",
+              "quote": "In the first quarter of fiscal year 2027, we changed our presentation of revenue by market platform, and the comparable period has been recast",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000052",
+              "form": "10-Q",
+              "filed": "2026-05-20",
+              "period_end": "2026-04-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+              "locator": "10-Q 0001045810-26-000052:50610-51506"
+            },
+            {
+              "evidence_id": "E5",
+              "quote": "Three Months Ended Apr 26, 2026 Apr 27, 2025 (In millions) Revenue by Market Platform Data Center $ 75,246 $ 39,112",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000052",
+              "form": "10-Q",
+              "filed": "2026-05-20",
+              "period_end": "2026-04-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+              "locator": "10-Q 0001045810-26-000052:50610-51506"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E5",
+              "quote": "Revenue by Market Platform Data Center $ 75,246 $ 39,112 Hyperscale 37,869 17,599 AI Clouds, Industrial, & Enterprise 37,377 21,513 Edge Computing 6,369 4,950 Total revenue $ 81,615 $ 44,062",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000052",
+              "form": "10-Q",
+              "filed": "2026-05-20",
+              "period_end": "2026-04-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+              "locator": "10-Q 0001045810-26-000052:50610-51506"
+            },
+            {
+              "evidence_id": "E6",
+              "quote": "Data Center $ 75,246 $ 62,314 $ 39,112 21 % 92 %",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000052",
+              "form": "10-Q",
+              "filed": "2026-05-20",
+              "period_end": "2026-04-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+              "locator": "10-Q 0001045810-26-000052:63276-64318"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E6",
+              "quote": "Data Center $ 75,246 $ 62,314 $ 39,112 21 % 92 % Hyperscale 37,869 33,814 17,599 12 % 115 % AI Clouds, Industrial, & Enterprise 37,377 28,500 21,513 31 % 74 %",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000052",
+              "form": "10-Q",
+              "filed": "2026-05-20",
+              "period_end": "2026-04-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+              "locator": "10-Q 0001045810-26-000052:63276-64318"
+            },
+            {
+              "evidence_id": "E6",
+              "quote": "Data Center revenue was $75.2 billion, up 92% from a year ago and up 21% sequentially",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000052",
+              "form": "10-Q",
+              "filed": "2026-05-20",
+              "period_end": "2026-04-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+              "locator": "10-Q 0001045810-26-000052:63276-64318"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "eaa8c09f671841e36afafc8e1203cd2291f18f74d1c14b882e8afc6ee93feee7",
+      "source": "cache",
+      "input_tokens": 4020,
+      "output_tokens": 490,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-04-26",
+            "comparison": ">",
+            "threshold": 40000000000,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E5",
+            "quote": "Three Months Ended Apr 26, 2026 Apr 27, 2025 (In millions) Revenue by Market Platform Data Center $ 75,246 $ 39,112"
+          },
+          {
+            "evidence_id": "E6",
+            "quote": "Apr 26, 2026 Jan 25, 2026 Apr 27, 2025 ($ in millions) Revenue by Market Platform (1) Data Center $ 75,246 $ 62,314 $ 39,112"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that NVIDIA's Data Center revenue for the quarter ended April 26, 2026 exceeded $40 billion. Evidence E5 and E6 both clearly show that Data Center revenue for the three months ended April 26, 2026 was $75,246 million (i.e., $75.246 billion). This amount significantly exceeds the $40 billion threshold stated in the claim. The evidence directly supports the claim with specific financial data from NVIDIA's 10-Q filing for the quarter ended April 26, 2026.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "self_critique",
+      "tool": "submit_self_critique",
+      "request_key": "b409e81e1dd73f737ddb85d12f243e51d550c7b68534f6feaae828c447346258",
+      "source": "live",
+      "input_tokens": 4649,
+      "output_tokens": 514,
+      "stop_reason": "tool_use",
+      "latency_ms": 10697,
+      "output": {
+        "weaknesses": [
+          {
+            "weakness_id": "W1",
+            "critique": "The claim specifically asks about 'Data Center revenue' for the quarter ended April 26, 2026, and I verified it was $75,246 million ($75.246 billion), which exceeds $40 billion. However, I should note that the evidence shows this is presented as 'Revenue by Market Platform' with 'Data Center' as one platform. Evidence E5 includes a footnote stating 'In the first quarter of fiscal year 2027, we changed our presentation of revenue by market platform, and the comparable period has been recast.' This presentation change could potentially affect how Data Center revenue is defined or categorized, though the evidence does not suggest the $75,246 million figure is incorrect or misleading."
+          },
+          {
+            "weakness_id": "W2",
+            "critique": "The numeric_checks show total revenue of $81,615 million for the quarter, while Data Center revenue was $75,246 million. I should verify this is internally consistent. Looking at E5 and E6, they show Data Center at $75,246 million and Edge Computing at $6,369 million, which sum to $81,615 million total revenue. This confirms Data Center is a segment/platform within total revenue, not the total itself. The claim is specifically about Data Center revenue exceeding $40 billion, which is clearly supported."
+          },
+          {
+            "weakness_id": "W3",
+            "critique": "Evidence E6 further breaks down Data Center revenue into 'Hyperscale' ($37,869 million) and 'AI Clouds, Industrial, & Enterprise' ($37,377 million), which sum to $75,246 million. This sub-categorization is consistent with the Data Center total. However, I should note that the presentation change mentioned in the footnote means the definition or composition of 'Data Center' may have changed from prior periods, though this does not affect whether the Q1 FY2027 Data Center revenue exceeded $40 billion - it clearly did at $75.246 billion."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "revision",
+      "tool": "submit_revision",
+      "request_key": "5a69d0a995a96978ca5064a18b36c5b03ad4ee49023d2d408ddc7e38856bdc32",
+      "source": "live",
+      "input_tokens": 6039,
+      "output_tokens": 1090,
+      "stop_reason": "tool_use",
+      "latency_ms": 14440,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "W1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E5",
+                "quote": "In the first quarter of fiscal year 2027, we changed our presentation of revenue by market platform, and the comparable period has been recast"
+              },
+              {
+                "evidence_id": "E5",
+                "quote": "Three Months Ended Apr 26, 2026 Apr 27, 2025 (In millions) Revenue by Market Platform Data Center $ 75,246 $ 39,112"
+              }
+            ]
+          },
+          {
+            "item_id": "W2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E5",
+                "quote": "Revenue by Market Platform Data Center $ 75,246 $ 39,112 Hyperscale 37,869 17,599 AI Clouds, Industrial, & Enterprise 37,377 21,513 Edge Computing 6,369 4,950 Total revenue $ 81,615 $ 44,062"
+              },
+              {
+                "evidence_id": "E6",
+                "quote": "Data Center $ 75,246 $ 62,314 $ 39,112 21 % 92 %"
+              }
+            ]
+          },
+          {
+            "item_id": "W3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E6",
+                "quote": "Data Center $ 75,246 $ 62,314 $ 39,112 21 % 92 % Hyperscale 37,869 33,814 17,599 12 % 115 % AI Clouds, Industrial, & Enterprise 37,377 28,500 21,513 31 % 74 %"
+              },
+              {
+                "evidence_id": "E6",
+                "quote": "Data Center revenue was $75.2 billion, up 92% from a year ago and up 21% sequentially"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E5",
+            "quote": "Three Months Ended Apr 26, 2026 Apr 27, 2025 (In millions) Revenue by Market Platform Data Center $ 75,246 $ 39,112"
+          },
+          {
+            "evidence_id": "E6",
+            "quote": "Apr 26, 2026 Jan 25, 2026 Apr 27, 2025 ($ in millions) Revenue by Market Platform (1) Data Center $ 75,246 $ 62,314 $ 39,112"
+          },
+          {
+            "evidence_id": "E6",
+            "quote": "Data Center revenue was $75.2 billion, up 92% from a year ago and up 21% sequentially"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After reviewing the weaknesses, my initial verdict remains SUPPORTED. All three weaknesses were refuted by the evidence:\n\nW1 raised concerns about the presentation change, but the evidence clearly states the Data Center revenue figure of $75,246 million for Q1 FY2027 (quarter ended April 26, 2026), and the presentation change only affected how the data is displayed, not the accuracy of the reported figure.\n\nW2 questioned internal consistency between Data Center revenue and total revenue. The evidence confirms that Data Center ($75,246M) and Edge Computing ($6,369M) sum to total revenue ($81,615M), demonstrating perfect internal consistency.\n\nW3 noted the sub-categorization of Data Center into Hyperscale and AI Clouds/Industrial/Enterprise, which sum correctly to the Data Center total. The presentation change does not affect the validity of the Q1 FY2027 figure.\n\nThe claim that NVIDIA's Data Center revenue for the quarter ended April 26, 2026 exceeded $40 billion is clearly and unambiguously supported by the evidence showing Data Center revenue of $75,246 million ($75.246 billion), which is nearly double the $40 billion threshold.",
+        "change_reason": "No change needed. All identified weaknesses were refuted by the evidence, confirming the initial SUPPORTED verdict is correct."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "NVIDIA's Data Center revenue for the quarter ended April 26, 2026 exceeded $40 billion. FY2027 Q1",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-04-26",
+            "comparison": ">",
+            "threshold": 40000000000,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-04-26",
+            "basis": "quarter",
+            "level": 81615000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-01-26",
+                "period_end": "2026-04-26",
+                "value": 81615000000.0,
+                "filed": "2026-05-20",
+                "form": "10-Q",
+                "accession_number": "0001045810-26-000052",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 44062000000.0,
+            "prior_period_end": "2025-04-27",
+            "yoy_change": 0.8522763378875221,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001045810-26-000052",
+        "filed": "2026-05-20",
+        "report_date": "2026-04-26",
+        "primary_document": "nvda-20260426.htm",
+        "sha256": "705df02ed8e8c9de7fc7df965ca7cceb61b0c456b9ff34d2cdfbcea4be092ef1"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001045810-26-000021",
+        "filed": "2026-02-25",
+        "report_date": "2026-01-25",
+        "primary_document": "nvda-20260125.htm",
+        "sha256": "2a8b6e294f59a9437d802de932f1a8f6221c81b5c143b9e94050170b03976667"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001045810-25-000230",
+        "filed": "2025-11-19",
+        "report_date": "2025-10-26",
+        "primary_document": "nvda-20251026.htm",
+        "sha256": "03ba0025e2f9683e36028abf6b317b416bf5f0a713638682de6b898692136b35"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 724
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:28069-29108",
+      "excerpt": "ed (2) ( 1,985 ) ( 6,228 ) Balance at end of period $ 3,117 $ 2,078 (1) Includes $ 1.7 billion and $ 6.2 billion of customer advances for the first quarter of fiscal years 2027 and 2026, respectively. (2) Includes $ 1.6 billion and $ 6.0 billion related to customer advances for the first quarter of fiscal years 2027 and 2026, respectively. We recognized revenue of $ 451 million and $ 265 million in the first quarter of fiscal years 2027 and 2026, respectively, that was included in the prior year-end deferred revenue balance. As of April 26, 2026, revenue related to remaining performance obligations from contracts greater than one year in length was $ 2.6 billion, which includes $ 2.3 billion from deferred revenue and $ 304 million, which has not yet been billed or 14 NVIDIA Corporation and Subsidiaries Notes to Condensed Consolidated Financial Statements (Continued) (Unaudited) recognized as revenue. Approximately 40 % of revenue from contracts greater than one year in length will be recognized over the next twelve months .",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:2597-3737",
+      "excerpt": "ock, $0.001 par value, outstanding as of May 15, 2026, was 24.2 billion. NVIDIA Corporation Form 10-Q For the Quarter Ended April 26, 2026 Table of Contents Page Part I : Financial Information Item 1. Financial Statements (Unaudited) a) Condensed Consolidated Statements of Income for the three months ended April 26, 2026 and April 27, 2025 3 b) Condensed Consolidated Statements of Comprehensive Income for the three months ended April 26, 2026 and April 27, 2025 4 c) Condensed Consolidated Balance Sheets as of April 26, 2026 and January 25, 2026 5 d) Condensed Consolidated Statements of Shareholders’ Equity for the three months ended April 26, 2026 and April 27, 2025 6 e) Condensed Consolidated Statements of Cash Flows for the three months ended April 26, 2026 and April 27, 2025 7 f) Notes to Condensed Consolidated Financial Statements 8 Item 2. Management’s Discussion and Analysis of Financial Condition and Results of Operations 23 Item 3. Quantitative and Qualitative Disclosures About Market Risk 30 Item 4. Controls and Procedures 31 Part II : Other Information Item 1. Legal Proceedings 31 Item 1A. Risk Factors 31 Item 2.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-25-000230",
+      "form": "10-Q",
+      "filed": "2025-11-19",
+      "period_start": null,
+      "period_end": "2025-10-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000230/nvda-20251026.htm",
+      "locator": "10-Q 0001045810-25-000230:63761-64960",
+      "excerpt": "the scale of the gaming market, NVIDIA has leveraged its GPU architecture to create platforms for scientific computing, AI, data science, autonomous vehicles, robotics, and digital twin applications. Our two operating segments are \"Compute & Networking\" and \"Graphics,\" as described in Note 13 of the Notes to Condensed Consolidated Financial Statements in Part I, Item 1 of this Quarterly Report on Form 10-Q. Headquartered in Santa Clara, California, NVIDIA was incorporated in California in April 1993 and reincorporated in Delaware in April 1998. Recent Developments, Future Objectives and Challenges Revenue growth in the third quarter was driven by data center compute and networking platforms for accelerated computing and AI solutions. Our Blackwell architectures are the majority of our Data Center revenue. The availability of data centers, energy, and capital to support the buildout of NVIDIA AI infrastructure by our customers is crucial, and any shortage of these resources could impact our future revenue and financial performance. Expanding energy capacity to meet demand is a complex, multi-year process that involves significant regulatory, technical, and construction challenges.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:184881-185980",
+      "excerpt": "latforms for scientific computing, AI, data science, autonomous vehicles, robotics, and digital twin applications. NVIDIA is now a data center scale AI infrastructure company reshaping all industries. Our two operating segments are \"Compute & Networking\" and \"Graphics.\" Refer to Note 16 of the Notes to the Consolidated Financial Statements in Part IV, Item 15 of this Annual Report on Form 10-K for additional information. Headquartered in Santa Clara, California, NVIDIA was incorporated in California in April 1993 and reincorporated in Delaware in April 1998. Recent Developments, Future Objectives and Challenges Revenue growth in fiscal year 2026 was driven by data center compute and networking platforms for accelerated computing and AI solutions. Our Blackwell architectures represented the majority of our Data Center revenue. The availability of data centers, energy, and capital to support the buildout of NVIDIA AI infrastructure by our customers and partners is crucial, and any shortage of these or other necessary resources could impact our future revenue and financial performance.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:50610-51506",
+      "excerpt": "& Networking segment. For the first quarter of fiscal year 2026, sales to two direct customers represented 16 % and 14 % of total revenue, which were attributable to the Compute & Networking segment. 20 NVIDIA Corporation and Subsidiaries Notes to Condensed Consolidated Financial Statements (Continued) (Unaudited) In the first quarter of fiscal year 2027, we changed our presentation of revenue by market platform, and the comparable period has been recast as follows: Three Months Ended Apr 26, 2026 Apr 27, 2025 (In millions) Revenue by Market Platform Data Center $ 75,246 $ 39,112 Hyperscale 37,869 17,599 AI Clouds, Industrial, & Enterprise 37,377 21,513 Edge Computing 6,369 4,950 Total revenue $ 81,615 $ 44,062 Note 14 - Leases Our lease obligations primarily consist of operating leases for our data centers and offices, with lease periods expiring between fiscal years 2027 and 2075.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:63276-64318",
+      "excerpt": "d AI factories across industries and countries. Edge Computing highlights devices for agentic and physical AI including PCs, game consoles, workstations, AI-RAN base stations, robotics and automotive. Three Months Ended Quarter-over-Quarter Change Year-over-Year Change Apr 26, 2026 Jan 25, 2026 Apr 27, 2025 ($ in millions) Revenue by Market Platform (1) Data Center $ 75,246 $ 62,314 $ 39,112 21 % 92 % Hyperscale 37,869 33,814 17,599 12 % 115 % AI Clouds, Industrial, & Enterprise 37,377 28,500 21,513 31 % 74 % Edge Computing 6,369 5,813 4,950 10 % 29 % Total revenue $ 81,615 $ 68,127 $ 44,062 20 % 85 % (1) In the first quarter of fiscal year 2027, we changed our presentation of revenue by market platform and the comparable periods have been recast. Revenue was $81.6 billion, up 85% from a year ago and up 20% sequentially. Data Center revenue was $75.2 billion, up 92% from a year ago and up 21% sequentially, driven by the ramp of our Blackwell 300 products and demand for our InfiniBand, Spectrum-X Ethernet, and NVLink solutions.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": "2026-01-26",
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/0001045810-26-000052-index.htm",
+      "locator": "Revenue 2026-01-26..2026-04-26",
+      "excerpt": null,
+      "values": [
+        81615000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": "2025-01-27",
+      "period_end": "2025-04-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/0001045810-26-000052-index.htm",
+      "locator": "Revenue 2025-01-27..2025-04-27",
+      "excerpt": null,
+      "values": [
+        44062000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "NVDA",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": null,
+      "locator": "Revenue level quarter @ 2026-04-26",
+      "excerpt": null,
+      "values": [
+        81615000000.0,
+        44062000000.0,
+        0.8522763378875221
+      ],
+      "unit": "USD",
+      "evidence_id": "E9"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E5",
+      "quote": "Three Months Ended Apr 26, 2026 Apr 27, 2025 (In millions) Revenue by Market Platform Data Center $ 75,246 $ 39,112",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:50610-51506"
+    },
+    {
+      "evidence_id": "E6",
+      "quote": "Apr 26, 2026 Jan 25, 2026 Apr 27, 2025 ($ in millions) Revenue by Market Platform (1) Data Center $ 75,246 $ 62,314 $ 39,112",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:63276-64318"
+    },
+    {
+      "evidence_id": "E9",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_end": "2026-04-26",
+      "source_url": null,
+      "locator": "Revenue level quarter @ 2026-04-26"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 14708,
+    "output": 2094
+  },
+  "latency_ms": 25163,
+  "estimated_cost_usd": 0.075534,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "self_reflection",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 6,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_ALL_TRUE",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "self_critique",
+        "status": "ok",
+        "duration_ms": 10701,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "weaknesses": 3
+      },
+      {
+        "node": "revise",
+        "status": "ok",
+        "duration_ms": 14447,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_ALL_TRUE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 9,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "self_critique",
+      "revise",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

@@ -1,0 +1,320 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:A2_rag_numeric:GOLD-KO-09:0de045d9",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A2_rag_numeric",
+  "approach_kind": "financial_verification",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A2_rag_numeric",
+    "kind": "financial_verification",
+    "description": "A2 baseline: RAG + deterministic numeric verification"
+  },
+  "config_hash": "d5298a61c0ae91f8",
+  "claim": {
+    "claim_id": "GOLD-KO-09",
+    "company": "KO",
+    "claim": "The change in Coca-Cola's operating margin in the quarter ended July 3, 2026 was driven by the refranchising of bottling operations.",
+    "as_of_date": "2026-08-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q2"
+  },
+  "initial_label": "INSUFFICIENT_EVIDENCE",
+  "final_label": "INSUFFICIENT_EVIDENCE",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes a causal assertion that \"the change in Coca-Cola's operating margin in the quarter ended July 3, 2026 was driven by the refranchising of bottling operations.\" This is a purely interpretive claim about what drove the change in operating margin.\n\nWhile the evidence confirms that refranchising of bottling operations in India occurred and had some impact on various segments, the evidence does not establish that refranchising was THE driver of the overall change in operating margin for the quarter.\n\nEvidence E1 shows operating margin percentages by segment but does not provide the overall operating margin figure or state what drove any change. Evidence E2 mentions that Bottling Investments' operating income increase was \"partially offset by...the impact of refranchising certain territories of our bottling operations in India\" - this indicates refranchising had a negative impact on that segment, not a positive one. Evidence E3, E5, and E6 mention the impact of refranchising on unit case volume in Bottling Investments but don't connect it to overall operating margin changes.\n\nNone of the evidence passages explicitly state that refranchising was the primary driver of the change in operating margin for the quarter ended July 3, 2026. The evidence shows refranchising had some impact on certain metrics in specific segments, but does not support the causal claim that it drove the overall operating margin change. Without a filing passage that explicitly states this causation, the claim cannot be verified.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "24a7bf0d5a354c3d6fb6c1fd359db36b896e124a6a5c0bc10d60ebecab14da61",
+      "source": "cache",
+      "input_tokens": 3954,
+      "output_tokens": 470,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim makes a causal assertion that \"the change in Coca-Cola's operating margin in the quarter ended July 3, 2026 was driven by the refranchising of bottling operations.\" This is a purely interpretive claim about what drove the change in operating margin.\n\nWhile the evidence confirms that refranchising of bottling operations in India occurred and had some impact on various segments, the evidence does not establish that refranchising was THE driver of the overall change in operating margin for the quarter.\n\nEvidence E1 shows operating margin percentages by segment but does not provide the overall operating margin figure or state what drove any change. Evidence E2 mentions that Bottling Investments' operating income increase was \"partially offset by...the impact of refranchising certain territories of our bottling operations in India\" - this indicates refranchising had a negative impact on that segment, not a positive one. Evidence E3, E5, and E6 mention the impact of refranchising on unit case volume in Bottling Investments but don't connect it to overall operating margin changes.\n\nNone of the evidence passages explicitly state that refranchising was the primary driver of the change in operating margin for the quarter ended July 3, 2026. The evidence shows refranchising had some impact on certain metrics in specific segments, but does not support the causal claim that it drove the overall operating margin change. Without a filing passage that explicitly states this causation, the claim cannot be verified.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "The change in Coca-Cola's operating margin in the quarter ended July 3, 2026 was driven by the refranchising of bottling operations. 2026 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-050503",
+        "filed": "2026-07-29",
+        "report_date": "2026-07-03",
+        "primary_document": "ko-20260703.htm",
+        "sha256": "912506ad356ed21407d4e52d2ff672acdf7d8bca6af7e9ef0f38ce8941081c07"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-028802",
+        "filed": "2026-04-30",
+        "report_date": "2026-04-03",
+        "primary_document": "ko-20260403.htm",
+        "sha256": "50aefabe2fc5388e6b17c140389af345f5af895b2ade81f82eb72028463f73ac"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-010047",
+        "filed": "2026-02-20",
+        "report_date": "2025-12-31",
+        "primary_document": "ko-20251231.htm",
+        "sha256": "7c344724ffd25824080de9272cf711543400cfcbbafb06b787fc482fa3d1a5e2"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1124
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050503",
+      "form": "10-Q",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-07-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+      "locator": "10-Q 0001628280-26-050503:140095-141283",
+      "excerpt": "to the BodyArmor acquisition, $7 million of transaction costs related to the refranchising of our bottling operations in certain territories in India and $5 million related to tax litigation expense. Refer to Note 2 of Notes to Consolidated Financial Statements for additional information on the refranchising of our bottling operations in certain territories in India. Refer to Note 9 of Notes to Consolidated Financial Statements for additional information on the tax litigation. Refer to Note 15 of Notes to Consolidated Financial Statements for additional information on the impairment charge. Operating Income and Operating Margin Information about our operating income contribution by operating segment and Corporate on a percentage basis is as follows: Three Months Ended Six Months Ended July 3, 2026 June 27, 2025 July 3, 2026 June 27, 2025 EMEA 28.0 % 31.0 % 28.4 % 30.1 % Latin America 25.2 22.3 24.5 23.4 North America 36.3 37.9 36.6 37.3 Asia Pacific 14.0 15.1 13.2 16.0 Bottling Investments 2.0 1.4 3.1 2.3 Corporate (5.5) (7.7) (5.8) (9.1) Total 100.0 % 100.0 % 100.0 % 100.0 % Operating margin is a ratio calculated by dividing operating income by net operating revenues.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050503",
+      "form": "10-Q",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-07-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+      "locator": "10-Q 0001628280-26-050503:144751-145858",
+      "excerpt": "her other operating charges and increased marketing spending. Asia Pacific’s operating income for the three months ended July 3, 2026 and June 27, 2025 was $656 million and $647 million, respectively. The increase in operating income was primarily driven by an increase in concentrate sales volume of 11%, lower commodity costs, lower operating expenses and a favorable foreign currency exchange rate impact of 1%, partially offset by unfavorable price/mix and increased marketing spending. Bottling Investments’ operating income for the three months ended July 3, 2026 and June 27, 2025 was $91 million and $59 million, respectively. The increase in operating income was primarily driven by an increase in unit case volume of 8%, favorable price/mix and lower commodity costs, partially offset by higher operating expenses, the impact of refranchising certain territories of our bottling operations in India and an unfavorable foreign currency exchange rate impact of 24%. Corporate’s operating loss for the three months ended July 3, 2026 and June 27, 2025 was $256 million and $329 million, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050503",
+      "form": "10-Q",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-07-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+      "locator": "10-Q 0001628280-26-050503:121939-122985",
+      "excerpt": "he India and Southwest Asia operating unit, 8% growth in both the Greater China and Mongolia and the ASEAN and South Pacific operating units, and 2% growth in the Japan and South Korea operating unit. Unit case volume for Bottling Investments increased 5%, primarily driven by growth in India, partially offset by the impact of refranchising certain territories of our bottling operations in India. Six Months Ended July 3, 2026 versus Six Months Ended June 27, 2025 Unit case volume in EMEA increased 3%, which included 2% growth in Trademark Coca-Cola, 5% growth in water, sports, coffee and tea, 2% growth in sparkling flavors, as well as growth in energy drinks, partially offset by a 12% decline in juice, value-added dairy and plant-based beverages, which was driven by the impact of the sale of our finished product operations in Nigeria. The operating segment’s volume performance included an increase in unit case volume of 4% in both the Africa and the Eurasia and Middle East operating units and 2% growth in the Europe operating unit.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050503",
+      "form": "10-Q",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-07-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+      "locator": "10-Q 0001628280-26-050503:149198-150278",
+      "excerpt": "a favorable foreign currency exchange rate impact of 2%. Bottling Investments’ operating income for the six months ended July 3, 2026 and June 27, 2025 was $282 million and $178 million, respectively. The increase in operating income was primarily driven by an increase in unit case volume of 10% and lower commodity costs, partially offset by higher operating expenses and the impact of refranchising certain territories of our bottling operations in India. Corporate’s operating loss for the six months ended July 3, 2026 and June 27, 2025 was $527 million and $723 million, respectively. This decrease is primarily a result of lower annual incentive expense and lower other operating charges. Based on current spot rates and our hedging coverage in place, we expect foreign currency exchange rate fluctuations will have a favorable impact on our full year 2026 operating income. Interest Income During the three months ended July 3, 2026, interest income was $198 million, compared to $188 million during the three months ended June 27, 2025, an increase of $10 million, or 6%.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-028802",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_start": null,
+      "period_end": "2026-04-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026028802/ko-20260403.htm",
+      "locator": "10-Q 0001628280-26-028802:103867-105026",
+      "excerpt": "ina and Mongolia operating unit, 5% growth in both the India and Southwest Asia operating unit and the Japan and South Korea operating unit and 3% growth in the ASEAN and South Pacific operating unit. Unit case volume for Bottling Investments increased 1%, primarily driven by growth in Africa, partially offset by the impact of refranchising certain territories of our bottling operations in India. Concentrate Sales Volume During the three months ended April 3, 2026, worldwide concentrate sales volume increased 8% and unit case volume increased 3% compared to the three months ended March 28, 2025. Concentrate sales volume growth is calculated based on the amount sold during the reporting periods, which is impacted by the number of days. Conversely, unit case volume growth is calculated based on average daily sales, which is not impacted by the number of days in the reporting periods. The first quarter of 2026 had six additional days when compared to the first quarter of 2025, which contributed to the differences between concentrate sales volume and unit case volume growth rates on a consolidated basis and for the individual operating segments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050503",
+      "form": "10-Q",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-07-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+      "locator": "10-Q 0001628280-26-050503:123530-124687",
+      "excerpt": "owth in Trademark Coca-Cola, 2% growth in both water, sports, coffee and tea and juice, value-added dairy and plant-based beverages, 1% growth in sparkling flavors, as well as growth in energy drinks. Unit case volume in Asia Pacific increased 7%, which included 7% growth in Trademark Coca-Cola, 6% growth in sparkling flavors, 8% growth in water, sports, coffee and tea, 5% growth in juice, value-added dairy and plant-based beverages, as well as growth in energy drinks. The operating segment’s volume performance included 8% growth in the Greater China and Mongolia operating unit, 9% growth in the India and Southwest Asia operating unit, 5% growth in the ASEAN and South Pacific operating unit and 3% growth in the Japan and South Korea operating unit. Unit case volume for Bottling Investments increased 3%, primarily driven by growth in India, partially offset by the impact of refranchising certain territories of our bottling operations in India. Concentrate Sales Volume During the three months ended July 3, 2026, worldwide concentrate sales volume increased 4% and unit case volume increased 5% compared to the three months ended June 27, 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 3954,
+    "output": 470
+  },
+  "latency_ms": 4,
+  "estimated_cost_usd": 0.018912,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "financial_verification",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

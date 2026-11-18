@@ -1,0 +1,601 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:SR_self_reflection:GOLD-MSFT-15:88cce7b0",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "SR_self_reflection",
+  "approach_kind": "self_reflection",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": true,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "SR_self_reflection",
+    "kind": "self_reflection",
+    "description": "A2 + self-critique and revision, no new retrieval"
+  },
+  "config_hash": "166d47be253b74e9",
+  "claim": {
+    "claim_id": "GOLD-MSFT-15",
+    "company": "MSFT",
+    "claim": "Microsoft's gaming business was a source of strength in its results for the quarter ended December 31, 2025.",
+    "as_of_date": "2026-02-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026 Q2"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "More Personal Computing revenue decreased driven by Gaming, offset in part by Search and news advertising as well as Windows OEM."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "Gaming 5,958 6,581 11,466 12,202"
+          }
+        ],
+        "reasoning_summary": "The claim states that Microsoft's gaming business was a \"source of strength\" in Q2 FY2026 (quarter ended December 31, 2025). This is a qualitative/interpretive claim about the gaming business's performance contribution.\n\nThe evidence contradicts this claim:\n\n1. E3 explicitly states that \"More Personal Computing revenue decreased driven by Gaming\" for the three months ended December 31, 2025, indicating Gaming was a drag on that segment's performance, not a source of strength.\n\n2. E5 shows Gaming revenue declined from $6,581 million in Q2 FY2025 to $5,958 million in Q2 FY2026, a decrease of approximately $623 million or 9.5%.\n\n3. E2 and E4 both mention \"impairment charges in our Gaming business\" which further indicates weakness rather than strength.\n\nA business experiencing revenue decline and impairment charges cannot reasonably be characterized as a \"source of strength.\" The evidence directly contradicts the claim's characterization of gaming performance.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "self_critique",
+      "weaknesses": [
+        {
+          "weakness_id": "W1",
+          "critique": "The term 'source of strength' is ambiguous and could be interpreted in multiple ways beyond just revenue growth. While Gaming revenue declined, the claim could potentially refer to other aspects like profitability, strategic positioning, or relative performance compared to expectations. The evidence shows impairment charges were mentioned in operating expenses (E2, E4), but we don't have explicit information about Gaming's profitability or operating income contribution for the quarter. It's possible Gaming could have been profitable or performed better than expected despite the revenue decline, though the impairment charges make this less likely."
+        },
+        {
+          "weakness_id": "W2",
+          "critique": "The evidence mentions impairment charges in Gaming business (E2, E4), but these are one-time accounting charges that may not reflect the underlying operational performance of the gaming business. The claim about being a 'source of strength' could refer to the core operational performance excluding these non-recurring items. However, even excluding impairments, the revenue decline of 9.5% still suggests weakness rather than strength."
+        },
+        {
+          "weakness_id": "W3",
+          "critique": "The verdict relies on Gaming revenue being down year-over-year, but doesn't consider whether this decline might have been expected or whether Gaming performed better than internal forecasts or analyst expectations. In some contexts, a business could be considered a 'source of strength' if it exceeded expectations even while declining. However, the filing's explicit statement that More Personal Computing revenue 'decreased driven by Gaming' suggests management viewed Gaming as a negative contributor, not a strength."
+        }
+      ]
+    },
+    {
+      "stage": "revision",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "W1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E3",
+              "quote": "More Personal Computing revenue decreased driven by Gaming",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-027207",
+              "form": "10-Q",
+              "filed": "2026-01-28",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+              "locator": "10-Q 0001193125-26-027207:81846-82970"
+            },
+            {
+              "evidence_id": "E2",
+              "quote": "impairment charges in our Gaming business",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-027207",
+              "form": "10-Q",
+              "filed": "2026-01-28",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+              "locator": "10-Q 0001193125-26-027207:96965-97982"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E5",
+              "quote": "Gaming 5,958 6,581",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-027207",
+              "form": "10-Q",
+              "filed": "2026-01-28",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+              "locator": "10-Q 0001193125-26-027207:63704-64904"
+            },
+            {
+              "evidence_id": "E3",
+              "quote": "More Personal Computing revenue decreased driven by Gaming",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-027207",
+              "form": "10-Q",
+              "filed": "2026-01-28",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+              "locator": "10-Q 0001193125-26-027207:81846-82970"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E3",
+              "quote": "More Personal Computing revenue decreased driven by Gaming",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-027207",
+              "form": "10-Q",
+              "filed": "2026-01-28",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+              "locator": "10-Q 0001193125-26-027207:81846-82970"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "44f5406e9f29fa34e72cdfca8175abd6e007359d4ce2bc1fd8b204f56b1a158f",
+      "source": "cache",
+      "input_tokens": 4165,
+      "output_tokens": 469,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "More Personal Computing revenue decreased driven by Gaming, offset in part by Search and news advertising as well as Windows OEM."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "Gaming 5,958 6,581 11,466 12,202"
+          }
+        ],
+        "reasoning_summary": "The claim states that Microsoft's gaming business was a \"source of strength\" in Q2 FY2026 (quarter ended December 31, 2025). This is a qualitative/interpretive claim about the gaming business's performance contribution.\n\nThe evidence contradicts this claim:\n\n1. E3 explicitly states that \"More Personal Computing revenue decreased driven by Gaming\" for the three months ended December 31, 2025, indicating Gaming was a drag on that segment's performance, not a source of strength.\n\n2. E5 shows Gaming revenue declined from $6,581 million in Q2 FY2025 to $5,958 million in Q2 FY2026, a decrease of approximately $623 million or 9.5%.\n\n3. E2 and E4 both mention \"impairment charges in our Gaming business\" which further indicates weakness rather than strength.\n\nA business experiencing revenue decline and impairment charges cannot reasonably be characterized as a \"source of strength.\" The evidence directly contradicts the claim's characterization of gaming performance.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "self_critique",
+      "tool": "submit_self_critique",
+      "request_key": "e74dd71e7d03259600e605092ecd525d87dd5adbc5e2afd041b70f0aace54235",
+      "source": "live",
+      "input_tokens": 4580,
+      "output_tokens": 406,
+      "stop_reason": "tool_use",
+      "latency_ms": 10149,
+      "output": {
+        "weaknesses": [
+          {
+            "weakness_id": "W1",
+            "critique": "The term 'source of strength' is ambiguous and could be interpreted in multiple ways beyond just revenue growth. While Gaming revenue declined, the claim could potentially refer to other aspects like profitability, strategic positioning, or relative performance compared to expectations. The evidence shows impairment charges were mentioned in operating expenses (E2, E4), but we don't have explicit information about Gaming's profitability or operating income contribution for the quarter. It's possible Gaming could have been profitable or performed better than expected despite the revenue decline, though the impairment charges make this less likely."
+          },
+          {
+            "weakness_id": "W2",
+            "critique": "The evidence mentions impairment charges in Gaming business (E2, E4), but these are one-time accounting charges that may not reflect the underlying operational performance of the gaming business. The claim about being a 'source of strength' could refer to the core operational performance excluding these non-recurring items. However, even excluding impairments, the revenue decline of 9.5% still suggests weakness rather than strength."
+          },
+          {
+            "weakness_id": "W3",
+            "critique": "The verdict relies on Gaming revenue being down year-over-year, but doesn't consider whether this decline might have been expected or whether Gaming performed better than internal forecasts or analyst expectations. In some contexts, a business could be considered a 'source of strength' if it exceeded expectations even while declining. However, the filing's explicit statement that More Personal Computing revenue 'decreased driven by Gaming' suggests management viewed Gaming as a negative contributor, not a strength."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "revision",
+      "tool": "submit_revision",
+      "request_key": "e86ee7083aeeded6094b3c824683821a3e62e59cb580176b9d6e1627ae5fc070",
+      "source": "live",
+      "input_tokens": 5756,
+      "output_tokens": 863,
+      "stop_reason": "tool_use",
+      "latency_ms": 14191,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "W1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E3",
+                "quote": "More Personal Computing revenue decreased driven by Gaming"
+              },
+              {
+                "evidence_id": "E2",
+                "quote": "impairment charges in our Gaming business"
+              }
+            ]
+          },
+          {
+            "item_id": "W2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E5",
+                "quote": "Gaming 5,958 6,581"
+              },
+              {
+                "evidence_id": "E3",
+                "quote": "More Personal Computing revenue decreased driven by Gaming"
+              }
+            ]
+          },
+          {
+            "item_id": "W3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E3",
+                "quote": "More Personal Computing revenue decreased driven by Gaming"
+              }
+            ]
+          }
+        ],
+        "label": "CONTRADICTED",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "More Personal Computing revenue decreased driven by Gaming, offset in part by Search and news advertising as well as Windows OEM."
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "Gaming 5,958 6,581 11,466 12,202"
+          }
+        ],
+        "reasoning_summary": "After reconsidering the weaknesses, the initial CONTRADICTED verdict stands.\n\nW1 (ambiguity of 'source of strength'): While theoretically ambiguous, the evidence refutes any reasonable interpretation of Gaming as a strength. E3 explicitly states Gaming drove a revenue decrease in the More Personal Computing segment, and E2 mentions impairment charges. No evidence suggests Gaming was strong on profitability, strategic positioning, or any other dimension.\n\nW2 (impairment charges as one-time items): Even if impairments are excluded, the core operational performance shows Gaming revenue declined 9.5% year-over-year (from $6,581M to $5,958M per E5). This revenue decline, combined with management's statement that Gaming drove the segment's revenue decrease (E3), contradicts any characterization of Gaming as a 'source of strength.'\n\nW3 (performance vs. expectations): While we lack explicit expectation data, E3's management commentary characterizes Gaming as the driver of a segment revenue decrease, not as a positive contributor. This language choice indicates management viewed Gaming as a weakness, not a strength, regardless of whether it met internal expectations.\n\nThe evidence directly contradicts the claim that Gaming was a 'source of strength' - it experienced revenue decline and drove down its segment's performance.",
+        "change_reason": "No change. All three weaknesses are refuted by the evidence. The filing explicitly characterizes Gaming as driving a revenue decrease, and Gaming revenue declined 9.5% year-over-year. This directly contradicts any reasonable interpretation of Gaming being a 'source of strength' in the quarter."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Microsoft's gaming business was a source of strength in its results for the quarter ended December 31, 2025. FY2026 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001193125-26-027207",
+        "filed": "2026-01-28",
+        "report_date": "2025-12-31",
+        "primary_document": "msft-20251231.htm",
+        "sha256": "383fbc3a1bc3340a625fd05599c36462c5fe642d288202995692cc90507c189c"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001193125-25-256321",
+        "filed": "2025-10-29",
+        "report_date": "2025-09-30",
+        "primary_document": "msft-20250930.htm",
+        "sha256": "c0b0599c8fe5cfd5f06da76108b87ac12a93cc0088ccc00536280c1f60a5566e"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0000950170-25-100235",
+        "filed": "2025-07-30",
+        "report_date": "2025-06-30",
+        "primary_document": "msft-20250630.htm",
+        "sha256": "15d2ebb941500e84aeadd2654143ac3d0fbb10a65d8387391727ec4ae36fcd42"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 790
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:2503-3695",
+      "excerpt": "ry 22, 2026 Common Stock, $ 0.00000625 par value per share 7,425,629,076 shares MICROSOFT CORPORATION FORM 10-Q For the Quarter Ended December 31, 2025 INDEX Page PART I. FINANCIAL INFORMATION Item 1. Financial Statements a) Income Statements for the Three and Six Months Ended December 31, 2025 and 2024 3 b) Comprehensive Income Statements for the Three and Six Months Ended December 31, 2025 and 2024 4 c) Balance Sheets as of December 31, 2025 and June 30, 2025 5 d) Cash Flows Statements for the Three and Six Months Ended December 31, 2025 and 2024 6 e) Stockholders’ Equity Statements for the Three and Six Months Ended December 31, 2025 and 2024 7 f) Notes to Financial Statements 8 g) Report of Independent Registered Public Accounting Firm 29 Item 2. Management’s Discussion and Analysis of Financial Condition and Results of Operations 30 Item 3. Quantitative and Qualitative Disclosures About Market Risk 46 Item 4. Controls and Procedures 46 PART II. OTHER INFORMATION Item 1. Legal Proceedings 47 Item 1A. Risk Factors 47 Item 2. Unregistered Sales of Equity Securities and Use of Proceeds 62 Item 5. Other Information 63 Item 6. Exhibits 64 SIGNATURE 65 2 PART I Item 1 PART I.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:96965-97982",
+      "excerpt": "ree Months Ended December 31, 2024 Research and development expenses increased $587 million or 7% driven by investments in compute capacity and AI talent and impairment charges in our Gaming business. Six Months Ended December 31, 2025 Compared with Six Months Ended December 31, 2024 Research and development expenses increased $1.2 billion or 8% driven by investments in compute capacity and AI talent and impairment charges in our Gaming business. 38 PART I Item 2 Sales and Marketing (In millions, except percentages) Three Months Ended December 31, Percentage Change Six Months Ended December 31, Percentage Change 2025 2024 2025 2024 Sales and marketing $ 6,584 $ 6,440 2% $ 12,301 $ 12,157 1% As a percent of revenue 8% 9% (1)ppt 8% 9% (1)ppt Sales and marketing expenses include payroll, employee benefits, stock-based compensation expense, and other headcount-related expenses associated with sales and marketing personnel, and the costs of advertising, promotions, trade shows, seminars, and other programs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:81846-82970",
+      "excerpt": "losses from investments in OpenAI. Refer to the Non-GAAP Financial Measures section below for a reconciliation of our financial results reported in accordance with GAAP to non-GAAP financial results. Three Months Ended December 31, 2025 Compared with Three Months Ended December 31, 2024 Revenue increased $11.6 billion or 17% driven by Intelligent Cloud and Productivity and Business Processes, offset in part by More Personal Computing. Intelligent Cloud revenue increased driven by Azure. Productivity and Business Processes revenue increased driven by Microsoft 365 Commercial cloud. More Personal Computing revenue decreased driven by Gaming, offset in part by Search and news advertising as well as Windows OEM. Cost of revenue increased $4.2 billion or 19% driven by growth in Microsoft Cloud. Gross margin increased $7.5 billion or 16% with growth across each of our segments. • Gross margin percentage decreased slightly driven by continued investments in AI infrastructure and growing AI product usage, offset in part by efficiency gains across the Microsoft Cloud and sales mix shift to higher margin businesses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:95970-97165",
+      "excerpt": "her margin businesses. • Operating expenses increased $369 million or 5% driven by impairment charges in our Gaming business and research and development investments in compute capacity and AI talent. OPERATING EXPENSES Research and Development (In millions, except percentages) Three Months Ended December 31, Percentage Change Six Months Ended December 31, Percentage Change 2025 2024 2025 2024 Research and development $ 8,504 $ 7,917 7% $ 16,650 $ 15,461 8% As a percent of revenue 10% 11% (1)ppt 10% 11% (1)ppt Research and development expenses include payroll, employee benefits, stock-based compensation expense, and other headcount-related expenses associated with product development. Research and development expenses also include technology development costs, including AI training and other infrastructure costs, third-party development and programming costs, and the amortization of purchased software code and services content. Three Months Ended December 31, 2025 Compared with Three Months Ended December 31, 2024 Research and development expenses increased $587 million or 7% driven by investments in compute capacity and AI talent and impairment charges in our Gaming business.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:63704-64904",
+      "excerpt": "$ 135,217 (a) Includes billings to OEMs and certain multinational organizations because of the nature of these businesses and the impracticability of determining the geographic source of the revenue. 27 PART I Item 1 Revenue, classified by significant product and service offerings, was as follows: (In millions) Three Months Ended December 31, Six Months Ended December 31, 2025 2024 2025 2024 Server products and cloud services $ 30,865 $ 23,641 $ 59,737 $ 45,796 Microsoft 365 Commercial products and cloud services 24,524 21,117 48,490 41,566 Gaming 5,958 6,581 11,466 12,202 LinkedIn 5,082 4,587 9,796 8,879 Windows and Devices 4,479 4,512 9,030 8,841 Search and news advertising 3,812 3,558 7,509 6,783 Microsoft 365 Consumer products and cloud services 2,305 1,821 4,509 3,548 Dynamics products and cloud services 2,204 1,913 4,340 3,762 Enterprise and partner services 2,038 1,892 4,060 3,820 Other 6 10 9 20 Total $ 81,273 $ 69,632 $ 158,946 $ 135,217 Our Microsoft Cloud revenue, which includes Microsoft 365 Commercial cloud, Azure and other cloud services, the commercial portion of LinkedIn, and Dynamics 365, was $ 51.5 billion and $ 100.6 billion for the three and six months ended De",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:91394-92555",
+      "excerpt": "her margin businesses. • Operating expenses increased $236 million or 6% driven by impairment charges in our Gaming business and research and development investments in compute capacity and AI talent. Six Months Ended December 31, 2025 Compared with Six Months Ended December 31, 2024 Productivity and Business Processes Revenue increased $9.4 billion or 16%. • Microsoft 365 Commercial products and cloud services revenue increased $6.9 billion or 17%. Microsoft 365 Commercial cloud revenue grew 17% with growth in revenue per user driven by Microsoft 365 E5 and Microsoft 365 Copilot, and continued Microsoft 365 Commercial seat growth. Microsoft 365 Commercial products revenue grew 15% driven by Windows Commercial on-premises components of Microsoft 365 suite sales, as well as an increase in Office 2024 transactional purchasing. • Microsoft 365 Consumer products and cloud services revenue increased $961 million or 27%. Microsoft 365 Consumer cloud revenue grew 27% driven by growth in revenue per user and continued growth in Microsoft 365 Consumer subscribers. • LinkedIn revenue increased $917 million or 10% driven by growth in Marketing Solutions.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E3",
+      "quote": "More Personal Computing revenue decreased driven by Gaming, offset in part by Search and news advertising as well as Windows OEM.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:81846-82970"
+    },
+    {
+      "evidence_id": "E5",
+      "quote": "Gaming 5,958 6,581 11,466 12,202",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:63704-64904"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 14501,
+    "output": 1738
+  },
+  "latency_ms": 24356,
+  "estimated_cost_usd": 0.069573,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "self_reflection",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "self_critique",
+        "status": "ok",
+        "duration_ms": 10152,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "weaknesses": 3
+      },
+      {
+        "node": "revise",
+        "status": "ok",
+        "duration_ms": 14197,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "model_final_label": "CONTRADICTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 33,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "self_critique",
+      "revise",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

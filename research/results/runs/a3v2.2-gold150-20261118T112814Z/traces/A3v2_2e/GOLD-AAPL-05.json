@@ -1,0 +1,2100 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:A3v2_2e:GOLD-AAPL-05:c5bfba4a",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3v2_2e",
+  "approach_kind": "contradiction_aware_v2",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "review": {
+      "enabled": true,
+      "max_output_tokens": 4096,
+      "passage_chars": 1200,
+      "allow_partial_period": false
+    },
+    "guard": {
+      "enabled": true,
+      "version": "0.3"
+    },
+    "analyzer": {
+      "name": "default"
+    },
+    "decidability": {
+      "name": "llm_0.1",
+      "scope_gate": true,
+      "downgrade": "supported"
+    },
+    "periods": {
+      "enabled": true,
+      "version": "1.1"
+    },
+    "quote_check": "1.1",
+    "numeric_checks": "0.1",
+    "coverage": "0.1",
+    "name": "A3v2_2e",
+    "kind": "contradiction_aware_v2",
+    "description": "A3 v2.2 + E1 evidence coverage: a final SUPPORTED / CONTRADICTED needs a validated finding, a valid A2 numeric rule or an A3 deterministic check",
+    "versions": {
+      "a3v2": "a3v2-0.3.0-dev",
+      "review_prompts": "a3v2-review-prompts-0.3",
+      "guard": "a3v2-guard-0.3",
+      "graph": "langgraph-claims-a3v2-0.1",
+      "periods": "a3v2-periods-1.1",
+      "decidability": "a3v2-decidability-0.1-draft",
+      "decidability_prompt": "a3v2-decidability-prompt-0.1",
+      "quote_check": "a3v2-quote-check-1.1",
+      "coverage": "a3v2-coverage-0.1",
+      "numeric_checks": "a3v2-numeric-checks-0.1"
+    }
+  },
+  "config_hash": "5bf41b202ff248b0",
+  "claim": {
+    "claim_id": "GOLD-AAPL-05",
+    "company": "AAPL",
+    "claim": "Apple's Greater China net sales for the quarter ended December 27, 2025 declined year over year.",
+    "as_of_date": "2026-02-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026 Q1"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2025-12-27",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Greater China 25,526 18,513 38 %"
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "Greater China Japan Rest of Asia Pacific Corporate Total Net sales $ 58,529 $ 38,146 $ 25,526 $ 9,413 $ 12,142"
+          }
+        ],
+        "reasoning_summary": "The claim states that Apple's Greater China net sales for the quarter ended December 27, 2025 declined year over year. However, the evidence directly contradicts this. Evidence E2 shows a table with Greater China net sales for the three months ended December 27, 2025 at $25,526 million compared to $18,513 million for December 28, 2024, representing a 38% increase (not a decline). Evidence E3 confirms the same figures. The Greater China segment actually experienced significant year-over-year growth of 38%, which is the opposite of a decline.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NUMERIC_FALSE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2025-12-27",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-27",
+            "basis": "quarter",
+            "level": 143756000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-09-28",
+                "period_end": "2025-12-27",
+                "value": 143756000000.0,
+                "filed": "2026-01-30",
+                "form": "10-Q",
+                "accession_number": "0000320193-26-000006",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 124300000000.0,
+            "prior_period_end": "2024-12-28",
+            "yoy_change": 0.15652453740949315,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "analyze_claim",
+      "analysis": {
+        "assertions": [
+          {
+            "assertion_id": "A0",
+            "text": "Apple's Greater China net sales for the quarter ended December 27, 2025 declined year over year.",
+            "type": "claim",
+            "period_end": "2025-12-27",
+            "comparison_end": "2024-12-27",
+            "period_start": "2025-09-28",
+            "period_months": 3,
+            "period_kind": "duration"
+          },
+          {
+            "assertion_id": "N1",
+            "type": "numeric",
+            "numeric": {
+              "metric": "Revenue",
+              "measure": "yoy_growth",
+              "period_basis": "quarter",
+              "period_end": "2025-12-27",
+              "comparison": "decrease",
+              "threshold": null,
+              "stated_value": null
+            },
+            "text": "Revenue yoy_growth decrease None",
+            "period_end": "2025-12-27",
+            "comparison_end": "2024-12-27",
+            "period_start": "2025-09-28",
+            "period_months": 3,
+            "period_kind": "duration"
+          }
+        ],
+        "computations": [],
+        "claim_period": {
+          "version": "a3v2-periods-1.1",
+          "kind": "duration",
+          "start": "2025-09-28",
+          "end": "2025-12-27",
+          "months": 3,
+          "label": "3M ended 2025-12-27",
+          "fiscal_year": 2026,
+          "source": "text_date",
+          "comparison": {
+            "start": "2024-09-28",
+            "end": "2024-12-27"
+          },
+          "notes": [],
+          "period_end": "2025-12-27",
+          "comparison_end": "2024-12-27",
+          "basis": "quarter",
+          "orientation": "historical",
+          "years": [
+            2024,
+            2025,
+            2026
+          ]
+        },
+        "analyzer": "default-whole-claim-0.1",
+        "decidability_record": {
+          "assertion_id": "A0",
+          "predicate_type": "MEASURABLE",
+          "criterion_source": "CLAIM_STATES",
+          "required_evidence": [
+            {
+              "kind": "NUMERIC_FACT",
+              "scope": {
+                "entity": null,
+                "segment": null,
+                "region": "Greater China",
+                "metric": "net sales"
+              }
+            },
+            {
+              "kind": "SCOPE_MATCHED_FACT",
+              "scope": {
+                "entity": null,
+                "segment": null,
+                "region": "Greater China",
+                "metric": "net sales"
+              }
+            }
+          ],
+          "status": "DECIDABLE",
+          "issues": [],
+          "version": "a3v2-decidability-0.1-draft",
+          "evaluative_terms": [],
+          "scope": {
+            "segment": null,
+            "region": "Greater China",
+            "metric": "net sales"
+          },
+          "contribution": {
+            "type": "NONE",
+            "component": null,
+            "total": null
+          },
+          "note": "The claim asserts a measurable year-over-year decline in net sales for a specific geographic region and time period, which can be verified by comparing numeric figures from the current and prior year filings.",
+          "prompt_version": "a3v2-decidability-prompt-0.1"
+        },
+        "decidability": [
+          {
+            "assertion_id": "A0",
+            "status": "DECIDABLE",
+            "predicate_type": "MEASURABLE",
+            "reason": "The claim asserts a measurable year-over-year decline in net sales for a specific geographic region and time period, which can be verified by comparing numeric figures from the current and prior year filings."
+          }
+        ]
+      },
+      "computations": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Could there be a distinction between 'net sales' and another revenue metric for Greater China that actually declined, such as constant currency revenue or revenue excluding certain items?",
+          "search_query": "Greater China constant currency revenue excluding foreign exchange impact",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Could the filing contain a restatement or correction indicating that the Greater China figures shown in the table were revised or that there was an error in reporting?",
+          "search_query": "Greater China restatement correction revised restated prior period adjustment",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Could there be commentary in the filing explicitly stating that Greater China net sales declined year over year despite the table showing an increase?",
+          "search_query": "Greater China net sales decreased declined lower compared prior year quarter",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "Greater China constant currency revenue excluding foreign exchange impact",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "Greater China restatement correction revised restated prior period adjustment",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "Greater China net sales decreased declined lower compared prior year quarter",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "evidence_review",
+      "version": "a3v2-review-prompts-0.1",
+      "claim_period": {
+        "version": "a3v2-periods-1.1",
+        "kind": "duration",
+        "start": "2025-09-28",
+        "end": "2025-12-27",
+        "months": 3,
+        "label": "3M ended 2025-12-27",
+        "fiscal_year": 2026,
+        "source": "text_date",
+        "comparison": {
+          "start": "2024-09-28",
+          "end": "2024-12-27"
+        },
+        "notes": [],
+        "period_end": "2025-12-27",
+        "comparison_end": "2024-12-27",
+        "basis": "quarter",
+        "orientation": "historical",
+        "years": [
+          2024,
+          2025,
+          2026
+        ]
+      },
+      "assertions": [
+        {
+          "assertion_id": "A0",
+          "text": "Apple's Greater China net sales for the quarter ended December 27, 2025 declined year over year.",
+          "type": "claim",
+          "period_end": "2025-12-27",
+          "comparison_end": "2024-12-27",
+          "period_start": "2025-09-28",
+          "period_months": 3,
+          "period_kind": "duration"
+        },
+        {
+          "assertion_id": "N1",
+          "type": "numeric",
+          "numeric": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2025-12-27",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          },
+          "text": "Revenue yoy_growth decrease None",
+          "period_end": "2025-12-27",
+          "comparison_end": "2024-12-27",
+          "period_start": "2025-09-28",
+          "period_months": 3,
+          "period_kind": "duration"
+        }
+      ],
+      "reviewed_evidence_ids": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "E9",
+        "E7",
+        "E8",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "findings": [
+        {
+          "finding_id": "R1",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E2"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended December 27, 2025 December 28, 2024 Change Americas $ 58,529 $ 52,648 11 % Europe 38,146 33,861 13 % Greater China 25,526 18,513 38 %",
+          "justification": "The table shows Greater China net sales for the three months ended December 27, 2025 were $25,526 million compared to $18,513 million for December 28, 2024, representing a 38% increase. This directly contradicts the claim that Greater China net sales declined year over year.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E2",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-27",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R2",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E3"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended December 27, 2025 Americas Europe Greater China Japan Rest of Asia Pacific Corporate Total Net sales $ 58,529 $ 38,146 $ 25,526 $ 9,413 $ 12,142 $ — $ 143,756",
+          "justification": "This table provides the Greater China net sales figures for both periods (December 27, 2025: $25,526 million vs December 28, 2024: $18,513 million), showing an increase rather than a decline.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E3",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-27",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R3",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E2"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended December 27, 2025 December 28, 2024 Change Americas $ 58,529 $ 52,648 11 % Europe 38,146 33,861 13 % Greater China 25,526 18,513 38 %",
+          "justification": "The evidence shows Greater China net sales increased 38% year over year for the three months ended December 27, 2025, which contradicts the assertion of a revenue yoy_growth decrease.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E2",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-27",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R4",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E3"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended December 27, 2025 Americas Europe Greater China Japan Rest of Asia Pacific Corporate Total Net sales $ 58,529 $ 38,146 $ 25,526 $ 9,413 $ 12,142 $ — $ 143,756",
+          "justification": "The segment table shows Greater China net sales of $25,526 million for Q1 2026 (three months ended December 27, 2025) compared to $18,513 million for the prior year period, indicating positive growth rather than a decrease.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E3",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-27",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R5",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E1"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OTHER_CONTEXT",
+          "addresses": "OTHER",
+          "definition_mismatch": false,
+          "key_quote": "for the three months ended December 27, 2025 and December 28, 2024, except in Greater China, where iPhone revenue represented a moderately higher proportion of net sales",
+          "justification": "This provides context about the product mix in Greater China (iPhone representing a higher proportion) but does not provide the actual net sales figures or state whether total Greater China sales increased or decreased.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E1",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-27",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R6",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E14"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Greater China net sales increased during the third quarter of 2025 compared to the third quarter of 2024 due primarily to higher net sales of iPhone and Mac. Greater China net sales decreased during the first nine months of 2025 compared to the same period in 2024",
+          "justification": "This evidence is for different periods (third quarter and first nine months of fiscal 2025, ending June 28, 2025) than the claim period (quarter ended December 27, 2025). Different periods do not decide the claim.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E14",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-06-28",
+                  "months": [
+                    3,
+                    9
+                  ],
+                  "markers": [
+                    "YTD9",
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R7",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E16"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Greater China net sales decreased during 2025 compared to 2024 primarily due to lower net sales of iPhone",
+          "justification": "This evidence is for the full fiscal year 2025 (ended September 27, 2025), not the quarter ended December 27, 2025. A different period does not decide the claim about Q1 FY2026.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E16",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-09-27",
+                  "months": [
+                    12
+                  ],
+                  "markers": [],
+                  "source": "filing_default_10K",
+                  "form": "10-K",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R8",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E14"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Greater China net sales increased during the third quarter of 2025 compared to the third quarter of 2024 due primarily to higher net sales of iPhone and Mac. Greater China net sales decreased during the first nine months of 2025 compared to the same period in 2024",
+          "justification": "This evidence covers different periods (Q3 FY2025 and nine months of FY2025) than the claim period (Q1 FY2026 ended December 27, 2025). Different periods do not decide the numeric assertion.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E14",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-06-28",
+                  "months": [
+                    3,
+                    9
+                  ],
+                  "markers": [
+                    "YTD9",
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R9",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E16"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Greater China net sales decreased during 2025 compared to 2024 primarily due to lower net sales of iPhone",
+          "justification": "This evidence is for the full fiscal year 2025, not the quarter ended December 27, 2025. A different period does not decide the numeric assertion about Q1 FY2026.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E16",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-09-27",
+                  "months": [
+                    12
+                  ],
+                  "markers": [],
+                  "source": "filing_default_10K",
+                  "form": "10-K",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        }
+      ],
+      "dropped_findings": [],
+      "llm_called": true,
+      "period_derivations": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_FALSE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [
+            {
+              "evidence_id": "E10",
+              "quote": "To protect gross margins from fluctuations in foreign exchange rates, the Company may use forwards, options or other instruments",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-26-000006",
+              "form": "10-Q",
+              "filed": "2026-01-30",
+              "period_end": "2025-12-27",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+              "locator": "10-Q 0000320193-26-000006:17241-18311"
+            },
+            {
+              "evidence_id": "E11",
+              "quote": "To protect gross margins from fluctuations in foreign exchange rates, the Company may use forwards, options or other instruments",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-25-000073",
+              "form": "10-Q",
+              "filed": "2025-08-01",
+              "period_end": "2025-06-28",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628.htm",
+              "locator": "10-Q 0000320193-25-000073:19310-20376"
+            },
+            {
+              "evidence_id": "E12",
+              "quote": "The Company generally hedges portions of its forecasted foreign currency exposure associated with revenue and inventory purchases",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-25-000079",
+              "form": "10-K",
+              "filed": "2025-10-31",
+              "period_end": "2025-09-27",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+              "locator": "10-K 0000320193-25-000079:149629-150674"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [
+            {
+              "evidence_id": "E13",
+              "quote": "indicate by check mark whether the financial statements of the registrant included in the filing reflect the correction of an error",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-25-000079",
+              "form": "10-K",
+              "filed": "2025-10-31",
+              "period_end": "2025-09-27",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+              "locator": "10-K 0000320193-25-000079:2497-3653"
+            },
+            {
+              "evidence_id": "E14",
+              "quote": "Greater China net sales increased during the third quarter of 2025 compared to the third quarter of 2024",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-25-000073",
+              "form": "10-Q",
+              "filed": "2025-08-01",
+              "period_end": "2025-06-28",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628.htm",
+              "locator": "10-Q 0000320193-25-000073:35302-36369"
+            },
+            {
+              "evidence_id": "E15",
+              "quote": "All financial statement schedules have been omitted, since the required information is not applicable",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-25-000079",
+              "form": "10-K",
+              "filed": "2025-10-31",
+              "period_end": "2025-09-27",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+              "locator": "10-K 0000320193-25-000079:193452-194535"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E17",
+              "quote": "iPad net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPad and iPad Pro",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-26-000006",
+              "form": "10-Q",
+              "filed": "2026-01-30",
+              "period_end": "2025-12-27",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+              "locator": "10-Q 0000320193-26-000006:35429-36037"
+            },
+            {
+              "evidence_id": "E18",
+              "quote": "iPhone net sales increased during the third quarter and first nine months of 2025 compared to the same periods in 2024",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-25-000073",
+              "form": "10-Q",
+              "filed": "2025-08-01",
+              "period_end": "2025-06-28",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628.htm",
+              "locator": "10-Q 0000320193-25-000073:37169-38367"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation_guard",
+      "version": "a3v2-guard-0.3",
+      "initial_label": "CONTRADICTED",
+      "proposed_label": "CONTRADICTED",
+      "final_label": "CONTRADICTED",
+      "outcome": "NO_CHANGE",
+      "reason_code": "NO_CHANGE",
+      "excluded_citations": [],
+      "deciding_findings": [],
+      "initial_basis": [],
+      "rule_trace": [
+        "NO_CHANGE: NO_CHANGE"
+      ],
+      "decidability_gate": {
+        "record": {
+          "assertion_id": "A0",
+          "predicate_type": "MEASURABLE",
+          "criterion_source": "CLAIM_STATES",
+          "required_evidence": [
+            {
+              "kind": "NUMERIC_FACT",
+              "scope": {
+                "entity": null,
+                "segment": null,
+                "region": "Greater China",
+                "metric": "net sales"
+              }
+            },
+            {
+              "kind": "SCOPE_MATCHED_FACT",
+              "scope": {
+                "entity": null,
+                "segment": null,
+                "region": "Greater China",
+                "metric": "net sales"
+              }
+            }
+          ],
+          "status": "DECIDABLE",
+          "issues": [],
+          "version": "a3v2-decidability-0.1-draft",
+          "evaluative_terms": [],
+          "scope": {
+            "segment": null,
+            "region": "Greater China",
+            "metric": "net sales"
+          },
+          "contribution": {
+            "type": "NONE",
+            "component": null,
+            "total": null
+          },
+          "note": "The claim asserts a measurable year-over-year decline in net sales for a specific geographic region and time period, which can be verified by comparing numeric figures from the current and prior year filings.",
+          "prompt_version": "a3v2-decidability-prompt-0.1"
+        },
+        "reason": null,
+        "label_before": "CONTRADICTED",
+        "label_after": "CONTRADICTED"
+      },
+      "numeric_checks": {
+        "validity": [
+          "SCOPE_MISMATCH"
+        ],
+        "fcf": {
+          "status": "NOT_APPLICABLE"
+        },
+        "reason": null,
+        "label_before": "CONTRADICTED",
+        "label_after": "CONTRADICTED"
+      },
+      "coverage": {
+        "basis": [
+          "VALID_FINDING"
+        ],
+        "reason": null,
+        "label_before": "CONTRADICTED",
+        "label_after": "CONTRADICTED"
+      }
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "823969132924815fd3e5a7a649b5eb1a0a0ee9b6f8aba803c48846452829c18a",
+      "source": "cache",
+      "input_tokens": 4396,
+      "output_tokens": 455,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2025-12-27",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Greater China 25,526 18,513 38 %"
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "Greater China Japan Rest of Asia Pacific Corporate Total Net sales $ 58,529 $ 38,146 $ 25,526 $ 9,413 $ 12,142"
+          }
+        ],
+        "reasoning_summary": "The claim states that Apple's Greater China net sales for the quarter ended December 27, 2025 declined year over year. However, the evidence directly contradicts this. Evidence E2 shows a table with Greater China net sales for the three months ended December 27, 2025 at $25,526 million compared to $18,513 million for December 28, 2024, representing a 38% increase (not a decline). Evidence E3 confirms the same figures. The Greater China segment actually experienced significant year-over-year growth of 38%, which is the opposite of a decline.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "decidability",
+      "tool": "classify_claim",
+      "request_key": "319b682cc892c8f3b46d0edfe637f53259f530f2c810d4d4d67ed63bd715c231",
+      "source": "live",
+      "input_tokens": 1508,
+      "output_tokens": 242,
+      "stop_reason": "tool_use",
+      "latency_ms": 4358,
+      "output": {
+        "predicate_type": "MEASURABLE",
+        "evaluative_terms": [],
+        "criterion_source": "CLAIM_STATES",
+        "scope": {
+          "metric": "net sales",
+          "region": "Greater China",
+          "segment": null
+        },
+        "contribution": {
+          "type": "NONE"
+        },
+        "required_evidence": [
+          "NUMERIC_FACT",
+          "SCOPE_MATCHED_FACT"
+        ],
+        "note": "The claim asserts a measurable year-over-year decline in net sales for a specific geographic region and time period, which can be verified by comparing numeric figures from the current and prior year filings."
+      },
+      "isolated_conversation": true,
+      "prompt_version": "a3v2-decidability-prompt-0.1"
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "13d703cb3f7c1237b8d30b7ef9d59f9f20714ed4bdd4b343f8d29d7cb24ebcea",
+      "source": "cache",
+      "input_tokens": 5416,
+      "output_tokens": 280,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Could there be a distinction between 'net sales' and another revenue metric for Greater China that actually declined, such as constant currency revenue or revenue excluding certain items?",
+            "search_query": "Greater China constant currency revenue excluding foreign exchange impact",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Could the filing contain a restatement or correction indicating that the Greater China figures shown in the table were revised or that there was an error in reporting?",
+            "search_query": "Greater China restatement correction revised restated prior period adjustment",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Could there be commentary in the filing explicitly stating that Greater China net sales declined year over year despite the table showing an increase?",
+            "search_query": "Greater China net sales decreased declined lower compared prior year quarter",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "evidence_review",
+      "tool": "submit_evidence_review",
+      "request_key": "42fc0974f259f1151abd5570ce274bdd95b2a160b10d359f2515bbbc5fedba82",
+      "source": "cache",
+      "input_tokens": 8357,
+      "output_tokens": 1747,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "findings": [
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E2"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Three Months Ended December 27, 2025 December 28, 2024 Change Americas $ 58,529 $ 52,648 11 % Europe 38,146 33,861 13 % Greater China 25,526 18,513 38 %",
+            "justification": "The table shows Greater China net sales for the three months ended December 27, 2025 were $25,526 million compared to $18,513 million for December 28, 2024, representing a 38% increase. This directly contradicts the claim that Greater China net sales declined year over year.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E3"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Three Months Ended December 27, 2025 Americas Europe Greater China Japan Rest of Asia Pacific Corporate Total Net sales $ 58,529 $ 38,146 $ 25,526 $ 9,413 $ 12,142 $ — $ 143,756",
+            "justification": "This table provides the Greater China net sales figures for both periods (December 27, 2025: $25,526 million vs December 28, 2024: $18,513 million), showing an increase rather than a decline.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E2"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Three Months Ended December 27, 2025 December 28, 2024 Change Americas $ 58,529 $ 52,648 11 % Europe 38,146 33,861 13 % Greater China 25,526 18,513 38 %",
+            "justification": "The evidence shows Greater China net sales increased 38% year over year for the three months ended December 27, 2025, which contradicts the assertion of a revenue yoy_growth decrease.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E3"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Three Months Ended December 27, 2025 Americas Europe Greater China Japan Rest of Asia Pacific Corporate Total Net sales $ 58,529 $ 38,146 $ 25,526 $ 9,413 $ 12,142 $ — $ 143,756",
+            "justification": "The segment table shows Greater China net sales of $25,526 million for Q1 2026 (three months ended December 27, 2025) compared to $18,513 million for the prior year period, indicating positive growth rather than a decrease.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E1"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OTHER_CONTEXT",
+            "addresses": "OTHER",
+            "key_quote": "for the three months ended December 27, 2025 and December 28, 2024, except in Greater China, where iPhone revenue represented a moderately higher proportion of net sales",
+            "justification": "This provides context about the product mix in Greater China (iPhone representing a higher proportion) but does not provide the actual net sales figures or state whether total Greater China sales increased or decreased.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E14"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Greater China net sales increased during the third quarter of 2025 compared to the third quarter of 2024 due primarily to higher net sales of iPhone and Mac. Greater China net sales decreased during the first nine months of 2025 compared to the same period in 2024",
+            "justification": "This evidence is for different periods (third quarter and first nine months of fiscal 2025, ending June 28, 2025) than the claim period (quarter ended December 27, 2025). Different periods do not decide the claim.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E16"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Greater China net sales decreased during 2025 compared to 2024 primarily due to lower net sales of iPhone",
+            "justification": "This evidence is for the full fiscal year 2025 (ended September 27, 2025), not the quarter ended December 27, 2025. A different period does not decide the claim about Q1 FY2026.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E14"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Greater China net sales increased during the third quarter of 2025 compared to the third quarter of 2024 due primarily to higher net sales of iPhone and Mac. Greater China net sales decreased during the first nine months of 2025 compared to the same period in 2024",
+            "justification": "This evidence covers different periods (Q3 FY2025 and nine months of FY2025) than the claim period (Q1 FY2026 ended December 27, 2025). Different periods do not decide the numeric assertion.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E16"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Greater China net sales decreased during 2025 compared to 2024 primarily due to lower net sales of iPhone",
+            "justification": "This evidence is for the full fiscal year 2025, not the quarter ended December 27, 2025. A different period does not decide the numeric assertion about Q1 FY2026.",
+            "definition_mismatch": false
+          }
+        ]
+      },
+      "isolated_conversation": true,
+      "prompt_version": "a3v2-review-prompts-0.3"
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "f1e976c0c5ce7ae480e62ea958791305fdf3e0c3b120a960ef82e445b908511e",
+      "source": "cache",
+      "input_tokens": 10794,
+      "output_tokens": 1057,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": [
+              {
+                "evidence_id": "E10",
+                "quote": "To protect gross margins from fluctuations in foreign exchange rates, the Company may use forwards, options or other instruments"
+              },
+              {
+                "evidence_id": "E11",
+                "quote": "To protect gross margins from fluctuations in foreign exchange rates, the Company may use forwards, options or other instruments"
+              },
+              {
+                "evidence_id": "E12",
+                "quote": "The Company generally hedges portions of its forecasted foreign currency exposure associated with revenue and inventory purchases"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": [
+              {
+                "evidence_id": "E13",
+                "quote": "indicate by check mark whether the financial statements of the registrant included in the filing reflect the correction of an error"
+              },
+              {
+                "evidence_id": "E14",
+                "quote": "Greater China net sales increased during the third quarter of 2025 compared to the third quarter of 2024"
+              },
+              {
+                "evidence_id": "E15",
+                "quote": "All financial statement schedules have been omitted, since the required information is not applicable"
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E17",
+                "quote": "iPad net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPad and iPad Pro"
+              },
+              {
+                "evidence_id": "E18",
+                "quote": "iPhone net sales increased during the third quarter and first nine months of 2025 compared to the same periods in 2024"
+              }
+            ]
+          }
+        ],
+        "label": "CONTRADICTED",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Greater China 25,526 18,513 38 %"
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "Greater China Japan Rest of Asia Pacific Corporate Total Net sales $ 58,529 $ 38,146 $ 25,526 $ 9,413 $ 12,142"
+          }
+        ],
+        "reasoning_summary": "After investigating potential challenges to the initial verdict, the conclusion remains CONTRADICTED. \n\nH1 (constant currency): The retrieved evidence discusses foreign exchange hedging practices but provides no information about constant currency revenue figures for Greater China that would show a decline. No relevant evidence was found to support this challenge.\n\nH2 (restatement): The retrieved evidence includes general filing information and references to error correction checkboxes, but contains no indication of any restatement or correction to the Greater China figures for the quarter ended December 27, 2025. No relevant evidence was found to support this challenge.\n\nH3 (contradictory commentary): The retrieved evidence (E17, E18) discusses product category performance but does not contain any commentary stating that Greater China net sales declined. In fact, no such contradictory statement exists in the filing. This challenge is refuted.\n\nThe original evidence remains decisive: E2 and E3 both clearly show Greater China net sales of $25,526 million for the quarter ended December 27, 2025 compared to $18,513 million for the prior year quarter (December 28, 2024), representing a 38% increase. The claim that Greater China net sales \"declined year over year\" is directly contradicted by these figures. The evidence review confirms both E2 and E3 are EXACT_MATCH for period compatibility and CONTRADICTS the claim with HISTORICAL_FACT statements.",
+        "change_reason": "No change in verdict. All three challenges either found no relevant evidence or were refuted. The original contradicting evidence (E2 and E3) remains valid and decisive, showing a 38% year-over-year increase in Greater China net sales rather than the claimed decline."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Apple's Greater China net sales for the quarter ended December 27, 2025 declined year over year. FY2026 Q1",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "Greater China constant currency revenue excluding foreign exchange impact",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "Greater China restatement correction revised restated prior period adjustment",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "Greater China net sales decreased declined lower compared prior year quarter",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2025-12-27",
+            "comparison": "decrease",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-27",
+            "basis": "quarter",
+            "level": 143756000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-09-28",
+                "period_end": "2025-12-27",
+                "value": 143756000000.0,
+                "filed": "2026-01-30",
+                "form": "10-Q",
+                "accession_number": "0000320193-26-000006",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 124300000000.0,
+            "prior_period_end": "2024-12-28",
+            "yoy_change": 0.15652453740949315,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-26-000006",
+        "filed": "2026-01-30",
+        "report_date": "2025-12-27",
+        "primary_document": "aapl-20251227.htm",
+        "sha256": "2d32cfc574b8a8301a1a165a93640ef5ab0de6e140054ccb16ded56d3bb02a78"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0000320193-25-000079",
+        "filed": "2025-10-31",
+        "report_date": "2025-09-27",
+        "primary_document": "aapl-20250927.htm",
+        "sha256": "056f733f13ff7407e64dc81fb96da3c3c55a6ba429bf094f57cb6bd472231f82"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-25-000073",
+        "filed": "2025-08-01",
+        "report_date": "2025-06-28",
+        "primary_document": "aapl-20250628.htm",
+        "sha256": "ef49651a716c112d0a0373f1bb41d70fd3984f8fc6b1e0c660e90517d02fb013"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 369
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:12737-13937",
+      "excerpt": "ote 10, “Segment Information” for the three months ended December 27, 2025 and December 28, 2024, except in Greater China, where iPhone revenue represented a moderately higher proportion of net sales. As of December 27, 2025 and September 27, 2025, the Company had total deferred revenue of $ 14.3 billion and $ 13.7 billion, respectively. As of December 27, 2025, the Company expects 66 % of total deferred revenue to be realized in less than a year, 23 % within one-to-two years, 9 % within two-to-three years and 2 % in greater than three years. Apple Inc. | Q1 2026 Form 10-Q | 6 Note 3 – Earnings Per Share The following table shows the computation of basic and diluted earnings per share for the three months ended December 27, 2025 and December 28, 2024 (net income in millions and shares in thousands): Three Months Ended December 27, 2025 December 28, 2024 Numerator: Net income $ 42,097 $ 36,330 Denominator: Weighted-average basic shares outstanding 14,748,158 15,081,724 Effect of dilutive share-based awards 62,198 69,141 Weighted-average diluted shares 14,810,356 15,150,865 Basic earnings per share $ 2.85 $ 2.41 Diluted earnings per share $ 2.84 $ 2.40 Note 4 – Financial Instruments",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:32891-34012",
+      "excerpt": "and reductions in consumer spending and negative consumer sentiment for the Company’s products and services, all of which can further adversely affect the Company’s business and results of operations. Segment Operating Performance The following table shows net sales by reportable segment for the three months ended December 27, 2025 and December 28, 2024 (dollars in millions): Three Months Ended December 27, 2025 December 28, 2024 Change Americas $ 58,529 $ 52,648 11 % Europe 38,146 33,861 13 % Greater China 25,526 18,513 38 % Japan 9,413 8,987 5 % Rest of Asia Pacific 12,142 10,291 18 % Total net sales $ 143,756 $ 124,300 16 % Americas Americas net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPhone and Services. Europe Europe net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPhone and Services. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Europe net sales during the first quarter of 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:25596-26796",
+      "excerpt": "reasonable possibility the Company may have incurred a material loss, or a material loss greater than a recorded accrual, concerning loss contingencies for asserted legal and other claims. Apple Inc. | Q1 2026 Form 10-Q | 11 Note 10 – Segment Information The following table shows information by reportable segment for the three months ended December 27, 2025 and December 28, 2024 (in millions): Three Months Ended December 27, 2025 Americas Europe Greater China Japan Rest of Asia Pacific Corporate Total Net sales $ 58,529 $ 38,146 $ 25,526 $ 9,413 $ 12,142 $ — $ 143,756 Cost of sales ( 31,849 ) ( 19,061 ) ( 13,030 ) ( 4,511 ) ( 6,074 ) — ( 74,525 ) Research and development — — — — — ( 10,887 ) ( 10,887 ) Selling and marketing ( 2,727 ) ( 1,295 ) ( 704 ) ( 289 ) ( 382 ) — ( 5,397 ) General and administrative — — — — — ( 2,095 ) ( 2,095 ) Operating income/(loss) $ 23,953 $ 17,790 $ 11,792 $ 4,613 $ 5,686 $ ( 12,982 ) $ 50,852 Three Months Ended December 28, 2024 Americas Europe Greater China Japan Rest of Asia Pacific Corporate Total Net sales $ 52,648 $ 33,861 $ 18,513 $ 8,987 $ 10,291 $ — $ 124,300 Cost of sales ( 28,495 ) ( 18,043 ) ( 9,759 ) ( 4,393 ) ( 5,335 ) — ( 66,025 ) Resear",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:34468-35629",
+      "excerpt": "Rest of Asia Pacific Rest of Asia Pacific net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPhone and Services. Apple Inc. | Q1 2026 Form 10-Q | 14 Products and Services Performance The following table shows net sales by category for the three months ended December 27, 2025 and December 28, 2024 (dollars in millions): Three Months Ended December 27, 2025 December 28, 2024 Change iPhone $ 85,269 $ 69,138 23 % Mac 8,386 8,987 (7) % iPad 8,595 8,088 6 % Wearables, Home and Accessories 11,493 11,747 (2) % Services 30,013 26,340 14 % Total net sales $ 143,756 $ 124,300 16 % iPhone iPhone net sales increased during the first quarter of 2026 compared to the same quarter in 2025 due to higher net sales of Pro models. Mac Mac net sales decreased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to lower net sales of laptops and desktops. iPad iPad net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPad and iPad Pro, partially offset by lower net sales of iPad mini ® .",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:11848-12937",
+      "excerpt": "rwise stated, references to particular years, quarters, months and periods refer to the Company’s fiscal years ended in September and the associated quarters, months and periods of those fiscal years. Note 2 – Revenue The following table shows disaggregated net sales, as well as the portion of total net sales that was previously deferred, for the three months ended December 27, 2025 and December 28, 2024 (in millions): Three Months Ended December 27, 2025 December 28, 2024 iPhone ® $ 85,269 $ 69,138 Mac ® 8,386 8,987 iPad ® 8,595 8,088 Wearables, Home and Accessories 11,493 11,747 Services 30,013 26,340 Total net sales $ 143,756 $ 124,300 Portion of total net sales that was included in deferred revenue as of the beginning of the period $ 4,050 $ 3,690 The Company’s proportion of net sales by disaggregated revenue source was generally consistent for each reportable segment in Note 10, “Segment Information” for the three months ended December 27, 2025 and December 28, 2024, except in Greater China, where iPhone revenue represented a moderately higher proportion of net sales.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:35837-36948",
+      "excerpt": "es Services net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales from advertising, the App Store ® and cloud services. Apple Inc. | Q1 2026 Form 10-Q | 15 Gross Margin Products and Services gross margin and gross margin percentage for the three months ended December 27, 2025 and December 28, 2024, were as follows (dollars in millions): Three Months Ended December 27, 2025 December 28, 2024 Gross margin: Products $ 46,265 $ 38,513 Services 22,966 19,762 Total gross margin $ 69,231 $ 58,275 Gross margin percentage: Products 40.7 % 39.3 % Services 76.5 % 75.0 % Total gross margin percentage 48.2 % 46.9 % Products Gross Margin Products gross margin and gross margin percentage increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to a different mix of products, partially offset by tariff costs. Services Gross Margin Services gross margin increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher Services net sales and a different mix of services.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": "2025-09-28",
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/0000320193-26-000006-index.htm",
+      "locator": "Revenue 2025-09-28..2025-12-27",
+      "excerpt": null,
+      "values": [
+        143756000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": "2024-09-29",
+      "period_end": "2024-12-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/0000320193-26-000006-index.htm",
+      "locator": "Revenue 2024-09-29..2024-12-28",
+      "excerpt": null,
+      "values": [
+        124300000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "AAPL",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2025-12-27",
+      "excerpt": null,
+      "values": [
+        143756000000.0,
+        124300000000.0,
+        0.15652453740949315
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:17241-18311",
+      "excerpt": "nomic cost of hedging particular exposures. There can be no assurance the hedges will offset more than a portion of the financial impact resulting from movements in foreign exchange or interest rates. Foreign Exchange Rate Risk To protect gross margins from fluctuations in foreign exchange rates, the Company may use forwards, options or other instruments, and may designate these instruments as cash flow hedges. The Company generally hedges portions of its forecasted foreign currency exposure associated with revenue and inventory purchases, typically for up to 12 months. To protect the Company’s foreign currency–denominated term debt or marketable securities from fluctuations in foreign exchange rates, the Company may use forwards, cross-currency swaps or other instruments. The Company designates these instruments as either cash flow or fair value hedges. As of December 27, 2025, the maximum length of time over which the Company is hedging its exposure to the variability in future cash flows for term debt–related foreign currency transactions is 17 years.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000073",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628.htm",
+      "locator": "10-Q 0000320193-25-000073:19310-20376",
+      "excerpt": "nomic cost of hedging particular exposures. There can be no assurance the hedges will offset more than a portion of the financial impact resulting from movements in foreign exchange or interest rates. Foreign Exchange Rate Risk To protect gross margins from fluctuations in foreign exchange rates, the Company may use forwards, options or other instruments, and may designate these instruments as cash flow hedges. The Company generally hedges portions of its forecasted foreign currency exposure associated with revenue and inventory purchases, typically for up to 12 months. To protect the Company’s foreign currency–denominated term debt or marketable securities from fluctuations in foreign exchange rates, the Company may use forwards, cross-currency swaps or other instruments. The Company designates these instruments as either cash flow or fair value hedges. As of June 28, 2025, the maximum length of time over which the Company is hedging its exposure to the variability in future cash flows for term debt–related foreign currency transactions is 17 years.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:149629-150674",
+      "excerpt": "these instruments as cash flow hedges. The Company generally hedges portions of its forecasted foreign currency exposure associated with revenue and inventory purchases, typically for up to 12 months. To protect the Company’s foreign currency–denominated term debt or marketable securities from fluctuations in foreign exchange rates, the Company may use forwards, cross-currency swaps or other instruments. The Company designates these instruments as either cash flow or fair value hedges. As of September 27, 2025, the maximum length of time over which the Company is hedging its exposure to the variability in future cash flows for term debt–related foreign currency transactions is 17 years. The Company may also use derivative instruments that are not designated as accounting hedges to protect gross margins from certain fluctuations in foreign exchange rates, as well as to offset a portion of the foreign currency gains and losses generated by the remeasurement of certain assets and liabilities denominated in non-functional currencies.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:2497-3653",
+      "excerpt": "any, or an emerging growth company. See the definitions of “large accelerated filer,” “accelerated filer,” “smaller reporting company,” and “emerging growth company” in Rule 12b-2 of the Exchange Act. Large accelerated filer ☒ Accelerated filer ☐ Non-accelerated filer ☐ Smaller reporting company ☐ Emerging growth company ☐ If an emerging growth company, indicate by check mark if the Registrant has elected not to use the extended transition period for complying with any new or revised financial accounting standards provided pursuant to Section 13(a) of the Exchange Act. ☐ Indicate by check mark whether the Registrant has filed a report on and attestation to its management’s assessment of the effectiveness of its internal control over financial reporting under Section 404(b) of the Sarbanes-Oxley Act (15 U.S.C. 7262(b)) by the registered public accounting firm that prepared or issued its audit report. ☒ If securities are registered pursuant to Section 12(b) of the Act, indicate by check mark whether the financial statements of the registrant included in the filing reflect the correction of an error to previously issued financial statements.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000073",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628.htm",
+      "locator": "10-Q 0000320193-25-000073:35302-36369",
+      "excerpt": "hone and Services. The weakness in foreign currencies relative to the U.S. dollar had an unfavorable year-over-year impact on Americas net sales during the third quarter and first nine months of 2025. Europe Europe net sales increased during the third quarter and first nine months of 2025 compared to the same periods in 2024 due primarily to higher net sales of Services and iPhone. Greater China Greater China net sales increased during the third quarter of 2025 compared to the third quarter of 2024 due primarily to higher net sales of iPhone and Mac. Greater China net sales decreased during the first nine months of 2025 compared to the same period in 2024 due to lower net sales of iPhone, partially offset by higher net sales of Mac. Japan Japan net sales increased during the third quarter and first nine months of 2025 compared to the same periods in 2024 due primarily to higher net sales of iPhone and Services. The strength in the yen relative to the U.S. dollar had a favorable year-over-year impact on Japan net sales during the third quarter of 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:193452-194535",
+      "excerpt": "September 28, 2024 and September 30, 2023 32 Consolidated Statements of Cash Flows for the years ended September 27, 2025, September 28, 2024 and September 30, 2023 33 Notes to Consolidated Financial Statements 34 Reports of Independent Registered Public Accounting Firm* 49 * Ernst & Young LLP, PCAOB Firm ID No. 000 42 . (2) Financial Statement Schedules All financial statement schedules have been omitted, since the required information is not applicable or is not present in amounts sufficient to require submission of the schedule, or because the information required is included in the consolidated financial statements and accompanying notes included in this Form 10-K. (3) Exhibits required by Item 601 of Regulation S-K (1) Incorporated by Reference Exhibit Number Exhibit Description Form Exhibit Filing Date/ Period End Date 3.1 Restated Articles of Incorporation of the Registrant filed on August 3, 2020. 8-K 3.1 8/7/20 3.2 Amended and Restated Bylaws of the Registrant effective as of August 20, 2024. 8-K 3.2 8/23/24 4.1** Description of Securities of the Registrant.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:108372-109237",
+      "excerpt": "1,035 2 % $ 383,285 Americas Americas net sales increased during 2025 compared to 2024 primarily due to higher net sales of iPhone and Services. The weakness in foreign currencies relative to the U.S. dollar had an unfavorable year-over-year impact on Americas net sales during 2025. Europe Europe net sales increased during 2025 compared to 2024 primarily due to higher net sales of Services, iPhone and Mac. Greater China Greater China net sales decreased during 2025 compared to 2024 primarily due to lower net sales of iPhone, partially offset by higher net sales of Mac. Japan Japan net sales increased during 2025 compared to 2024 primarily due to higher net sales of iPhone, Services and iPad. Rest of Asia Pacific Rest of Asia Pacific net sales increased during 2025 compared to 2024 primarily due to higher net sales of iPhone, Services and Mac. Apple Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:35429-36037",
+      "excerpt": "d net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPad and iPad Pro, partially offset by lower net sales of iPad mini ® . Wearables, Home and Accessories Wearables, Home and Accessories net sales decreased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to lower net sales of Wearables. Services Services net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales from advertising, the App Store ® and cloud services. Apple Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000073",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628.htm",
+      "locator": "10-Q 0000320193-25-000073:37169-38367",
+      "excerpt": "ales $ 94,036 $ 85,777 10 % $ 313,695 $ 296,105 6 % iPhone iPhone net sales increased during the third quarter and first nine months of 2025 compared to the same periods in 2024 due to higher net sales of Pro models. Mac Mac net sales increased during the third quarter and first nine months of 2025 compared to the same periods in 2024 due to higher net sales of both laptops and desktops. iPad iPad net sales decreased during the third quarter of 2025 compared to the third quarter of 2024 due to lower net sales of iPad Pro ® , partially offset by higher net sales of all other iPad models. iPad net sales increased during the first nine months of 2025 compared to the same period in 2024 due primarily to higher net sales of iPad Air ® . Wearables, Home and Accessories Wearables, Home and Accessories net sales decreased during the third quarter and first nine months of 2025 compared to the same periods in 2024 due primarily to lower net sales of Wearables and Accessories. Services Services net sales increased during the third quarter and first nine months of 2025 compared to the same periods in 2024 due primarily to higher net sales from advertising, the App Store ® and cloud services.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E2",
+      "quote": "Greater China 25,526 18,513 38 %",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:32891-34012"
+    },
+    {
+      "evidence_id": "E3",
+      "quote": "Greater China Japan Rest of Asia Pacific Corporate Total Net sales $ 58,529 $ 38,146 $ 25,526 $ 9,413 $ 12,142",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:25596-26796"
+    },
+    {
+      "evidence_id": "E9",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_end": "2025-12-27",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2025-12-27"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 30471,
+    "output": 3781
+  },
+  "latency_ms": 4394,
+  "estimated_cost_usd": 0.148128,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_FALSE",
+        "checks": [
+          "FALSE"
+        ]
+      },
+      {
+        "node": "analyze_claim",
+        "status": "ok",
+        "duration_ms": 4371,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "assertions": 2,
+        "computations": 0,
+        "period_source": "text_date"
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "evidence_review",
+        "status": "ok",
+        "duration_ms": 9,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "findings": 9,
+        "deciding": 4,
+        "downgraded": 0
+      },
+      {
+        "node": "reconcile_v2",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 5,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "CONTRADICTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 5,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_FALSE"
+      },
+      {
+        "node": "reconciliation_guard",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 5,
+        "retrieval_queries_so_far": 4,
+        "outcome": "NO_CHANGE",
+        "reason": "NO_CHANGE",
+        "label": "CONTRADICTED"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 5,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "analyze_claim",
+      "generate_hypotheses",
+      "counter_investigation",
+      "evidence_review",
+      "reconcile_v2",
+      "apply_guards",
+      "reconciliation_guard",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-a3v2-0.1"
+  },
+  "a3v2_version": "a3v2-0.3.0-dev"
+}

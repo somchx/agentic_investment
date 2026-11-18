@@ -1,0 +1,485 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:SR_self_reflection:GOLD-MSFT-13:6177fafb",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "SR_self_reflection",
+  "approach_kind": "self_reflection",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": true,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "SR_self_reflection",
+    "kind": "self_reflection",
+    "description": "A2 + self-critique and revision, no new retrieval"
+  },
+  "config_hash": "166d47be253b74e9",
+  "claim": {
+    "claim_id": "GOLD-MSFT-13",
+    "company": "MSFT",
+    "claim": "Microsoft's strong fiscal 2025 results were achieved without any meaningful headwind from foreign currency.",
+    "as_of_date": "2025-08-31",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "INSUFFICIENT_EVIDENCE",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Net gains (losses) on foreign currency remeasurements 171 (244)"
+          }
+        ],
+        "reasoning_summary": "The claim states that Microsoft's fiscal 2025 results were achieved \"without any meaningful headwind from foreign currency.\" This is an interpretive claim about whether foreign currency had a negative impact on results.\n\nEvidence E1 shows the \"Other Income (Expense), Net\" components for fiscal years 2025 and 2024. The line item \"Net gains (losses) on foreign currency remeasurements\" shows a gain of $171 million in fiscal 2025 compared to a loss of $244 million in fiscal 2024. \n\nThis represents a positive swing of $415 million year-over-year ($171M gain vs. $244M loss). Rather than experiencing a \"headwind\" (negative impact) from foreign currency in fiscal 2025, Microsoft actually experienced a tailwind (positive impact), with net gains on foreign currency remeasurements.\n\nThe evidence directly contradicts the claim that there was no meaningful headwind from foreign currency - in fact, foreign currency provided a meaningful benefit (not a headwind) to fiscal 2025 results.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "self_critique",
+      "weaknesses": [
+        {
+          "weakness_id": "W1",
+          "critique": "The evidence only shows foreign currency remeasurement gains/losses in the 'Other Income (Expense), Net' section, which is below operating income. The claim refers to Microsoft's 'strong fiscal 2025 results' broadly, which could primarily refer to revenue and operating performance. Foreign currency can impact results through translation of foreign revenue and costs (affecting reported revenue and operating income), not just through remeasurement gains/losses. The evidence does not provide information about foreign currency translation impacts on revenue or operating income, which might be more material to the overall 'results' than the $171M remeasurement gain shown."
+        },
+        {
+          "weakness_id": "W2",
+          "critique": "The $171 million net gain on foreign currency remeasurements in fiscal 2025 may not be 'meaningful' in the context of Microsoft's overall scale. Without knowing Microsoft's total revenue, operating income, or net income for fiscal 2025, it's difficult to assess whether $171 million represents a meaningful impact. If Microsoft's revenue is in the hundreds of billions, a $171 million gain might be considered immaterial or not 'meaningful,' which could support rather than contradict the claim."
+        },
+        {
+          "weakness_id": "W3",
+          "critique": "The claim states there was no 'meaningful headwind' (negative impact), and my verdict confirms there was actually a tailwind (positive impact). However, the claim could be interpreted as simply stating the absence of a negative effect, which would be technically true - there was no headwind. The claim doesn't assert there was no foreign currency impact at all, just no headwind. In this interpretation, the claim would be SUPPORTED rather than CONTRADICTED, as the evidence confirms no headwind existed."
+        }
+      ]
+    },
+    {
+      "stage": "revision",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "W1",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "OTHER INCOME (EXPENSE), NET The components of other income (expense), net were as follows:",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000950170-25-100235",
+              "form": "10-K",
+              "filed": "2025-07-30",
+              "period_end": "2025-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm",
+              "locator": "10-K 0000950170-25-100235:159871-161009"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "W3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "c8ea23e9c1beaa28a5c2686bdfa9da1c43f939a745d33378ab1a17e5b22d9cae",
+      "source": "cache",
+      "input_tokens": 3837,
+      "output_tokens": 418,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Net gains (losses) on foreign currency remeasurements 171 (244)"
+          }
+        ],
+        "reasoning_summary": "The claim states that Microsoft's fiscal 2025 results were achieved \"without any meaningful headwind from foreign currency.\" This is an interpretive claim about whether foreign currency had a negative impact on results.\n\nEvidence E1 shows the \"Other Income (Expense), Net\" components for fiscal years 2025 and 2024. The line item \"Net gains (losses) on foreign currency remeasurements\" shows a gain of $171 million in fiscal 2025 compared to a loss of $244 million in fiscal 2024. \n\nThis represents a positive swing of $415 million year-over-year ($171M gain vs. $244M loss). Rather than experiencing a \"headwind\" (negative impact) from foreign currency in fiscal 2025, Microsoft actually experienced a tailwind (positive impact), with net gains on foreign currency remeasurements.\n\nThe evidence directly contradicts the claim that there was no meaningful headwind from foreign currency - in fact, foreign currency provided a meaningful benefit (not a headwind) to fiscal 2025 results.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "self_critique",
+      "tool": "submit_self_critique",
+      "request_key": "9db0750c1c0bb226e7c6942b44c6b519e320a01ac5be8bc6a4c4be06031a8bf2",
+      "source": "live",
+      "input_tokens": 4166,
+      "output_tokens": 446,
+      "stop_reason": "tool_use",
+      "latency_ms": 10882,
+      "output": {
+        "weaknesses": [
+          {
+            "weakness_id": "W1",
+            "critique": "The evidence only shows foreign currency remeasurement gains/losses in the 'Other Income (Expense), Net' section, which is below operating income. The claim refers to Microsoft's 'strong fiscal 2025 results' broadly, which could primarily refer to revenue and operating performance. Foreign currency can impact results through translation of foreign revenue and costs (affecting reported revenue and operating income), not just through remeasurement gains/losses. The evidence does not provide information about foreign currency translation impacts on revenue or operating income, which might be more material to the overall 'results' than the $171M remeasurement gain shown."
+          },
+          {
+            "weakness_id": "W2",
+            "critique": "The $171 million net gain on foreign currency remeasurements in fiscal 2025 may not be 'meaningful' in the context of Microsoft's overall scale. Without knowing Microsoft's total revenue, operating income, or net income for fiscal 2025, it's difficult to assess whether $171 million represents a meaningful impact. If Microsoft's revenue is in the hundreds of billions, a $171 million gain might be considered immaterial or not 'meaningful,' which could support rather than contradict the claim."
+          },
+          {
+            "weakness_id": "W3",
+            "critique": "The claim states there was no 'meaningful headwind' (negative impact), and my verdict confirms there was actually a tailwind (positive impact). However, the claim could be interpreted as simply stating the absence of a negative effect, which would be technically true - there was no headwind. The claim doesn't assert there was no foreign currency impact at all, just no headwind. In this interpretation, the claim would be SUPPORTED rather than CONTRADICTED, as the evidence confirms no headwind existed."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "revision",
+      "tool": "submit_revision",
+      "request_key": "f1a4749f6e67a1b142cdf5de3d2ba43a974ace945da666274c015b698e210d3f",
+      "source": "live",
+      "input_tokens": 5422,
+      "output_tokens": 687,
+      "stop_reason": "tool_use",
+      "latency_ms": 11419,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "W1",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E1",
+                "quote": "OTHER INCOME (EXPENSE), NET The components of other income (expense), net were as follows:"
+              }
+            ]
+          },
+          {
+            "item_id": "W2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "W3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "INSUFFICIENT_EVIDENCE",
+        "verdict_changed": true,
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "Upon reconsideration, I am changing my verdict from CONTRADICTED to INSUFFICIENT_EVIDENCE.\n\nW1 is CHALLENGE_SUPPORTED: The evidence only shows foreign currency remeasurement gains/losses in the \"Other Income (Expense), Net\" section, which is below operating income. The claim refers to Microsoft's \"strong fiscal 2025 results\" broadly, which typically encompasses revenue and operating performance. Foreign currency impacts can occur through: (1) translation of foreign revenue and costs (affecting reported revenue and operating income), and (2) remeasurement gains/losses (affecting other income/expense). The evidence only addresses the second category with a $171M gain, but provides no information about foreign currency translation impacts on revenue or operating income, which are likely more material to overall \"results.\"\n\nW2 is NO_RELEVANT_EVIDENCE: The supplied evidence does not include Microsoft's total revenue, operating income, or net income figures that would allow assessment of whether $171M is \"meaningful\" in context.\n\nW3 is NO_RELEVANT_EVIDENCE: There is no evidence that clarifies the intended interpretation of \"without any meaningful headwind.\"\n\nSince the evidence only covers one aspect of foreign currency impact (remeasurement in other income/expense) and does not address the potentially more material impact on revenue and operating income through translation effects, there is insufficient evidence to either support or contradict the claim about Microsoft's overall fiscal 2025 results.",
+        "change_reason": "The initial verdict incorrectly assumed that foreign currency remeasurement gains/losses in other income/expense represented the complete picture of foreign currency impacts on Microsoft's results. However, foreign currency translation effects on revenue and operating income are not addressed in the evidence and are likely more material to the \"strong fiscal 2025 results\" referenced in the claim."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Microsoft's strong fiscal 2025 results were achieved without any meaningful headwind from foreign currency. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0000950170-25-100235",
+        "filed": "2025-07-30",
+        "report_date": "2025-06-30",
+        "primary_document": "msft-20250630.htm",
+        "sha256": "15d2ebb941500e84aeadd2654143ac3d0fbb10a65d8387391727ec4ae36fcd42"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000950170-25-061046",
+        "filed": "2025-04-30",
+        "report_date": "2025-03-31",
+        "primary_document": "msft-20250331.htm",
+        "sha256": "9e3518772d828182911eda6ed1d87746a0dbb0b5a121a6701c4d30d90733288c"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000950170-25-010491",
+        "filed": "2025-01-29",
+        "report_date": "2024-12-31",
+        "primary_document": "msft-20241231.htm",
+        "sha256": "8a778c2d558e59ea40184ac0610ae37aef28275b22a2b7eb320a2c9ca66543f3"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 823
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-100235",
+      "form": "10-K",
+      "filed": "2025-07-30",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm",
+      "locator": "10-K 0000950170-25-100235:159871-161009",
+      "excerpt": "ve fees. Fiscal Year 2025 Compared with Fiscal Year 2024 General and administrative expenses decreased $386 million or 5% driven by Gaming, including the impact of the Activision Blizzard acquisition. OTHER INCOME (EXPENSE), NET The components of other income (expense), net were as follows: (In millions) Year Ended June 30, 2025 2024 Interest and dividends income $ 2,647 $ 3,157 Interest expense (2,385 ) (2,935 ) Net recognized losses on investments (349 ) (118 ) Net losses on derivatives (260 ) (187 ) Net gains (losses) on foreign currency remeasurements 171 (244 ) Other, net (4,725 ) (1,319 ) Total $ (4,901 ) $ (1,646 ) We use derivative instruments to manage risks related to foreign currencies, interest rates, equity prices, and credit; to enhance investment returns; and to facilitate portfolio diversification. Gains and losses from changes in fair values of derivatives that are not designated as hedging instruments are primarily recognized in other income (expense), net. 41 PART II Item 7 Fiscal Year 2025 Compared with Fiscal Year 2024 Interest and dividends income decreased primarily due to lower portfolio balances.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-100235",
+      "form": "10-K",
+      "filed": "2025-07-30",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm",
+      "locator": "10-K 0000950170-25-100235:267601-268727",
+      "excerpt": "e canceled without delivery of shares generally become available for issuance under the plans. We issue new shares of Microsoft common stock to satisfy vesting of awards granted under our stock plans. We also have an ESPP for all eligible employees. Stock-based compensation expense and related income tax benefits were as follows: (In millions) Year Ended June 30, 2025 2024 2023 Stock-based compensation expense $ 11,974 $ 10,734 $ 9,611 Income tax benefits related to stock-based compensation 2,027 1,826 1,651 Stock Plans Stock awards entitle the holder to receive shares of Microsoft common stock as the award vests. Stock awards generally vest over a service period of four years or five years . Executive Incentive Plan Under the Executive Incentive Plan, the Compensation Committee approves stock awards to executive officers and certain senior executives. RSUs generally vest ratably over a service period of four years . PSUs generally vest over a performance period of three years . The number of shares the PSU holder receives is based on the extent to which the corresponding performance goals have been achieved.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-100235",
+      "form": "10-K",
+      "filed": "2025-07-30",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm",
+      "locator": "10-K 0000950170-25-100235:243372-244535",
+      "excerpt": ",220 $ 0 $ 289 $ 119,509 We have recast certain prior period amounts to conform to the way we internally manage and monitor our business. Refer to Note 1 – Accounting Policies for further information. The measurement periods for the valuation of assets acquired and liabilities assumed end as soon as information on the facts and circumstances that existed as of the acquisition dates becomes available, but do not exceed 12 months. Adjustments in purchase price allocations may require a change in the amounts allocated to goodwill during the periods in which the adjustments are determined. Any change in the goodwill amounts resulting from foreign currency translations and purchase accounting adjustments are presented as “Other” in the table above. Also included in “Other” are business dispositions and transfers between segments due to reorganizations, as applicable. As discussed in Note 1 – Accounting Policies, during the first quarter of fiscal year 2025 we made changes to our segments. These segment changes also resulted in changes to our reporting units. We reallocated goodwill across impacted reporting units using a relative fair value approach.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-100235",
+      "form": "10-K",
+      "filed": "2025-07-30",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm",
+      "locator": "10-K 0000950170-25-100235:12351-13544",
+      "excerpt": "n learning pathways. • Inventing new gaming experiences that bring people together around their shared love for games on any device and pushing the boundaries of innovation with console and PC gaming. • Leveraging Windows to fuel our cloud business, grow our share of the PC market, and drive increased engagement with our services like Microsoft Edge, Bing, Copilot, Microsoft Teams, Microsoft 365 Consumer, Xbox Game Pass, and more. • Tackling security from all angles with our integrated, end-to-end solutions spanning security, compliance, identity, and management, across all clouds and platforms. Our future growth depends on our ability to transcend current product category definitions, business models, and sales motions. Commitment to Sustainability Microsoft is committed to sustainability and our approach to addressing climate change starts with the sustainability of our own business. In 2020, we announced goals to become a carbon negative, water positive, and zero waste company by 2030. Since announcing these goals, we have made meaningful progress while having seen major changes in both the technology sector and in our understanding of what it will take to meet our goals.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-061046",
+      "form": "10-Q",
+      "filed": "2025-04-30",
+      "period_start": null,
+      "period_end": "2025-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025061046/msft-20250331.htm",
+      "locator": "10-Q 0000950170-25-061046:42911-44091",
+      "excerpt": ",220 $ 0 $ 109 $ 119,329 We have recast certain prior period amounts to conform to the way we internally manage and monitor our business. Refer to Note 1 – Accounting Policies for further information. 19 PART I Item 1 The measurement periods for the valuation of assets acquired and liabilities assumed end as soon as information on the facts and circumstances that existed as of the acquisition dates becomes available, but do not exceed 12 months. Adjustments in purchase price allocations may require a change in the amounts allocated to goodwill during the periods in which the adjustments are determined. Any change in the goodwill amounts resulting from foreign currency translations and purchase accounting adjustments are presented as “Other” in the table above. Also included in “Other” are business dispositions and transfers between segments due to reorganizations, as applicable. As discussed in Note 1 – Accounting Policies, during the first quarter of fiscal year 2025 we made changes to our segments. These segment changes also resulted in changes to our reporting units. We reallocated goodwill across impacted reporting units using a relative fair value approach.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0000950170-25-010491",
+      "form": "10-Q",
+      "filed": "2025-01-29",
+      "period_start": null,
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025010491/msft-20241231.htm",
+      "locator": "10-Q 0000950170-25-010491:43016-44196",
+      "excerpt": "0 $ 0 $ ( 29 ) $ 119,191 We have recast certain prior period amounts to conform to the way we internally manage and monitor our business. Refer to Note 1 – Accounting Policies for further information. 19 PART I Item 1 The measurement periods for the valuation of assets acquired and liabilities assumed end as soon as information on the facts and circumstances that existed as of the acquisition dates becomes available, but do not exceed 12 months. Adjustments in purchase price allocations may require a change in the amounts allocated to goodwill during the periods in which the adjustments are determined. Any change in the goodwill amounts resulting from foreign currency translations and purchase accounting adjustments are presented as “Other” in the table above. Also included in “Other” are business dispositions and transfers between segments due to reorganizations, as applicable. As discussed in Note 1 – Accounting Policies, during the first quarter of fiscal year 2025 we made changes to our segments. These segment changes also resulted in changes to our reporting units. We reallocated goodwill across impacted reporting units using a relative fair value approach.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 13425,
+    "output": 1551
+  },
+  "latency_ms": 22320,
+  "estimated_cost_usd": 0.06354,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "self_reflection",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "self_critique",
+        "status": "ok",
+        "duration_ms": 10885,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "weaknesses": 3
+      },
+      {
+        "node": "revise",
+        "status": "ok",
+        "duration_ms": 11426,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "model_final_label": "INSUFFICIENT_EVIDENCE"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 30,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "self_critique",
+      "revise",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

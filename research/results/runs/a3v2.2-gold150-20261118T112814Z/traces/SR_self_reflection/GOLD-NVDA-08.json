@@ -1,0 +1,557 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:SR_self_reflection:GOLD-NVDA-08:f1b30312",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "SR_self_reflection",
+  "approach_kind": "self_reflection",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": true,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "SR_self_reflection",
+    "kind": "self_reflection",
+    "description": "A2 + self-critique and revision, no new retrieval"
+  },
+  "config_hash": "166d47be253b74e9",
+  "claim": {
+    "claim_id": "GOLD-NVDA-08",
+    "company": "NVDA",
+    "claim": "NVIDIA's Gaming revenue growth in the quarter ended July 26, 2026 was driven by sales of its Blackwell-based GeForce GPUs.",
+    "as_of_date": "2026-09-10",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2027 Q2"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "INSUFFICIENT_EVIDENCE",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E5",
+            "quote": "Graphics revenue – The year-over-year increase in the second quarter and first half of fiscal year 2027 was driven by sales of our Blackwell architecture."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that NVIDIA's Gaming revenue growth in Q2 FY2027 (quarter ended July 26, 2026) was driven by sales of Blackwell-based GeForce GPUs. This is an interpretive claim about the driver/cause of revenue growth.\n\nEvidence E5 is from NVIDIA's 10-Q filed 2026-08-26 for the period ending 2026-07-26 (Q2 FY2027), which matches the claim's timeframe. The evidence states: \"Graphics revenue – The year-over-year increase in the second quarter and first half of fiscal year 2027 was driven by sales of our Blackwell architecture.\"\n\nThe Graphics reportable segment includes Gaming products (as established in E1, which describes Gaming products including GeForce RTX GPUs). The filing explicitly attributes the Graphics revenue growth to \"sales of our Blackwell architecture,\" which aligns with the claim's attribution to \"Blackwell-based GeForce GPUs.\"\n\nThe claim is purely interpretive/causal (about what drove the growth) rather than making specific numeric assertions about revenue levels or growth rates. The evidence directly supports the stated driver of the revenue growth.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "self_critique",
+      "weaknesses": [
+        {
+          "weakness_id": "W1",
+          "critique": "The claim specifically refers to 'Gaming revenue' while the evidence (E5) discusses 'Graphics revenue.' Although E1 establishes that Gaming is part of the Graphics segment, the Graphics segment may include other product lines beyond Gaming (such as Professional Visualization products). The filing attributes Graphics revenue growth to Blackwell architecture sales broadly, but does not specifically isolate Gaming revenue or confirm that Gaming revenue specifically grew or was driven by Blackwell-based GeForce GPUs. The claim makes a more specific assertion about Gaming than what the evidence directly supports."
+        },
+        {
+          "weakness_id": "W2",
+          "critique": "The claim specifies 'Blackwell-based GeForce GPUs' while the evidence only mentions 'Blackwell architecture' without specifying the GeForce product line. While E1 mentions that Gaming products include GeForce RTX GPUs, the evidence does not explicitly confirm that the Blackwell architecture sales driving Graphics revenue growth were specifically GeForce GPUs rather than other Blackwell-based products that might fall under the Graphics segment."
+        },
+        {
+          "weakness_id": "W3",
+          "critique": "Evidence E4 mentions 'We expect supply constraints to be a headwind to Gaming in the first quarter of fiscal 2027 and beyond' (referring to Q1 FY2027 and later periods). This suggests that Gaming revenue in Q2 FY2027 (the period in question) may have been constrained by supply issues. If supply was constrained, the growth driver might be more accurately characterized as demand exceeding constrained supply rather than simply 'sales of Blackwell-based GeForce GPUs,' which could imply that sales growth was the primary driver when supply limitations may have been a significant factor."
+        }
+      ]
+    },
+    {
+      "stage": "revision",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "W1",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E4",
+              "quote": "Professional Visualization revenue for fiscal year 2026 was up 70% from a year ago, driven by exceptional demand for Blackwell",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000021",
+              "form": "10-K",
+              "filed": "2026-02-25",
+              "period_end": "2026-01-25",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+              "locator": "10-K 0001045810-26-000021:191068-192240"
+            },
+            {
+              "evidence_id": "E5",
+              "quote": "Graphics revenue – The year-over-year increase in the second quarter and first half of fiscal year 2027 was driven by sales of our Blackwell architecture.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000075",
+              "form": "10-Q",
+              "filed": "2026-08-26",
+              "period_end": "2026-07-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+              "locator": "10-Q 0001045810-26-000075:83351-84440"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W2",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E5",
+              "quote": "Graphics revenue – The year-over-year increase in the second quarter and first half of fiscal year 2027 was driven by sales of our Blackwell architecture.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000075",
+              "form": "10-Q",
+              "filed": "2026-08-26",
+              "period_end": "2026-07-26",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+              "locator": "10-Q 0001045810-26-000075:83351-84440"
+            },
+            {
+              "evidence_id": "E1",
+              "quote": "Our products for the gaming market include GeForce RTX GPUs for gaming desktop and laptop PCs",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000021",
+              "form": "10-K",
+              "filed": "2026-02-25",
+              "period_end": "2026-01-25",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+              "locator": "10-K 0001045810-26-000021:23730-24850"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W3",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E4",
+              "quote": "We expect supply constraints to be a headwind to Gaming in the first quarter of fiscal 2027 and beyond.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001045810-26-000021",
+              "form": "10-K",
+              "filed": "2026-02-25",
+              "period_end": "2026-01-25",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+              "locator": "10-K 0001045810-26-000021:191068-192240"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "fd0638df3f5a2a4abcbd568c2fd4054f4553c1c5ecb5d021d72adfcacedcbb37",
+      "source": "cache",
+      "input_tokens": 4198,
+      "output_tokens": 469,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E5",
+            "quote": "Graphics revenue – The year-over-year increase in the second quarter and first half of fiscal year 2027 was driven by sales of our Blackwell architecture."
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that NVIDIA's Gaming revenue growth in Q2 FY2027 (quarter ended July 26, 2026) was driven by sales of Blackwell-based GeForce GPUs. This is an interpretive claim about the driver/cause of revenue growth.\n\nEvidence E5 is from NVIDIA's 10-Q filed 2026-08-26 for the period ending 2026-07-26 (Q2 FY2027), which matches the claim's timeframe. The evidence states: \"Graphics revenue – The year-over-year increase in the second quarter and first half of fiscal year 2027 was driven by sales of our Blackwell architecture.\"\n\nThe Graphics reportable segment includes Gaming products (as established in E1, which describes Gaming products including GeForce RTX GPUs). The filing explicitly attributes the Graphics revenue growth to \"sales of our Blackwell architecture,\" which aligns with the claim's attribution to \"Blackwell-based GeForce GPUs.\"\n\nThe claim is purely interpretive/causal (about what drove the growth) rather than making specific numeric assertions about revenue levels or growth rates. The evidence directly supports the stated driver of the revenue growth.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "self_critique",
+      "tool": "submit_self_critique",
+      "request_key": "757907404ed61416041ef29a80b89ddd5d2150acf3c896caa9b7c65fa68ebb8c",
+      "source": "live",
+      "input_tokens": 4634,
+      "output_tokens": 453,
+      "stop_reason": "tool_use",
+      "latency_ms": 10390,
+      "output": {
+        "weaknesses": [
+          {
+            "weakness_id": "W1",
+            "critique": "The claim specifically refers to 'Gaming revenue' while the evidence (E5) discusses 'Graphics revenue.' Although E1 establishes that Gaming is part of the Graphics segment, the Graphics segment may include other product lines beyond Gaming (such as Professional Visualization products). The filing attributes Graphics revenue growth to Blackwell architecture sales broadly, but does not specifically isolate Gaming revenue or confirm that Gaming revenue specifically grew or was driven by Blackwell-based GeForce GPUs. The claim makes a more specific assertion about Gaming than what the evidence directly supports."
+          },
+          {
+            "weakness_id": "W2",
+            "critique": "The claim specifies 'Blackwell-based GeForce GPUs' while the evidence only mentions 'Blackwell architecture' without specifying the GeForce product line. While E1 mentions that Gaming products include GeForce RTX GPUs, the evidence does not explicitly confirm that the Blackwell architecture sales driving Graphics revenue growth were specifically GeForce GPUs rather than other Blackwell-based products that might fall under the Graphics segment."
+          },
+          {
+            "weakness_id": "W3",
+            "critique": "Evidence E4 mentions 'We expect supply constraints to be a headwind to Gaming in the first quarter of fiscal 2027 and beyond' (referring to Q1 FY2027 and later periods). This suggests that Gaming revenue in Q2 FY2027 (the period in question) may have been constrained by supply issues. If supply was constrained, the growth driver might be more accurately characterized as demand exceeding constrained supply rather than simply 'sales of Blackwell-based GeForce GPUs,' which could imply that sales growth was the primary driver when supply limitations may have been a significant factor."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "revision",
+      "tool": "submit_revision",
+      "request_key": "5d99975719a62c2cac5312cd3c01633e77307b9acc2ee044705cd38eb64a4ce3",
+      "source": "live",
+      "input_tokens": 5903,
+      "output_tokens": 892,
+      "stop_reason": "tool_use",
+      "latency_ms": 14535,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "W1",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E4",
+                "quote": "Professional Visualization revenue for fiscal year 2026 was up 70% from a year ago, driven by exceptional demand for Blackwell"
+              },
+              {
+                "evidence_id": "E5",
+                "quote": "Graphics revenue – The year-over-year increase in the second quarter and first half of fiscal year 2027 was driven by sales of our Blackwell architecture."
+              }
+            ]
+          },
+          {
+            "item_id": "W2",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E5",
+                "quote": "Graphics revenue – The year-over-year increase in the second quarter and first half of fiscal year 2027 was driven by sales of our Blackwell architecture."
+              },
+              {
+                "evidence_id": "E1",
+                "quote": "Our products for the gaming market include GeForce RTX GPUs for gaming desktop and laptop PCs"
+              }
+            ]
+          },
+          {
+            "item_id": "W3",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E4",
+                "quote": "We expect supply constraints to be a headwind to Gaming in the first quarter of fiscal 2027 and beyond."
+              }
+            ]
+          }
+        ],
+        "label": "INSUFFICIENT_EVIDENCE",
+        "verdict_changed": true,
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "Upon reconsideration, the initial SUPPORTED verdict was too broad. The claim makes a specific assertion about \"Gaming revenue\" being driven by \"Blackwell-based GeForce GPUs\" in Q2 FY2027 (quarter ended July 26, 2026).\n\nW1 is supported: E4 shows that Professional Visualization (a separate business segment from Gaming) also had Blackwell-driven growth. E5 only discusses \"Graphics revenue\" broadly, not Gaming revenue specifically. The Graphics reportable segment includes both Gaming and Professional Visualization products, so the evidence does not isolate whether Gaming revenue specifically grew or what drove it.\n\nW2 is supported: The evidence (E5) only mentions \"Blackwell architecture\" without specifying GeForce products. While E1 confirms GeForce RTX GPUs are Gaming products, there is no evidence explicitly linking the Blackwell architecture sales that drove Graphics revenue growth to GeForce GPUs specifically.\n\nW3 is supported: E4 explicitly states supply constraints were expected to be \"a headwind to Gaming in the first quarter of fiscal 2027 and beyond,\" which includes Q2 FY2027. This indicates supply limitations were a factor affecting Gaming revenue during the period in question.\n\nThe evidence discusses Graphics segment revenue (which includes multiple product lines) driven by Blackwell architecture broadly, but does not specifically confirm that Gaming revenue grew or that it was driven by Blackwell-based GeForce GPUs. The claim requires more specific evidence about Gaming revenue and GeForce products than what is provided.",
+        "change_reason": "The evidence only addresses Graphics segment revenue broadly, not Gaming revenue specifically. The Graphics segment includes multiple product lines (Gaming and Professional Visualization), and the evidence does not isolate Gaming revenue or confirm GeForce GPUs specifically drove any growth. Additionally, supply constraints mentioned for Gaming in the relevant period complicate the attribution."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "NVIDIA's Gaming revenue growth in the quarter ended July 26, 2026 was driven by sales of its Blackwell-based GeForce GPUs. FY2027 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001045810-26-000075",
+        "filed": "2026-08-26",
+        "report_date": "2026-07-26",
+        "primary_document": "nvda-20260726.htm",
+        "sha256": "2379ff2b3606fcbb8427606927d312607807fedcef53a54766994f3615a854e5"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001045810-26-000052",
+        "filed": "2026-05-20",
+        "report_date": "2026-04-26",
+        "primary_document": "nvda-20260426.htm",
+        "sha256": "705df02ed8e8c9de7fc7df965ca7cceb61b0c456b9ff34d2cdfbcea4be092ef1"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001045810-26-000021",
+        "filed": "2026-02-25",
+        "report_date": "2026-01-25",
+        "primary_document": "nvda-20260125.htm",
+        "sha256": "2a8b6e294f59a9437d802de932f1a8f6221c81b5c143b9e94050170b03976667"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 720
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:23730-24850",
+      "excerpt": "modules, and software stacks to train, simulate, and deploy advanced automation and robotics solutions. Gaming Gaming is the largest entertainment industry, with PC gaming as the predominant platform. Many factors propel its growth, including new high production value games, the continued rise of eSports, social connectivity and the increasing popularity of game streamers, modders, or gamers who remaster games, and creators. Our products for the gaming market include GeForce RTX GPUs for gaming desktop and laptop PCs, GeForce NOW cloud gaming service, as well as SoCs and development services for game consoles. Our gaming platforms leverage our GPUs and sophisticated software to enhance the gaming experience with smoother, higher quality graphics. NVIDIA RTX features ray tracing technology for real-time, cinematic-quality rendering, and deep learning super sampling, or NVIDIA DLSS, our AI technology that boosts frame rates while generating high-quality images for games. RTX GPUs also feature NVIDIA tensor core technology making them well suited to accelerate a new generation of on-device AI applications.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000052",
+      "form": "10-Q",
+      "filed": "2026-05-20",
+      "period_start": null,
+      "period_end": "2026-04-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+      "locator": "10-Q 0001045810-26-000052:67059-68129",
+      "excerpt": "pr 26, 2026 Apr 27, 2025 $ Change % Change ($ in millions) Compute & Networking $ 53,335 $ 22,054 $ 31,281 142 % Graphics 2,941 1,640 1,301 79 % Total $ 56,276 $ 23,694 $ 32,582 138 % Compute & Networking revenue – The year-over-year increase in the first quarter of fiscal year 2027 was due to growth in Data Center products, driven by the ramp of our Blackwell systems and demand for our InfiniBand, Spectrum-X Ethernet, and NVLink solutions. Graphics revenue – The year-over-year increase in the first quarter of fiscal year 2027 was driven by sales of our Blackwell architecture. Reportable segment operating income – The year-over-year increase in Compute & Networking segment operating income in the first quarter of fiscal year 2027 was driven by the growth in revenue and the non-recurrence of a $4.5 billion charge associated with H20 excess inventory and purchase obligations in the first quarter of fiscal year 2026. The year-over-year increase in Graphics segment operating income in the first quarter of fiscal year 2027 was driven by the growth in revenue.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:202098-203242",
+      "excerpt": "$ 77,286 67 % Graphics 22,459 14,304 8,155 57 % Total $ 215,938 $ 130,497 $ 85,441 65 % Operating Income by Reportable Segments Year Ended Jan 25, 2026 Jan 26, 2025 $ Change % Change ($ in millions) Compute & Networking $ 130,141 $ 82,875 $ 47,266 57 % Graphics 9,156 5,085 4,071 80 % Total $ 139,297 $ 87,960 $ 51,337 58 % Compute & Networking revenue – The year over year increase was driven by the major platform shifts – accelerated computing and AI. Revenue from Data Center computing grew 59% driven by demand for our Blackwell computing platform. Revenue from Data Center networking grew 142% driven by the introduction and continued ramp of NVLink compute fabric for GB200 and GB300 systems and the growth of Ethernet and InfiniBand platforms. Graphics revenue – The year over year increase was driven by sales of our Blackwell architecture. Reportable segment operating income – The year over year increase in Compute & Networking segment operating income was driven by growth in revenue, partially offset by a $4.5 billion charge associated with H20 excess inventory and purchase obligations in the first quarter of fiscal year 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000021",
+      "form": "10-K",
+      "filed": "2026-02-25",
+      "period_start": null,
+      "period_end": "2026-01-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "locator": "10-K 0001045810-26-000021:191068-192240",
+      "excerpt": "with our vendors. Refer to “Item 1A. Risk Factors – Risks Related to Regulatory, Legal, Our Stock and Other Matters” for a further discussion of the potential impact of these factors on our business. Fiscal Year 2026 Summary Year Ended Jan 25, 2026 Jan 26, 2025 Change ($ in millions, except per share data) Revenue $ 215,938 $ 130,497 Up 65% Gross margin 71.1 % 75.0 % -3.9 pts Operating expenses $ 23,076 $ 16,405 Up 41% Operating income $ 130,387 $ 81,453 Up 60% Net income $ 120,067 $ 72,880 Up 65% Net income per diluted share $ 4.90 $ 2.94 Up 67% Revenue for fiscal year 2026 was $215.9 billion, up 65% from a year ago. Data Center revenue for fiscal year 2026 was up 68% from a year ago. The strong year-on-year growth was driven by the major platform shifts – accelerated computing and AI. Gaming revenue for fiscal year 2026 was up 41% from a year ago, driven by strong Blackwell demand. We expect supply constraints to be a headwind to Gaming in the first quarter of fiscal 2027 and beyond. Professional Visualization revenue for fiscal year 2026 was up 70% from a year ago, driven by exceptional demand for Blackwell as well as the launch of our new DGX Spark.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:83351-84440",
+      "excerpt": "% $ 162,850 $ 80,920 $ 81,930 101 % Graphics 7,922 5,412 2,510 46 % 14,987 9,885 5,102 52 % Total $ 96,221 $ 46,743 $ 49,478 106 % $ 177,837 $ 90,805 $ 87,032 96 % 28 Operating Income by Reportable Segments Three Months Ended Six Months Ended Jul 26, 2026 Jul 27, 2025 $ Change % Change Jul 26, 2026 Jul 27, 2025 $ Change % Change ($ in millions) Compute & Networking $ 62,696 $ 28,363 $ 34,333 121 % $ 116,031 $ 50,417 $ 65,614 130 % Graphics 3,899 2,242 1,657 74 % 6,840 3,882 2,958 76 % Total $ 66,595 $ 30,605 $ 35,990 118 % $ 122,871 $ 54,299 $ 68,572 126 % Compute & Networking revenue – The year-over-year increase in the second quarter and first half of fiscal year 2027 was driven by the ramp of our Blackwell Ultra infrastructure. Graphics revenue – The year-over-year increase in the second quarter and first half of fiscal year 2027 was driven by sales of our Blackwell architecture. Reportable segment operating income – The year-over-year increase in Compute & Networking segment operating income in the second quarter of fiscal year 2027 was driven by the growth in revenue.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NVDA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001045810-26-000075",
+      "form": "10-Q",
+      "filed": "2026-08-26",
+      "period_start": null,
+      "period_end": "2026-07-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "locator": "10-Q 0001045810-26-000075:84240-85412",
+      "excerpt": "cture. Reportable segment operating income – The year-over-year increase in Compute & Networking segment operating income in the second quarter of fiscal year 2027 was driven by the growth in revenue. The year-over-year increase in Compute & Networking segment operating income in the first half of fiscal year 2027 was driven by the growth in revenue and the non-recurrence of a $4.5 billion charge associated with H20 excess inventory and purchase obligations in the first quarter of fiscal year 2026. The year-over-year increase in Graphics segment operating income in the second quarter and first half of fiscal year 2027 was driven by the growth in revenue. Concentration of Revenue We refer to customers who purchase products directly from NVIDIA as direct customers, such as AIBs, distributors, ODMs, OEMs, CSPs, AI model makers, and system integrators. Certain direct customers may use either internal resources or third-party system integrators to complete their build. We refer to indirect customers as those who purchase products through our direct customers; indirect customers include CSPs, AI clouds, AI model makers, enterprises, and public sector entities.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 14735,
+    "output": 1814
+  },
+  "latency_ms": 24948,
+  "estimated_cost_usd": 0.071415,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "self_reflection",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "self_critique",
+        "status": "ok",
+        "duration_ms": 10397,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "weaknesses": 3
+      },
+      {
+        "node": "revise",
+        "status": "ok",
+        "duration_ms": 14544,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "model_final_label": "INSUFFICIENT_EVIDENCE"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 11,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "self_critique",
+      "revise",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

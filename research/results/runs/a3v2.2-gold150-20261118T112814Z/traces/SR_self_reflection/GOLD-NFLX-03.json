@@ -1,0 +1,739 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:SR_self_reflection:GOLD-NFLX-03:9a0fbedb",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "SR_self_reflection",
+  "approach_kind": "self_reflection",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": true,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "SR_self_reflection",
+    "kind": "self_reflection",
+    "description": "A2 + self-critique and revision, no new retrieval"
+  },
+  "config_hash": "166d47be253b74e9",
+  "claim": {
+    "claim_id": "GOLD-NFLX-03",
+    "company": "NFLX",
+    "claim": "Netflix's operating income for the quarter ended June 30, 2026 was higher than in the same quarter a year earlier.",
+    "as_of_date": "2026-08-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q2"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": "increase",
+            "threshold": 0,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E6",
+            "quote": "Net income fo r the three months ended June 30, 2026 increased $276 million as compared to the prior comparative period, primarily due to a $418 million increase in operating income"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Netflix's operating income for Q2 2026 (quarter ended June 30, 2026) was higher than Q2 2025 (same quarter a year earlier). Evidence E6 explicitly states that for the three months ended June 30, 2026, there was \"a $418 million increase in operating income\" compared to the prior comparative period (Q2 2025). This directly supports the claim that operating income was higher year-over-year. The $418 million increase is a positive change, confirming operating income increased from Q2 2025 to Q2 2026.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_ALL_TRUE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": "increase",
+            "threshold": 0,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-06-30",
+            "basis": "quarter",
+            "level": 4192610000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 4192610000.0,
+                "filed": "2026-07-17",
+                "form": "10-Q",
+                "accession_number": "0001065280-26-000212",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 3774694000.0,
+            "prior_period_end": "2025-06-30",
+            "yoy_change": 0.11071519969565745,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "self_critique",
+      "weaknesses": [
+        {
+          "weakness_id": "W1",
+          "critique": "The evidence E6 states there was a '$418 million increase in operating income' for Q2 2026 vs Q2 2025, and the computed figures show operating income of $4,192,610,000 for Q2 2026 vs $3,774,694,000 for Q2 2025 (a difference of $417,916,000, which rounds to $418 million). This confirms the increase occurred. However, I should verify whether any one-time items or unusual transactions affected operating income comparability. Evidence E1 mentions a '$2.8 billion termination fee received in connection with the termination of the WBD transaction in the first quarter of 2026,' but this was in Q1 2026, not Q2 2026. The evidence does not indicate any one-time items affecting Q2 2026 operating income specifically, so the comparison appears to be on a comparable basis."
+        },
+        {
+          "weakness_id": "W2",
+          "critique": "The claim is purely about whether operating income was 'higher' in Q2 2026 vs Q2 2025, which is a simple directional comparison. Evidence E6 explicitly confirms a $418 million increase in operating income for the three months ended June 30, 2026 compared to the prior year period. The computed numeric check also confirms this with actual figures showing Q2 2026 operating income of $4.19 billion vs Q2 2025 of $3.77 billion. There is no ambiguity in the metric or period being compared."
+        },
+        {
+          "weakness_id": "W3",
+          "critique": "Evidence E6 provides context that the operating income increase was 'driven by a $1,481 million increase in revenues and partially offset by a $712 million increase in cost of revenues primarily due to an increase in content amortization.' This shows the increase was driven by normal business operations (revenue growth partially offset by cost increases), not by unusual or non-recurring items in Q2 2026. The claim makes no causal attribution, so this context does not weaken the verdict but rather confirms the operating income increase was real and operational."
+        }
+      ]
+    },
+    {
+      "stage": "revision",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_ALL_TRUE",
+      "assessments": [
+        {
+          "item_id": "W1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "$2.8 billion termination fee received in connection with the termination of the WBD transaction in the first quarter of 2026",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-26-000212",
+              "form": "10-Q",
+              "filed": "2026-07-17",
+              "period_end": "2026-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+              "locator": "10-Q 0001065280-26-000212:89532-90572"
+            },
+            {
+              "evidence_id": "E6",
+              "quote": "Net income fo r the three months ended June 30, 2026 increased $276 million as compared to the prior comparative period, primarily due to a $418 million increase in operating income",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-26-000212",
+              "form": "10-Q",
+              "filed": "2026-07-17",
+              "period_end": "2026-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+              "locator": "10-Q 0001065280-26-000212:71925-73090"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E6",
+              "quote": "a $418 million increase in operating income, driven by a $1,481 million increase in revenues and partially offset by a $712 million increase in cost of revenues",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-26-000212",
+              "form": "10-Q",
+              "filed": "2026-07-17",
+              "period_end": "2026-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+              "locator": "10-Q 0001065280-26-000212:71925-73090"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E6",
+              "quote": "driven by a $1,481 million increase in revenues and partially offset by a $712 million increase in cost of revenues primarily due to an increase in content amortization",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001065280-26-000212",
+              "form": "10-Q",
+              "filed": "2026-07-17",
+              "period_end": "2026-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+              "locator": "10-Q 0001065280-26-000212:71925-73090"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "c3c5e0629f975f452749dd98ae06f39bede325a881e1047beb03d07a67d9a684",
+      "source": "cache",
+      "input_tokens": 3993,
+      "output_tokens": 426,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": "increase",
+            "threshold": 0,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E6",
+            "quote": "Net income fo r the three months ended June 30, 2026 increased $276 million as compared to the prior comparative period, primarily due to a $418 million increase in operating income"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Netflix's operating income for Q2 2026 (quarter ended June 30, 2026) was higher than Q2 2025 (same quarter a year earlier). Evidence E6 explicitly states that for the three months ended June 30, 2026, there was \"a $418 million increase in operating income\" compared to the prior comparative period (Q2 2025). This directly supports the claim that operating income was higher year-over-year. The $418 million increase is a positive change, confirming operating income increased from Q2 2025 to Q2 2026.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "self_critique",
+      "tool": "submit_self_critique",
+      "request_key": "83db0d565eacc46b49d057cd3b0e227cbee080a5bdd86bc9227b05c0f0775063",
+      "source": "live",
+      "input_tokens": 4516,
+      "output_tokens": 548,
+      "stop_reason": "tool_use",
+      "latency_ms": 10974,
+      "output": {
+        "weaknesses": [
+          {
+            "weakness_id": "W1",
+            "critique": "The evidence E6 states there was a '$418 million increase in operating income' for Q2 2026 vs Q2 2025, and the computed figures show operating income of $4,192,610,000 for Q2 2026 vs $3,774,694,000 for Q2 2025 (a difference of $417,916,000, which rounds to $418 million). This confirms the increase occurred. However, I should verify whether any one-time items or unusual transactions affected operating income comparability. Evidence E1 mentions a '$2.8 billion termination fee received in connection with the termination of the WBD transaction in the first quarter of 2026,' but this was in Q1 2026, not Q2 2026. The evidence does not indicate any one-time items affecting Q2 2026 operating income specifically, so the comparison appears to be on a comparable basis."
+          },
+          {
+            "weakness_id": "W2",
+            "critique": "The claim is purely about whether operating income was 'higher' in Q2 2026 vs Q2 2025, which is a simple directional comparison. Evidence E6 explicitly confirms a $418 million increase in operating income for the three months ended June 30, 2026 compared to the prior year period. The computed numeric check also confirms this with actual figures showing Q2 2026 operating income of $4.19 billion vs Q2 2025 of $3.77 billion. There is no ambiguity in the metric or period being compared."
+          },
+          {
+            "weakness_id": "W3",
+            "critique": "Evidence E6 provides context that the operating income increase was 'driven by a $1,481 million increase in revenues and partially offset by a $712 million increase in cost of revenues primarily due to an increase in content amortization.' This shows the increase was driven by normal business operations (revenue growth partially offset by cost increases), not by unusual or non-recurring items in Q2 2026. The claim makes no causal attribution, so this context does not weaken the verdict but rather confirms the operating income increase was real and operational."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "revision",
+      "tool": "submit_revision",
+      "request_key": "57658d374cce35b79d54c1c9169eda17cfd3fc2203d7732c361f35c632408596",
+      "source": "live",
+      "input_tokens": 5974,
+      "output_tokens": 833,
+      "stop_reason": "tool_use",
+      "latency_ms": 12157,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "W1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E1",
+                "quote": "$2.8 billion termination fee received in connection with the termination of the WBD transaction in the first quarter of 2026"
+              },
+              {
+                "evidence_id": "E6",
+                "quote": "Net income fo r the three months ended June 30, 2026 increased $276 million as compared to the prior comparative period, primarily due to a $418 million increase in operating income"
+              }
+            ]
+          },
+          {
+            "item_id": "W2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E6",
+                "quote": "a $418 million increase in operating income, driven by a $1,481 million increase in revenues and partially offset by a $712 million increase in cost of revenues"
+              }
+            ]
+          },
+          {
+            "item_id": "W3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E6",
+                "quote": "driven by a $1,481 million increase in revenues and partially offset by a $712 million increase in cost of revenues primarily due to an increase in content amortization"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E6",
+            "quote": "Net income fo r the three months ended June 30, 2026 increased $276 million as compared to the prior comparative period, primarily due to a $418 million increase in operating income"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After reviewing the critique, all three weaknesses are refuted by the evidence. W1 raised concern about one-time items, but the evidence shows the $2.8 billion termination fee was in Q1 2026, not Q2 2026, so it does not affect the Q2 2026 vs Q2 2025 comparison. W2 and W3 actually confirm rather than challenge the verdict - they show the operating income increase was real, measurable ($418 million), and driven by normal business operations (revenue growth partially offset by cost increases). The claim makes a simple directional statement that operating income for Q2 2026 was higher than Q2 2025, and E6 explicitly confirms this with a $418 million increase. The computed figures also verify this (Q2 2026: $4.19 billion vs Q2 2025: $3.77 billion). No evidence contradicts the claim, and the comparison is on a comparable basis without unusual items affecting Q2 2026 operating income. The initial SUPPORTED verdict remains correct.",
+        "change_reason": "No change. All weaknesses identified in the critique were refuted by the evidence. The evidence clearly supports that Netflix's operating income for Q2 2026 was higher than Q2 2025, with no one-time items or unusual transactions affecting the Q2 2026 operating income figure that would undermine comparability."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Netflix's operating income for the quarter ended June 30, 2026 was higher than in the same quarter a year earlier. 2026 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-06-30",
+            "comparison": "increase",
+            "threshold": 0,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-06-30",
+            "basis": "quarter",
+            "level": 4192610000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2026-04-01",
+                "period_end": "2026-06-30",
+                "value": 4192610000.0,
+                "filed": "2026-07-17",
+                "form": "10-Q",
+                "accession_number": "0001065280-26-000212",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 3774694000.0,
+            "prior_period_end": "2025-06-30",
+            "yoy_change": 0.11071519969565745,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001065280-26-000212",
+        "filed": "2026-07-17",
+        "report_date": "2026-06-30",
+        "primary_document": "nflx-20260630.htm",
+        "sha256": "0505f7d52b0ee3212251acf0f7c57670655288ae8f0cda6b7dd86607af59b495"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001065280-26-000138",
+        "filed": "2026-04-17",
+        "report_date": "2026-03-31",
+        "primary_document": "nflx-20260331.htm",
+        "sha256": "7768fe699406fc00a3d32d83a7a944e334557633e5049cfd7e8febdebc0d413e"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001065280-26-000034",
+        "filed": "2026-01-23",
+        "report_date": "2025-12-31",
+        "primary_document": "nflx-20251231.htm",
+        "sha256": "264db6ba1f54f59e834ad0d3bc192e5f346ca59764af4c9c6422056a8b8e3574"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 558
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+      "locator": "10-Q 0001065280-26-000212:89532-90572",
+      "excerpt": "2026, primarily due to a $2.8 billion termination fee received in connection with the termination of the WBD transaction in the first quarter of 2026. See Note 6 Acquisitions for further information. Provision for Income Taxes Three months ended June 30, 2026 as compared to the three months ended June 30, 2025 Three Months Ended Change June 30, 2026 June 30, 2025 Q2’26 vs. Q2’25 (in thousands, except percentages) Provision for income taxes $ 667,172 $ 506,262 $ 160,910 32 % Effective tax rate 16 % 14 % Six months ended June 30, 2026 as compared to the six months ended June 30, 2025 Six Months Ended Change June 30, 2026 June 30, 2025 YTD’26 vs. YTD’25 (in thousands, except percentages) Provision for income taxes $ 1,931,467 $ 829,637 $ 1,101,830 133 % Effective tax rate 18 % 12 % The increase in the effective tax rates for the three and six months ended June 30, 2026, as compared to the same periods in 2025, was primarily due to a decrease in tax benefits associated with lower excess tax benefits on stock-based compensation.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+      "locator": "10-Q 0001065280-26-000212:86856-88055",
+      "excerpt": "The decrease in interest expense for the three months ended June 30, 2026 as compared to the three months ended June 30, 2025 was due to the lower average aggregate principal of our Notes outstanding. The increase in interest expense for the six months ended June 30, 2026 as compared to the six months ended June 30, 2025 was primarily driven by higher amortization of debt issuance costs, including approximately $85 million recognized in connection with the termination of financing arrangements associated with the WBD transaction in the first quarter of 2026. See Note 7 Debt for additional details regarding the termination of financing arrangements associated with the WBD transaction. Interest and Other Income (Expense) Interest and other income (expense) consists primarily of foreign exchange gains and losses on foreign currency denominated balances, gains and losses on certain derivative instruments, interest earned on cash, cash equivalents and short-term investments, and miscellaneous other income and expenses. 32 Table of Contents Three months ended June 30, 2026 as compared to the three months ended June 30, 2025 Three Months Ended Change June 30, 2026 June 30, 2025 Q2’26 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+      "locator": "10-Q 0001065280-26-000212:90372-91542",
+      "excerpt": "hree and six months ended June 30, 2026, as compared to the same periods in 2025, was primarily due to a decrease in tax benefits associated with lower excess tax benefits on stock-based compensation. The increase in the effective tax rate for the six months ended June 30, 2026, as compared to the same period in 2025, was also impacted by lower foreign-derived income deduction relative to the growth in income before income taxes. 33 Table of Contents Liquidity and Capital Resources As of Change June 30, 2026 December 31, 2025 June 30, 2026 vs. December 31, 2025 (in thousands, except percentages) Cash, cash equivalents, restricted cash and short-term investments $ 9,131,464 $ 9,067,872 $ 63,592 1 % Short-term and long-term debt 14,309,306 14,462,836 (153,530) (1) % Cash, cash equivalents, restricted cash and short-term investments increased $64 million in the six months ended June 30, 2026, primarily due to cash provided by operations, which includes the receipt of a $2.8 billion termination fee in connection with the termination of the WBD transaction in the first quarter of 2026, partially offset by repurchases of stock and cash paid for acquisitions.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+      "locator": "10-Q 0001065280-26-000212:98376-99283",
+      "excerpt": "lows The following tables summarize our cash flows: Three months ended June 30, 2026 as compared to the three months ended June 30, 2025 Three Months Ended Change June 30, 2026 June 30, 2025 Q2’26 vs. Q2’25 (in thousands, except percentages) Net cash provided by operating activities $ 1,743,812 $ 2,423,258 $ (679,446) (28) % Net cash provided by (used in) investing activities (218,644) 768,684 (987,328) (128) % Net cash used in financing activities (4,669,627) (2,502,868) 2,166,759 87 % Net cash provided by operating activities for the three months ended June 30, 2026 decreased $679 million as compared to the corresponding period in 2025, primarily driven by a $1,059 million increase in payments for content assets and $620 million in unfavorable changes in working capital, partially offset by a $724 million increase in adjustments for non-cash expenses and a $276 million increase in net income.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+      "locator": "10-Q 0001065280-26-000212:87855-88807",
+      "excerpt": "ous other income and expenses. 32 Table of Contents Three months ended June 30, 2026 as compared to the three months ended June 30, 2025 Three Months Ended Change June 30, 2026 June 30, 2025 Q2’26 vs. Q2’25 (in thousands, except percentages) Interest and other income (expense) $ 51,661 $ 39,630 $ 12,031 30 % As a percentage of revenues — % — % Interest and other income (expense) increased in the three months ended June 30, 2026 primarily due to foreign exchange losses of $17 million, net of the impacts of derivatives and hedging, compared to losses of $36 million for the corresponding period in 2025. In the three months ended June 30, 2026, the foreign exchange losses were primarily driven by the remeasurement of cash and content liability positions in currencies other than the functional currencies, partially offset by the non-cash gain of $9 million from the remeasurement of our Senior Notes denominated in Euros, net of hedging impacts.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+      "locator": "10-Q 0001065280-26-000212:71925-73090",
+      "excerpt": "details on our use of constant currency revenue. Operating margin for the three months ended June 30, 2026 decreased by approximately one percentage point as compared to the prior comparative period. The decrease in operating margin was primarily driven by technology and development expenses and sales and marketing expenses growing at a faster rate than revenue. Net income fo r the three months ended June 30, 2026 increased $276 million as compared to the prior comparative period, primarily due to a $418 million increase in operating income, driven by a $1,481 million increase in revenues and partially offset by a $712 million increase in cost of revenues primarily due to an increase in content amortization. The impact of higher operating income was partially offset by a $161 million increase in the provision for income taxes. 27 Table of Contents Revenues We primarily derive revenues from monthly membership fees for services related to streaming content to our members. We offer a variety of streaming membership plans, the price of which varies by country and the features of the plan. As of June 30, 2026, pricing on our plans ranged from the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_start": "2026-04-01",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/0001065280-26-000212-index.htm",
+      "locator": "OperatingIncome 2026-04-01..2026-06-30",
+      "excerpt": null,
+      "values": [
+        4192610000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "NFLX",
+      "source": "SEC EDGAR",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_start": "2025-04-01",
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/0001065280-26-000212-index.htm",
+      "locator": "OperatingIncome 2025-04-01..2025-06-30",
+      "excerpt": null,
+      "values": [
+        3774694000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "NFLX",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": null,
+      "locator": "OperatingIncome yoy_growth quarter @ 2026-06-30",
+      "excerpt": null,
+      "values": [
+        4192610000.0,
+        3774694000.0,
+        0.11071519969565745
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E6",
+      "quote": "Net income fo r the three months ended June 30, 2026 increased $276 million as compared to the prior comparative period, primarily due to a $418 million increase in operating income",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000212/nflx-20260630.htm",
+      "locator": "10-Q 0001065280-26-000212:71925-73090"
+    },
+    {
+      "evidence_id": "E9",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001065280-26-000212",
+      "form": "10-Q",
+      "filed": "2026-07-17",
+      "period_end": "2026-06-30",
+      "source_url": null,
+      "locator": "OperatingIncome yoy_growth quarter @ 2026-06-30"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 14483,
+    "output": 1807
+  },
+  "latency_ms": 23154,
+  "estimated_cost_usd": 0.070554,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "self_reflection",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_ALL_TRUE",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "self_critique",
+        "status": "ok",
+        "duration_ms": 10982,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "weaknesses": 3
+      },
+      {
+        "node": "revise",
+        "status": "ok",
+        "duration_ms": 12165,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_ALL_TRUE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 10,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "self_critique",
+      "revise",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

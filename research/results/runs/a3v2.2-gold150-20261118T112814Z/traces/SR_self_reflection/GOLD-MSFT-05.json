@@ -1,0 +1,561 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:SR_self_reflection:GOLD-MSFT-05:a0feed31",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "SR_self_reflection",
+  "approach_kind": "self_reflection",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": true,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "SR_self_reflection",
+    "kind": "self_reflection",
+    "description": "A2 + self-critique and revision, no new retrieval"
+  },
+  "config_hash": "166d47be253b74e9",
+  "claim": {
+    "claim_id": "GOLD-MSFT-05",
+    "company": "MSFT",
+    "claim": "Microsoft's revenue for the quarter ended December 31, 2026 grew year over year.",
+    "as_of_date": "2026-11-01",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2027 Q2"
+  },
+  "initial_label": "INSUFFICIENT_EVIDENCE",
+  "final_label": "INSUFFICIENT_EVIDENCE",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Microsoft's revenue for the quarter ended December 31, 2026 grew year over year. This would be FY2027 Q2 (Microsoft's fiscal year ends June 30, so Q2 would end December 31).\n\nHowever, none of the evidence provided contains financial data for the quarter ended December 31, 2026. The evidence includes:\n- E1, E2, E3, E6: 10-Q filed 2026-04-29 for period ending 2026-03-31 (FY2026 Q3)\n- E4: 10-K filed 2026-07-29 for period ending 2026-06-30 (FY2026 full year)\n- E5: 10-Q filed 2026-10-28 for period ending 2026-09-30 (FY2027 Q1)\n\nThe quarter ended December 31, 2026 (FY2027 Q2) would typically be reported in a 10-Q filing around late January 2027, which is after the evidence cutoff date of 2026-11-01. Therefore, there is no evidence available to verify whether revenue grew year over year for that specific quarter.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-12-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "stage": "self_critique",
+      "weaknesses": [
+        {
+          "weakness_id": "1",
+          "critique": "I may have misunderstood the fiscal quarter timing. The claim states 'quarter ended December 31, 2026' which I interpreted as FY2027 Q2. However, I should verify this is correct given Microsoft's fiscal year ends June 30. December 31, 2026 would indeed be Q2 of FY2027 (July-September 2026 = Q1, October-December 2026 = Q2). The 10-Q for this period would typically be filed in late January 2027, after the evidence cutoff of November 1, 2026. My conclusion appears correct that this data would not yet be available."
+        },
+        {
+          "weakness_id": "2",
+          "critique": "I should consider whether any forward-looking statements or preliminary results in the available filings might provide information about Q2 FY2027 performance. However, reviewing the evidence, none of the passages contain forward-looking revenue guidance or preliminary results for the quarter ended December 31, 2026. The most recent filing (E5, filed 2026-10-28 for period ending 2026-09-30) only covers through September 30, 2026, which is the end of Q1 FY2027, not Q2."
+        },
+        {
+          "weakness_id": "3",
+          "critique": "I should verify whether the evidence cutoff date of 2026-11-01 could realistically include any early filing of Q2 FY2027 results. For a quarter ending December 31, 2026, Microsoft would need to file the 10-Q within 40 days (for a large accelerated filer), meaning by approximately February 9, 2027. Since the evidence cutoff is November 1, 2026, which is before the quarter even ends (December 31, 2026), there is no possibility that the Q2 FY2027 results would be available. My INSUFFICIENT_EVIDENCE verdict is correct."
+        }
+      ]
+    },
+    {
+      "stage": "revision",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+      "assessments": [
+        {
+          "item_id": "1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E5",
+              "quote": "Fiscal Year 2027 2026 First Quarter 6 $ 2,925 8 $ 3,955",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-436133",
+              "form": "10-Q",
+              "filed": "2026-10-28",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+              "locator": "10-Q 0001193125-26-436133:52106-52964"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E5",
+              "quote": "filed: 2026-10-28, form: 10-Q, period_end: 2026-09-30",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-436133",
+              "form": "10-Q",
+              "filed": "2026-10-28",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+              "locator": "10-Q 0001193125-26-436133:52106-52964"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "5ce716deb159bcf95d345b415b31d5af4dc4017710ea6ab29115e8d340d1b7c3",
+      "source": "cache",
+      "input_tokens": 4156,
+      "output_tokens": 505,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Microsoft's revenue for the quarter ended December 31, 2026 grew year over year. This would be FY2027 Q2 (Microsoft's fiscal year ends June 30, so Q2 would end December 31).\n\nHowever, none of the evidence provided contains financial data for the quarter ended December 31, 2026. The evidence includes:\n- E1, E2, E3, E6: 10-Q filed 2026-04-29 for period ending 2026-03-31 (FY2026 Q3)\n- E4: 10-K filed 2026-07-29 for period ending 2026-06-30 (FY2026 full year)\n- E5: 10-Q filed 2026-10-28 for period ending 2026-09-30 (FY2027 Q1)\n\nThe quarter ended December 31, 2026 (FY2027 Q2) would typically be reported in a 10-Q filing around late January 2027, which is after the evidence cutoff date of 2026-11-01. Therefore, there is no evidence available to verify whether revenue grew year over year for that specific quarter.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "self_critique",
+      "tool": "submit_self_critique",
+      "request_key": "ffcf75000e2a1a5996fb70d595b577c3cab02f2c9385c3eef42a81e1153ce5a6",
+      "source": "live",
+      "input_tokens": 4688,
+      "output_tokens": 508,
+      "stop_reason": "tool_use",
+      "latency_ms": 10694,
+      "output": {
+        "weaknesses": [
+          {
+            "weakness_id": "1",
+            "critique": "I may have misunderstood the fiscal quarter timing. The claim states 'quarter ended December 31, 2026' which I interpreted as FY2027 Q2. However, I should verify this is correct given Microsoft's fiscal year ends June 30. December 31, 2026 would indeed be Q2 of FY2027 (July-September 2026 = Q1, October-December 2026 = Q2). The 10-Q for this period would typically be filed in late January 2027, after the evidence cutoff of November 1, 2026. My conclusion appears correct that this data would not yet be available."
+          },
+          {
+            "weakness_id": "2",
+            "critique": "I should consider whether any forward-looking statements or preliminary results in the available filings might provide information about Q2 FY2027 performance. However, reviewing the evidence, none of the passages contain forward-looking revenue guidance or preliminary results for the quarter ended December 31, 2026. The most recent filing (E5, filed 2026-10-28 for period ending 2026-09-30) only covers through September 30, 2026, which is the end of Q1 FY2027, not Q2."
+          },
+          {
+            "weakness_id": "3",
+            "critique": "I should verify whether the evidence cutoff date of 2026-11-01 could realistically include any early filing of Q2 FY2027 results. For a quarter ending December 31, 2026, Microsoft would need to file the 10-Q within 40 days (for a large accelerated filer), meaning by approximately February 9, 2027. Since the evidence cutoff is November 1, 2026, which is before the quarter even ends (December 31, 2026), there is no possibility that the Q2 FY2027 results would be available. My INSUFFICIENT_EVIDENCE verdict is correct."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "revision",
+      "tool": "submit_revision",
+      "request_key": "983aaaf3d67f6eafe4b73dae76715798ce30b7e8f9316c8b7b0e9772ce2b9250",
+      "source": "live",
+      "input_tokens": 6069,
+      "output_tokens": 757,
+      "stop_reason": "tool_use",
+      "latency_ms": 13266,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E5",
+                "quote": "Fiscal Year 2027 2026 First Quarter 6 $ 2,925 8 $ 3,955"
+              }
+            ]
+          },
+          {
+            "item_id": "2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E5",
+                "quote": "filed: 2026-10-28, form: 10-Q, period_end: 2026-09-30"
+              }
+            ]
+          }
+        ],
+        "label": "INSUFFICIENT_EVIDENCE",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After reviewing my critique, my initial verdict of INSUFFICIENT_EVIDENCE remains correct.\n\nWeakness 1 questioned my fiscal quarter timing interpretation. The evidence confirms my understanding was correct: E5 shows \"Fiscal Year 2027 2026 First Quarter\" data, confirming that FY2027 Q1 ended September 30, 2026. This means Q2 FY2027 would end December 31, 2026, exactly as I interpreted. This challenge is refuted.\n\nWeakness 2 suggested checking for forward-looking statements about Q2 FY2027. I found no relevant evidence in any of the supplied passages containing preliminary results or guidance for the quarter ended December 31, 2026.\n\nWeakness 3 questioned whether the evidence cutoff could include Q2 FY2027 results. The evidence refutes this concern: E5 (filed 2026-10-28 for period ending 2026-09-30) is the most recent filing available, covering only through Q1 FY2027. Since the evidence cutoff is November 1, 2026, and the quarter in question doesn't even end until December 31, 2026, there is no possibility of having the required financial data.\n\nThe claim requires revenue data for the quarter ended December 31, 2026 and the comparable prior year quarter (ended December 31, 2025). Neither period's data is available in the evidence provided. Therefore, INSUFFICIENT_EVIDENCE is the appropriate verdict.",
+        "change_reason": "No change. All three weaknesses were either refuted by the evidence or found to have no relevant evidence. The initial verdict of INSUFFICIENT_EVIDENCE remains correct because the necessary financial data for the quarter ended December 31, 2026 is not available in any of the supplied evidence."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Microsoft's revenue for the quarter ended December 31, 2026 grew year over year. FY2027 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-12-31",
+            "comparison": "increase",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "PERIOD_NOT_AVAILABLE:2026-12-31"
+          ],
+          "computed": null,
+          "evidence_ids": []
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001193125-26-436133",
+        "filed": "2026-10-28",
+        "report_date": "2026-09-30",
+        "primary_document": "msft-20260930.htm",
+        "sha256": "b0a6acbf5de340588e12f990b56ece4e5d67de2922bf5aa9a6ab379c742e92a8"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001193125-26-323660",
+        "filed": "2026-07-29",
+        "report_date": "2026-06-30",
+        "primary_document": "msft-20260630.htm",
+        "sha256": "a2e8af9a97a682ba3b408c9557ec6f0f3dbd4db6f600d310ae23ebe5b3c827a4"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001193125-26-191507",
+        "filed": "2026-04-29",
+        "report_date": "2026-03-31",
+        "primary_document": "msft-20260331.htm",
+        "sha256": "320b75a01f6ea0cf6cb1ccd46e1081de9e596c2a87f43a65412a159da12ad2d5"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 827
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-191507",
+      "form": "10-Q",
+      "filed": "2026-04-29",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm",
+      "locator": "10-Q 0001193125-26-191507:87279-88398",
+      "excerpt": "ng expenses 4,009 3,750 7% 11,739 11,111 6% Operating income $ 3,672 $ 3,526 4% $ 11,638 $ 10,976 6% Total Revenue $ 82,886 $ 70,066 18% $ 241,832 $ 205,283 18% Cost of revenue 26,828 21,919 22% 76,849 63,817 20% Operating expenses 17,660 16,147 9% 50,349 47,261 7% Operating income $ 38,398 $ 32,000 20% $ 114,634 $ 94,205 22% Reportable Segments Three Months Ended March 31, 2026 Compared with Three Months Ended March 31, 2025 Productivity and Business Processes Revenue increased $5.1 billion or 17%. • Microsoft 365 Commercial products and cloud services revenue increased $3.7 billion or 17%. Microsoft 365 Commercial cloud revenue grew 19% with growth in revenue per user driven by Microsoft 365 E5 and Microsoft 365 Copilot. Microsoft 365 Commercial seats grew 6% driven by small and medium businesses and frontline worker offerings. Microsoft 365 Commercial products revenue grew 1%. • Microsoft 365 Consumer products and cloud services revenue increased $476 million or 26%. Microsoft 365 Consumer cloud revenue grew 33% driven by growth in revenue per user and Microsoft 365 Consumer subscriber growth of 7%.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-191507",
+      "form": "10-Q",
+      "filed": "2026-04-29",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm",
+      "locator": "10-Q 0001193125-26-191507:92448-93510",
+      "excerpt": "r related expenses in our Gaming business and continued investments in research and development compute capacity, AI talent, and data to support product development that benefits the entire portfolio. Revenue, gross margin, and operating income included a favorable foreign currency impact of 2%, 2%, and 3%, respectively. Nine Months Ended March 31, 2026 Compared with Nine Months Ended March 31, 2025 Productivity and Business Processes Revenue increased $14.5 billion or 16%. • Microsoft 365 Commercial products and cloud services revenue increased $10.6 billion or 17%. Microsoft 365 Commercial cloud revenue grew 18% with growth in revenue per user driven by Microsoft 365 E5 and Microsoft 365 Copilot, and continued Microsoft 365 Commercial seat growth. Microsoft 365 Commercial products revenue grew 10% driven by an increase in Office 2024 transactional purchasing, as well as growth in the Windows Commercial on-premises components of Microsoft 365 suite sales. • Microsoft 365 Consumer products and cloud services revenue increased $1.4 billion or 27%.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-191507",
+      "form": "10-Q",
+      "filed": "2026-04-29",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm",
+      "locator": "10-Q 0001193125-26-191507:54777-55693",
+      "excerpt": "$ 1.2 billion and $ 4.4 billion for the three and nine months ended March 31, 2026, respectively, and $ 1.3 billion and $ 4.1 billion for the three and nine months ended March 31, 2025, respectively. 24 PART I Item 1 Dividends Our Board of Directors declared the following dividends: Declaration Date Record Date Payment Date Dividend Per Share Amount Fiscal Year 2026 (In millions) September 15, 2025 November 20, 2025 December 11, 2025 $ 0.91 $ 6,762 December 2, 2025 February 19, 2026 March 12, 2026 0.91 6,756 March 10, 2026 May 21, 2026 June 11, 2026 0.91 6,760 Total $ 2.73 $ 20,278 Fiscal Year 2025 September 16, 2024 November 21, 2024 December 12, 2024 $ 0.83 $ 6,170 December 3, 2024 February 20, 2025 March 13, 2025 0.83 6,169 March 11, 2025 May 15, 2025 June 12, 2025 0.83 6,169 Total $ 2.49 $ 18,508 The dividend declared on March 10, 2026 was included in other current liabilities as of March 31, 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-323660",
+      "form": "10-K",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+      "locator": "10-K 0001193125-26-323660:156857-158004",
+      "excerpt": "ompared with Fiscal Year 2025 Productivity and Business Processes Revenue increased $19.2 billion or 16%. • Microsoft 365 Commercial products and cloud services revenue increased $14.2 billion or 16%. Microsoft 365 Commercial cloud revenue grew 17% with growth in revenue per user driven by Microsoft 365 Copilot and Microsoft 365 E5. Microsoft 365 Commercial seats grew 6% driven by small and medium businesses and frontline worker offerings. Microsoft 365 Commercial products revenue grew 13% driven by growth in the Windows Commercial on-premises components of Microsoft 365 suite sales, as well as an increase in Office 2024 transactional purchasing. • Microsoft 365 Consumer products and cloud services revenue increased $1.8 billion or 24%. Microsoft 365 Consumer cloud revenue grew 28% driven by growth in revenue per user and Microsoft 365 Consumer subscriber growth of 7%. • LinkedIn revenue increased $2.0 billion or 11% with growth across all lines of business. • Dynamics products and cloud services revenue increased $1.2 billion or 15% driven by growth in Dynamics 365. Dynamics 365 revenue grew 18% with growth across all workloads.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-436133",
+      "form": "10-Q",
+      "filed": "2026-10-28",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+      "locator": "10-Q 0001193125-26-436133:52106-52964",
+      "excerpt": "al Year 2027 2026 First Quarter 6 $ 2,925 8 $ 3,955 All share repurchases were made using cash resources. All shares repurchased were under the share repurchase program approved on September 16, 2024. The above table excludes shares repurchased to settle employee tax withholding related to the vesting of stock awards of $ 1.5 billion and $ 1.7 billion for the three months ended September 30, 2026 and 2025, respectively. Dividends Our Board of Directors declared the following dividends: Declaration Date Record Date Payment Date Dividend Per Share Amount Fiscal Year 2027 (In millions) September 15, 2026 November 19, 2026 December 10, 2026 $ 0.98 $ 7,279 Fiscal Year 2026 September 15, 2025 November 20, 2025 December 11, 2025 $ 0.91 $ 6,762 The dividend declared on September 15, 2026 was included in other current liabilities as of September 30, 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-191507",
+      "form": "10-Q",
+      "filed": "2026-04-29",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm",
+      "locator": "10-Q 0001193125-26-191507:53900-54977",
+      "excerpt": "of the program approved on September 14, 2021, has no expiration date, and may be terminated at any time. As of March 31, 2026, $ 44.0 billion remained of this $ 60.0 billion share repurchase program. We repurchased the following shares of common stock under the share repurchase programs: (In millions) Shares Amount Shares Amount Fiscal Year 2026 2025 First Quarter 8 $ 3,955 7 $ 2,800 Second Quarter 12 5,964 8 3,500 Third Quarter 7 3,400 8 3,500 Total 27 $ 13,319 23 $ 9,800 All repurchases were made using cash resources. Shares repurchased during fiscal year 2026 were under the share repurchase program approved on September 16, 2024. Shares repurchased during fiscal year 2025 were under the share repurchase program approved on September 14, 2021. The above table excludes shares repurchased to settle employee tax withholding related to the vesting of stock awards of $ 1.2 billion and $ 4.4 billion for the three and nine months ended March 31, 2026, respectively, and $ 1.3 billion and $ 4.1 billion for the three and nine months ended March 31, 2025, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 14913,
+    "output": 1770
+  },
+  "latency_ms": 23973,
+  "estimated_cost_usd": 0.071289,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "self_reflection",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+        "checks": [
+          "UNVERIFIABLE"
+        ]
+      },
+      {
+        "node": "self_critique",
+        "status": "ok",
+        "duration_ms": 10697,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "weaknesses": 3
+      },
+      {
+        "node": "revise",
+        "status": "ok",
+        "duration_ms": 13270,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "model_final_label": "INSUFFICIENT_EVIDENCE"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_PARTIALLY_UNVERIFIABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 22,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "self_critique",
+      "revise",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

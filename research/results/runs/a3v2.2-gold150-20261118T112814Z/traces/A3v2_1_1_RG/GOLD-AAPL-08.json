@@ -1,0 +1,1205 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:A3v2_1_1_RG:GOLD-AAPL-08:a1123a72",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3v2_1_1_RG",
+  "approach_kind": "contradiction_aware_v2",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "review": {
+      "enabled": true,
+      "max_output_tokens": 4096,
+      "passage_chars": 1200,
+      "allow_partial_period": false
+    },
+    "guard": {
+      "enabled": true
+    },
+    "analyzer": {
+      "name": "default"
+    },
+    "decidability": {
+      "name": "not_assessed"
+    },
+    "periods": {
+      "enabled": true,
+      "version": "1.1"
+    },
+    "name": "A3v2_1_1_RG",
+    "kind": "contradiction_aware_v2",
+    "description": "A3v2_1_1_R + deterministic reconciliation guard (cache-only replay of A3v2_1_1_R)",
+    "versions": {
+      "a3v2": "a3v2-0.2.1-dev",
+      "review_prompts": "a3v2-review-prompts-0.3",
+      "guard": "a3v2-guard-0.1",
+      "graph": "langgraph-claims-a3v2-0.1",
+      "periods": "a3v2-periods-1.1"
+    },
+    "replay_of": "A3v2_1_1_R"
+  },
+  "config_hash": "84aba6df744a9382",
+  "claim": {
+    "claim_id": "GOLD-AAPL-08",
+    "company": "AAPL",
+    "claim": "Apple's growth in Americas net sales in the quarter ended March 28, 2026 was primarily driven by Services.",
+    "as_of_date": "2026-05-20",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026 Q2"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Americas net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 due to higher net sales of iPhone and Services."
+          }
+        ],
+        "reasoning_summary": "The claim states that Apple's growth in Americas net sales in Q2 FY2026 (quarter ended March 28, 2026) was \"primarily driven by Services.\" This is a causal/attribution claim about what drove the growth.\n\nEvidence E1, from the 10-Q for the period ended March 28, 2026, directly addresses the drivers of Americas net sales growth for this quarter. It states: \"Americas net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 due to higher net sales of iPhone and Services.\"\n\nThe filing attributes the growth to BOTH iPhone and Services, listing them together without indicating that Services was the primary driver. The claim's assertion that Services was the \"primary\" driver is contradicted by the filing's statement that growth was \"due to\" both iPhone and Services equally (they are listed in the same sentence with \"and\" connecting them, with iPhone mentioned first).\n\nThis is a purely interpretive/causal claim about what drove the growth, not a numeric claim about specific figures or growth rates.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "analyze_claim",
+      "analysis": {
+        "assertions": [
+          {
+            "assertion_id": "A0",
+            "text": "Apple's growth in Americas net sales in the quarter ended March 28, 2026 was primarily driven by Services.",
+            "type": "claim",
+            "period_end": "2026-03-28",
+            "comparison_end": "2025-03-28",
+            "period_start": "2025-12-28",
+            "period_months": 3,
+            "period_kind": "duration"
+          }
+        ],
+        "computations": [],
+        "claim_period": {
+          "version": "a3v2-periods-1.1",
+          "kind": "duration",
+          "start": "2025-12-28",
+          "end": "2026-03-28",
+          "months": 3,
+          "label": "3M ended 2026-03-28",
+          "fiscal_year": 2026,
+          "source": "text_date",
+          "comparison": {
+            "start": "2024-12-28",
+            "end": "2025-03-28"
+          },
+          "notes": [],
+          "period_end": "2026-03-28",
+          "comparison_end": "2025-03-28",
+          "basis": "quarter",
+          "orientation": "historical",
+          "years": [
+            2024,
+            2025,
+            2026
+          ]
+        },
+        "analyzer": "default-whole-claim-0.1",
+        "decidability": [
+          {
+            "assertion_id": "A0",
+            "status": "NOT_ASSESSED",
+            "reason": "decidability check not implemented yet"
+          }
+        ]
+      },
+      "computations": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did Services revenue in Americas actually grow more in absolute dollars than iPhone revenue in Q2 FY2026, which would support that Services was the primary driver even if both are mentioned together?",
+          "search_query": "Americas Services revenue iPhone revenue quarter March 2026 2025 segment product category",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Does the filing provide more detailed commentary elsewhere that specifically identifies Services as the primary or main driver of Americas growth in Q2 FY2026?",
+          "search_query": "Americas primarily mainly driven Services growth second quarter Q2 2026",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Could the order of mention (iPhone listed before Services) be incidental rather than indicating relative importance, and might other context show Services contribution was larger?",
+          "search_query": "Americas Services iPhone contribution growth percentage second quarter March 2026",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "Americas Services revenue iPhone revenue quarter March 2026 2025 segment product category",
+          "results": [
+            "E7",
+            "E8",
+            "E9"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "Americas primarily mainly driven Services growth second quarter Q2 2026",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "Americas Services iPhone contribution growth percentage second quarter March 2026",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "evidence_review",
+      "version": "a3v2-review-prompts-0.1",
+      "claim_period": {
+        "version": "a3v2-periods-1.1",
+        "kind": "duration",
+        "start": "2025-12-28",
+        "end": "2026-03-28",
+        "months": 3,
+        "label": "3M ended 2026-03-28",
+        "fiscal_year": 2026,
+        "source": "text_date",
+        "comparison": {
+          "start": "2024-12-28",
+          "end": "2025-03-28"
+        },
+        "notes": [],
+        "period_end": "2026-03-28",
+        "comparison_end": "2025-03-28",
+        "basis": "quarter",
+        "orientation": "historical",
+        "years": [
+          2024,
+          2025,
+          2026
+        ]
+      },
+      "assertions": [
+        {
+          "assertion_id": "A0",
+          "text": "Apple's growth in Americas net sales in the quarter ended March 28, 2026 was primarily driven by Services.",
+          "type": "claim",
+          "period_end": "2026-03-28",
+          "comparison_end": "2025-03-28",
+          "period_start": "2025-12-28",
+          "period_months": 3,
+          "period_kind": "duration"
+        }
+      ],
+      "reviewed_evidence_ids": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15"
+      ],
+      "findings": [
+        {
+          "finding_id": "R1",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E1"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CAUSE",
+          "definition_mismatch": false,
+          "key_quote": "Americas net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 due to higher net sales of iPhone and Services.",
+          "justification": "This passage explicitly states the causes of Americas net sales growth in the second quarter of 2026 (the quarter ended March 28, 2026). It attributes the increase to 'higher net sales of iPhone and Services' - listing both iPhone and Services together without indicating that Services was the primary driver. The claim asserts Services was the PRIMARY driver, but the filing presents iPhone and Services as co-equal contributors to the growth, contradicting the claim that Services was primary.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E1",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-03-28",
+                  "months": [
+                    3,
+                    6
+                  ],
+                  "markers": [
+                    "YTD6",
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025,
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R2",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E8"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended March 28, 2026: iPhone $ 56,994, Services 30,976",
+          "justification": "This table shows the absolute levels of iPhone and Services net sales for the three months ended March 28, 2026. While it shows iPhone had higher absolute sales ($56,994M vs $30,976M), it does not provide the prior period comparison figures needed to determine which category contributed more to the GROWTH in Americas specifically. The table shows company-wide figures, not Americas segment specifically, and without the prior period Americas breakdown by product category, we cannot determine which drove Americas growth.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-03-28",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R3",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E2"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "OTHER",
+          "definition_mismatch": false,
+          "key_quote": "Americas net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPhone and Services.",
+          "justification": "This passage discusses the first quarter of 2026 (three months ended December 27, 2025), which is a different period than the claim's period (second quarter ended March 28, 2026). While it provides context about Americas performance in an adjacent quarter, it does not decide what drove growth in the specific quarter at issue.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E2",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-27",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025,
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        }
+      ],
+      "dropped_findings": [],
+      "llm_called": true,
+      "period_derivations": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [
+            {
+              "evidence_id": "E8",
+              "quote": "Three Months Ended March 28, 2026 March 29, 2025 Change iPhone $ 56,994 $ 46,841 22 % Services 30,976 26,645 16 %",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-26-000013",
+              "form": "10-Q",
+              "filed": "2026-05-01",
+              "period_end": "2026-03-28",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+              "locator": "10-Q 0000320193-26-000013:39201-40394"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E10",
+              "quote": "Services Services net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales from advertising, the App Store ® and cloud services.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-26-000013",
+              "form": "10-Q",
+              "filed": "2026-05-01",
+              "period_end": "2026-03-28",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+              "locator": "10-Q 0000320193-26-000013:40194-41177"
+            },
+            {
+              "evidence_id": "E11",
+              "quote": "Rest of Asia Pacific net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPhone and Services.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0000320193-26-000013",
+              "form": "10-Q",
+              "filed": "2026-05-01",
+              "period_end": "2026-03-28",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+              "locator": "10-Q 0000320193-26-000013:38711-39401"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation_guard",
+      "version": "a3v2-guard-0.1",
+      "initial_label": "CONTRADICTED",
+      "proposed_label": "CONTRADICTED",
+      "final_label": "CONTRADICTED",
+      "outcome": "NO_CHANGE",
+      "reason_code": "NO_CHANGE",
+      "excluded_citations": [],
+      "deciding_findings": [],
+      "initial_basis": [],
+      "rule_trace": [
+        "NO_CHANGE: NO_CHANGE"
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "a8004b5882c4865a5f4c7f24b3b54b7cf8c095814dce4feaee7d2c74702d0b32",
+      "source": "cache",
+      "input_tokens": 4162,
+      "output_tokens": 443,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Americas net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 due to higher net sales of iPhone and Services."
+          }
+        ],
+        "reasoning_summary": "The claim states that Apple's growth in Americas net sales in Q2 FY2026 (quarter ended March 28, 2026) was \"primarily driven by Services.\" This is a causal/attribution claim about what drove the growth.\n\nEvidence E1, from the 10-Q for the period ended March 28, 2026, directly addresses the drivers of Americas net sales growth for this quarter. It states: \"Americas net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 due to higher net sales of iPhone and Services.\"\n\nThe filing attributes the growth to BOTH iPhone and Services, listing them together without indicating that Services was the primary driver. The claim's assertion that Services was the \"primary\" driver is contradicted by the filing's statement that growth was \"due to\" both iPhone and Services equally (they are listed in the same sentence with \"and\" connecting them, with iPhone mentioned first).\n\nThis is a purely interpretive/causal claim about what drove the growth, not a numeric claim about specific figures or growth rates.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "903a2a0bac064571d87b965fb85bd4f09662477715d420f76ca5025ec7c5cad9",
+      "source": "cache",
+      "input_tokens": 5005,
+      "output_tokens": 300,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did Services revenue in Americas actually grow more in absolute dollars than iPhone revenue in Q2 FY2026, which would support that Services was the primary driver even if both are mentioned together?",
+            "search_query": "Americas Services revenue iPhone revenue quarter March 2026 2025 segment product category",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Does the filing provide more detailed commentary elsewhere that specifically identifies Services as the primary or main driver of Americas growth in Q2 FY2026?",
+            "search_query": "Americas primarily mainly driven Services growth second quarter Q2 2026",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Could the order of mention (iPhone listed before Services) be incidental rather than indicating relative importance, and might other context show Services contribution was larger?",
+            "search_query": "Americas Services iPhone contribution growth percentage second quarter March 2026",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "evidence_review",
+      "tool": "submit_evidence_review",
+      "request_key": "e823b63357e79a250ab0a5ff5d261321004c435820b932ca10d3a353e7e9a0f0",
+      "source": "cache",
+      "input_tokens": 8137,
+      "output_tokens": 667,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "findings": [
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E1"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CAUSE",
+            "key_quote": "Americas net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 due to higher net sales of iPhone and Services.",
+            "justification": "This passage explicitly states the causes of Americas net sales growth in the second quarter of 2026 (the quarter ended March 28, 2026). It attributes the increase to 'higher net sales of iPhone and Services' - listing both iPhone and Services together without indicating that Services was the primary driver. The claim asserts Services was the PRIMARY driver, but the filing presents iPhone and Services as co-equal contributors to the growth, contradicting the claim that Services was primary.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E8"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Three Months Ended March 28, 2026: iPhone $ 56,994, Services 30,976",
+            "justification": "This table shows the absolute levels of iPhone and Services net sales for the three months ended March 28, 2026. While it shows iPhone had higher absolute sales ($56,994M vs $30,976M), it does not provide the prior period comparison figures needed to determine which category contributed more to the GROWTH in Americas specifically. The table shows company-wide figures, not Americas segment specifically, and without the prior period Americas breakdown by product category, we cannot determine which drove Americas growth.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E2"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "OTHER",
+            "key_quote": "Americas net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPhone and Services.",
+            "justification": "This passage discusses the first quarter of 2026 (three months ended December 27, 2025), which is a different period than the claim's period (second quarter ended March 28, 2026). While it provides context about Americas performance in an adjacent quarter, it does not decide what drove growth in the specific quarter at issue.",
+            "definition_mismatch": false
+          }
+        ]
+      },
+      "isolated_conversation": true,
+      "prompt_version": "a3v2-review-prompts-0.3"
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "7149115b82b8810b9fee1564134d7c9be5457cc8897ad8d9421eb04cde9c0161",
+      "source": "cache",
+      "input_tokens": 10009,
+      "output_tokens": 945,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": [
+              {
+                "evidence_id": "E8",
+                "quote": "Three Months Ended March 28, 2026 March 29, 2025 Change iPhone $ 56,994 $ 46,841 22 % Services 30,976 26,645 16 %"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E10",
+                "quote": "Services Services net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales from advertising, the App Store ® and cloud services."
+              },
+              {
+                "evidence_id": "E11",
+                "quote": "Rest of Asia Pacific net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPhone and Services."
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "CONTRADICTED",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Americas net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 due to higher net sales of iPhone and Services."
+          }
+        ],
+        "reasoning_summary": "The claim asserts that Apple's growth in Americas net sales in Q2 FY2026 (quarter ended March 28, 2026) was \"primarily driven by Services.\"\n\n**Initial Verdict Analysis:**\nEvidence E1 directly addresses the drivers of Americas net sales growth for Q2 FY2026. It states the increase was \"due to higher net sales of iPhone and Services\" - presenting both as co-equal contributors without indicating Services was primary. This contradicts the claim's assertion that Services was the PRIMARY driver.\n\n**Challenge Assessment:**\n\nH1 (Services vs iPhone absolute dollar growth in Americas): E8 provides company-wide product category data showing iPhone grew from $46,841M to $56,994M (+$10,153M) while Services grew from $26,645M to $30,976M (+$4,331M) globally. However, this is total company data, not Americas-specific breakdowns. Without Americas segment data by product category, we cannot determine which contributed more to Americas growth specifically. NO_RELEVANT_EVIDENCE.\n\nH2 (More detailed commentary identifying Services as primary): E10 discusses Services growth drivers globally (advertising, App Store, cloud services) but does not specifically address Americas. E11 discusses Rest of Asia Pacific, not Americas. No evidence was found that specifically identifies Services as the primary driver of Americas growth in Q2 FY2026. CHALLENGE_REFUTED.\n\nH3 (Order of mention incidental, Services contribution larger): No evidence was retrieved showing Americas-specific contribution data that would demonstrate Services had a larger contribution than iPhone. NO_RELEVANT_EVIDENCE.\n\n**Final Verdict:**\nThe initial verdict remains CONTRADICTED. E1 explicitly attributes Americas growth in Q2 FY2026 to both iPhone and Services equally, contradicting the claim that Services was the primary driver. The challenges did not uncover evidence supporting the claim or refuting the initial verdict.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Apple's growth in Americas net sales in the quarter ended March 28, 2026 was primarily driven by Services. FY2026 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "Americas Services revenue iPhone revenue quarter March 2026 2025 segment product category",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E7",
+        "E8",
+        "E9"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "Americas primarily mainly driven Services growth second quarter Q2 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "Americas Services iPhone contribution growth percentage second quarter March 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-26-000013",
+        "filed": "2026-05-01",
+        "report_date": "2026-03-28",
+        "primary_document": "aapl-20260328.htm",
+        "sha256": "8a2c43286c07522163b237664aad64d3f1760654e22d881374dea29362508ea6"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-26-000006",
+        "filed": "2026-01-30",
+        "report_date": "2025-12-27",
+        "primary_document": "aapl-20251227.htm",
+        "sha256": "2d32cfc574b8a8301a1a165a93640ef5ab0de6e140054ccb16ded56d3bb02a78"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0000320193-25-000079",
+        "filed": "2025-10-31",
+        "report_date": "2025-09-27",
+        "primary_document": "aapl-20250927.htm",
+        "sha256": "056f733f13ff7407e64dc81fb96da3c3c55a6ba429bf094f57cb6bd472231f82"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 398
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:36814-37964",
+      "excerpt": "and reductions in consumer spending and negative consumer sentiment for the Company’s products and services, all of which can further adversely affect the Company’s business and results of operations. Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 28, 2026 and March 29, 2025 (dollars in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 Change March 28, 2026 March 29, 2025 Change Americas $ 45,093 $ 40,315 12 % $ 103,622 $ 92,963 11 % Europe 28,055 24,454 15 % 66,201 58,315 14 % Greater China 20,497 16,002 28 % 46,023 34,515 33 % Japan 8,401 7,298 15 % 17,814 16,285 9 % Rest of Asia Pacific 9,138 7,290 25 % 21,280 17,581 21 % Total net sales $ 111,184 $ 95,359 17 % $ 254,940 $ 219,659 16 % Americas Americas net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 due to higher net sales of iPhone and Services. The strength in foreign currencies relative to the U.S. dollar had a favorable year-over-year impact on Americas net sales during the second quarter of 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:32891-34012",
+      "excerpt": "and reductions in consumer spending and negative consumer sentiment for the Company’s products and services, all of which can further adversely affect the Company’s business and results of operations. Segment Operating Performance The following table shows net sales by reportable segment for the three months ended December 27, 2025 and December 28, 2024 (dollars in millions): Three Months Ended December 27, 2025 December 28, 2024 Change Americas $ 58,529 $ 52,648 11 % Europe 38,146 33,861 13 % Greater China 25,526 18,513 38 % Japan 9,413 8,987 5 % Rest of Asia Pacific 12,142 10,291 18 % Total net sales $ 143,756 $ 124,300 16 % Americas Americas net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPhone and Services. Europe Europe net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales of iPhone and Services. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Europe net sales during the first quarter of 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:40977-42118",
+      "excerpt": "increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales from advertising, the App Store ® and cloud services. Apple Inc. | Q2 2026 Form 10-Q | 15 Gross Margin Products and Services gross margin and gross margin percentage for the three- and six-month periods ended March 28, 2026 and March 29, 2025, were as follows (dollars in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 March 28, 2026 March 29, 2025 Gross margin: Products $ 31,029 $ 24,684 $ 77,294 $ 63,197 Services 23,752 20,183 46,718 39,945 Total gross margin $ 54,781 $ 44,867 $ 124,012 $ 103,142 Gross margin percentage: Products 38.7 % 35.9 % 39.9 % 37.9 % Services 76.7 % 75.7 % 76.6 % 75.4 % Total gross margin percentage 49.3 % 47.1 % 48.6 % 47.0 % Products Gross Margin Products gross margin and gross margin percentage increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to a different mix of products and strength in foreign currencies relative to the U.S. dollar, partially offset by higher costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:37764-38911",
+      "excerpt": "o higher net sales of iPhone and Services. The strength in foreign currencies relative to the U.S. dollar had a favorable year-over-year impact on Americas net sales during the second quarter of 2026. Europe Europe net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPhone and Services. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Europe net sales during the second quarter and first six months of 2026. Greater China Greater China net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 due to higher net sales of iPhone. The strength in the renminbi relative to the U.S. dollar had a favorable year-over-year impact on Greater China net sales during the second quarter of 2026. Apple Inc. | Q2 2026 Form 10-Q | 14 Japan Japan net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPhone. The weakness in the yen relative to the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:38021-39114",
+      "excerpt": "pense during the first quarter of 2026 compared to the same quarter in 2025 was primarily driven by increases in infrastructure-related costs, headcount-related expenses and engineering program costs. Selling, General and Administrative The growth in selling, general and administrative expense during the first quarter of 2026 compared to the same quarter in 2025 was primarily driven by increases in headcount-related expenses and variable selling expenses. Apple Inc. | Q1 2026 Form 10-Q | 16 Provision for Income Taxes Provision for income taxes, effective tax rate and statutory federal income tax rate for the three months ended December 27, 2025 and December 28, 2024, were as follows (dollars in millions): Three Months Ended December 27, 2025 December 28, 2024 Provision for income taxes $ 8,905 $ 6,254 Effective tax rate 17.5 % 14.7 % Statutory federal income tax rate 21 % 21 % The Company’s effective tax rate for the first quarter of 2026 was lower than the statutory federal income tax rate primarily due to a lower effective tax rate on foreign earnings, the impact of the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:37272-38221",
+      "excerpt": "and Part II, Item 1A of this Form 10-Q, in each case under the heading “Risk Factors.” As a result, the Company believes, in general, gross margins will be subject to volatility and downward pressure. Operating Expenses Operating expenses for the three months ended December 27, 2025 and December 28, 2024, were as follows (dollars in millions): Three Months Ended December 27, 2025 December 28, 2024 Change Research and development $ 10,887 $ 8,268 32 % Percentage of total net sales 8 % 7 % Selling, general and administrative $ 7,492 $ 7,175 4 % Percentage of total net sales 5 % 6 % Total operating expenses $ 18,379 $ 15,443 19 % Percentage of total net sales 13 % 12 % Research and Development The growth in research and development (“R&D”) expense during the first quarter of 2026 compared to the same quarter in 2025 was primarily driven by increases in infrastructure-related costs, headcount-related expenses and engineering program costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:13986-14599",
+      "excerpt": "rally consistent for each reportable segment in Note 10, “Segment Information” for the three- and six-month periods ended March 28, 2026 and March 29, 2025, except in Greater China, where iPhone revenue represented a moderately higher proportion of net sales. As of March 28, 2026 and September 27, 2025, the Company had total deferred revenue of $ 14.7 billion and $ 13.7 billion, respectively. As of March 28, 2026, the Company expects 64 % of total deferred revenue to be realized in less than a year, 23 % within one-to-two years, 11 % within two-to-three years and 2 % in greater than three years. Apple Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:39201-40394",
+      "excerpt": "es of iPhone and Services. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Rest of Asia Pacific net sales during the second quarter of 2026. Products and Services Performance The following table shows net sales by category for the three- and six-month periods ended March 28, 2026 and March 29, 2025 (dollars in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 Change March 28, 2026 March 29, 2025 Change iPhone $ 56,994 $ 46,841 22 % $ 142,263 $ 115,979 23 % Mac 8,399 7,949 6 % 16,785 16,936 (1) % iPad 6,914 6,402 8 % 15,509 14,490 7 % Wearables, Home and Accessories 7,901 7,522 5 % 19,394 19,269 1 % Services 30,976 26,645 16 % 60,989 52,985 15 % Total net sales $ 111,184 $ 95,359 17 % $ 254,940 $ 219,659 16 % iPhone iPhone net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 due to higher net sales of Pro models. Mac Mac net sales increased during the second quarter of 2026 compared to the second quarter of 2025 due to higher net sales of laptops. Year-over-year Mac net sales during the first six months of 2026 were relatively flat.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:12986-14186",
+      "excerpt": "rwise stated, references to particular years, quarters, months and periods refer to the Company’s fiscal years ended in September and the associated quarters, months and periods of those fiscal years. Note 2 – Revenue The following table shows disaggregated net sales, as well as the portion of total net sales that was previously deferred, for the three- and six-month periods ended March 28, 2026 and March 29, 2025 (in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 March 28, 2026 March 29, 2025 iPhone ® $ 56,994 $ 46,841 $ 142,263 $ 115,979 Mac ® 8,399 7,949 16,785 16,936 iPad ® 6,914 6,402 15,509 14,490 Wearables, Home and Accessories 7,901 7,522 19,394 19,269 Services 30,976 26,645 60,989 52,985 Total net sales $ 111,184 $ 95,359 $ 254,940 $ 219,659 Portion of total net sales that was included in deferred revenue as of the beginning of the period $ 3,987 $ 3,672 $ 5,834 $ 5,440 The Company’s proportion of net sales by disaggregated revenue source was generally consistent for each reportable segment in Note 10, “Segment Information” for the three- and six-month periods ended March 28, 2026 and March 29, 2025, except in Greater China, where iPhone reven",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:40194-41177",
+      "excerpt": "ased during the second quarter of 2026 compared to the second quarter of 2025 due to higher net sales of laptops. Year-over-year Mac net sales during the first six months of 2026 were relatively flat. iPad iPad net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPad, partially offset by lower net sales of iPad mini ® . Wearables, Home and Accessories Wearables, Home and Accessories net sales increased during the second quarter of 2026 compared to the second quarter of 2025 primarily due to higher net sales of Accessories and Wearables. Year-over-year Wearables, Home and Accessories net sales during the first six months of 2026 were relatively flat. Services Services net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales from advertising, the App Store ® and cloud services. Apple Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:38711-39401",
+      "excerpt": "et sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPhone. The weakness in the yen relative to the U.S. dollar had an unfavorable year-over-year impact on Japan net sales during the first six months of 2026. Rest of Asia Pacific Rest of Asia Pacific net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPhone and Services. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Rest of Asia Pacific net sales during the second quarter of 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:41918-42960",
+      "excerpt": "t six months of 2026 compared to the same periods in 2025 primarily due to a different mix of products and strength in foreign currencies relative to the U.S. dollar, partially offset by higher costs. Services Gross Margin Services gross margin increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher Services net sales and a different mix of services. Services gross margin percentage increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to a different mix of services and strength in foreign currencies relative to the U.S. dollar, partially offset by higher costs. The Company’s future gross margins can be impacted by a variety of factors, as discussed in Part I, Item 1A of the 2025 Form 10-K and Part II, Item 1A of this Form 10-Q, in each case under the heading “Risk Factors.” As a result, the Company believes, in general, gross margins will be subject to volatility and downward pressure. Apple Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:42760-43866",
+      "excerpt": ", Item 1A of this Form 10-Q, in each case under the heading “Risk Factors.” As a result, the Company believes, in general, gross margins will be subject to volatility and downward pressure. Apple Inc. | Q2 2026 Form 10-Q | 16 Operating Expenses Operating expenses for the three- and six-month periods ended March 28, 2026 and March 29, 2025, were as follows (dollars in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 Change March 28, 2026 March 29, 2025 Change Research and development $ 11,419 $ 8,550 34 % $ 22,306 $ 16,818 33 % Percentage of total net sales 10 % 9 % 9 % 8 % Selling, general and administrative $ 7,477 $ 6,728 11 % $ 14,969 $ 13,903 8 % Percentage of total net sales 7 % 7 % 6 % 6 % Total operating expenses $ 18,896 $ 15,278 24 % $ 37,275 $ 30,721 21 % Percentage of total net sales 17 % 16 % 15 % 14 % Research and Development Research and development (“R&D”) expense increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher infrastructure-related costs and headcount-related expenses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000006",
+      "form": "10-Q",
+      "filed": "2026-01-30",
+      "period_start": null,
+      "period_end": "2025-12-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm",
+      "locator": "10-Q 0000320193-26-000006:35837-36948",
+      "excerpt": "es Services net sales increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher net sales from advertising, the App Store ® and cloud services. Apple Inc. | Q1 2026 Form 10-Q | 15 Gross Margin Products and Services gross margin and gross margin percentage for the three months ended December 27, 2025 and December 28, 2024, were as follows (dollars in millions): Three Months Ended December 27, 2025 December 28, 2024 Gross margin: Products $ 46,265 $ 38,513 Services 22,966 19,762 Total gross margin $ 69,231 $ 58,275 Gross margin percentage: Products 40.7 % 39.3 % Services 76.5 % 75.0 % Total gross margin percentage 48.2 % 46.9 % Products Gross Margin Products gross margin and gross margin percentage increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to a different mix of products, partially offset by tariff costs. Services Gross Margin Services gross margin increased during the first quarter of 2026 compared to the same quarter in 2025 primarily due to higher Services net sales and a different mix of services.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_start": null,
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:43666-44845",
+      "excerpt": "R&D”) expense increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher infrastructure-related costs and headcount-related expenses. Selling, General and Administrative Selling, general and administrative expense increased during the second quarter and first six months of 2026 compared to the same periods in 2025 primarily due to higher headcount-related expenses, variable selling expenses and professional services. Provision for Income Taxes Provision for income taxes, effective tax rate and statutory federal income tax rate for the three- and six-month periods ended March 28, 2026 and March 29, 2025, were as follows (dollars in millions): Three Months Ended Six Months Ended March 28, 2026 March 29, 2025 March 28, 2026 March 29, 2025 Provision for income taxes $ 6,255 $ 4,530 $ 15,160 $ 10,784 Effective tax rate 17.5 % 15.5 % 17.5 % 15.0 % Statutory federal income tax rate 21 % 21 % 21 % 21 % The Company’s effective tax rate for the second quarter of 2026 was lower than the statutory federal income tax rate primarily due to a lower effective tax rate on foreign earnings, the impact of the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "Americas net sales increased during the second quarter and first six months of 2026 compared to the same periods in 2025 due to higher net sales of iPhone and Services.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0000320193-26-000013",
+      "form": "10-Q",
+      "filed": "2026-05-01",
+      "period_end": "2026-03-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+      "locator": "10-Q 0000320193-26-000013:36814-37964"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 27313,
+    "output": 2355
+  },
+  "latency_ms": 8,
+  "estimated_cost_usd": 0.117264,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "analyze_claim",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "assertions": 1,
+        "computations": 0,
+        "period_source": "text_date"
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "evidence_review",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "findings": 3,
+        "deciding": 1,
+        "downgraded": 0
+      },
+      {
+        "node": "reconcile_v2",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "CONTRADICTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "reconciliation_guard",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "outcome": "NO_CHANGE",
+        "reason": "NO_CHANGE",
+        "label": "CONTRADICTED"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "analyze_claim",
+      "generate_hypotheses",
+      "counter_investigation",
+      "evidence_review",
+      "reconcile_v2",
+      "apply_guards",
+      "reconciliation_guard",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-a3v2-0.1"
+  },
+  "a3v2_version": "a3v2-0.2.1-dev"
+}

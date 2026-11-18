@@ -1,0 +1,2291 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:A3v2_1_1_RG:GOLD-AMZN-03:5f8425fd",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3v2_1_1_RG",
+  "approach_kind": "contradiction_aware_v2",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "review": {
+      "enabled": true,
+      "max_output_tokens": 4096,
+      "passage_chars": 1200,
+      "allow_partial_period": false
+    },
+    "guard": {
+      "enabled": true
+    },
+    "analyzer": {
+      "name": "default"
+    },
+    "decidability": {
+      "name": "not_assessed"
+    },
+    "periods": {
+      "enabled": true,
+      "version": "1.1"
+    },
+    "name": "A3v2_1_1_RG",
+    "kind": "contradiction_aware_v2",
+    "description": "A3v2_1_1_R + deterministic reconciliation guard (cache-only replay of A3v2_1_1_R)",
+    "versions": {
+      "a3v2": "a3v2-0.2.1-dev",
+      "review_prompts": "a3v2-review-prompts-0.3",
+      "guard": "a3v2-guard-0.1",
+      "graph": "langgraph-claims-a3v2-0.1",
+      "periods": "a3v2-periods-1.1"
+    },
+    "replay_of": "A3v2_1_1_R"
+  },
+  "config_hash": "84aba6df744a9382",
+  "claim": {
+    "claim_id": "GOLD-AMZN-03",
+    "company": "AMZN",
+    "claim": "Amazon's operating income for fiscal year 2025 increased by more than 20% compared with 2024.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Amazon's operating income for fiscal year 2025 increased by more than 20% compared with 2024. While the evidence provides extensive information about revenue growth, operating expenses, and segment-level operating income drivers for 2025, it does not contain the actual operating income figures for fiscal years 2024 and 2025 that would be necessary to calculate the year-over-year growth rate. \n\nEvidence E3 provides a table of operating expenses for 2024 and 2025, but operating income would be calculated as revenue minus operating expenses, and the total revenue figures for these years are not provided in the evidence. Evidence E2, E4, and E6 discuss changes in operating income qualitatively (e.g., \"increased unit sales and increased advertising sales\") but do not provide the absolute dollar amounts or percentage changes for total company operating income on an annual basis.\n\nWithout the specific operating income figures or the stated percentage change for the full fiscal years 2024 and 2025, I cannot verify whether the increase was indeed more than 20%.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "CONTRADICTED",
+      "rule": "NUMERIC_FALSE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 79975000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 79975000000.0,
+                "filed": "2026-02-06",
+                "form": "10-K",
+                "accession_number": "0001018724-26-000004",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 68593000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.1659352995203592,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "analyze_claim",
+      "analysis": {
+        "assertions": [
+          {
+            "assertion_id": "A0",
+            "text": "Amazon's operating income for fiscal year 2025 increased by more than 20% compared with 2024.",
+            "type": "claim",
+            "period_end": "2025-12-31",
+            "comparison_end": "2024-12-31",
+            "period_start": "2025-01-01",
+            "period_months": 12,
+            "period_kind": "duration"
+          },
+          {
+            "assertion_id": "N1",
+            "type": "numeric",
+            "numeric": {
+              "metric": "OperatingIncome",
+              "measure": "yoy_growth",
+              "period_basis": "annual",
+              "period_end": "2025-12-31",
+              "comparison": ">",
+              "threshold": 0.2,
+              "stated_value": null
+            },
+            "text": "OperatingIncome yoy_growth > 0.2",
+            "period_end": "2025-12-31",
+            "comparison_end": "2024-12-31",
+            "period_start": "2025-01-01",
+            "period_months": 12,
+            "period_kind": "duration"
+          }
+        ],
+        "computations": [],
+        "claim_period": {
+          "version": "a3v2-periods-1.1",
+          "kind": "duration",
+          "start": "2025-01-01",
+          "end": "2025-12-31",
+          "months": 12,
+          "label": "FY2025",
+          "fiscal_year": 2025,
+          "source": "text_fiscal",
+          "comparison": {
+            "start": "2024-01-01",
+            "end": "2024-12-31"
+          },
+          "notes": [],
+          "period_end": "2025-12-31",
+          "comparison_end": "2024-12-31",
+          "basis": "annual",
+          "orientation": "historical",
+          "years": [
+            2024,
+            2025
+          ]
+        },
+        "analyzer": "default-whole-claim-0.1",
+        "decidability": [
+          {
+            "assertion_id": "A0",
+            "status": "NOT_ASSESSED",
+            "reason": "decidability check not implemented yet"
+          },
+          {
+            "assertion_id": "N1",
+            "status": "NOT_ASSESSED",
+            "reason": "decidability check not implemented yet"
+          }
+        ]
+      },
+      "computations": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Did Amazon's operating income for fiscal year 2025 actually increase by more than 20% compared to 2024?",
+          "search_query": "operating income 2025 2024 fiscal year annual consolidated",
+          "numeric_check": {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "What were the specific operating income dollar amounts for fiscal years 2024 and 2025 that would allow calculation of the growth rate?",
+          "search_query": "total operating income fiscal 2025 2024 million billion consolidated statements operations",
+          "numeric_check": {
+            "metric": "OperatingIncome",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">=",
+            "threshold": null,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Were there any one-time items, accounting changes, or unusual charges in 2024 or 2025 that would affect the comparability of operating income between the two years?",
+          "search_query": "one-time charges restructuring impairment goodwill operating income 2024 2025 unusual non-recurring",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "operating income 2025 2024 fiscal year annual consolidated",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "total operating income fiscal 2025 2024 million billion consolidated statements operations",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "one-time charges restructuring impairment goodwill operating income 2024 2025 unusual non-recurring",
+          "results": [
+            "E17",
+            "E18",
+            "E19"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E17",
+        "E18",
+        "E19"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 79975000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 79975000000.0,
+                "filed": "2026-02-06",
+                "form": "10-K",
+                "accession_number": "0001018724-26-000004",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 68593000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.1659352995203592,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "THRESHOLD_MISSING"
+          ],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 79975000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 79975000000.0,
+                "filed": "2026-02-06",
+                "form": "10-K",
+                "accession_number": "0001018724-26-000004",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 68593000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.1659352995203592,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E16",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "evidence_review",
+      "version": "a3v2-review-prompts-0.1",
+      "claim_period": {
+        "version": "a3v2-periods-1.1",
+        "kind": "duration",
+        "start": "2025-01-01",
+        "end": "2025-12-31",
+        "months": 12,
+        "label": "FY2025",
+        "fiscal_year": 2025,
+        "source": "text_fiscal",
+        "comparison": {
+          "start": "2024-01-01",
+          "end": "2024-12-31"
+        },
+        "notes": [],
+        "period_end": "2025-12-31",
+        "comparison_end": "2024-12-31",
+        "basis": "annual",
+        "orientation": "historical",
+        "years": [
+          2024,
+          2025
+        ]
+      },
+      "assertions": [
+        {
+          "assertion_id": "A0",
+          "text": "Amazon's operating income for fiscal year 2025 increased by more than 20% compared with 2024.",
+          "type": "claim",
+          "period_end": "2025-12-31",
+          "comparison_end": "2024-12-31",
+          "period_start": "2025-01-01",
+          "period_months": 12,
+          "period_kind": "duration"
+        },
+        {
+          "assertion_id": "N1",
+          "type": "numeric",
+          "numeric": {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          },
+          "text": "OperatingIncome yoy_growth > 0.2",
+          "period_end": "2025-12-31",
+          "comparison_end": "2024-12-31",
+          "period_start": "2025-01-01",
+          "period_months": 12,
+          "period_kind": "duration"
+        }
+      ],
+      "reviewed_evidence_ids": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "E9",
+        "E7",
+        "E8",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E17",
+        "E18",
+        "E19",
+        "E16"
+      ],
+      "findings": [
+        {
+          "finding_id": "R1",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E7",
+            "E8"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "79975000000.0",
+          "justification": "E7 shows operating income for fiscal year 2025 (2025-01-01 to 2025-12-31) was $79,975 million. E8 shows operating income for fiscal year 2024 (2024-01-01 to 2024-12-31) was $68,593 million. The growth rate is (79,975 - 68,593) / 68,593 = 16.59%, which is less than 20%. This contradicts the assertion that operating income increased by more than 20%.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-01-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "XBRL_VALUE_NOT_IN_QUOTE",
+              "issues": [
+                "XBRL_VALUE_NOT_IN_QUOTE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "comparison",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2024-01-01",
+                  "end": "2024-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R2",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E9"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "0.1659352995203592",
+          "justification": "E9 provides the derived year-over-year growth rate for operating income for fiscal year 2025 as 0.1659 (16.59%), which is less than 0.2 (20%). This directly contradicts the assertion that operating income increased by more than 20%.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E9",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-01-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "OperatingIncome"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R3",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E16"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "0.1659352995203592",
+          "justification": "E16 provides the operating income levels and growth rate for fiscal year 2025. The growth rate of 0.1659 (16.59%) is less than 20%, contradicting the assertion.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E16",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-01-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "OperatingIncome"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R4",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E2"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Operating income increased from $14.7 billion in Q2 2024 to $19.2 billion in Q2 2025, and increased from $30.0 billion for the six months ended June 30, 2024 to $37.6 billion for the six months ended June 30, 2025.",
+          "justification": "This evidence provides operating income figures for Q2 and the six months ended June 30, 2025, not for the full fiscal year 2025. The period_status is MISMATCH, so this does not decide the claim about full fiscal year 2025.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E2",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "PERIOD_MISMATCH",
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-06-30",
+                  "months": [
+                    3,
+                    6
+                  ],
+                  "markers": [
+                    "YTD6",
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R5",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E13"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Operating income increased from $14.7 billion in Q2 2024 to $19.2 billion in Q2 2025, and increased from $30.0 billion for the six months ended June 30, 2024 to $37.6 billion for the six months ended June 30, 2025.",
+          "justification": "This evidence provides operating income for Q2 and six months ended June 30, 2025, not for the full fiscal year 2025. The period_status is MISMATCH, so this does not decide the claim about full fiscal year 2025.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E13",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-06-30",
+                  "months": [
+                    3,
+                    6
+                  ],
+                  "markers": [
+                    "YTD6",
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R6",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E4"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CAUSE",
+          "definition_mismatch": false,
+          "key_quote": "The increase in AWS operating income in 2025, compared to the prior year, is primarily due to increased sales, partially offset by spending on technology infrastructure",
+          "justification": "This passage discusses the causes of the increase in AWS segment operating income in 2025, but does not provide the consolidated operating income figures or growth rate needed to verify the assertion about total operating income growth exceeding 20%.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E4",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "markers": [],
+                  "source": "filing_default_10K",
+                  "form": "10-K",
+                  "quote_years": [
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R7",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E1"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "OTHER",
+          "definition_mismatch": false,
+          "key_quote": "sales increased 13% in 2025, compared to the prior year",
+          "justification": "This evidence discusses sales growth (13%) and AWS sales growth (20%) in 2025, but does not provide information about operating income growth. Sales growth is a different measure than operating income growth.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E1",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "markers": [],
+                  "source": "filing_default_10K",
+                  "form": "10-K",
+                  "quote_years": [
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R8",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E3"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "OTHER",
+          "definition_mismatch": false,
+          "key_quote": "Year Ended December 31, 2024 2025 Operating Expenses: Cost of sales $ 326,288 $ 356,414",
+          "justification": "This evidence provides operating expenses for 2024 and 2025, which is related to operating income but does not directly state the operating income figures or growth rate. Operating income would be calculated as revenue minus operating expenses, but revenue is not provided in this passage.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E3",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "markers": [
+                    "FISCAL_YEAR"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-K",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R9",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E7",
+            "E8"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "79975000000.0",
+          "justification": "E7 shows operating income for fiscal year 2025 was $79,975 million. E8 shows operating income for fiscal year 2024 was $68,593 million. The year-over-year growth is (79,975 - 68,593) / 68,593 = 0.1659, which is not greater than 0.2. This contradicts the numeric assertion.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-01-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "XBRL_VALUE_NOT_IN_QUOTE",
+              "issues": [
+                "XBRL_VALUE_NOT_IN_QUOTE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "comparison",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2024-01-01",
+                  "end": "2024-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R10",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E9"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "0.1659352995203592",
+          "justification": "E9 directly provides the year-over-year growth rate for operating income as 0.1659, which is less than 0.2. This contradicts the numeric assertion that yoy_growth > 0.2.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E9",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-01-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "OperatingIncome"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R11",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E16"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "0.1659352995203592",
+          "justification": "E16 provides the operating income growth rate of 0.1659, which is less than 0.2, contradicting the numeric assertion.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E16",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-01-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "OperatingIncome"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        }
+      ],
+      "dropped_findings": [],
+      "llm_called": true,
+      "period_derivations": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_FALSE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "operating income for fiscal year 2025 (2025-01-01 to 2025-12-31) was $79,975 million",
+              "valid": true,
+              "issues": [],
+              "kind": "xbrl_fact",
+              "accession_number": "0001018724-26-000004",
+              "form": "10-K",
+              "filed": "2026-02-06",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/0001018724-26-000004-index.htm",
+              "locator": "OperatingIncome 2025-01-01..2025-12-31"
+            },
+            {
+              "evidence_id": "E8",
+              "quote": "operating income for fiscal year 2024 (2024-01-01 to 2024-12-31) was $68,593 million",
+              "valid": true,
+              "issues": [],
+              "kind": "xbrl_fact",
+              "accession_number": "0001018724-26-000004",
+              "form": "10-K",
+              "filed": "2026-02-06",
+              "period_end": "2024-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/0001018724-26-000004-index.htm",
+              "locator": "OperatingIncome 2024-01-01..2024-12-31"
+            },
+            {
+              "evidence_id": "E9",
+              "quote": "year-over-year growth rate for operating income for fiscal year 2025 as 0.1659 (16.59%)",
+              "valid": true,
+              "issues": [],
+              "kind": "derived_metric",
+              "accession_number": "0001018724-26-000004",
+              "form": "10-K",
+              "filed": "2026-02-06",
+              "period_end": "2025-12-31",
+              "source_url": null,
+              "locator": "OperatingIncome yoy_growth annual @ 2025-12-31"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E7",
+              "quote": "operating income for fiscal year 2025 (2025-01-01 to 2025-12-31) was $79,975 million",
+              "valid": true,
+              "issues": [],
+              "kind": "xbrl_fact",
+              "accession_number": "0001018724-26-000004",
+              "form": "10-K",
+              "filed": "2026-02-06",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/0001018724-26-000004-index.htm",
+              "locator": "OperatingIncome 2025-01-01..2025-12-31"
+            },
+            {
+              "evidence_id": "E8",
+              "quote": "operating income for fiscal year 2024 (2024-01-01 to 2024-12-31) was $68,593 million",
+              "valid": true,
+              "issues": [],
+              "kind": "xbrl_fact",
+              "accession_number": "0001018724-26-000004",
+              "form": "10-K",
+              "filed": "2026-02-06",
+              "period_end": "2024-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/0001018724-26-000004-index.htm",
+              "locator": "OperatingIncome 2024-01-01..2024-12-31"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [
+            {
+              "evidence_id": "E17",
+              "quote": "We completed the required annual impairment test of goodwill for all reporting units and indefinite-lived intangible assets as of April 1, 2025, resulting in no impairments.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-26-000004",
+              "form": "10-K",
+              "filed": "2026-02-06",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+              "locator": "10-K 0001018724-26-000004:186035-187197"
+            },
+            {
+              "evidence_id": "E18",
+              "quote": "Effective January 1, 2025 we changed our estimate of the useful lives of a subset of our servers and networking equipment from six years to five years",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-26-000004",
+              "form": "10-K",
+              "filed": "2026-02-06",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+              "locator": "10-K 0001018724-26-000004:155062-156129"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation_guard",
+      "version": "a3v2-guard-0.1",
+      "initial_label": "CONTRADICTED",
+      "proposed_label": "CONTRADICTED",
+      "final_label": "CONTRADICTED",
+      "outcome": "NO_CHANGE",
+      "reason_code": "NO_CHANGE",
+      "excluded_citations": [],
+      "deciding_findings": [],
+      "initial_basis": [],
+      "rule_trace": [
+        "NO_CHANGE: NO_CHANGE"
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "2d285d18b401e63b3e97ca82ed606fddb3483167224f3e29c80aed6b534f4470",
+      "source": "cache",
+      "input_tokens": 3780,
+      "output_tokens": 462,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Amazon's operating income for fiscal year 2025 increased by more than 20% compared with 2024. While the evidence provides extensive information about revenue growth, operating expenses, and segment-level operating income drivers for 2025, it does not contain the actual operating income figures for fiscal years 2024 and 2025 that would be necessary to calculate the year-over-year growth rate. \n\nEvidence E3 provides a table of operating expenses for 2024 and 2025, but operating income would be calculated as revenue minus operating expenses, and the total revenue figures for these years are not provided in the evidence. Evidence E2, E4, and E6 discuss changes in operating income qualitatively (e.g., \"increased unit sales and increased advertising sales\") but do not provide the absolute dollar amounts or percentage changes for total company operating income on an annual basis.\n\nWithout the specific operating income figures or the stated percentage change for the full fiscal years 2024 and 2025, I cannot verify whether the increase was indeed more than 20%.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "cfdd893c71e4f5c9e31a6cf8264f11f07ffc3b9d78a560326f9d177c458c8469",
+      "source": "cache",
+      "input_tokens": 4865,
+      "output_tokens": 454,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Did Amazon's operating income for fiscal year 2025 actually increase by more than 20% compared to 2024?",
+            "search_query": "operating income 2025 2024 fiscal year annual consolidated",
+            "numeric_check": {
+              "metric": "OperatingIncome",
+              "measure": "yoy_growth",
+              "period_basis": "annual",
+              "period_end": "2025-12-31",
+              "comparison": ">",
+              "threshold": 0.2,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "What were the specific operating income dollar amounts for fiscal years 2024 and 2025 that would allow calculation of the growth rate?",
+            "search_query": "total operating income fiscal 2025 2024 million billion consolidated statements operations",
+            "numeric_check": {
+              "metric": "OperatingIncome",
+              "measure": "level",
+              "period_basis": "annual",
+              "period_end": "2025-12-31",
+              "comparison": ">=",
+              "threshold": null,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Were there any one-time items, accounting changes, or unusual charges in 2024 or 2025 that would affect the comparability of operating income between the two years?",
+            "search_query": "one-time charges restructuring impairment goodwill operating income 2024 2025 unusual non-recurring",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "evidence_review",
+      "tool": "submit_evidence_review",
+      "request_key": "1c229b09a39a3d4794d770140825a18cac5afafca469aae06bb5079f743f4a6a",
+      "source": "cache",
+      "input_tokens": 7981,
+      "output_tokens": 1834,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "findings": [
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E7",
+              "E8"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "79975000000.0",
+            "justification": "E7 shows operating income for fiscal year 2025 (2025-01-01 to 2025-12-31) was $79,975 million. E8 shows operating income for fiscal year 2024 (2024-01-01 to 2024-12-31) was $68,593 million. The growth rate is (79,975 - 68,593) / 68,593 = 16.59%, which is less than 20%. This contradicts the assertion that operating income increased by more than 20%."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E9"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "0.1659352995203592",
+            "justification": "E9 provides the derived year-over-year growth rate for operating income for fiscal year 2025 as 0.1659 (16.59%), which is less than 0.2 (20%). This directly contradicts the assertion that operating income increased by more than 20%."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E16"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "0.1659352995203592",
+            "justification": "E16 provides the operating income levels and growth rate for fiscal year 2025. The growth rate of 0.1659 (16.59%) is less than 20%, contradicting the assertion."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E2"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Operating income increased from $14.7 billion in Q2 2024 to $19.2 billion in Q2 2025, and increased from $30.0 billion for the six months ended June 30, 2024 to $37.6 billion for the six months ended June 30, 2025.",
+            "justification": "This evidence provides operating income figures for Q2 and the six months ended June 30, 2025, not for the full fiscal year 2025. The period_status is MISMATCH, so this does not decide the claim about full fiscal year 2025."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E13"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Operating income increased from $14.7 billion in Q2 2024 to $19.2 billion in Q2 2025, and increased from $30.0 billion for the six months ended June 30, 2024 to $37.6 billion for the six months ended June 30, 2025.",
+            "justification": "This evidence provides operating income for Q2 and six months ended June 30, 2025, not for the full fiscal year 2025. The period_status is MISMATCH, so this does not decide the claim about full fiscal year 2025."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E4"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CAUSE",
+            "key_quote": "The increase in AWS operating income in 2025, compared to the prior year, is primarily due to increased sales, partially offset by spending on technology infrastructure",
+            "justification": "This passage discusses the causes of the increase in AWS segment operating income in 2025, but does not provide the consolidated operating income figures or growth rate needed to verify the assertion about total operating income growth exceeding 20%."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E1"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "OTHER",
+            "key_quote": "sales increased 13% in 2025, compared to the prior year",
+            "justification": "This evidence discusses sales growth (13%) and AWS sales growth (20%) in 2025, but does not provide information about operating income growth. Sales growth is a different measure than operating income growth."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E3"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "OTHER",
+            "key_quote": "Year Ended December 31, 2024 2025 Operating Expenses: Cost of sales $ 326,288 $ 356,414",
+            "justification": "This evidence provides operating expenses for 2024 and 2025, which is related to operating income but does not directly state the operating income figures or growth rate. Operating income would be calculated as revenue minus operating expenses, but revenue is not provided in this passage."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E7",
+              "E8"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "79975000000.0",
+            "justification": "E7 shows operating income for fiscal year 2025 was $79,975 million. E8 shows operating income for fiscal year 2024 was $68,593 million. The year-over-year growth is (79,975 - 68,593) / 68,593 = 0.1659, which is not greater than 0.2. This contradicts the numeric assertion."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E9"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "0.1659352995203592",
+            "justification": "E9 directly provides the year-over-year growth rate for operating income as 0.1659, which is less than 0.2. This contradicts the numeric assertion that yoy_growth > 0.2."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E16"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "0.1659352995203592",
+            "justification": "E16 provides the operating income growth rate of 0.1659, which is less than 0.2, contradicting the numeric assertion."
+          }
+        ]
+      },
+      "isolated_conversation": true,
+      "prompt_version": "a3v2-review-prompts-0.3"
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "130c23165bf249a9b86fd6687fb1d76ce81baa33bf4cce4cd94be71a3a25a3d3",
+      "source": "cache",
+      "input_tokens": 11535,
+      "output_tokens": 1230,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "operating income for fiscal year 2025 (2025-01-01 to 2025-12-31) was $79,975 million"
+              },
+              {
+                "evidence_id": "E8",
+                "quote": "operating income for fiscal year 2024 (2024-01-01 to 2024-12-31) was $68,593 million"
+              },
+              {
+                "evidence_id": "E9",
+                "quote": "year-over-year growth rate for operating income for fiscal year 2025 as 0.1659 (16.59%)"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E7",
+                "quote": "operating income for fiscal year 2025 (2025-01-01 to 2025-12-31) was $79,975 million"
+              },
+              {
+                "evidence_id": "E8",
+                "quote": "operating income for fiscal year 2024 (2024-01-01 to 2024-12-31) was $68,593 million"
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": [
+              {
+                "evidence_id": "E17",
+                "quote": "We completed the required annual impairment test of goodwill for all reporting units and indefinite-lived intangible assets as of April 1, 2025, resulting in no impairments."
+              },
+              {
+                "evidence_id": "E18",
+                "quote": "Effective January 1, 2025 we changed our estimate of the useful lives of a subset of our servers and networking equipment from six years to five years"
+              }
+            ]
+          }
+        ],
+        "label": "CONTRADICTED",
+        "verdict_changed": true,
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E7",
+            "quote": "operating income for fiscal year 2025 (2025-01-01 to 2025-12-31) was $79,975 million"
+          },
+          {
+            "evidence_id": "E8",
+            "quote": "operating income for fiscal year 2024 (2024-01-01 to 2024-12-31) was $68,593 million"
+          },
+          {
+            "evidence_id": "E9",
+            "quote": "year-over-year growth rate for operating income for fiscal year 2025 as 0.1659 (16.59%)"
+          }
+        ],
+        "reasoning_summary": "My initial verdict of INSUFFICIENT_EVIDENCE was incorrect. The newly retrieved evidence provides the specific operating income figures needed to verify the claim.\n\nEvidence E7 and E8 provide the actual operating income amounts for fiscal years 2025 ($79,975 million) and 2024 ($68,593 million) respectively. Evidence E9 provides the computed year-over-year growth rate of 0.1659 or 16.59%.\n\nThe calculation confirms: ($79,975 - $68,593) / $68,593 = $11,382 / $68,593 = 0.1659 = 16.59%\n\nSince 16.59% is less than 20%, the claim that Amazon's operating income for fiscal year 2025 increased by MORE than 20% compared with 2024 is FALSE. The operating income did increase, but only by approximately 16.6%, which does not meet the \"more than 20%\" threshold stated in the claim.\n\nRegarding H3 (one-time items), while E18 notes a change in useful life estimates for equipment effective January 1, 2025, and E17 confirms no goodwill impairments in 2025, these do not appear to be material one-time charges that would make the comparison non-meaningful. The accounting change would affect depreciation going forward but does not represent a one-time charge that distorts the comparison.",
+        "change_reason": "The initial verdict was based on the absence of specific operating income figures in the original evidence packet. The newly retrieved evidence (E7, E8, E9) provides the exact operating income amounts for both fiscal years 2024 and 2025, as well as the computed growth rate. This allows for a definitive determination that the claim is false - operating income grew by 16.59%, not more than 20% as claimed."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Amazon's operating income for fiscal year 2025 increased by more than 20% compared with 2024. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "operating income 2025 2024 fiscal year annual consolidated",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "total operating income fiscal 2025 2024 million billion consolidated statements operations",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "one-time charges restructuring impairment goodwill operating income 2024 2025 unusual non-recurring",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E17",
+        "E18",
+        "E19"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 79975000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 79975000000.0,
+                "filed": "2026-02-06",
+                "form": "10-K",
+                "accession_number": "0001018724-26-000004",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 68593000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.1659352995203592,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 79975000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 79975000000.0,
+                "filed": "2026-02-06",
+                "form": "10-K",
+                "accession_number": "0001018724-26-000004",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 68593000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.1659352995203592,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H2",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingIncome",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">=",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "THRESHOLD_MISSING"
+          ],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 79975000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 79975000000.0,
+                "filed": "2026-02-06",
+                "form": "10-K",
+                "accession_number": "0001018724-26-000004",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 68593000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.1659352995203592,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E16",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001018724-26-000004",
+        "filed": "2026-02-06",
+        "report_date": "2025-12-31",
+        "primary_document": "amzn-20251231.htm",
+        "sha256": "3702599045ec83f3faca3186c42b62247d1ec0e3bdf47c7f8acc7305b858f139"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001018724-25-000123",
+        "filed": "2025-10-31",
+        "report_date": "2025-09-30",
+        "primary_document": "amzn-20250930.htm",
+        "sha256": "e47779b6d5dcd4239bb9e92b7756092f499d6a14c4feaf247bdd4f0fb365402f"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001018724-25-000086",
+        "filed": "2025-08-01",
+        "report_date": "2025-06-30",
+        "primary_document": "amzn-20250630.htm",
+        "sha256": "ded0385afc1d6ab0789742696fc7370f1fe8e673514e845c4c5f6dd5f4378eac"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 734
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:112665-113349",
+      "excerpt": "sales increased 13% in 2025, compared to the prior year. The sales growth primarily reflects increased unit sales, including sales by third-party sellers, advertising sales, and subscription services. Increased unit sales were driven largely 24 Table of Contents by our continued focus on price, selection, and convenience for our customers, including from our fast shipping offers. Changes in foreign exchange rates increased International net sales by $4.9 billion in 2025. AWS sales increased 20% in 2025, compared to the prior year. The sales growth primarily reflects increased customer usage, partially offset by pricing changes primarily driven by long-term customer contracts.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:93311-94507",
+      "excerpt": "me increased from $14.7 billion in Q2 2024 to $19.2 billion in Q2 2025, and increased from $30.0 billion for the six months ended June 30, 2024 to $37.6 billion for the six months ended June 30, 2025. We believe that operating income is a more meaningful measure than gross profit and gross margin due to the diversity of our product categories and services. For more information on the operating expenses that impact segment operating income, see “Operating Expenses” and the descriptions of operating expense line item changes on pages 26 to 28, and “Note 8 — Segment Information” on page 18. The increase in North America operating income in Q2 2025 and for the six months ended June 30, 2025, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment, technology and infrastructure, and shipping costs. The increase in International operating income in Q2 2025 and for the six months ended June 30, 2025, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:113149-114349",
+      "excerpt": "s increased 20% in 2025, compared to the prior year. The sales growth primarily reflects increased customer usage, partially offset by pricing changes primarily driven by long-term customer contracts. Operating Expenses Information about operating expenses is as follows (in millions): Year Ended December 31, 2024 2025 Operating Expenses: Cost of sales $ 326,288 $ 356,414 Fulfillment 98,505 109,074 Technology and infrastructure 88,544 108,521 Sales and marketing 43,907 47,129 General and administrative 11,359 11,172 Other operating expense (income), net 763 4,639 Total operating expenses $ 569,366 $ 636,949 Year-over-year Percentage Growth (Decline): Cost of sales 7 % 9 % Fulfillment 9 11 Technology and infrastructure 3 23 Sales and marketing (1) 7 General and administrative (4) (2) Other operating expense (income), net (1) 508 Percent of Net Sales: Cost of sales 51.1 % 49.7 % Fulfillment 15.4 15.2 Technology and infrastructure 13.9 15.1 Sales and marketing 6.9 6.6 General and administrative 1.8 1.6 Other operating expense (income), net 0.1 0.6 Cost of Sales Cost of sales primarily consists of the purchase price of consumer products, inbound and outbound shipping costs, including co",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:123228-124414",
+      "excerpt": "ernational operating income in 2025, compared to the prior year, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs. Changes in foreign exchange rates positively impacted operating income by $903 million in 2025. The increase in AWS operating income in 2025, compared to the prior year, is primarily due to increased sales, partially offset by spending on technology infrastructure that was primarily driven by additional investments to support AWS business growth. Changes in foreign exchange rates negatively impacted operating income by $341 million in 2025. Interest Income and Expense Our interest income was $4.7 billion and $4.4 billion during 2024 and 2025, primarily due to a decrease in prevailing rates, offset by a higher average balance of invested funds. We generally invest our excess cash in investment grade short- to intermediate-term marketable debt securities and AAA-rated money market funds. Our interest income corresponds with the average balance of invested funds based on the prevailing rates, which vary depending on the geographies and currencies in which they are invested.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:120422-121592",
+      "excerpt": ", third-party customer referrals, social and online advertising, television advertising, and other initiatives. Our marketing costs are largely variable, based on growth in sales and changes in rates. To the extent there is increased or decreased competition for these traffic sources, or to the extent our mix of these channels shifts, we would expect to see a corresponding change in our marketing costs. The increase in sales and marketing costs in 2025, compared to the prior year, is primarily due to increased third-party advertising expenses. Changes in foreign exchange rates increased sales and marketing costs by $283 million in 2025. While costs associated with Amazon Prime membership benefits and other shipping offers are not included in sales and marketing expense, we view these offers as effective worldwide marketing tools, and intend to continue offering them indefinitely. 26 Table of Contents General and Administrative General and administrative costs in 2025 did not significantly change compared to the prior year. Other Operating Expense (Income), Net Other operating expense (income), net was $763 million and $4.6 billion during 2024 and 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:94307-95472",
+      "excerpt": "ed June 30, 2025, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs. Changes in foreign exchange rates positively impacted operating income by $338 million for Q2 2025, and by $282 million for six months ended June 30, 2025. The increase in AWS operating income in Q2 2025, compared to the comparable prior year period, is primarily due to increased sales, partially offset by spending on technology infrastructure that was primarily driven by additional investments to support AWS business growth. The increase in AWS operating income for the six months ended June 30, 2025, compared to the comparable prior year period, is primarily due to increased sales and decreased payroll and related expenses, partially offset by spending on technology infrastructure that was primarily driven by additional investments to support AWS business growth. Changes in foreign exchange rates negatively impacted operating income by $139 million for Q2 2025, but did not significantly impact operating income for the six months ended June 30, 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/0001018724-26-000004-index.htm",
+      "locator": "OperatingIncome 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        79975000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/0001018724-26-000004-index.htm",
+      "locator": "OperatingIncome 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        68593000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "AMZN",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "OperatingIncome yoy_growth annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        79975000000.0,
+        68593000000.0,
+        0.1659352995203592
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:203886-205051",
+      "excerpt": "guidance, primarily requiring more detailed disclosure for income taxes paid and the effective tax rate reconciliation. We adopted this ASU for the year ended December 31, 2025 on a retroactive basis. See “Note 9 — Income Taxes.” Accounting Pronouncements Not Yet Adopted In November 2024, the FASB issued an ASU amending existing income statement disclosure guidance, primarily requiring more detailed disclosure for expenses. The ASU is effective for annual reporting periods beginning after December 15, 2026, and interim periods within fiscal years beginning after December 15, 2027, with early adoption permitted. The amendments can be applied on either a prospective or retroactive basis. We are currently evaluating the ASU to determine its impact on our disclosures. 51 Table of Contents Note 2 — FINANCIAL INSTRUMENTS Cash, Cash Equivalents, Restricted Cash, and Marketable Securities As of December 31, 2024 and 2025, our cash, cash equivalents, restricted cash, and marketable securities primarily consisted of cash, AAA-rated money market funds, U.S. government and agency securities, other investment grade securities, and marketable equity securities.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:21453-22387",
+      "excerpt": "d an Accounting Standards Update (“ASU”) amending existing income tax disclosure guidance, primarily requiring more detailed disclosure for income taxes paid and the effective tax rate reconciliation. The ASU is effective for annual reporting periods beginning after December 15, 2024, with early adoption permitted and can be applied on either a prospective or retroactive basis. We expect to adopt the ASU on a retroactive basis. In November 2024, the FASB issued an ASU amending existing income statement disclosure guidance, primarily requiring more detailed disclosure for expenses. The ASU is effective for annual reporting periods beginning after December 15, 2026, and interim periods within fiscal years beginning after December 15, 2027, with early adoption permitted. The amendments can be applied on either a prospective or retroactive basis. We are currently evaluating the ASU to determine its impact on our disclosures.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:0-690",
+      "excerpt": "amzn-20251231 Table of Contents UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 ____________________________________ FORM 10-K ____________________________________ (Mark One) ☒ ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 For the fiscal year ended December 31 , 2025 or ☐ TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 For the transition period from to . Commission File No. 000-22513 ____________________________________ AMAZON.COM, INC. (Exact name of registrant as specified in its charter) Delaware 91-1646860 (State or other jurisdiction of incorporation or organization) (I.R.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:92460-93511",
+      "excerpt": "n general and administrative costs in Q2 2025 and for the six months ended June 30, 2025, compared to the comparable prior year periods, is primarily due to a decrease in payroll and related expenses. Other Operating Expense (Income), Net Other operating expense (income), net was $97 million and $199 million for Q2 2024 and Q2 2025, and $325 million and $507 million for the six months ended June 30, 2024 and 2025, and was primarily related to asset impairments and the amortization of intangible assets. Operating Income Operating income by segment is as follows (in millions): Three Months Ended June 30, Six Months Ended June 30, 2024 2025 2024 2025 Operating Income North America $ 5,065 $ 7,517 $ 10,048 $ 13,358 International 273 1,494 1,176 2,511 AWS 9,334 10,160 18,755 21,707 Consolidated $ 14,672 $ 19,171 $ 29,979 $ 37,576 Operating income increased from $14.7 billion in Q2 2024 to $19.2 billion in Q2 2025, and increased from $30.0 billion for the six months ended June 30, 2024 to $37.6 billion for the six months ended June 30, 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:28189-29326",
+      "excerpt": "our consolidated statements of 11 Table of Contents operations. In Q2 2025, we invested $ 1.3 billion in a new convertible note from Anthropic, and will invest an additional $ 1.4 billion by Q4 2025. As of June 30, 2025, the estimated fair value of our convertible notes and amounts recorded for nonvoting preferred stock investments was approximately $ 15.1 billion. We also have a commercial arrangement primarily for the provision of AWS cloud services, which includes the use of AWS chips. As of December 31, 2024 and June 30, 2025, equity investments in private companies not accounted for under the equity-method had a carrying value of $ 989 million and $ 6.1 billion, with adjustments for observable changes in prices or impairments recognized in “Other income (expense), net” on our consolidated statements of operations. As of December 31, 2024 and June 30, 2025, equity investments accounted for under the equity-method of accounting, including investments for which we have elected the fair value option, had a carrying value of $ 1.2 billion. We hold equity warrants giving us the right to acquire stock of other companies.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:196750-197741",
+      "excerpt": "es, amortization of basis differences, related gains or losses, and impairments, if any, are recognized in “Equity-method investment activity, net of tax” on our consolidated statements of operations. Each reporting period, we evaluate whether declines in fair value below carrying value are other-than-temporary and if so, we write down the investment to its estimated fair value. As of December 31, 2024 and 2025, these investments had a carrying value of $ 1.2 billion and $ 659 million. As of December 31, 2024 and 2025, equity warrants measured at fair value were $ 2.7 billion, with changes recognized in “Other income (expense), net” on our consolidated statements of operations. These warrants are classified as Level 2 and 3 assets. These non-marketable investments are included within “Other assets” on our consolidated balance sheets. Certain of our investments represent a variable interest in an entity for which we do not consolidate because we are not the primary beneficiary.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "AMZN",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "OperatingIncome level annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        79975000000.0,
+        68593000000.0,
+        0.1659352995203592
+      ],
+      "unit": "USD",
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:186035-187197",
+      "excerpt": "valuate goodwill and indefinite-lived intangible assets for impairment annually or more frequently when an event occurs or circumstances change that indicate the carrying value may not be recoverable. We may elect to utilize a qualitative assessment to evaluate whether it is more likely than not that the fair value of a reporting unit or indefinite-lived intangible asset is less than its carrying value and if so, we perform a quantitative test. We compare the carrying value of each reporting unit and indefinite-lived intangible asset to its estimated fair value and if the fair value is determined to be less than the carrying value, we recognize an impairment loss for the difference. We estimate the fair value of the reporting units using discounted cash flows. Forecasts of future cash flows are based on our best estimate of future net sales and operating expenses, based primarily on expected category expansion, pricing, market segment share, and general economic conditions. We completed the required annual impairment test of goodwill for all reporting units and indefinite-lived intangible assets as of April 1, 2025, resulting in no impairments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:155062-156129",
+      "excerpt": "ns that affect the reported amounts of assets and liabilities, revenues and expenses, and related disclosures of contingent liabilities in the consolidated financial statements and accompanying notes. Estimates are used for, but not limited to, collectability of receivables, commitments and contingencies, impairment of property and equipment and operating leases, income taxes, inventory valuation, self-insurance liabilities, stock-based compensation forfeiture rates, the determination of when to capitalize certain costs relating to new products or service offerings, useful lives of equipment, valuation and impairment of investments, valuation of acquired intangibles and goodwill, valuation of derivative instruments, vendor funding, and viewing patterns of capitalized video content. Actual results could differ materially from these estimates. We review the useful lives of equipment on an ongoing basis. Effective January 1, 2025 we changed our estimate of the useful lives of a subset of our servers and networking equipment from six years to five years .",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000123",
+      "form": "10-Q",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/amzn-20250930.htm",
+      "locator": "10-Q 0001018724-25-000123:12877-13944",
+      "excerpt": "ns that affect the reported amounts of assets and liabilities, revenues and expenses, and related disclosures of contingent liabilities in the consolidated financial statements and accompanying notes. Estimates are used for, but not limited to, income taxes, useful lives of equipment, commitments and contingencies, valuation of acquired intangibles and goodwill, stock-based compensation forfeiture rates, vendor funding, inventory valuation, collectability of receivables, impairment of property and equipment and operating leases, valuation and impairment of investments, self-insurance liabilities, viewing patterns of capitalized video content, valuation of derivative instruments, and the determination of when to capitalize certain costs relating to new products or service offerings. Actual results could differ materially from these estimates. We review the useful lives of equipment on an ongoing basis. Effective January 1, 2025 we changed our estimate of the useful lives of a subset of our servers and networking equipment from six years to five years .",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E19"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E7",
+      "quote": "operating income for fiscal year 2025 (2025-01-01 to 2025-12-31) was $79,975 million",
+      "valid": true,
+      "issues": [],
+      "kind": "xbrl_fact",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/0001018724-26-000004-index.htm",
+      "locator": "OperatingIncome 2025-01-01..2025-12-31"
+    },
+    {
+      "evidence_id": "E8",
+      "quote": "operating income for fiscal year 2024 (2024-01-01 to 2024-12-31) was $68,593 million",
+      "valid": true,
+      "issues": [],
+      "kind": "xbrl_fact",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/0001018724-26-000004-index.htm",
+      "locator": "OperatingIncome 2024-01-01..2024-12-31"
+    },
+    {
+      "evidence_id": "E9",
+      "quote": "year-over-year growth rate for operating income for fiscal year 2025 as 0.1659 (16.59%)",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "OperatingIncome yoy_growth annual @ 2025-12-31"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 28161,
+    "output": 3980
+  },
+  "latency_ms": 12,
+  "estimated_cost_usd": 0.144183,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_FALSE",
+        "checks": [
+          "FALSE"
+        ]
+      },
+      {
+        "node": "analyze_claim",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "assertions": 2,
+        "computations": 0,
+        "period_source": "text_fiscal"
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 2,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "evidence_review",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "findings": 11,
+        "deciding": 6,
+        "downgraded": 0
+      },
+      {
+        "node": "reconcile_v2",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "CONTRADICTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_FALSE"
+      },
+      {
+        "node": "reconciliation_guard",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "outcome": "NO_CHANGE",
+        "reason": "NO_CHANGE",
+        "label": "CONTRADICTED"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "analyze_claim",
+      "generate_hypotheses",
+      "counter_investigation",
+      "evidence_review",
+      "reconcile_v2",
+      "apply_guards",
+      "reconciliation_guard",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-a3v2-0.1"
+  },
+  "a3v2_version": "a3v2-0.2.1-dev"
+}

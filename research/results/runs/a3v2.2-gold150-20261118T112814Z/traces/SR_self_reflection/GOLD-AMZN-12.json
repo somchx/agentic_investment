@@ -1,0 +1,492 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:SR_self_reflection:GOLD-AMZN-12:6e2a93b4",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "SR_self_reflection",
+  "approach_kind": "self_reflection",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": true,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "SR_self_reflection",
+    "kind": "self_reflection",
+    "description": "A2 + self-critique and revision, no new retrieval"
+  },
+  "config_hash": "166d47be253b74e9",
+  "claim": {
+    "claim_id": "GOLD-AMZN-12",
+    "company": "AMZN",
+    "claim": "Amazon's 2025 results show that its retail business is now as profitable as AWS.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "INSUFFICIENT_EVIDENCE",
+  "final_label": "INSUFFICIENT_EVIDENCE",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Amazon's 2025 results show that its retail business is now as profitable as AWS. This is a comparative profitability claim requiring specific financial metrics (such as operating income, operating margin, or net income) for both the retail segments (North America and International) and the AWS segment for FY2025.\n\nWhile the evidence provides segment descriptions (E1, E3) explaining that North America and International segments consist of retail sales and that AWS consists of cloud services, none of the evidence passages contain actual financial performance data (revenue, operating income, margins, or profitability metrics) for any segment for 2025.\n\nE1 and E3 only describe what each segment consists of but provide no financial figures. E2 discusses legal matters. E4 discusses international operations risks. E5 and E6 discuss free cash flow methodology and foreign exchange effects but contain no segment-level profitability data.\n\nWithout actual profitability metrics for the retail segments versus AWS for 2025, the claim cannot be verified. The evidence is insufficient to support or contradict the comparative profitability assertion.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "self_critique",
+      "weaknesses": [
+        {
+          "weakness_id": "W1",
+          "critique": "The verdict assumes that segment-level profitability data would necessarily appear in the specific evidence passages provided, but it's possible that such data exists elsewhere in the 10-K filing (e.g., in segment reporting tables or MD&A sections) that simply wasn't retrieved. The evidence retrieval may have focused on qualitative descriptions rather than quantitative financial tables. However, I can only work with the evidence provided, so the INSUFFICIENT_EVIDENCE label remains appropriate given the constraint that I cannot use information beyond what was supplied."
+        },
+        {
+          "weakness_id": "W2",
+          "critique": "The claim uses the term 'retail business' which could be interpreted as either (1) just the North America segment, (2) just the International segment, or (3) the combined North America and International segments. The verdict doesn't explicitly address this ambiguity. If 'retail business' means only one segment versus AWS, the comparison would be different than if it means the combined retail segments. This definitional ambiguity affects what specific data would be needed to verify the claim."
+        },
+        {
+          "weakness_id": "W3",
+          "critique": "The verdict doesn't consider what 'as profitable as' means precisely - it could mean equal operating income in absolute dollars, equal operating margins as percentages, equal net income, or equal profitability on some other metric. Different interpretations would require different data to verify. Additionally, even if the evidence showed AWS had higher absolute operating income but retail had higher margins (or vice versa), the claim's truth value would depend on which metric 'as profitable as' refers to."
+        }
+      ]
+    },
+    {
+      "stage": "revision",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "W1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "W2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "North America segment primarily consists of amounts earned from retail sales of consumer products (including from sellers) and advertising and subscription services through North America-focused online and physical stores",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-26-000004",
+              "form": "10-K",
+              "filed": "2026-02-06",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+              "locator": "10-K 0001018724-26-000004:253369-254565"
+            },
+            {
+              "evidence_id": "E1",
+              "quote": "International segment primarily consists of amounts earned from retail sales of consumer products (including from sellers) and advertising and subscription services through internationally-focused online stores",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-26-000004",
+              "form": "10-K",
+              "filed": "2026-02-06",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+              "locator": "10-K 0001018724-26-000004:253369-254565"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "be7eab234a26390e5a6ed5af2254d9b2eb6f07a5c243b737bbcbe1cbea4eef68",
+      "source": "cache",
+      "input_tokens": 3579,
+      "output_tokens": 387,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Amazon's 2025 results show that its retail business is now as profitable as AWS. This is a comparative profitability claim requiring specific financial metrics (such as operating income, operating margin, or net income) for both the retail segments (North America and International) and the AWS segment for FY2025.\n\nWhile the evidence provides segment descriptions (E1, E3) explaining that North America and International segments consist of retail sales and that AWS consists of cloud services, none of the evidence passages contain actual financial performance data (revenue, operating income, margins, or profitability metrics) for any segment for 2025.\n\nE1 and E3 only describe what each segment consists of but provide no financial figures. E2 discusses legal matters. E4 discusses international operations risks. E5 and E6 discuss free cash flow methodology and foreign exchange effects but contain no segment-level profitability data.\n\nWithout actual profitability metrics for the retail segments versus AWS for 2025, the claim cannot be verified. The evidence is insufficient to support or contradict the comparative profitability assertion.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "self_critique",
+      "tool": "submit_self_critique",
+      "request_key": "b919ac076bbd6b42806baed9f7eb016223bb96aab7d6075f5773b91ea31581f0",
+      "source": "live",
+      "input_tokens": 3868,
+      "output_tokens": 415,
+      "stop_reason": "tool_use",
+      "latency_ms": 10575,
+      "output": {
+        "weaknesses": [
+          {
+            "weakness_id": "W1",
+            "critique": "The verdict assumes that segment-level profitability data would necessarily appear in the specific evidence passages provided, but it's possible that such data exists elsewhere in the 10-K filing (e.g., in segment reporting tables or MD&A sections) that simply wasn't retrieved. The evidence retrieval may have focused on qualitative descriptions rather than quantitative financial tables. However, I can only work with the evidence provided, so the INSUFFICIENT_EVIDENCE label remains appropriate given the constraint that I cannot use information beyond what was supplied."
+          },
+          {
+            "weakness_id": "W2",
+            "critique": "The claim uses the term 'retail business' which could be interpreted as either (1) just the North America segment, (2) just the International segment, or (3) the combined North America and International segments. The verdict doesn't explicitly address this ambiguity. If 'retail business' means only one segment versus AWS, the comparison would be different than if it means the combined retail segments. This definitional ambiguity affects what specific data would be needed to verify the claim."
+          },
+          {
+            "weakness_id": "W3",
+            "critique": "The verdict doesn't consider what 'as profitable as' means precisely - it could mean equal operating income in absolute dollars, equal operating margins as percentages, equal net income, or equal profitability on some other metric. Different interpretations would require different data to verify. Additionally, even if the evidence showed AWS had higher absolute operating income but retail had higher margins (or vice versa), the claim's truth value would depend on which metric 'as profitable as' refers to."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "revision",
+      "tool": "submit_revision",
+      "request_key": "6a9b261b0714de4d197fb5ac4d97107ed1de18ab548c849a2a0eea0449ae3f91",
+      "source": "live",
+      "input_tokens": 5064,
+      "output_tokens": 721,
+      "stop_reason": "tool_use",
+      "latency_ms": 13098,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "W1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "W2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E1",
+                "quote": "North America segment primarily consists of amounts earned from retail sales of consumer products (including from sellers) and advertising and subscription services through North America-focused online and physical stores"
+              },
+              {
+                "evidence_id": "E1",
+                "quote": "International segment primarily consists of amounts earned from retail sales of consumer products (including from sellers) and advertising and subscription services through internationally-focused online stores"
+              }
+            ]
+          },
+          {
+            "item_id": "W3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "INSUFFICIENT_EVIDENCE",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After reconsidering the initial verdict in light of the critique:\n\nW1 (evidence retrieval limitations): There is no relevant evidence in the supplied passages to assess whether segment profitability data exists elsewhere in the filing. I can only work with what was provided, and none of the six evidence passages contain segment-level profitability metrics for 2025.\n\nW2 (definition of \"retail business\"): This weakness is refuted by the evidence. E1 clearly defines both North America and International segments as primarily consisting of retail sales, making it reasonable to interpret \"retail business\" as encompassing both segments. However, this doesn't change the verdict because even with a clear definition, no profitability data is provided for any segment.\n\nW3 (definition of \"as profitable as\"): There is no relevant evidence addressing what profitability metric would be appropriate for comparison. The evidence provides no profitability figures at all (operating income, margins, net income, etc.) for any segment.\n\nThe final verdict remains INSUFFICIENT_EVIDENCE. While W2 clarifies that \"retail business\" reasonably refers to the North America and International segments combined, this doesn't help verify the claim because the fundamental problem persists: none of the supplied evidence contains actual profitability metrics for any segment for 2025. Without numerical data showing profitability levels for retail versus AWS, the comparative claim cannot be verified.",
+        "change_reason": "No change. The critique identified some interpretive ambiguities but none of the weaknesses revealed evidence that would support or contradict the claim. The core issue remains: no segment profitability data for 2025 is present in the supplied evidence."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Amazon's 2025 results show that its retail business is now as profitable as AWS. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001018724-26-000004",
+        "filed": "2026-02-06",
+        "report_date": "2025-12-31",
+        "primary_document": "amzn-20251231.htm",
+        "sha256": "3702599045ec83f3faca3186c42b62247d1ec0e3bdf47c7f8acc7305b858f139"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001018724-25-000123",
+        "filed": "2025-10-31",
+        "report_date": "2025-09-30",
+        "primary_document": "amzn-20250930.htm",
+        "sha256": "e47779b6d5dcd4239bb9e92b7756092f499d6a14c4feaf247bdd4f0fb365402f"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001018724-25-000086",
+        "filed": "2025-08-01",
+        "report_date": "2025-06-30",
+        "primary_document": "amzn-20250630.htm",
+        "sha256": "ded0385afc1d6ab0789742696fc7370f1fe8e673514e845c4c5f6dd5f4378eac"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 734
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:253369-254565",
+      "excerpt": "business primarily by reviewing consolidated results by segment on a quarterly basis, and using those results along with forecasts and other non-financial information in our annual budgeting process. 67 Table of Contents North America The North America segment primarily consists of amounts earned from retail sales of consumer products (including from sellers) and advertising and subscription services through North America-focused online and physical stores. This segment includes export sales from these online stores. International The International segment primarily consists of amounts earned from retail sales of consumer products (including from sellers) and advertising and subscription services through internationally-focused online stores. This segment includes export sales from these internationally-focused online stores (including export sales from these online stores to customers in the U.S., Mexico, and Canada), but excludes export sales from our North America-focused online stores. AWS The AWS segment consists of amounts earned from global sales of compute, storage, database, and other services for start-ups, enterprises, government agencies, and academic institutions.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:227436-228613",
+      "excerpt": "st Amazon Web Services, Inc. in the United States District Court for the Northern District of Illinois. The complaint alleged, among other things, that Amazon S3 and DynamoDB infringe U.S. Patent Nos. 7,814,170; 7,103,640; and 7,233,978. The complaint sought an unspecified amount of damages, enhanced damages, attorneys’ fees, costs, interest, and injunctive relief. In April 2024, a jury found that Amazon infringed the asserted patents and awarded Kove $ 525 million in damages. In August 2024, the court awarded Kove $ 148 million in pre-judgment interest. In September 2024, we filed a notice of appeal. We disagree with the jury’s findings and will continue to defend ourselves vigorously in this matter. Beginning in June 2019 with Wilcosky v. Amazon.com, Inc., now pending in the United States District Court for the Northern District of Illinois (“N.D. Ill.”), private litigants have filed a number of cases in U.S. federal and state courts, including Hogan v. Amazon.com, Inc. (N.D. Ill.), alleging, among other things, that Amazon’s collection, storage, use, retention, and protection of biometric identifiers violated the Illinois Biometric Information Privacy Act.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000123",
+      "form": "10-Q",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/amzn-20250930.htm",
+      "locator": "10-Q 0001018724-25-000123:59240-60413",
+      "excerpt": "ajority of infrastructure costs recorded in “Technology and infrastructure” are allocated to the AWS segment based on usage. There are no internal revenue transactions between our reportable segments. Our chief operating decision maker (“CODM”) is our President and Chief Executive Officer. Our CODM regularly reviews consolidated net sales, consolidated operating expenses, and consolidated operating income (loss) by segment. Amounts included in consolidated operating expenses include “Cost of sales,” “Fulfillment,” “Technology and infrastructure,” “Sales and marketing,” “General and administrative,” and “Other operating expense (income), net.” Our CODM manages our business primarily by reviewing consolidated results by segment on a quarterly basis, and using those results along with forecasts and other non-financial information in our annual budgeting process. North America The North America segment primarily consists of amounts earned from retail sales of consumer products (including from sellers) and advertising and subscription services through North America-focused online and physical stores. This segment includes export sales from these online stores.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:24192-24942",
+      "excerpt": "ns, including if we are unable to realize the expected benefits of new technologies or if we do not successfully plan or execute new strategies, which could harm our business or damage our reputation. Our International Operations Expose Us to a Number of Risks Our international activities are significant to our revenues and profits, and we plan to further expand internationally. In certain international market segments, we have relatively little operating experience and may not benefit from any first-to-market advantages or otherwise succeed. It is costly to establish, develop, and maintain international operations and stores, and promote our brand internationally. Our international operations may not become profitable on a sustained basis.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:99320-100419",
+      "excerpt": ",440) $ (8,652) Free cash flow has limitations as it omits certain components of the overall cash flow statement and does not represent the residual cash flow available for discretionary expenditures. For example, free cash flow does not incorporate the portion of payments representing principal reductions of debt or cash payments for business acquisitions. Additionally, our mix of property and equipment acquisitions with cash or other financing options may change over time. Therefore, we believe it is important to view free cash flow only as a complement to our entire consolidated statements of cash flows. 29 Table of Contents Effect of Foreign Exchange Rates Information regarding the effect of foreign exchange rates, versus the U.S. Dollar, on our net sales, operating expenses, and operating income is provided to show reported period operating results had the foreign exchange rates remained the same as those in effect in the comparable prior year period. The effect on our net sales, operating expenses, and operating income from changes in our foreign exchange rates versus the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:129139-130238",
+      "excerpt": "11,812) $ 9,661 Free cash flow has limitations as it omits certain components of the overall cash flow statement and does not represent the residual cash flow available for discretionary expenditures. For example, free cash flow does not incorporate the portion of payments representing principal reductions of debt or cash payments for business acquisitions. Additionally, our mix of property and equipment acquisitions with cash or other financing options may change over time. Therefore, we believe it is important to view free cash flow only as a complement to our entire consolidated statements of cash flows. 28 Table of Contents Effect of Foreign Exchange Rates Information regarding the effect of foreign exchange rates, versus the U.S. Dollar, on our net sales, operating expenses, and operating income is provided to show reported period operating results had the foreign exchange rates remained the same as those in effect in the comparable prior year period. The effect on our net sales, operating expenses, and operating income from changes in our foreign exchange rates versus the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 12511,
+    "output": 1523
+  },
+  "latency_ms": 23692,
+  "estimated_cost_usd": 0.060378,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "self_reflection",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "self_critique",
+        "status": "ok",
+        "duration_ms": 10581,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "weaknesses": 3
+      },
+      {
+        "node": "revise",
+        "status": "ok",
+        "duration_ms": 13105,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "model_final_label": "INSUFFICIENT_EVIDENCE"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 9,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "self_critique",
+      "revise",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

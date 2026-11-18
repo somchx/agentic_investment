@@ -1,0 +1,798 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:SR_self_reflection:GOLD-META-01:f9b2b43f",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "SR_self_reflection",
+  "approach_kind": "self_reflection",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": true,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "SR_self_reflection",
+    "kind": "self_reflection",
+    "description": "A2 + self-critique and revision, no new retrieval"
+  },
+  "config_hash": "166d47be253b74e9",
+  "claim": {
+    "claim_id": "GOLD-META-01",
+    "company": "META",
+    "claim": "Meta's revenue for the quarter ended September 30, 2026 increased by more than 20% year over year.",
+    "as_of_date": "2026-11-01",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q3"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E5",
+            "quote": "d September 30, 2026 increased $13.39 billion, or 26%, and $40.62 billion, or 29%, respectively, compared to the same periods in 2025."
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "for the three months ended September 30, 2026, our total revenue and advertising revenue would have been $64.71 billion and $63.16 billion"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Meta's revenue for Q3 2026 (quarter ended September 30, 2026) increased by more than 20% year over year. Evidence E5 explicitly states that revenue for the three months ended September 30, 2026 increased by 26% compared to the same period in 2025. Since 26% is greater than 20%, the claim is supported. The evidence provides the actual year-over-year growth rate of 26%, which clearly exceeds the 20% threshold stated in the claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_ALL_TRUE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-09-30",
+            "basis": "quarter",
+            "level": 64601000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-07-01",
+                "period_end": "2026-09-30",
+                "value": 64601000000.0,
+                "filed": "2026-10-22",
+                "form": "10-Q",
+                "accession_number": "0001628280-26-066773",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 51242000000.0,
+            "prior_period_end": "2025-09-30",
+            "yoy_change": 0.2607041099098396,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "self_critique",
+      "weaknesses": [
+        {
+          "weakness_id": "W1",
+          "critique": "The claim asks about 'revenue' generally, and E5 confirms a 26% increase. However, I should verify this is total revenue and not just a segment. E5 discusses revenue in the context of periods 'ended September 30, 2026' and mentions it 'increased $13.39 billion, or 26%' - the context suggests this is total revenue (as it's discussed before breaking down into advertising and other revenue components), but the passage doesn't explicitly state 'total revenue' in the quoted portion. The computed facts show total revenue of $64.601 billion for Q3 2026 vs $51.242 billion for Q3 2025, which confirms the 26% growth rate, so this concern is mitigated."
+        },
+        {
+          "weakness_id": "W2",
+          "critique": "Foreign exchange effects could complicate the interpretation. E3 states that changes in foreign exchange rates had an 'unfavorable impact' on revenue in Q3 2026 compared to Q3 2025, and on a constant currency basis, total revenue would have been $64.71 billion (vs actual $64.60 billion reported). This means the actual reported 26% growth was slightly dampened by FX headwinds. However, the claim is about reported revenue growth, not constant currency growth, so the 26% reported growth still exceeds 20% and supports the claim."
+        },
+        {
+          "weakness_id": "W3",
+          "critique": "E1 mentions 'Costs and expenses were $51.61 billion, including the $9.89 billion charge related to the August 2026 multistate attorneys general agreement.' While this is an expense item (not revenue), I should confirm there are no one-time revenue items that could distort the comparison. Reviewing the evidence, the revenue increases are attributed to normal business drivers: advertising revenue growth from ad impressions and pricing (E4, E5), and other revenue from WhatsApp paid messaging and subscriptions (E2). No one-time revenue items are mentioned, so the 26% growth appears to reflect organic business performance."
+        }
+      ]
+    },
+    {
+      "stage": "revision",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_ALL_TRUE",
+      "assessments": [
+        {
+          "item_id": "W1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E3",
+              "quote": "for the three months ended September 30, 2026, our total revenue and advertising revenue would have been $64.71 billion and $63.16 billion",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-066773",
+              "form": "10-Q",
+              "filed": "2026-10-22",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+              "locator": "10-Q 0001628280-26-066773:137252-138371"
+            },
+            {
+              "evidence_id": "E5",
+              "quote": "d September 30, 2026 increased $13.39 billion, or 26%, and $40.62 billion, or 29%, respectively, compared to the same periods in 2025",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-066773",
+              "form": "10-Q",
+              "filed": "2026-10-22",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+              "locator": "10-Q 0001628280-26-066773:134377-135520"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E3",
+              "quote": "Changes in foreign exchange rates had an unfavorable impact on our revenue in the three months ended September 30, 2026 compared to the same period in 2025.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-066773",
+              "form": "10-Q",
+              "filed": "2026-10-22",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+              "locator": "10-Q 0001628280-26-066773:137252-138371"
+            },
+            {
+              "evidence_id": "E3",
+              "quote": "for the three months ended September 30, 2026, our total revenue and advertising revenue would have been $64.71 billion and $63.16 billion, which were $113 million and $96 million higher than actual total revenue",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-066773",
+              "form": "10-Q",
+              "filed": "2026-10-22",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+              "locator": "10-Q 0001628280-26-066773:137252-138371"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [
+            {
+              "evidence_id": "E5",
+              "quote": "Advertising revenue in the three and nine months ended September 30, 2026 increased $12.98 billion, or 26%, and $39.41 billion, or 29%, respectively",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-066773",
+              "form": "10-Q",
+              "filed": "2026-10-22",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+              "locator": "10-Q 0001628280-26-066773:134377-135520"
+            },
+            {
+              "evidence_id": "E2",
+              "quote": "FoA other revenue in the three and nine months ended September 30, 2026 increased $407 million, or 59%, and $1.20 billion, or 67%, respectively",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-066773",
+              "form": "10-Q",
+              "filed": "2026-10-22",
+              "period_end": "2026-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+              "locator": "10-Q 0001628280-26-066773:136299-137452"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "65ab649f0f30188eaa6537f1e07bba8caa4aeaaeffacc40d22630d14fcfffff0",
+      "source": "cache",
+      "input_tokens": 3920,
+      "output_tokens": 469,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E5",
+            "quote": "d September 30, 2026 increased $13.39 billion, or 26%, and $40.62 billion, or 29%, respectively, compared to the same periods in 2025."
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "for the three months ended September 30, 2026, our total revenue and advertising revenue would have been $64.71 billion and $63.16 billion"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Meta's revenue for Q3 2026 (quarter ended September 30, 2026) increased by more than 20% year over year. Evidence E5 explicitly states that revenue for the three months ended September 30, 2026 increased by 26% compared to the same period in 2025. Since 26% is greater than 20%, the claim is supported. The evidence provides the actual year-over-year growth rate of 26%, which clearly exceeds the 20% threshold stated in the claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "self_critique",
+      "tool": "submit_self_critique",
+      "request_key": "bee58b6915f3b399b7d45623966eb1833e582c4cc46a22b583799d574d7ed3e6",
+      "source": "live",
+      "input_tokens": 4507,
+      "output_tokens": 536,
+      "stop_reason": "tool_use",
+      "latency_ms": 12313,
+      "output": {
+        "weaknesses": [
+          {
+            "weakness_id": "W1",
+            "critique": "The claim asks about 'revenue' generally, and E5 confirms a 26% increase. However, I should verify this is total revenue and not just a segment. E5 discusses revenue in the context of periods 'ended September 30, 2026' and mentions it 'increased $13.39 billion, or 26%' - the context suggests this is total revenue (as it's discussed before breaking down into advertising and other revenue components), but the passage doesn't explicitly state 'total revenue' in the quoted portion. The computed facts show total revenue of $64.601 billion for Q3 2026 vs $51.242 billion for Q3 2025, which confirms the 26% growth rate, so this concern is mitigated."
+          },
+          {
+            "weakness_id": "W2",
+            "critique": "Foreign exchange effects could complicate the interpretation. E3 states that changes in foreign exchange rates had an 'unfavorable impact' on revenue in Q3 2026 compared to Q3 2025, and on a constant currency basis, total revenue would have been $64.71 billion (vs actual $64.60 billion reported). This means the actual reported 26% growth was slightly dampened by FX headwinds. However, the claim is about reported revenue growth, not constant currency growth, so the 26% reported growth still exceeds 20% and supports the claim."
+          },
+          {
+            "weakness_id": "W3",
+            "critique": "E1 mentions 'Costs and expenses were $51.61 billion, including the $9.89 billion charge related to the August 2026 multistate attorneys general agreement.' While this is an expense item (not revenue), I should confirm there are no one-time revenue items that could distort the comparison. Reviewing the evidence, the revenue increases are attributed to normal business drivers: advertising revenue growth from ad impressions and pricing (E4, E5), and other revenue from WhatsApp paid messaging and subscriptions (E2). No one-time revenue items are mentioned, so the 26% growth appears to reflect organic business performance."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "revision",
+      "tool": "submit_revision",
+      "request_key": "ed313efd51f53fc296b988e86eb763559f9120ac0c1c0f97f50df1f7f1427948",
+      "source": "live",
+      "input_tokens": 5941,
+      "output_tokens": 1054,
+      "stop_reason": "tool_use",
+      "latency_ms": 15072,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "W1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E3",
+                "quote": "for the three months ended September 30, 2026, our total revenue and advertising revenue would have been $64.71 billion and $63.16 billion"
+              },
+              {
+                "evidence_id": "E5",
+                "quote": "d September 30, 2026 increased $13.39 billion, or 26%, and $40.62 billion, or 29%, respectively, compared to the same periods in 2025"
+              }
+            ]
+          },
+          {
+            "item_id": "W2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E3",
+                "quote": "Changes in foreign exchange rates had an unfavorable impact on our revenue in the three months ended September 30, 2026 compared to the same period in 2025."
+              },
+              {
+                "evidence_id": "E3",
+                "quote": "for the three months ended September 30, 2026, our total revenue and advertising revenue would have been $64.71 billion and $63.16 billion, which were $113 million and $96 million higher than actual total revenue"
+              }
+            ]
+          },
+          {
+            "item_id": "W3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": [
+              {
+                "evidence_id": "E5",
+                "quote": "Advertising revenue in the three and nine months ended September 30, 2026 increased $12.98 billion, or 26%, and $39.41 billion, or 29%, respectively"
+              },
+              {
+                "evidence_id": "E2",
+                "quote": "FoA other revenue in the three and nine months ended September 30, 2026 increased $407 million, or 59%, and $1.20 billion, or 67%, respectively"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E5",
+            "quote": "d September 30, 2026 increased $13.39 billion, or 26%, and $40.62 billion, or 29%, respectively, compared to the same periods in 2025."
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "for the three months ended September 30, 2026, our total revenue and advertising revenue would have been $64.71 billion and $63.16 billion"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After reviewing the weaknesses:\n\nW1 (Total vs segment revenue): CHALLENGE_REFUTED. E3 explicitly refers to \"total revenue\" of $64.71 billion (constant currency) for Q3 2026, confirming that the 26% growth figure in E5 refers to total revenue, not just a segment.\n\nW2 (FX effects): CHALLENGE_REFUTED. While E3 confirms FX had an unfavorable impact, the actual reported revenue still grew 26% year-over-year. The claim is about reported revenue growth (not constant currency), and the 26% reported growth clearly exceeds the 20% threshold. The FX headwind of $113 million is immaterial relative to the $13.39 billion absolute increase.\n\nW3 (One-time items): NO_RELEVANT_EVIDENCE. The evidence shows revenue growth was driven by normal business operations (advertising, WhatsApp, subscriptions). While a one-time expense is mentioned, no one-time revenue items are disclosed that would distort the comparison.\n\nThe initial SUPPORTED verdict remains correct. Meta's Q3 2026 revenue increased 26% year-over-year, which exceeds the claim's threshold of \"more than 20%.\"",
+        "change_reason": "No change needed. All three weaknesses were either refuted by the evidence or had no relevant evidence to support them as material concerns. The 26% year-over-year revenue growth for Q3 2026 clearly exceeds 20%, supporting the claim."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Meta's revenue for the quarter ended September 30, 2026 increased by more than 20% year over year. 2026 Q3",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-09-30",
+            "basis": "quarter",
+            "level": 64601000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2026-07-01",
+                "period_end": "2026-09-30",
+                "value": 64601000000.0,
+                "filed": "2026-10-22",
+                "form": "10-Q",
+                "accession_number": "0001628280-26-066773",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 51242000000.0,
+            "prior_period_end": "2025-09-30",
+            "yoy_change": 0.2607041099098396,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-066773",
+        "filed": "2026-10-22",
+        "report_date": "2026-09-30",
+        "primary_document": "meta-20260930.htm",
+        "sha256": "0ea75a9311407dc3202c051c3166c7dbc7f4714ee77d599691dcab16b75a916e"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-050705",
+        "filed": "2026-07-30",
+        "report_date": "2026-06-30",
+        "primary_document": "meta-20260630.htm",
+        "sha256": "6ed73c37a6bf6c45f5becbf56107d45228849955dd5c6d43e0cd3e0d5e6a4d24"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-003942",
+        "filed": "2026-01-29",
+        "report_date": "2025-12-31",
+        "primary_document": "meta-20251231.htm",
+        "sha256": "f78fe1cbc2a5c786cbb67362e22a79c19ae606f5cdbae9faed231f210a574053"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1525
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:111381-112416",
+      "excerpt": "1 billion for the three months ended September 30, 2026. • Costs and expenses were $51.61 billion, including the $9.89 billion charge related to the August 2026 multistate attorneys general agreement. • Dividend and dividend equivalent payments were $1.36 billion for the three months ended September 30, 2026. • Cash, cash equivalents, and marketable securities were $82.45 billion as of September 30, 2026. • Effective tax rate was 24% for the three months ended September 30, 2026. • Headcount was 66,775 as of September 30, 2026, a decrease of 15% year-over-year. Family of Apps Metrics • Family daily active people (DAP) was 3.64 billion on average for September 2026, an increase of 3% year-over-year. • Ad impressions delivered across our Family of Apps in the third quarter of 2026 increased by 10% year-over-year. • Average price per ad in the third quarter of 2026 increased by 14% year-over-year. Developments in Advertising Substantially all of our revenue is currently generated from advertising on Facebook and Instagram.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:136299-137452",
+      "excerpt": "hree and nine months ended September 30, 2026 compared to the same periods in 2025. We anticipate that future advertising revenue will be driven by a combination of price and ad impressions delivered. Other revenue FoA other revenue in the three and nine months ended September 30, 2026 increased $407 million, or 59%, and $1.20 billion, or 67%, respectively, compared to the same periods in 2025. The increases were primarily driven by paid messaging from WhatsApp and subscriptions. Reality Labs RL revenue in the three months ended September 30, 2026 decreased $27 million, or 6%, compared to the same period in 2025. The decrease was driven by lower Meta Quest sales, partially offset by higher sales of AI glasses. RL revenue in the nine months ended September 30, 2026 increased $24 million, or 2%, compared to the same period in 2025. The increase was driven by higher sales of AI glasses, partially offset by lower Meta Quest sales. 45 Table of Contents Foreign Exchange Impact on Revenue Changes in foreign exchange rates had an unfavorable impact on our revenue in the three months ended September 30, 2026 compared to the same period in 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:137252-138371",
+      "excerpt": "Contents Foreign Exchange Impact on Revenue Changes in foreign exchange rates had an unfavorable impact on our revenue in the three months ended September 30, 2026 compared to the same period in 2025. To calculate revenue on a constant currency basis, we translated revenue using the prior year's monthly exchange rates for our settlement or billing currencies other than the U.S. dollar. Using these constant rates, for the three months ended September 30, 2026, our total revenue and advertising revenue would have been $64.71 billion and $63.16 billion, which were $113 million and $96 million higher than actual total revenue and advertising revenue, respectively. Changes in foreign exchange rates had a favorable impact on our revenue in the nine months ended September 30, 2026 compared to the same period in 2025. Using prior year's monthly exchange rates, for the nine months ended September 30, 2026, our total revenue and advertising revenue would have been $179.39 billion and $175.11 billion, which were $2.32 billion and $2.34 billion lower than actual total revenue and advertising revenue, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:135320-136499",
+      "excerpt": ". During the three and nine months ended September 30, 2026, the average price per ad increased by 14% and 13%, respectively, year-over-year, as compared with increases of 10% in both periods in 2025. The increases in average price per ad in the three and nine months ended September 30, 2026 were driven by an increase in advertising demand, which we believe is mostly due to ongoing improvements to our ad performance from our ad targeting and measurement tools. A favorable foreign currency exchange impact also contributed to the increase in the nine months ended September 30, 2026. These increases were partially offset by a higher number of ad impressions delivered, especially in geographies and in products, such as Reels, that monetize at lower rates. Other factors are discussed in the section entitled \"—Executive Overview of Third Quarter Results.\" In addition, the online commerce vertical was the largest contributor to the increase in advertising revenue in the three and nine months ended September 30, 2026 compared to the same periods in 2025. We anticipate that future advertising revenue will be driven by a combination of price and ad impressions delivered.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:134377-135520",
+      "excerpt": "d September 30, 2026 increased $13.39 billion, or 26%, and $40.62 billion, or 29%, respectively, compared to the same periods in 2025. The increases were almost entirely driven by advertising revenue. Advertising Advertising revenue in the three and nine months ended September 30, 2026 increased $12.98 billion, or 26%, and $39.41 billion, or 29%, respectively, compared to the same periods in 2025, due to increases in ad impressions delivered and average price per ad. During the three and nine months ended September 30, 2026, ad impressions delivered increased by 10% and 14%, respectively, year-over-year, as compared with increases of 14% and 10%, respectively, in the same periods in 2025. Ad impressions delivered during the three and nine months ended September 30, 2026 grew in all regions, especially in Asia-Pacific, which was driven by increases in users and their engagement as well as the frequency of ads shown on our products. During the three and nine months ended September 30, 2026, the average price per ad increased by 14% and 13%, respectively, year-over-year, as compared with increases of 10% in both periods in 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050705",
+      "form": "10-Q",
+      "filed": "2026-07-30",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm",
+      "locator": "10-Q 0001628280-26-050705:129912-131050",
+      "excerpt": "the three and six months ended June 30, 2026 compared to the same periods in 2025. We anticipate that future advertising revenue will be driven by a combination of price and ad impressions delivered. Other revenue FoA other revenue in the three and six months ended June 30, 2026 increased $424 million, or 73%, and $798 million, or 73%, respectively, compared to the same periods in 2025. The increases were primarily driven by paid messaging from WhatsApp and subscriptions. Reality Labs RL revenue in the three and six months ended June 30, 2026 increased $61 million, or 16%, and $51 million, or 7%, respectively, compared to the same periods in 2025. The increases were driven by higher sales of AI glasses, partially offset by lower Meta Quest sales. Foreign Exchange Impact on Revenue Changes in foreign exchange rates had a favorable impact on our revenue in the three and six months ended June 30, 2026 compared to the same periods in 2025. To calculate revenue on a constant currency basis, we translated revenue using the prior year's monthly exchange rates for our settlement or billing currencies other than the U.S. dollar.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": "2026-07-01",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/0001628280-26-066773-index.htm",
+      "locator": "Revenue 2026-07-01..2026-09-30",
+      "excerpt": null,
+      "values": [
+        64601000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": "2025-07-01",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/0001628280-26-066773-index.htm",
+      "locator": "Revenue 2025-07-01..2025-09-30",
+      "excerpt": null,
+      "values": [
+        51242000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "META",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2026-09-30",
+      "excerpt": null,
+      "values": [
+        64601000000.0,
+        51242000000.0,
+        0.2607041099098396
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E5",
+      "quote": "d September 30, 2026 increased $13.39 billion, or 26%, and $40.62 billion, or 29%, respectively, compared to the same periods in 2025.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:134377-135520"
+    },
+    {
+      "evidence_id": "E3",
+      "quote": "for the three months ended September 30, 2026, our total revenue and advertising revenue would have been $64.71 billion and $63.16 billion",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:137252-138371"
+    },
+    {
+      "evidence_id": "E9",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_end": "2026-09-30",
+      "source_url": null,
+      "locator": "Revenue yoy_growth quarter @ 2026-09-30"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 14368,
+    "output": 2059
+  },
+  "latency_ms": 27433,
+  "estimated_cost_usd": 0.073989,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "self_reflection",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 23,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_ALL_TRUE",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "self_critique",
+        "status": "ok",
+        "duration_ms": 12321,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "weaknesses": 3
+      },
+      {
+        "node": "revise",
+        "status": "ok",
+        "duration_ms": 15081,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_ALL_TRUE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 9,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "self_critique",
+      "revise",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

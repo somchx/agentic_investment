@@ -1,0 +1,545 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:A2_rag_numeric:GOLD-META-04:21c47822",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A2_rag_numeric",
+  "approach_kind": "financial_verification",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A2_rag_numeric",
+    "kind": "financial_verification",
+    "description": "A2 baseline: RAG + deterministic numeric verification"
+  },
+  "config_hash": "d5298a61c0ae91f8",
+  "claim": {
+    "claim_id": "GOLD-META-04",
+    "company": "META",
+    "claim": "Meta's long-term debt was higher as of September 30, 2026 than at December 31, 2025.",
+    "as_of_date": "2026-11-01",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q3"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "LongTermDebt",
+            "measure": "level",
+            "period_basis": "instant",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 58744000000,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Long-term debt 80,922 58,744"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "Long-term debt, non-current $ 80,922 $ 58,744"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Meta's long-term debt was higher as of September 30, 2026 than at December 31, 2025. Evidence E3 and E1 both show the condensed consolidated balance sheet data comparing these two dates. Long-term debt was $80,922 million as of September 30, 2026 versus $58,744 million as of December 31, 2025. Since $80,922 million > $58,744 million, the claim is supported. The evidence also explains this increase was due to the issuance of $25 billion in new notes in May 2026 (E6), which increased the total face value of long-term debt from $59 billion to $84 billion (E1).",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_ALL_TRUE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "LongTermDebt",
+            "measure": "level",
+            "period_basis": "instant",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 58744000000,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-09-30",
+            "basis": "instant",
+            "level": 80922000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "LongTermDebt",
+                "period_start": null,
+                "period_end": "2026-09-30",
+                "value": 80922000000.0,
+                "filed": "2026-10-22",
+                "form": "10-Q",
+                "accession_number": "0001628280-26-066773",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 28834000000.0,
+            "prior_period_end": "2025-09-30",
+            "yoy_change": 1.8064784629257127,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "f77652a436185c33e2005e1b96c9302c6ed9b7f1ec63c3e46a3bed40602fc37f",
+      "source": "cache",
+      "input_tokens": 4336,
+      "output_tokens": 475,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "LongTermDebt",
+            "measure": "level",
+            "period_basis": "instant",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 58744000000,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E3",
+            "quote": "Long-term debt 80,922 58,744"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "Long-term debt, non-current $ 80,922 $ 58,744"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Meta's long-term debt was higher as of September 30, 2026 than at December 31, 2025. Evidence E3 and E1 both show the condensed consolidated balance sheet data comparing these two dates. Long-term debt was $80,922 million as of September 30, 2026 versus $58,744 million as of December 31, 2025. Since $80,922 million > $58,744 million, the claim is supported. The evidence also explains this increase was due to the issuance of $25 billion in new notes in May 2026 (E6), which increased the total face value of long-term debt from $59 billion to $84 billion (E1).",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Meta's long-term debt was higher as of September 30, 2026 than at December 31, 2025. 2026 Q3",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "LongTermDebt",
+            "measure": "level",
+            "period_basis": "instant",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 58744000000,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-09-30",
+            "basis": "instant",
+            "level": 80922000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "LongTermDebt",
+                "period_start": null,
+                "period_end": "2026-09-30",
+                "value": 80922000000.0,
+                "filed": "2026-10-22",
+                "form": "10-Q",
+                "accession_number": "0001628280-26-066773",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 28834000000.0,
+            "prior_period_end": "2025-09-30",
+            "yoy_change": 1.8064784629257127,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-066773",
+        "filed": "2026-10-22",
+        "report_date": "2026-09-30",
+        "primary_document": "meta-20260930.htm",
+        "sha256": "0ea75a9311407dc3202c051c3166c7dbc7f4714ee77d599691dcab16b75a916e"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-050705",
+        "filed": "2026-07-30",
+        "report_date": "2026-06-30",
+        "primary_document": "meta-20260630.htm",
+        "sha256": "6ed73c37a6bf6c45f5becbf56107d45228849955dd5c6d43e0cd3e0d5e6a4d24"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-003942",
+        "filed": "2026-01-29",
+        "report_date": "2025-12-31",
+        "primary_document": "meta-20251231.htm",
+        "sha256": "f78fe1cbc2a5c786cbb67362e22a79c19ae606f5cdbae9faed231f210a574053"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1525
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:48440-49574",
+      "excerpt": "es 2029 - 2064 4.30 % - 5.55 % 4.42 % - 5.60 % 10,500 10,500 November 2025 Notes 2030 - 2065 4.20 % - 5.75 % 4.27 % - 5.77 % 30,000 30,000 May 2026 Notes 2031 - 2066 4.55 % - 6.45 % 4.60 % - 6.48 % 25,000 — Total face value of long-term debt 84,000 59,000 Unamortized discount and issuance costs, net ( 331 ) ( 256 ) Less: Long-term debt, current ( 2,747 ) — Long-term debt, non-current $ 80,922 $ 58,744 Each series of the Notes ranks equally with each other. Interest on the Notes is payable semi-annually in arrears. We may redeem the Notes at any time, in whole or in part, at specified redemption prices. We are not subject to any financial covenants under the Notes. Interest expense, net of capitalized interest, recognized on the Notes was $ 882 million and $ 205 million for the three months ended September 30, 2026 and 2025, respectively, and $ 2.17 billion and $ 668 million for the nine months ended September 30, 2026 and 2025, respectively. 20 Table of Contents The total estimated fair value of our outstanding Notes was $ 73.31 billion and $ 57.22 billion as of September 30, 2026 and December 31, 2025, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:144046-144871",
+      "excerpt": "est income in the three and nine months ended September 30, 2026, increased $575 million, or 160%, and $1.04 billion, or 69%, respectively, compared to the same periods in 2025, mostly due to higher investment balances. • Interest expense in the three and nine months ended September 30, 2026, increased $750 million, or 330%, and $1.61 billion, or 228%, respectively, compared to the same periods in 2025, due to higher long-term debt balances. • Gain (loss) on equity investments and other, net in the three and nine months ended September 30, 2026, decreased $784 million, or 82%, and $1.67 billion, or 212%, respectively, compared to the same periods in 2025, primarily due to increases in unrealized losses on our marketable equity investments, partially offset by our share of net earnings from equity method investees.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:17604-18603",
+      "excerpt": "Total current liabilities 63,011 41,836 Operating lease liabilities, non-current 28,651 22,940 Long-term debt 80,922 58,744 Long-term income taxes 20,521 21,005 Other liabilities 13,345 4,253 Total liabilities 206,450 148,778 Commitments and contingencies Stockholders' equity: Common stock and additional paid-in capital, $ 0.000006 par value; 5,000 million Class A shares authorized, 2,214 million and 2,187 million shares issued and outstanding, as of September 30, 2026 and December 31, 2025, respectively; 4,141 million Class B shares authorized, 342 million and 343 million shares issued and outstanding, as of September 30, 2026 and December 31, 2025, respectively 108,244 95,793 Accumulated other comprehensive income (loss) ( 1,200 ) 271 Retained earnings 165,342 121,179 Total stockholders' equity 272,386 217,243 Total liabilities and stockholders' equity $ 478,836 $ 366,021 See Accompanying Notes to Condensed Consolidated Financial Statements. 6 Table of Contents META PLATFORMS, INC.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:345163-346347",
+      "excerpt": "centers, colocations, and network infrastructure, as of December 31, 2025. These operating and finance leases will commence between 2026 and 2030 with lease terms of greater than one year to 30 years. We also have $131.05 billion of contractual commitments as of December 31, 2025, mostly related to third-party cloud capacity arrangements and our continued investments in servers and network infrastructure, data centers, and consumer hardware products in Reality Labs with $30.63 billion due in 2026. Long-term Debt As of December 31, 2025, we had outstanding long-term debt in the form of senior unsecured notes for an aggregate principal amount of $59.0 billion, which mature from 2027 through 2064. Short-term and long-term future interest payments obligations as of December 31, 2025 were $2.98 billion and $56.74 billion, respectively. Capital Return Program Share Repurchase Our board of directors has authorized a share repurchase program of our Class A common stock, which commenced in January 2017 and does not have an expiration date. In 2025, we repurchased and subsequently retired 40 million shares of our Class A common stock for an aggregate amount of $26.26 billion.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:46440-47640",
+      "excerpt": "fied $ 1.27 billion of goodwill to held-for-sale within prepaid expenses and other current assets on our condensed consolidated balance sheets. No impairment loss was recognized upon reclassification. During the third quarter of 2026, we completed the sale and derecognized the related goodwill. The gain recognized on the sale was not material. 19 Table of Contents Note 8. Liabilities The components of accrued expenses and other current liabilities are as follows (in millions): September 30, 2026 December 31, 2025 Legal-related accruals, current (1) $ 11,577 $ 6,867 Accrued compensation and benefits 3,846 7,151 Accrued property and equipment 7,172 4,402 Accrued taxes 2,057 1,922 Long-term debt, current 2,747 — Other current liabilities 13,993 10,387 Total $ 41,392 $ 30,729 The components of other liabilities are as follows (in millions): September 30, 2026 December 31, 2025 Legal-related accruals, non-current (1) $ 8,304 $ 450 Other non-current liabilities 5,041 3,803 Total $ 13,345 $ 4,253 _________________________ (1) Includes current and non-current accruals for the August 2026 multistate attorneys general agreement to resolve litigation related to teen mental health and social m",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:47440-48640",
+      "excerpt": ",253 _________________________ (1) Includes current and non-current accruals for the August 2026 multistate attorneys general agreement to resolve litigation related to teen mental health and social media, accruals for estimated fines, judgments, settlements, or other losses in connection with other legal and related matters, and accrued legal fees. For further information, see Legal and Related Matters in Note 10 — Commitments and Contingencies. Note 9. Long-term Debt In May 2026, we issued an aggregate of $ 25.00 billion of fixed-rate senior unsecured notes in six series. The following table summarizes our fixed-rate senior unsecured notes (the Notes) and the carrying amount of our long-term debt (in millions, except percentages): Maturity Stated Interest Rate Effective Interest Rate September 30, 2026 December 31, 2025 August 2022 Notes 2027 - 2062 3.50 % - 4.65 % 3.63 % - 4.71 % $ 10,000 $ 10,000 May 2023 Notes 2028 - 2063 4.60 % - 5.75 % 4.68 % - 5.79 % 8,500 8,500 August 2024 Notes 2029 - 2064 4.30 % - 5.55 % 4.42 % - 5.60 % 10,500 10,500 November 2025 Notes 2030 - 2065 4.20 % - 5.75 % 4.27 % - 5.77 % 30,000 30,000 May 2026 Notes 2031 - 2066 4.55 % - 6.45 % 4.60 % - 6.48 % 25",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/0001628280-26-066773-index.htm",
+      "locator": "LongTermDebt ..2026-09-30",
+      "excerpt": null,
+      "values": [
+        80922000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/0001628280-25-047240-index.htm",
+      "locator": "LongTermDebt ..2025-09-30",
+      "excerpt": null,
+      "values": [
+        28834000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "META",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": null,
+      "locator": "LongTermDebt level instant @ 2026-09-30",
+      "excerpt": null,
+      "values": [
+        80922000000.0,
+        28834000000.0,
+        1.8064784629257127
+      ],
+      "unit": "USD",
+      "evidence_id": "E9"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E3",
+      "quote": "Long-term debt 80,922 58,744",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:17604-18603"
+    },
+    {
+      "evidence_id": "E1",
+      "quote": "Long-term debt, non-current $ 80,922 $ 58,744",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "locator": "10-Q 0001628280-26-066773:48440-49574"
+    },
+    {
+      "evidence_id": "E9",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001628280-26-066773",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_end": "2026-09-30",
+      "source_url": null,
+      "locator": "LongTermDebt level instant @ 2026-09-30"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 4336,
+    "output": 475
+  },
+  "latency_ms": 5,
+  "estimated_cost_usd": 0.020133,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "financial_verification",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_ALL_TRUE",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 5,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

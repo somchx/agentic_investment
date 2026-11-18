@@ -1,0 +1,2217 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:A3v2_2e:GOLD-TSLA-04:0fc0a011",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3v2_2e",
+  "approach_kind": "contradiction_aware_v2",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "review": {
+      "enabled": true,
+      "max_output_tokens": 4096,
+      "passage_chars": 1200,
+      "allow_partial_period": false
+    },
+    "guard": {
+      "enabled": true,
+      "version": "0.3"
+    },
+    "analyzer": {
+      "name": "default"
+    },
+    "decidability": {
+      "name": "llm_0.1",
+      "scope_gate": true,
+      "downgrade": "supported"
+    },
+    "periods": {
+      "enabled": true,
+      "version": "1.1"
+    },
+    "quote_check": "1.1",
+    "numeric_checks": "0.1",
+    "coverage": "0.1",
+    "name": "A3v2_2e",
+    "kind": "contradiction_aware_v2",
+    "description": "A3 v2.2 + E1 evidence coverage: a final SUPPORTED / CONTRADICTED needs a validated finding, a valid A2 numeric rule or an A3 deterministic check",
+    "versions": {
+      "a3v2": "a3v2-0.3.0-dev",
+      "review_prompts": "a3v2-review-prompts-0.3",
+      "guard": "a3v2-guard-0.3",
+      "graph": "langgraph-claims-a3v2-0.1",
+      "periods": "a3v2-periods-1.1",
+      "decidability": "a3v2-decidability-0.1-draft",
+      "decidability_prompt": "a3v2-decidability-prompt-0.1",
+      "quote_check": "a3v2-quote-check-1.1",
+      "coverage": "a3v2-coverage-0.1",
+      "numeric_checks": "a3v2-numeric-checks-0.1"
+    }
+  },
+  "config_hash": "5bf41b202ff248b0",
+  "claim": {
+    "claim_id": "GOLD-TSLA-04",
+    "company": "TSLA",
+    "claim": "Tesla's energy generation and storage revenue for fiscal year 2025 increased by more than 20% compared with fiscal year 2024.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Tesla's energy generation and storage revenue for fiscal year 2025 increased by more than 20% compared with fiscal year 2024. \n\nEvidence E1 discusses cost of energy generation and storage revenue (not revenue itself), stating: \"Cost of energy generation and storage revenue increased $1.52 billion, or 20%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024.\" This is about costs, not revenue.\n\nEvidence E4 mentions \"Energy generation and storage revenue includes sales, leasing, and financing of energy generation and storage products...\" but does not provide the actual revenue figures or growth rate for FY2025 vs FY2024.\n\nEvidence E2 provides partial year data: \"Energy generation and storage revenue increased $870 million, or 19%, in the six months ended June 30, 2025 as compared to the six months ended June 30, 2024.\" This is only for six months, not the full fiscal year.\n\nEvidence E6 provides nine-month data: \"Energy generation and storage revenue increased $1.04 billion, or 44%, in the three months ended September 30, 2025\" but this is comparing Q3 2025 to Q3 2024, not full year figures.\n\nNone of the evidence passages provide the actual full-year energy generation and storage revenue growth rate for FY2025 vs FY2024. While we have cost growth (20%) and partial year revenue growth rates (19% for H1, 44% for Q3), we do not have the complete full-year revenue growth figure needed to verify whether it exceeded 20%.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "CONTRADICTED",
+      "rule": "NUMERIC_FALSE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 94827000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 94827000000.0,
+                "filed": "2026-01-29",
+                "form": "10-K",
+                "accession_number": "0001628280-26-003952",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 97690000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": -0.029306991503736307,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "analyze_claim",
+      "analysis": {
+        "assertions": [
+          {
+            "assertion_id": "A0",
+            "text": "Tesla's energy generation and storage revenue for fiscal year 2025 increased by more than 20% compared with fiscal year 2024.",
+            "type": "claim",
+            "period_end": "2025-12-31",
+            "comparison_end": "2024-12-31",
+            "period_start": "2025-01-01",
+            "period_months": 12,
+            "period_kind": "duration"
+          },
+          {
+            "assertion_id": "N1",
+            "type": "numeric",
+            "numeric": {
+              "metric": "Revenue",
+              "measure": "yoy_growth",
+              "period_basis": "annual",
+              "period_end": "2025-12-31",
+              "comparison": ">",
+              "threshold": 0.2,
+              "stated_value": null
+            },
+            "text": "Revenue yoy_growth > 0.2",
+            "period_end": "2025-12-31",
+            "comparison_end": "2024-12-31",
+            "period_start": "2025-01-01",
+            "period_months": 12,
+            "period_kind": "duration"
+          }
+        ],
+        "computations": [],
+        "claim_period": {
+          "version": "a3v2-periods-1.1",
+          "kind": "duration",
+          "start": "2025-01-01",
+          "end": "2025-12-31",
+          "months": 12,
+          "label": "FY2025",
+          "fiscal_year": 2025,
+          "source": "text_fiscal",
+          "comparison": {
+            "start": "2024-01-01",
+            "end": "2024-12-31"
+          },
+          "notes": [],
+          "period_end": "2025-12-31",
+          "comparison_end": "2024-12-31",
+          "basis": "annual",
+          "orientation": "historical",
+          "years": [
+            2024,
+            2025
+          ]
+        },
+        "analyzer": "default-whole-claim-0.1",
+        "decidability_record": {
+          "assertion_id": "A0",
+          "predicate_type": "MEASURABLE",
+          "criterion_source": "CLAIM_STATES",
+          "required_evidence": [
+            {
+              "kind": "NUMERIC_FACT",
+              "scope": {
+                "entity": null,
+                "segment": "energy generation and storage",
+                "region": null,
+                "metric": "revenue"
+              }
+            }
+          ],
+          "status": "DECIDABLE",
+          "issues": [],
+          "version": "a3v2-decidability-0.1-draft",
+          "evaluative_terms": [],
+          "scope": {
+            "segment": "energy generation and storage",
+            "region": null,
+            "metric": "revenue"
+          },
+          "contribution": {
+            "type": "NONE",
+            "component": null,
+            "total": null
+          },
+          "note": "The claim asserts a measurable fact about revenue growth exceeding a specific threshold (20%) for a defined segment, which can be verified by comparing revenue figures from the two fiscal years in the filing.",
+          "prompt_version": "a3v2-decidability-prompt-0.1"
+        },
+        "decidability": [
+          {
+            "assertion_id": "A0",
+            "status": "DECIDABLE",
+            "predicate_type": "MEASURABLE",
+            "reason": "The claim asserts a measurable fact about revenue growth exceeding a specific threshold (20%) for a defined segment, which can be verified by comparing revenue figures from the two fiscal years in the filing."
+          }
+        ]
+      },
+      "computations": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Does the filing explicitly state the full-year energy generation and storage segment revenue for FY2025 and FY2024, showing growth exceeding 20%?",
+          "search_query": "energy generation and storage revenue year ended December 31 2025 2024 segment",
+          "numeric_check": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Does the filing provide a breakdown table or consolidated statement showing energy generation and storage segment revenue for both fiscal years 2025 and 2024?",
+          "search_query": "energy generation storage segment revenue 2025 2024 annual consolidated statements operations",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Does the filing discuss the percentage change or dollar change in energy generation and storage revenue for the full fiscal year 2025 compared to 2024?",
+          "search_query": "energy generation storage revenue increased decreased percent year ended 2025 2024",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "energy generation and storage revenue year ended December 31 2025 2024 segment",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "energy generation storage segment revenue 2025 2024 annual consolidated statements operations",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "energy generation storage revenue increased decreased percent year ended 2025 2024",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 94827000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 94827000000.0,
+                "filed": "2026-01-29",
+                "form": "10-K",
+                "accession_number": "0001628280-26-003952",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 97690000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": -0.029306991503736307,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "evidence_review",
+      "version": "a3v2-review-prompts-0.1",
+      "claim_period": {
+        "version": "a3v2-periods-1.1",
+        "kind": "duration",
+        "start": "2025-01-01",
+        "end": "2025-12-31",
+        "months": 12,
+        "label": "FY2025",
+        "fiscal_year": 2025,
+        "source": "text_fiscal",
+        "comparison": {
+          "start": "2024-01-01",
+          "end": "2024-12-31"
+        },
+        "notes": [],
+        "period_end": "2025-12-31",
+        "comparison_end": "2024-12-31",
+        "basis": "annual",
+        "orientation": "historical",
+        "years": [
+          2024,
+          2025
+        ]
+      },
+      "assertions": [
+        {
+          "assertion_id": "A0",
+          "text": "Tesla's energy generation and storage revenue for fiscal year 2025 increased by more than 20% compared with fiscal year 2024.",
+          "type": "claim",
+          "period_end": "2025-12-31",
+          "comparison_end": "2024-12-31",
+          "period_start": "2025-01-01",
+          "period_months": 12,
+          "period_kind": "duration"
+        },
+        {
+          "assertion_id": "N1",
+          "type": "numeric",
+          "numeric": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          },
+          "text": "Revenue yoy_growth > 0.2",
+          "period_end": "2025-12-31",
+          "comparison_end": "2024-12-31",
+          "period_start": "2025-01-01",
+          "period_months": 12,
+          "period_kind": "duration"
+        }
+      ],
+      "reviewed_evidence_ids": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "E9",
+        "E7",
+        "E8",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "findings": [
+        {
+          "finding_id": "R1",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E11"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Energy generation and storage revenue increased $2.69 billion, or 27%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024",
+          "justification": "This passage directly states that energy generation and storage revenue increased by 27% for the year ended December 31, 2025 compared to the year ended December 31, 2024. Since 27% > 20%, this entails the assertion that the increase was more than 20%.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E11",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "markers": [
+                    "FISCAL_YEAR"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-K",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R2",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E12"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Energy generation and storage segment Revenues $ 12,771 $ 10,086",
+          "justification": "This table shows energy generation and storage segment revenues for 2025 ($12,771 million) and 2024 ($10,086 million). The increase is $2,685 million, which represents 26.6% growth ($2,685/$10,086), exceeding the 20% threshold claimed.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E12",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "markers": [
+                    "FISCAL_YEAR"
+                  ],
+                  "source": "passage_marker",
+                  "form": "10-K",
+                  "quote_years": []
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R3",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E11"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Energy generation and storage revenue increased $2.69 billion, or 27%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024",
+          "justification": "This passage states that energy generation and storage revenue increased by 27% year-over-year. Since 0.27 > 0.2, this entails the numeric assertion that revenue yoy_growth > 0.2.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E11",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "markers": [
+                    "FISCAL_YEAR"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-K",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R4",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E12"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Energy generation and storage segment Revenues $ 12,771 $ 10,086",
+          "justification": "The revenues for energy generation and storage segment are $12,771 million for 2025 and $10,086 million for 2024. The growth rate is (12,771 - 10,086)/10,086 = 0.266 or 26.6%, which is greater than 0.2 (20%).",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E12",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "markers": [
+                    "FISCAL_YEAR"
+                  ],
+                  "source": "passage_marker",
+                  "form": "10-K",
+                  "quote_years": []
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R5",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E1"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Cost of energy generation and storage revenue increased $1.52 billion, or 20%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024",
+          "justification": "This passage discusses the cost of energy generation and storage revenue, not the revenue itself. While related to the same segment, cost changes do not directly establish revenue changes.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E1",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "markers": [
+                    "FISCAL_YEAR"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-K",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R6",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E2"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Energy generation and storage revenue increased $870 million, or 19%, in the six months ended June 30, 2025 as compared to the six months ended June 30, 2024",
+          "justification": "This passage reports a 19% increase for the six months ended June 30, 2025, which is a different period than the full fiscal year 2025. The period_status is MISMATCH, so this cannot decide the claim about the full year.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E2",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-06-30",
+                  "months": [
+                    6
+                  ],
+                  "markers": [
+                    "YTD6"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R7",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E6"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Energy generation and storage revenue increased $1.04 billion, or 44%, in the three months ended September 30, 2025 as compared to the three months ended September 30, 2024",
+          "justification": "This passage reports a 44% increase for the three months ended September 30, 2025, which is a different period (quarterly vs annual) than the full fiscal year 2025. The period_status is MISMATCH, so this cannot decide the claim about the full year.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E6",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-09-30",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R8",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E7",
+            "E8"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Revenue 2025-01-01..2025-12-31",
+          "justification": "These XBRL facts show total Tesla revenue for 2025 ($94,827 million) and 2024 ($97,690 million), not specifically energy generation and storage segment revenue. Total revenue actually decreased, but this does not decide the claim about the energy generation and storage segment specifically.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "XBRL_VALUE_NOT_IN_QUOTE",
+              "issues": [
+                "XBRL_VALUE_NOT_IN_QUOTE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-01-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "XBRL_VALUE_NOT_IN_QUOTE",
+              "issues": [
+                "XBRL_VALUE_NOT_IN_QUOTE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "comparison",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2024-01-01",
+                  "end": "2024-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R9",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E7",
+            "E8"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Revenue 2025-01-01..2025-12-31",
+          "justification": "These XBRL facts show total Tesla revenue, not energy generation and storage segment revenue specifically. The claim is about energy generation and storage revenue growth, not total company revenue growth.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "XBRL_VALUE_NOT_IN_QUOTE",
+              "issues": [
+                "XBRL_VALUE_NOT_IN_QUOTE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-01-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "XBRL_VALUE_NOT_IN_QUOTE",
+              "issues": [
+                "XBRL_VALUE_NOT_IN_QUOTE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "comparison",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2024-01-01",
+                  "end": "2024-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R10",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E14"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Energy generation and storage sales 12,270 9,564",
+          "justification": "This table shows energy generation and storage sales revenue (excluding leasing) of $12,270 million for 2025 and $9,564 million for 2024. However, the claim refers to total energy generation and storage revenue, which includes both sales and leasing components. This is only a partial figure.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E14",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "markers": [
+                    "FISCAL_YEAR"
+                  ],
+                  "source": "passage_marker",
+                  "form": "10-K",
+                  "quote_years": []
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        }
+      ],
+      "dropped_findings": [],
+      "llm_called": true,
+      "period_derivations": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_FALSE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E11",
+              "quote": "Energy generation and storage revenue increased $2.69 billion, or 27%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003952",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+              "locator": "10-K 0001628280-26-003952:182571-183771"
+            },
+            {
+              "evidence_id": "E12",
+              "quote": "Energy generation and storage segment Revenues $ 12,771 $ 10,086 $ 6,035",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003952",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+              "locator": "10-K 0001628280-26-003952:373477-374564"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E12",
+              "quote": "Energy generation and storage segment Revenues $ 12,771 $ 10,086 $ 6,035 Cost of revenues (2) $ 8,969 $ 7,446 $ 4,894",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003952",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+              "locator": "10-K 0001628280-26-003952:373477-374564"
+            },
+            {
+              "evidence_id": "E14",
+              "quote": "Energy generation and storage sales 12,270 9,564 5,515... Energy generation and storage leasing 501 522 520",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003952",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+              "locator": "10-K 0001628280-26-003952:231129-232329"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E11",
+              "quote": "Energy generation and storage revenue increased $2.69 billion, or 27%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003952",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+              "locator": "10-K 0001628280-26-003952:182571-183771"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation_guard",
+      "version": "a3v2-guard-0.3",
+      "initial_label": "CONTRADICTED",
+      "proposed_label": "CONTRADICTED",
+      "final_label": "SUPPORTED",
+      "outcome": "NO_CHANGE",
+      "reason_code": "NO_CHANGE+N1_SCOPE_MISMATCH",
+      "excluded_citations": [],
+      "deciding_findings": [],
+      "initial_basis": [],
+      "rule_trace": [
+        "NO_CHANGE: NO_CHANGE",
+        "numeric checks: N1_SCOPE_MISMATCH (CONTRADICTED -> SUPPORTED)"
+      ],
+      "decidability_gate": {
+        "record": {
+          "assertion_id": "A0",
+          "predicate_type": "MEASURABLE",
+          "criterion_source": "CLAIM_STATES",
+          "required_evidence": [
+            {
+              "kind": "NUMERIC_FACT",
+              "scope": {
+                "entity": null,
+                "segment": "energy generation and storage",
+                "region": null,
+                "metric": "revenue"
+              }
+            }
+          ],
+          "status": "DECIDABLE",
+          "issues": [],
+          "version": "a3v2-decidability-0.1-draft",
+          "evaluative_terms": [],
+          "scope": {
+            "segment": "energy generation and storage",
+            "region": null,
+            "metric": "revenue"
+          },
+          "contribution": {
+            "type": "NONE",
+            "component": null,
+            "total": null
+          },
+          "note": "The claim asserts a measurable fact about revenue growth exceeding a specific threshold (20%) for a defined segment, which can be verified by comparing revenue figures from the two fiscal years in the filing.",
+          "prompt_version": "a3v2-decidability-prompt-0.1"
+        },
+        "reason": null,
+        "label_before": "CONTRADICTED",
+        "label_after": "CONTRADICTED"
+      },
+      "numeric_checks": {
+        "validity": [
+          "SCOPE_MISMATCH"
+        ],
+        "fcf": {
+          "status": "NOT_APPLICABLE"
+        },
+        "reason": "N1_SCOPE_MISMATCH",
+        "label_before": "CONTRADICTED",
+        "label_after": "SUPPORTED"
+      },
+      "coverage": {
+        "basis": [
+          "VALID_FINDING",
+          "A3_DETERMINISTIC_CHECK"
+        ],
+        "reason": null,
+        "label_before": "SUPPORTED",
+        "label_after": "SUPPORTED"
+      }
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "4ff9c49ab437993c5a640afda4ed64d7ee97ea6bd7451b1992b63f8f992e9ebb",
+      "source": "cache",
+      "input_tokens": 3881,
+      "output_tokens": 596,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Tesla's energy generation and storage revenue for fiscal year 2025 increased by more than 20% compared with fiscal year 2024. \n\nEvidence E1 discusses cost of energy generation and storage revenue (not revenue itself), stating: \"Cost of energy generation and storage revenue increased $1.52 billion, or 20%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024.\" This is about costs, not revenue.\n\nEvidence E4 mentions \"Energy generation and storage revenue includes sales, leasing, and financing of energy generation and storage products...\" but does not provide the actual revenue figures or growth rate for FY2025 vs FY2024.\n\nEvidence E2 provides partial year data: \"Energy generation and storage revenue increased $870 million, or 19%, in the six months ended June 30, 2025 as compared to the six months ended June 30, 2024.\" This is only for six months, not the full fiscal year.\n\nEvidence E6 provides nine-month data: \"Energy generation and storage revenue increased $1.04 billion, or 44%, in the three months ended September 30, 2025\" but this is comparing Q3 2025 to Q3 2024, not full year figures.\n\nNone of the evidence passages provide the actual full-year energy generation and storage revenue growth rate for FY2025 vs FY2024. While we have cost growth (20%) and partial year revenue growth rates (19% for H1, 44% for Q3), we do not have the complete full-year revenue growth figure needed to verify whether it exceeded 20%.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "decidability",
+      "tool": "classify_claim",
+      "request_key": "12f66ea38684849faceb9fad9c1534ad719ede2bdf84abc88dacf30ccd4e1b3f",
+      "source": "live",
+      "input_tokens": 1510,
+      "output_tokens": 233,
+      "stop_reason": "tool_use",
+      "latency_ms": 4459,
+      "output": {
+        "predicate_type": "MEASURABLE",
+        "evaluative_terms": [],
+        "criterion_source": "CLAIM_STATES",
+        "scope": {
+          "segment": "energy generation and storage",
+          "region": null,
+          "metric": "revenue"
+        },
+        "contribution": {
+          "type": "NONE"
+        },
+        "required_evidence": [
+          "NUMERIC_FACT"
+        ],
+        "note": "The claim asserts a measurable fact about revenue growth exceeding a specific threshold (20%) for a defined segment, which can be verified by comparing revenue figures from the two fiscal years in the filing."
+      },
+      "isolated_conversation": true,
+      "prompt_version": "a3v2-decidability-prompt-0.1"
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "1a877fb37f2aa461b72e73f6cbb431017079ee11047bbc2db0a4d638a543dcb5",
+      "source": "cache",
+      "input_tokens": 5241,
+      "output_tokens": 377,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Does the filing explicitly state the full-year energy generation and storage segment revenue for FY2025 and FY2024, showing growth exceeding 20%?",
+            "search_query": "energy generation and storage revenue year ended December 31 2025 2024 segment",
+            "numeric_check": {
+              "metric": "Revenue",
+              "measure": "yoy_growth",
+              "period_basis": "annual",
+              "period_end": "2025-12-31",
+              "comparison": ">",
+              "threshold": 0.2,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Does the filing provide a breakdown table or consolidated statement showing energy generation and storage segment revenue for both fiscal years 2025 and 2024?",
+            "search_query": "energy generation storage segment revenue 2025 2024 annual consolidated statements operations",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Does the filing discuss the percentage change or dollar change in energy generation and storage revenue for the full fiscal year 2025 compared to 2024?",
+            "search_query": "energy generation storage revenue increased decreased percent year ended 2025 2024",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "evidence_review",
+      "tool": "submit_evidence_review",
+      "request_key": "2c2ff05778153777b5b48e7a057a43671ab9b83f49c91927dd3c1c3e99526856",
+      "source": "cache",
+      "input_tokens": 8286,
+      "output_tokens": 1806,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "findings": [
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E11"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Energy generation and storage revenue increased $2.69 billion, or 27%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024",
+            "justification": "This passage directly states that energy generation and storage revenue increased by 27% for the year ended December 31, 2025 compared to the year ended December 31, 2024. Since 27% > 20%, this entails the assertion that the increase was more than 20%.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E12"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Energy generation and storage segment Revenues $ 12,771 $ 10,086",
+            "justification": "This table shows energy generation and storage segment revenues for 2025 ($12,771 million) and 2024 ($10,086 million). The increase is $2,685 million, which represents 26.6% growth ($2,685/$10,086), exceeding the 20% threshold claimed.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E11"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Energy generation and storage revenue increased $2.69 billion, or 27%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024",
+            "justification": "This passage states that energy generation and storage revenue increased by 27% year-over-year. Since 0.27 > 0.2, this entails the numeric assertion that revenue yoy_growth > 0.2.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E12"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Energy generation and storage segment Revenues $ 12,771 $ 10,086",
+            "justification": "The revenues for energy generation and storage segment are $12,771 million for 2025 and $10,086 million for 2024. The growth rate is (12,771 - 10,086)/10,086 = 0.266 or 26.6%, which is greater than 0.2 (20%).",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E1"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Cost of energy generation and storage revenue increased $1.52 billion, or 20%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024",
+            "justification": "This passage discusses the cost of energy generation and storage revenue, not the revenue itself. While related to the same segment, cost changes do not directly establish revenue changes.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E2"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Energy generation and storage revenue increased $870 million, or 19%, in the six months ended June 30, 2025 as compared to the six months ended June 30, 2024",
+            "justification": "This passage reports a 19% increase for the six months ended June 30, 2025, which is a different period than the full fiscal year 2025. The period_status is MISMATCH, so this cannot decide the claim about the full year.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E6"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Energy generation and storage revenue increased $1.04 billion, or 44%, in the three months ended September 30, 2025 as compared to the three months ended September 30, 2024",
+            "justification": "This passage reports a 44% increase for the three months ended September 30, 2025, which is a different period (quarterly vs annual) than the full fiscal year 2025. The period_status is MISMATCH, so this cannot decide the claim about the full year.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E7",
+              "E8"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Revenue 2025-01-01..2025-12-31",
+            "justification": "These XBRL facts show total Tesla revenue for 2025 ($94,827 million) and 2024 ($97,690 million), not specifically energy generation and storage segment revenue. Total revenue actually decreased, but this does not decide the claim about the energy generation and storage segment specifically.",
+            "definition_mismatch": true
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E7",
+              "E8"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Revenue 2025-01-01..2025-12-31",
+            "justification": "These XBRL facts show total Tesla revenue, not energy generation and storage segment revenue specifically. The claim is about energy generation and storage revenue growth, not total company revenue growth.",
+            "definition_mismatch": true
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E14"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Energy generation and storage sales 12,270 9,564",
+            "justification": "This table shows energy generation and storage sales revenue (excluding leasing) of $12,270 million for 2025 and $9,564 million for 2024. However, the claim refers to total energy generation and storage revenue, which includes both sales and leasing components. This is only a partial figure.",
+            "definition_mismatch": false
+          }
+        ]
+      },
+      "isolated_conversation": true,
+      "prompt_version": "a3v2-review-prompts-0.3"
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "39b3ad36ec9154c526e19d8b9f51489b3df52a4bfe8d648d0db8f1b379c7fbe0",
+      "source": "cache",
+      "input_tokens": 11740,
+      "output_tokens": 1094,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E11",
+                "quote": "Energy generation and storage revenue increased $2.69 billion, or 27%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024"
+              },
+              {
+                "evidence_id": "E12",
+                "quote": "Energy generation and storage segment Revenues $ 12,771 $ 10,086 $ 6,035"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E12",
+                "quote": "Energy generation and storage segment Revenues $ 12,771 $ 10,086 $ 6,035 Cost of revenues (2) $ 8,969 $ 7,446 $ 4,894"
+              },
+              {
+                "evidence_id": "E14",
+                "quote": "Energy generation and storage sales 12,270 9,564 5,515... Energy generation and storage leasing 501 522 520"
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E11",
+                "quote": "Energy generation and storage revenue increased $2.69 billion, or 27%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": true,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E11",
+            "quote": "Energy generation and storage revenue increased $2.69 billion, or 27%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024"
+          },
+          {
+            "evidence_id": "E12",
+            "quote": "Energy generation and storage segment Revenues $ 12,771 $ 10,086 $ 6,035"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "My initial verdict of INSUFFICIENT_EVIDENCE was incorrect. The newly retrieved evidence provides clear and direct confirmation of the claim.\n\nEvidence E11 explicitly states: \"Energy generation and storage revenue increased $2.69 billion, or 27%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024.\" This directly confirms that the energy generation and storage revenue increased by 27% for fiscal year 2025 compared to fiscal year 2024, which exceeds the 20% threshold stated in the claim.\n\nEvidence E12 provides the segment revenue table showing energy generation and storage segment revenues of $12,771 million for 2025 and $10,086 million for 2024. The calculated growth rate is ($12,771 - $10,086) / $10,086 = 26.6%, which also exceeds 20%.\n\nThe evidence review confirms that both E11 and E12 are marked as ENTAILS with EXACT_MATCH period compatibility and HISTORICAL_FACT statement time, making them valid evidence to support the claim.\n\nMy initial analysis incorrectly concluded there was insufficient evidence because I focused on the originally provided evidence (E1-E6), which included cost data (E1), partial-year data (E2, E6), and general descriptions (E4) but not the full-year revenue growth figure. The contradiction plan successfully identified that the filing should contain explicit full-year segment revenue data, and the new retrieval found this information in E11 and E12.",
+        "change_reason": "The newly retrieved evidence E11 and E12 explicitly provide the full-year energy generation and storage segment revenue for FY2025 and FY2024, showing 27% growth (or 26.6% when calculated from the table), which exceeds the 20% threshold claimed. This evidence was not available in the initial packet but was found through targeted searches for segment revenue data."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Tesla's energy generation and storage revenue for fiscal year 2025 increased by more than 20% compared with fiscal year 2024. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "energy generation and storage revenue year ended December 31 2025 2024 segment",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "energy generation storage segment revenue 2025 2024 annual consolidated statements operations",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "energy generation storage revenue increased decreased percent year ended 2025 2024",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 94827000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 94827000000.0,
+                "filed": "2026-01-29",
+                "form": "10-K",
+                "accession_number": "0001628280-26-003952",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 97690000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": -0.029306991503736307,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "Revenue",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.2,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 94827000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "Revenue",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 94827000000.0,
+                "filed": "2026-01-29",
+                "form": "10-K",
+                "accession_number": "0001628280-26-003952",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 97690000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": -0.029306991503736307,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-003952",
+        "filed": "2026-01-29",
+        "report_date": "2025-12-31",
+        "primary_document": "tsla-20251231.htm",
+        "sha256": "442a79e7a2099ddb16af0bdb92a78873cbdcd683613875724e17115f012cbce5"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-045968",
+        "filed": "2025-10-23",
+        "report_date": "2025-09-30",
+        "primary_document": "tsla-20250930.htm",
+        "sha256": "cc264bfe1648e78c3de92fb9c81bbe3b42815942f491c0536e61f9bb84fe90e7"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-035806",
+        "filed": "2025-07-24",
+        "report_date": "2025-06-30",
+        "primary_document": "tsla-20250630.htm",
+        "sha256": "52ed29d209255825d33858fafd29c17ca342a5d62f315c0aa6001676aa5220b0"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 732
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:187884-188957",
+      "excerpt": "evenue is primarily comprised of depreciation of the cost of leased energy generation and storage systems, maintenance costs associated with those systems and amortization of any initial direct costs. 2025 compared to 2024 Cost of energy generation and storage revenue increased $1.52 billion, or 20%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, primarily from increases in Megapack and Powerwall deployments, partially offset by a decrease in average cost per unit for Megapack and Powerwall from lower raw material costs, lower manufacturing costs for Megapack in part from the ramp of Shanghai Megafactory, partially offset by higher tariffs. Gross margin for energy generation and storage increased from 26.2% to 29.8% in the year ended December 31, 2025 as compared to the year ended December 31, 2024, primarily due the changes in energy generation and storage revenue and cost of energy generation and storage revenue, as discussed above. Research and Development Expense Year Ended December 31, 2025 vs. 2024 Change 2024 vs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-035806",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025035806/tsla-20250630.htm",
+      "locator": "10-Q 0001628280-25-035806:88354-89419",
+      "excerpt": "r automobile manufacturers. 29 Table of Contents Services and other revenue increased $438 million, or 17%, in the three months ended June 30, 2025 as compared to the three months ended June 30, 2024. Services and other revenue increased $788 million, or 16%, in the six months ended June 30, 2025 as compared to the six months ended June 30, 2024. The increases were primarily due to increases in paid Supercharging revenue, non-warranty maintenance services and collision revenue, insurance services revenue, used vehicle revenue and part sales revenue. Energy Generation and Storage Segment Energy generation and storage revenue decreased $225 million, or 7%, in the three months ended June 30, 2025 as compared to the three months ended June 30, 2024, primarily due to a decrease in average selling price of Megapack, partially offset by an increase in Powerwall deployments compared to the prior year. Energy generation and storage revenue increased $870 million, or 19%, in the six months ended June 30, 2025 as compared to the six months ended June 30, 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-035806",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025035806/tsla-20250630.htm",
+      "locator": "10-Q 0001628280-25-035806:93018-94175",
+      "excerpt": "to 14.9% in the six months ended June 30, 2025 as compared to the six months ended June 30, 2024. The changes in gross margin are primarily due to the automotive gross margin factors discussed above. Energy Generation and Storage Segment Cost of energy generation and storage revenue decreased $331 million, or 15%, in the three months ended June 30, 2025 as compared to the three months ended June 30, 2024, primarily due to a decrease in average cost per unit for Megapack and Powerwall from lower raw material costs, partially offset by an increase in Powerwall deployments compared to the prior year. Cost of energy generation and storage revenue increased $382 million, or 11%, in the six months ended June 30, 2025 as compared to the six months ended June 30, 2024, primarily from increases in Megapack and Powerwall deployments compared to the prior year, partially offset by a decrease in average cost per unit for Megapack and Powerwall primarily from lower raw material costs. Gross margin for energy generation and storage increased from 24.6% to 30.3% in the three months ended June 30, 2025 as compared to the three months ended June 30, 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:181779-182771",
+      "excerpt": "r 31, 2025 as compared to the year ended December 31, 2024. Fluctuations in automotive regulatory credits are impacted by our supply of credits, subject to changes in regulation, production and sales. In 2025, governmental and regulatory actions, such as OBBBA, have restricted certain regulatory credit programs tied to our products. Furthermore, we are impacted by the demand for credits by other automobile manufacturers. 37 Services and other revenue increased $2.00 billion, or 19%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, primarily due to increases in paid Supercharging sessions, non-warranty maintenance services and collision revenue, used vehicle sales volume and automotive insurance business revenue. Energy Generation and Storage Segment Energy generation and storage revenue includes sales, leasing, and financing of energy generation and storage products, services related to such products and sales of energy generation incentives.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:188757-189933",
+      "excerpt": "s in energy generation and storage revenue and cost of energy generation and storage revenue, as discussed above. Research and Development Expense Year Ended December 31, 2025 vs. 2024 Change 2024 vs. 2023 Change (Dollars in millions) 2025 2024 2023 $ % $ % Research and development $ 6,411 $ 4,540 $ 3,969 $ 1,871 41 % $ 571 14 % As a percentage of revenues 7 % 5 % 4 % Research and development (“R&D”) expense consists primarily of personnel costs for our teams in engineering and research, facilities costs such as data center depreciation, prototyping expense, and professional and contract services. 39 R&D expense increased $1.87 billion, or 41%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, primarily due to increases in costs related to AI and other programs as we continue to expand our product roadmap and technologies and an increase in stock-based compensation of $500 million. R&D expense as a percentage of revenue increased from 5% to 7% in the year ended December 31, 2025 as compared to the year ended December 31, 2024, primarily due to higher R&D expense and a decrease in total revenue as compared to the prior year.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-045968",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045968/tsla-20250930.htm",
+      "locator": "10-Q 0001628280-25-045968:98678-99761",
+      "excerpt": "ulatory credits are impacted by our supply of credits, subject to changes in regulation, production and sales. Furthermore, we are impacted by the demand for credits by other automobile manufacturers. Services and other revenue increased $685 million, or 25%, in the three months ended September 30, 2025 as compared to the three months ended September 30, 2024, primarily due to increases in used vehicle sales volume, paid Supercharging sessions, non-warranty maintenance services and collision revenue and insurance business revenue. Services and other revenue increased $1.47 billion, or 19%, in the nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024, primarily due to increases in paid Supercharging sessions, non-warranty maintenance services and collision revenue, used vehicle sales volume and insurance business revenue. Energy Generation and Storage Segment Energy generation and storage revenue increased $1.04 billion, or 44%, in the three months ended September 30, 2025 as compared to the three months ended September 30, 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/0001628280-26-003952-index.htm",
+      "locator": "Revenue 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        94827000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/0001628280-26-003952-index.htm",
+      "locator": "Revenue 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        97690000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "TSLA",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "Revenue yoy_growth annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        94827000000.0,
+        97690000000.0,
+        -0.029306991503736307
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:186315-187425",
+      "excerpt": "vehicle sales volume and cost, cost of paid Supercharging sessions, cost related to our automotive insurance business, and cost related to our non-warranty maintenance services and collision revenue. Gross margin for total automotive decreased from 18.4% to 17.8% in the year ended December 31, 2025 as compared to the year ended December 31, 2024 primarily due to a decrease in regulatory credits revenue as well as the changes in automotive sales revenue and cost of automotive sales revenue, as discussed above. Gross margin for total automotive & services and other segment decreased from 16.9% to 16.2% in the year ended December 31, 2025 as compared to the year ended December 31, 2024 primarily due to a decrease in regulatory credits revenue, partially offset by an improvement in services and other margins. Energy Generation and Storage Segment Cost of energy generation and storage revenue includes direct and indirect material, tariffs, labor costs, manufacturing overhead, including depreciation costs of tooling and machinery, shipping and logistic costs, warranty expense and cost of servicing.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:182571-183771",
+      "excerpt": "ent Energy generation and storage revenue includes sales, leasing, and financing of energy generation and storage products, services related to such products and sales of energy generation incentives. 2025 compared to 2024 Energy generation and storage revenue increased $2.69 billion, or 27%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024 primarily due to increases in Megapack and Powerwall deployments, partially offset by a decrease in average selling price of Megapack. Cost of Revenues and Gross Margin Year Ended December 31, 2025 vs. 2024 Change 2024 vs. 2023 Change (Dollars in millions) 2025 2024 2023 $ % $ % Cost of revenues Automotive sales $ 56,267 $ 61,870 $ 65,121 $ (5,603) (9) % $ (3,251) (5) % Automotive leasing 898 1,003 1,268 (105) (10) % (265) (21) % Total automotive cost of revenues 57,165 62,873 66,389 (5,708) (9) % (3,516) (5) % Services and other 11,599 9,921 7,830 1,678 17 % 2,091 27 % Total automotive & services and other segment cost of revenues 68,764 72,794 74,219 (4,030) (6) % (1,425) (2) % Energy generation and storage segment 8,969 7,446 4,894 1,523 20 % 2,552 52 % Total cost of revenues $ 77,733 $ 80,240 $ 79,113 $ (2,",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:373477-374564",
+      "excerpt": "fit to allocate operating and capital resources and assesses performance of each segment by comparing actual gross profit results to historical results and previously forecasted financial information. The following table presents revenues, cost of revenues and gross profit by reportable segment (in millions): Year Ended December 31, 2025 2024 2023 Automotive segment Revenues $ 82,056 $ 87,604 $ 90,738 Cost of revenues (1) $ 68,764 $ 72,794 $ 74,219 Gross profit $ 13,292 $ 14,810 $ 16,519 Energy generation and storage segment Revenues $ 12,771 $ 10,086 $ 6,035 Cost of revenues (2) $ 8,969 $ 7,446 $ 4,894 Gross profit $ 3,802 $ 2,640 $ 1,141 (1) Depreciation and amortization included in Cost of revenues for the automotive segment for the years ended December 31, 2025, 2024 and 2023 was $ 3.78 billion, $ 3.68 billion and $ 3.45 billion, respectively. (2) Depreciation and amortization included in Cost of revenues for the energy generation and storage segment for the years ended December 31, 2025, 2024 and 2023 was $ 355 million, $ 377 million and $ 343 million, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:33859-34899",
+      "excerpt": "on. In such transactions, they are included as a component of energy generation and storage revenues in our consolidated statements of operations included elsewhere in this Annual Report on Form 10-K. Pursuant to the IRA, as modified by the OBBBA, under Sections 48, 48E and 25D of the Internal Revenue Code (”IRC”), standalone energy storage technology is eligible for a tax credit between 6% and 50% of qualified expenditures, regardless of the source of energy, which may be claimed by our customers for storage systems they purchase or by us for arrangements where we own the systems. Residential credits expired on December 31, 2025, and commercial credits are currently scheduled to phase out in 2034 or later. Energy Generation System Incentives and Policies U.S. federal, state and local governments have established various policies, incentives and financial mechanisms to reduce the cost of solar energy and to accelerate the adoption of solar energy. These incentives include tax credits, cash grants, tax abatements and rebates.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:231129-232329",
+      "excerpt": "ed the carrying value of our assets or liabilities as of the date of issuance of this Annual Report on Form 10-K. These estimates may change as new events occur and additional information is obtained. Actual results could differ materially from these estimates under different assumptions or conditions. Reclassifications Certain prior period balances have been reclassified to conform to the current period presentation in the consolidated financial statements and the accompanying notes. 54 Revenue Recognition Revenue by source The following table disaggregates our revenue by major source (in millions): Year Ended December 31, 2025 2024 2023 Automotive sales $ 65,821 $ 72,480 $ 78,509 Automotive regulatory credits 1,993 2,763 1,790 Energy generation and storage sales 12,270 9,564 5,515 Services and other 12,530 10,534 8,319 Total revenues from sales and services 92,614 95,341 94,133 Automotive leasing 1,712 1,827 2,120 Energy generation and storage leasing 501 522 520 Total revenues $ 94,827 $ 97,690 $ 96,773 Automotive Segment Automotive Sales Automotive sales revenue includes revenues related to cash and financing deliveries of new vehicles, and specific other features and services",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:243718-244884",
+      "excerpt": "e premiums, which is recognized as revenue ratably over the respective customer contract term. Deferred revenue excluding unearned insurance premiums was not material as of December 31, 2025 and 2024. Energy Generation and Storage Segment Energy Generation and Storage Sales Energy generation and storage sales revenue consists of the sale of energy generation and storage systems to residential, small commercial, large commercial and utility grade customers. Sales of energy generation and storage systems to residential and small-scale commercial customers consist of the engineering, design and installation of the system. Residential and small-scale commercial customers pay the full purchase price of the system upfront. Revenue for the design and installation obligation is recognized when control transfers, which is when we install a system and the system passes inspection by the utility or the authority having jurisdiction. We also sell storage systems to channel partners. These sales are recognized when the product has been delivered. Payment for such storage systems is made upon invoice or in accordance with payment terms customary to the business.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-045968",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045968/tsla-20250930.htm",
+      "locator": "10-Q 0001628280-25-045968:105264-106388",
+      "excerpt": "ed September 30, 2024. Gross margin for energy generation and storage increased from 26.6% to 30.3% in the nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024. The increases were primarily due to the changes in energy generation and storage revenue and cost of energy generation and storage revenue, as discussed above. Research and Development Expense Three Months Ended September 30, Change Nine Months Ended September 30, Change (Dollars in millions) 2025 2024 $ % 2025 2024 $ % Research and development $ 1,630 $ 1,039 $ 591 57 % $ 4,628 $ 3,264 $ 1,364 42 % As a percentage of revenues 6 % 4 % 7 % 5 % Research and development (“R&D”) expenses increased $591 million, or 57%, in the three months ended September 30, 2025 as compared to the three months ended September 30, 2024. R&D expenses increased $1.36 billion, or 42%, in the nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024. These increases were primarily due to increases in costs related to AI and other programs as we continue to expand our product roadmap and technologies.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-045968",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045968/tsla-20250930.htm",
+      "locator": "10-Q 0001628280-25-045968:104387-105464",
+      "excerpt": "decrease in average cost per unit for Megapack from lower raw material costs, lower manufacturing costs for Megapack in part from the ramp of Shanghai Megafactory, partially offset by higher tariffs. Cost of energy generation and storage revenue increased $1.07 billion, or 21%, in the nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024, primarily from increases in Megapack and Powerwall deployments compared to the prior period, partially offset by a decrease in average cost per unit for Megapack and Powerwall primarily from lower raw material costs, lower manufacturing costs for Megapack in part from the ramp of Shanghai Megafactory, partially offset by higher tariffs. Gross margin for energy generation and storage increased from 30.5% to 31.4% in the three months ended September 30, 2025 as compared to the three months ended September 30, 2024. Gross margin for energy generation and storage increased from 26.6% to 30.3% in the nine months ended September 30, 2025 as compared to the nine months ended September 30, 2024.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:185510-186515",
+      "excerpt": "rvices and collision, operating costs of paid Supercharging sessions, claim costs associated with providing automotive insurance, and costs associated with our part sales and retail merchandise sales. 2025 compared to 2024 Cost of automotive sales revenue decreased $5.60 billion, or 9%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024 due to the decrease in deliveries year over year as discussed above and lower average cost per unit due to sales mix and lower material costs, partially offset by lower fixed cost absorption and an increase in tariffs compared to the prior year. Cost of services and other revenue increased $1.68 billion, or 17%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024, primarily due to increases in used vehicle sales volume and cost, cost of paid Supercharging sessions, cost related to our automotive insurance business, and cost related to our non-warranty maintenance services and collision revenue.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E11",
+      "quote": "Energy generation and storage revenue increased $2.69 billion, or 27%, in the year ended December 31, 2025 as compared to the year ended December 31, 2024",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:182571-183771"
+    },
+    {
+      "evidence_id": "E12",
+      "quote": "Energy generation and storage segment Revenues $ 12,771 $ 10,086 $ 6,035",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:373477-374564"
+    },
+    {
+      "evidence_id": "E9",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "Revenue yoy_growth annual @ 2025-12-31"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 30658,
+    "output": 4106
+  },
+  "latency_ms": 4493,
+  "estimated_cost_usd": 0.153564,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_FALSE",
+        "checks": [
+          "FALSE"
+        ]
+      },
+      {
+        "node": "analyze_claim",
+        "status": "ok",
+        "duration_ms": 4472,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "assertions": 2,
+        "computations": 0,
+        "period_source": "text_fiscal"
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 8,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "evidence_review",
+        "status": "ok",
+        "duration_ms": 6,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "findings": 10,
+        "deciding": 4,
+        "downgraded": 0
+      },
+      {
+        "node": "reconcile_v2",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 5,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 5,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_FALSE"
+      },
+      {
+        "node": "reconciliation_guard",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 5,
+        "retrieval_queries_so_far": 4,
+        "outcome": "NO_CHANGE",
+        "reason": "NO_CHANGE+N1_SCOPE_MISMATCH",
+        "label": "SUPPORTED"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 6,
+        "llm_calls_so_far": 5,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "analyze_claim",
+      "generate_hypotheses",
+      "counter_investigation",
+      "evidence_review",
+      "reconcile_v2",
+      "apply_guards",
+      "reconciliation_guard",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-a3v2-0.1"
+  },
+  "a3v2_version": "a3v2-0.3.0-dev"
+}

@@ -1,0 +1,2423 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:A3v2_1_1_R:GOLD-MSFT-02:e2072227",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3v2_1_1_R",
+  "approach_kind": "contradiction_aware_v2",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "review": {
+      "enabled": true,
+      "max_output_tokens": 4096,
+      "passage_chars": 1200,
+      "allow_partial_period": false
+    },
+    "guard": {
+      "enabled": false
+    },
+    "analyzer": {
+      "name": "default"
+    },
+    "decidability": {
+      "name": "not_assessed"
+    },
+    "periods": {
+      "enabled": true,
+      "version": "1.1"
+    },
+    "name": "A3v2_1_1_R",
+    "kind": "contradiction_aware_v2",
+    "description": "A3 v2.1.1: evidence reviewer with period compatibility 1.1 and statement-time checks; v1 guards only",
+    "versions": {
+      "a3v2": "a3v2-0.2.1-dev",
+      "review_prompts": "a3v2-review-prompts-0.3",
+      "guard": "a3v2-guard-0.1",
+      "graph": "langgraph-claims-a3v2-0.1",
+      "periods": "a3v2-periods-1.1"
+    }
+  },
+  "config_hash": "226a920c772a1af4",
+  "claim": {
+    "claim_id": "GOLD-MSFT-02",
+    "company": "MSFT",
+    "claim": "Microsoft's operating margin for the quarter ended December 31, 2025 exceeded 45%.",
+    "as_of_date": "2026-02-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2026 Q2"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.45,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Microsoft's operating margin for the quarter ended December 31, 2025 exceeded 45%. While the evidence provided includes the 10-Q filing for this period (filed 2026-01-28), none of the evidence passages contain the actual operating margin figure or the specific revenue and operating income figures needed to calculate it. \n\nEvidence E2 mentions \"As a percent of revenue 10% 11% (1)ppt\" but this refers to Research and Development expenses as a percent of revenue, not operating margin. Evidence E3 discusses gross margin percentage changes but does not provide the specific operating margin figure. The other evidence passages discuss revenue changes, cost changes, and various business metrics, but none state or allow calculation of the operating margin for Q2 FY2026.\n\nWithout the actual operating income and revenue figures from the income statement, or a direct statement of the operating margin percentage, I cannot verify whether the operating margin exceeded 45% for the quarter ended December 31, 2025.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_ALL_TRUE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.45,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "quarter",
+            "level": 0.47094360980891564,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-10-01",
+                "period_end": "2025-12-31",
+                "value": 38275000000.0,
+                "filed": "2026-01-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-027207",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-10-01",
+                "period_end": "2025-12-31",
+                "value": 81273000000.0,
+                "filed": "2026-01-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-027207",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.4545754825367647,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.016368127272150923,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "analyze_claim",
+      "analysis": {
+        "assertions": [
+          {
+            "assertion_id": "A0",
+            "text": "Microsoft's operating margin for the quarter ended December 31, 2025 exceeded 45%.",
+            "type": "claim",
+            "period_end": "2025-12-31",
+            "comparison_end": "2024-12-31",
+            "period_start": "2025-10-01",
+            "period_months": 3,
+            "period_kind": "duration"
+          },
+          {
+            "assertion_id": "N1",
+            "type": "numeric",
+            "numeric": {
+              "metric": "OperatingMargin",
+              "measure": "level",
+              "period_basis": "quarter",
+              "period_end": "2025-12-31",
+              "comparison": ">",
+              "threshold": 0.45,
+              "stated_value": null
+            },
+            "text": "OperatingMargin level > 0.45",
+            "period_end": "2025-12-31",
+            "comparison_end": "2024-12-31",
+            "period_start": "2025-10-01",
+            "period_months": 3,
+            "period_kind": "duration"
+          }
+        ],
+        "computations": [],
+        "claim_period": {
+          "version": "a3v2-periods-1.1",
+          "kind": "duration",
+          "start": "2025-10-01",
+          "end": "2025-12-31",
+          "months": 3,
+          "label": "3M ended 2025-12-31",
+          "fiscal_year": 2026,
+          "source": "text_date",
+          "comparison": {
+            "start": "2024-10-01",
+            "end": "2024-12-31"
+          },
+          "notes": [],
+          "period_end": "2025-12-31",
+          "comparison_end": "2024-12-31",
+          "basis": "quarter",
+          "orientation": "historical",
+          "years": [
+            2024,
+            2025,
+            2026
+          ]
+        },
+        "analyzer": "default-whole-claim-0.1",
+        "decidability": [
+          {
+            "assertion_id": "A0",
+            "status": "NOT_ASSESSED",
+            "reason": "decidability check not implemented yet"
+          },
+          {
+            "assertion_id": "N1",
+            "status": "NOT_ASSESSED",
+            "reason": "decidability check not implemented yet"
+          }
+        ]
+      },
+      "computations": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "The operating margin for Q2 FY2026 (quarter ended December 31, 2025) may have been below 45% rather than exceeding it.",
+          "search_query": "operating income operating margin quarter ended December 31 2025",
+          "numeric_check": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2025-12-31",
+            "comparison": "<=",
+            "threshold": 0.45,
+            "stated_value": null
+          }
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "One-time charges, impairments, or restructuring costs in Q2 FY2026 may have significantly reduced operating income and margin below 45%.",
+          "search_query": "impairment charges restructuring Gaming business quarter December 2025 operating income impact",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "The income statement may show that total operating expenses as a percentage of revenue were high enough to result in an operating margin at or below 45%.",
+          "search_query": "total operating expenses income statement three months December 31 2025 revenue",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "operating income operating margin quarter ended December 31 2025",
+          "results": [
+            "E12",
+            "E13",
+            "E14"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "impairment charges restructuring Gaming business quarter December 2025 operating income impact",
+          "results": [
+            "E15",
+            "E16",
+            "E17"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "total operating expenses income statement three months December 31 2025 revenue",
+          "results": [
+            "E18",
+            "E19",
+            "E20"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18",
+        "E19",
+        "E20"
+      ],
+      "counter_numeric": [
+        {
+          "hypothesis_id": "H1",
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "quarter",
+            "level": 0.47094360980891564,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-10-01",
+                "period_end": "2025-12-31",
+                "value": 38275000000.0,
+                "filed": "2026-01-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-027207",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-10-01",
+                "period_end": "2025-12-31",
+                "value": 81273000000.0,
+                "filed": "2026-01-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-027207",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.4545754825367647,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.016368127272150923,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "evidence_review",
+      "version": "a3v2-review-prompts-0.1",
+      "claim_period": {
+        "version": "a3v2-periods-1.1",
+        "kind": "duration",
+        "start": "2025-10-01",
+        "end": "2025-12-31",
+        "months": 3,
+        "label": "3M ended 2025-12-31",
+        "fiscal_year": 2026,
+        "source": "text_date",
+        "comparison": {
+          "start": "2024-10-01",
+          "end": "2024-12-31"
+        },
+        "notes": [],
+        "period_end": "2025-12-31",
+        "comparison_end": "2024-12-31",
+        "basis": "quarter",
+        "orientation": "historical",
+        "years": [
+          2024,
+          2025,
+          2026
+        ]
+      },
+      "assertions": [
+        {
+          "assertion_id": "A0",
+          "text": "Microsoft's operating margin for the quarter ended December 31, 2025 exceeded 45%.",
+          "type": "claim",
+          "period_end": "2025-12-31",
+          "comparison_end": "2024-12-31",
+          "period_start": "2025-10-01",
+          "period_months": 3,
+          "period_kind": "duration"
+        },
+        {
+          "assertion_id": "N1",
+          "type": "numeric",
+          "numeric": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.45,
+            "stated_value": null
+          },
+          "text": "OperatingMargin level > 0.45",
+          "period_end": "2025-12-31",
+          "comparison_end": "2024-12-31",
+          "period_start": "2025-10-01",
+          "period_months": 3,
+          "period_kind": "duration"
+        }
+      ],
+      "reviewed_evidence_ids": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "E11",
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18",
+        "E19",
+        "E20"
+      ],
+      "findings": [
+        {
+          "finding_id": "R1",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E11"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "OperatingMargin level quarter @ 2025-12-31",
+          "justification": "E11 is a derived metric showing operating margin of 0.4709 (47.09%) for the three months ended December 31, 2025, which exceeds 45%. The period_status is COMPATIBLE_AFTER_VERIFIED_DERIVATION and the period matches exactly (3 months ended 2025-12-31).",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "checks": [
+            {
+              "evidence_id": "E11",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "XBRL_VALUE_NOT_IN_QUOTE",
+              "issues": [
+                "XBRL_VALUE_NOT_IN_QUOTE"
+              ],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-10-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    3
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "OperatingIncome",
+                    "Revenue"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R2",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E7",
+            "E8"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "38275000000.0",
+          "justification": "E7 shows operating income of $38,275 million and E8 shows revenue of $81,273 million for the three months ended December 31, 2025. Operating margin = 38,275 / 81,273 = 0.4709 or 47.09%, which exceeds 45%. Both facts have period_status EXACT_MATCH for the claim period.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-10-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "XBRL_VALUE_NOT_IN_QUOTE",
+              "issues": [
+                "XBRL_VALUE_NOT_IN_QUOTE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-10-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R3",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E13"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended December 31, 2025 2024 Total Revenue $ 81,273 $ 69,632 Cost of revenue 25,978 21,799 Operating expenses 17,020 16,180 Operating income $ 38,275 $ 31,653",
+          "justification": "E13 provides the income statement summary for the three months ended December 31, 2025, showing revenue of $81,273 million and operating income of $38,275 million. Operating margin = 38,275 / 81,273 = 47.09%, which exceeds 45%. The passage states multiple durations but the key_quote explicitly identifies the three months ended December 31, 2025 figures.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "checks": [
+            {
+              "evidence_id": "E13",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R4",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E19"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended December 31, 2025 Compared with Three Months Ended December 31, 2024 Total Revenue $ 81,273 $ 69,632 17% Operating income $ 38,275 $ 31,653 21%",
+          "justification": "E19 shows for the three months ended December 31, 2025, total revenue of $81,273 million and operating income of $38,275 million. Operating margin = 38,275 / 81,273 = 47.09%, exceeding 45%. Period_status is EXACT_MATCH.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "checks": [
+            {
+              "evidence_id": "E19",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R5",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E14"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended December 31, 2025 2024 Revenue $ 81,273 $ 69,632 17% Operating income 38,275 31,653 21%",
+          "justification": "E14 presents summary results showing for the three months ended December 31, 2025, revenue of $81,273 million and operating income of $38,275 million. Operating margin = 38,275 / 81,273 = 47.09%, which exceeds 45%. The passage covers multiple periods but the key_quote identifies the three months ended December 31, 2025.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "checks": [
+            {
+              "evidence_id": "E14",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R6",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E3"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OTHER_CONTEXT",
+          "addresses": "OTHER",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended December 31, 2025 Compared with Three Months Ended December 31, 2024 Revenue increased $11.6 billion or 17%",
+          "justification": "E3 discusses revenue growth and gross margin changes for the three months ended December 31, 2025, but does not provide the specific operating income or operating margin figures needed to determine if operating margin exceeded 45%. It provides context about margin drivers but not the actual operating margin level.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E3",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R7",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E16"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OTHER_CONTEXT",
+          "addresses": "OTHER",
+          "definition_mismatch": false,
+          "key_quote": "Operating income increased $6.6 billion or 21%",
+          "justification": "E16 discusses operating income growth and margin drivers but has period_status UNKNOWN (no period words in passage). While it mentions operating income increased 21%, it doesn't provide the base figures or confirm the specific period, so it cannot definitively establish the operating margin level for the quarter ended December 31, 2025.",
+          "validation_status": "PERIOD_UNKNOWN",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E16",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "UNKNOWN",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "UNKNOWN",
+                "role": null,
+                "reason": "EVIDENCE_PERIOD_UNKNOWN:10Q_passage_without_period_words",
+                "evidence_period": {
+                  "kind": null,
+                  "end": "2025-12-31",
+                  "markers": [],
+                  "source": "10Q_passage_without_period_words",
+                  "form": "10-Q"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "UNKNOWN"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R8",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E11"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "OperatingMargin level quarter @ 2025-12-31",
+          "justification": "E11 shows operating margin of 0.4709 (47.09%) for the quarter ended December 31, 2025, which is greater than 0.45 (45%). Period_status is COMPATIBLE_AFTER_VERIFIED_DERIVATION.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "checks": [
+            {
+              "evidence_id": "E11",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "XBRL_VALUE_NOT_IN_QUOTE",
+              "issues": [
+                "XBRL_VALUE_NOT_IN_QUOTE"
+              ],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-10-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    3
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "OperatingIncome",
+                    "Revenue"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R9",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E7",
+            "E8"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "38275000000.0",
+          "justification": "E7 shows operating income of $38,275 million and E8 shows revenue of $81,273 million for the three months ended December 31, 2025. Operating margin = 38,275 / 81,273 = 0.4709, which exceeds 0.45. Both have period_status EXACT_MATCH.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-10-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "XBRL_VALUE_NOT_IN_QUOTE",
+              "issues": [
+                "XBRL_VALUE_NOT_IN_QUOTE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-10-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R10",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E13"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended December 31, 2025 Total Revenue $ 81,273 Operating income $ 38,275",
+          "justification": "E13 provides revenue of $81,273 million and operating income of $38,275 million for the three months ended December 31, 2025. Operating margin = 38,275 / 81,273 = 0.4709 > 0.45.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "checks": [
+            {
+              "evidence_id": "E13",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R11",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E19"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended December 31, 2025 Total Revenue $ 81,273 Operating income $ 38,275",
+          "justification": "E19 shows for the three months ended December 31, 2025, revenue of $81,273 million and operating income of $38,275 million, yielding an operating margin of 0.4709 > 0.45. Period_status is EXACT_MATCH.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "checks": [
+            {
+              "evidence_id": "E19",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R12",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E14"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended December 31, 2025 Revenue $ 81,273 Operating income 38,275",
+          "justification": "E14 shows revenue of $81,273 million and operating income of $38,275 million for the three months ended December 31, 2025, yielding operating margin of 0.4709 > 0.45.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "checks": [
+            {
+              "evidence_id": "E14",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R13",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E9",
+            "E10"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "31653000000.0",
+          "justification": "E9 and E10 provide operating income and revenue for the three months ended December 31, 2024 (comparison period), not the claim period of December 31, 2025. These are comparison period figures and do not decide the claim about 2025.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E9",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "comparison",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2024-10-01",
+                  "end": "2024-12-31",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E10",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "XBRL_VALUE_NOT_IN_QUOTE",
+              "issues": [
+                "XBRL_VALUE_NOT_IN_QUOTE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "comparison",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2024-10-01",
+                  "end": "2024-12-31",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        }
+      ],
+      "dropped_findings": [],
+      "llm_called": true,
+      "period_derivations": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_ALL_TRUE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E13",
+              "quote": "Three Months Ended December 31, 2025 2024 Revenue $ 81,273 $ 69,632 Cost of revenue 25,978 21,799 Operating expenses 17,020 16,180 Operating income $ 38,275 $ 31,653",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-027207",
+              "form": "10-Q",
+              "filed": "2026-01-28",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+              "locator": "10-Q 0001193125-26-027207:62774-63904"
+            },
+            {
+              "evidence_id": "E7",
+              "quote": "Operating income $ 38,275 $ 31,653",
+              "valid": true,
+              "issues": [],
+              "kind": "xbrl_fact",
+              "accession_number": "0001193125-26-027207",
+              "form": "10-Q",
+              "filed": "2026-01-28",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/0001193125-26-027207-index.htm",
+              "locator": "OperatingIncome 2025-10-01..2025-12-31"
+            },
+            {
+              "evidence_id": "E8",
+              "quote": "Revenue $ 81,273 $ 69,632",
+              "valid": true,
+              "issues": [],
+              "kind": "xbrl_fact",
+              "accession_number": "0001193125-26-027207",
+              "form": "10-Q",
+              "filed": "2026-01-28",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/0001193125-26-027207-index.htm",
+              "locator": "Revenue 2025-10-01..2025-12-31"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E15",
+              "quote": "Research and development expenses increased $587 million or 7% driven by investments in compute capacity and AI talent and impairment charges in our Gaming business.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-027207",
+              "form": "10-Q",
+              "filed": "2026-01-28",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+              "locator": "10-Q 0001193125-26-027207:96965-97982"
+            },
+            {
+              "evidence_id": "E16",
+              "quote": "Operating expenses increased $840 million or 5% driven by research and development investments in compute capacity and AI talent, as well as impairment charges in our Gaming business. Operating income increased $6.6 billion or 21%",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-027207",
+              "form": "10-Q",
+              "filed": "2026-01-28",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+              "locator": "10-Q 0001193125-26-027207:82770-83810"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E19",
+              "quote": "Three Months Ended December 31, 2025 2024 Revenue $ 81,273 $ 69,632 17% Cost of revenue 25,978 21,799 19% Operating expenses 17,020 16,180 5% Operating income $ 38,275 $ 31,653 21%",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-027207",
+              "form": "10-Q",
+              "filed": "2026-01-28",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+              "locator": "10-Q 0001193125-26-027207:86716-87849"
+            },
+            {
+              "evidence_id": "E13",
+              "quote": "Revenue $ 81,273 $ 69,632 Cost of revenue 25,978 21,799 Operating expenses 17,020 16,180 Operating income $ 38,275 $ 31,653",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001193125-26-027207",
+              "form": "10-Q",
+              "filed": "2026-01-28",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+              "locator": "10-Q 0001193125-26-027207:62774-63904"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "f393923a055cdf69e0e7faaebe1a287310590521c345ed55f4440cf7db01157c",
+      "source": "cache",
+      "input_tokens": 4043,
+      "output_tokens": 444,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.45,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Microsoft's operating margin for the quarter ended December 31, 2025 exceeded 45%. While the evidence provided includes the 10-Q filing for this period (filed 2026-01-28), none of the evidence passages contain the actual operating margin figure or the specific revenue and operating income figures needed to calculate it. \n\nEvidence E2 mentions \"As a percent of revenue 10% 11% (1)ppt\" but this refers to Research and Development expenses as a percent of revenue, not operating margin. Evidence E3 discusses gross margin percentage changes but does not provide the specific operating margin figure. The other evidence passages discuss revenue changes, cost changes, and various business metrics, but none state or allow calculation of the operating margin for Q2 FY2026.\n\nWithout the actual operating income and revenue figures from the income statement, or a direct statement of the operating margin percentage, I cannot verify whether the operating margin exceeded 45% for the quarter ended December 31, 2025.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "7eefaa94d58290f7d1366c04062731ec5c8945b16e2fad2bfe6f400e5473645b",
+      "source": "cache",
+      "input_tokens": 5190,
+      "output_tokens": 375,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "The operating margin for Q2 FY2026 (quarter ended December 31, 2025) may have been below 45% rather than exceeding it.",
+            "search_query": "operating income operating margin quarter ended December 31 2025",
+            "numeric_check": {
+              "metric": "OperatingMargin",
+              "measure": "level",
+              "period_basis": "quarter",
+              "period_end": "2025-12-31",
+              "comparison": "<=",
+              "threshold": 0.45,
+              "stated_value": null
+            }
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "One-time charges, impairments, or restructuring costs in Q2 FY2026 may have significantly reduced operating income and margin below 45%.",
+            "search_query": "impairment charges restructuring Gaming business quarter December 2025 operating income impact",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "The income statement may show that total operating expenses as a percentage of revenue were high enough to result in an operating margin at or below 45%.",
+            "search_query": "total operating expenses income statement three months December 31 2025 revenue",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "evidence_review",
+      "tool": "submit_evidence_review",
+      "request_key": "01e437eb28855e61b07d2f5d147c426e9b252feee3887cf802a1cc074543e76e",
+      "source": "live",
+      "input_tokens": 9200,
+      "output_tokens": 2305,
+      "stop_reason": "tool_use",
+      "latency_ms": 30022,
+      "output": {
+        "findings": [
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E11"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "OperatingMargin level quarter @ 2025-12-31",
+            "justification": "E11 is a derived metric showing operating margin of 0.4709 (47.09%) for the three months ended December 31, 2025, which exceeds 45%. The period_status is COMPATIBLE_AFTER_VERIFIED_DERIVATION and the period matches exactly (3 months ended 2025-12-31)."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E7",
+              "E8"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "38275000000.0",
+            "justification": "E7 shows operating income of $38,275 million and E8 shows revenue of $81,273 million for the three months ended December 31, 2025. Operating margin = 38,275 / 81,273 = 0.4709 or 47.09%, which exceeds 45%. Both facts have period_status EXACT_MATCH for the claim period."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E13"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Three Months Ended December 31, 2025 2024 Total Revenue $ 81,273 $ 69,632 Cost of revenue 25,978 21,799 Operating expenses 17,020 16,180 Operating income $ 38,275 $ 31,653",
+            "justification": "E13 provides the income statement summary for the three months ended December 31, 2025, showing revenue of $81,273 million and operating income of $38,275 million. Operating margin = 38,275 / 81,273 = 47.09%, which exceeds 45%. The passage states multiple durations but the key_quote explicitly identifies the three months ended December 31, 2025 figures."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E19"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Three Months Ended December 31, 2025 Compared with Three Months Ended December 31, 2024 Total Revenue $ 81,273 $ 69,632 17% Operating income $ 38,275 $ 31,653 21%",
+            "justification": "E19 shows for the three months ended December 31, 2025, total revenue of $81,273 million and operating income of $38,275 million. Operating margin = 38,275 / 81,273 = 47.09%, exceeding 45%. Period_status is EXACT_MATCH."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E14"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Three Months Ended December 31, 2025 2024 Revenue $ 81,273 $ 69,632 17% Operating income 38,275 31,653 21%",
+            "justification": "E14 presents summary results showing for the three months ended December 31, 2025, revenue of $81,273 million and operating income of $38,275 million. Operating margin = 38,275 / 81,273 = 47.09%, which exceeds 45%. The passage covers multiple periods but the key_quote identifies the three months ended December 31, 2025."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E3"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OTHER_CONTEXT",
+            "addresses": "OTHER",
+            "key_quote": "Three Months Ended December 31, 2025 Compared with Three Months Ended December 31, 2024 Revenue increased $11.6 billion or 17%",
+            "justification": "E3 discusses revenue growth and gross margin changes for the three months ended December 31, 2025, but does not provide the specific operating income or operating margin figures needed to determine if operating margin exceeded 45%. It provides context about margin drivers but not the actual operating margin level."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E16"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OTHER_CONTEXT",
+            "addresses": "OTHER",
+            "key_quote": "Operating income increased $6.6 billion or 21%",
+            "justification": "E16 discusses operating income growth and margin drivers but has period_status UNKNOWN (no period words in passage). While it mentions operating income increased 21%, it doesn't provide the base figures or confirm the specific period, so it cannot definitively establish the operating margin level for the quarter ended December 31, 2025."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E11"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "OperatingMargin level quarter @ 2025-12-31",
+            "justification": "E11 shows operating margin of 0.4709 (47.09%) for the quarter ended December 31, 2025, which is greater than 0.45 (45%). Period_status is COMPATIBLE_AFTER_VERIFIED_DERIVATION."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E7",
+              "E8"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "38275000000.0",
+            "justification": "E7 shows operating income of $38,275 million and E8 shows revenue of $81,273 million for the three months ended December 31, 2025. Operating margin = 38,275 / 81,273 = 0.4709, which exceeds 0.45. Both have period_status EXACT_MATCH."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E13"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Three Months Ended December 31, 2025 Total Revenue $ 81,273 Operating income $ 38,275",
+            "justification": "E13 provides revenue of $81,273 million and operating income of $38,275 million for the three months ended December 31, 2025. Operating margin = 38,275 / 81,273 = 0.4709 > 0.45."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E19"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Three Months Ended December 31, 2025 Total Revenue $ 81,273 Operating income $ 38,275",
+            "justification": "E19 shows for the three months ended December 31, 2025, revenue of $81,273 million and operating income of $38,275 million, yielding an operating margin of 0.4709 > 0.45. Period_status is EXACT_MATCH."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E14"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Three Months Ended December 31, 2025 Revenue $ 81,273 Operating income 38,275",
+            "justification": "E14 shows revenue of $81,273 million and operating income of $38,275 million for the three months ended December 31, 2025, yielding operating margin of 0.4709 > 0.45."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E9",
+              "E10"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "31653000000.0",
+            "justification": "E9 and E10 provide operating income and revenue for the three months ended December 31, 2024 (comparison period), not the claim period of December 31, 2025. These are comparison period figures and do not decide the claim about 2025."
+          }
+        ]
+      },
+      "isolated_conversation": true,
+      "prompt_version": "a3v2-review-prompts-0.3"
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "0b6a41fcf824592eb7e207e11ab85eef20187c6cf48e5a685dfa57c20e8fea9f",
+      "source": "live",
+      "input_tokens": 12889,
+      "output_tokens": 1344,
+      "stop_reason": "tool_use",
+      "latency_ms": 20473,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E13",
+                "quote": "Three Months Ended December 31, 2025 2024 Revenue $ 81,273 $ 69,632 Cost of revenue 25,978 21,799 Operating expenses 17,020 16,180 Operating income $ 38,275 $ 31,653"
+              },
+              {
+                "evidence_id": "E7",
+                "quote": "Operating income $ 38,275 $ 31,653"
+              },
+              {
+                "evidence_id": "E8",
+                "quote": "Revenue $ 81,273 $ 69,632"
+              }
+            ]
+          },
+          {
+            "item_id": "H2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E15",
+                "quote": "Research and development expenses increased $587 million or 7% driven by investments in compute capacity and AI talent and impairment charges in our Gaming business."
+              },
+              {
+                "evidence_id": "E16",
+                "quote": "Operating expenses increased $840 million or 5% driven by research and development investments in compute capacity and AI talent, as well as impairment charges in our Gaming business. Operating income increased $6.6 billion or 21%"
+              }
+            ]
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E19",
+                "quote": "Three Months Ended December 31, 2025 2024 Revenue $ 81,273 $ 69,632 17% Cost of revenue 25,978 21,799 19% Operating expenses 17,020 16,180 5% Operating income $ 38,275 $ 31,653 21%"
+              },
+              {
+                "evidence_id": "E13",
+                "quote": "Revenue $ 81,273 $ 69,632 Cost of revenue 25,978 21,799 Operating expenses 17,020 16,180 Operating income $ 38,275 $ 31,653"
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": true,
+        "change_reason": "My initial verdict of INSUFFICIENT_EVIDENCE was incorrect. The newly retrieved evidence includes the actual income statement figures from Microsoft's 10-Q filing for the quarter ended December 31, 2025. Evidence E7, E8, E13, E14, and E19 all provide the key figures: Revenue of $81,273 million and Operating Income of $38,275 million for the three months ended December 31, 2025. This yields an operating margin of 38,275 / 81,273 = 47.09%, which clearly exceeds 45%. The evidence review confirms these are EXACT_MATCH periods and HISTORICAL_FACT statements. All three challenges were refuted: H1 (margin below 45%) is false as the computed margin is 47.09%; H2 (impairments reducing margin below 45%) is refuted as despite impairment charges mentioned in E15 and E16, operating income still grew 21% and the margin exceeded 45%; H3 (high operating expenses) is refuted as E19 shows operating expenses were only 20.9% of revenue (17,020/81,273), leaving a 47.09% operating margin.",
+        "supporting_evidence": [
+          {
+            "evidence_id": "E7",
+            "quote": "Operating income $ 38,275 $ 31,653"
+          },
+          {
+            "evidence_id": "E8",
+            "quote": "Revenue $ 81,273 $ 69,632"
+          },
+          {
+            "evidence_id": "E13",
+            "quote": "Three Months Ended December 31, 2025 2024 Revenue $ 81,273 $ 69,632 Cost of revenue 25,978 21,799 Operating expenses 17,020 16,180 Operating income $ 38,275 $ 31,653"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Microsoft's operating margin for the quarter ended December 31, 2025 exceeded 45%. The newly retrieved evidence provides the complete income statement data needed to verify this claim. Evidence E7 and E8 (validated as ENTAILS with EXACT_MATCH period compatibility) show operating income of $38,275 million and revenue of $81,273 million for the three months ended December 31, 2025. The operating margin calculation is: $38,275M / $81,273M = 0.4709 or 47.09%, which exceeds the 45% threshold stated in the claim. This is further corroborated by E13, E14, and E19, which all present the same income statement figures. The numeric check confirms the operating margin was 47.09% > 45%. All three challenge hypotheses were refuted: the margin was not below 45% (H1), impairment charges in Gaming did not reduce the margin below 45% (H2), and operating expenses as a percentage of revenue were not high enough to prevent the margin from exceeding 45% (H3)."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Microsoft's operating margin for the quarter ended December 31, 2025 exceeded 45%. FY2026 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "operating income operating margin quarter ended December 31 2025",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E12",
+        "E13",
+        "E14"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "impairment charges restructuring Gaming business quarter December 2025 operating income impact",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E15",
+        "E16",
+        "E17"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "total operating expenses income statement three months December 31 2025 revenue",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E18",
+        "E19",
+        "E20"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2025-12-31",
+            "comparison": ">",
+            "threshold": 0.45,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "quarter",
+            "level": 0.47094360980891564,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-10-01",
+                "period_end": "2025-12-31",
+                "value": 38275000000.0,
+                "filed": "2026-01-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-027207",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-10-01",
+                "period_end": "2025-12-31",
+                "value": 81273000000.0,
+                "filed": "2026-01-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-027207",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.4545754825367647,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.016368127272150923,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "counter:H1",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2025-12-31",
+            "comparison": "<=",
+            "threshold": 0.45,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "quarter",
+            "level": 0.47094360980891564,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2025-10-01",
+                "period_end": "2025-12-31",
+                "value": 38275000000.0,
+                "filed": "2026-01-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-027207",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2025-10-01",
+                "period_end": "2025-12-31",
+                "value": 81273000000.0,
+                "filed": "2026-01-28",
+                "form": "10-Q",
+                "accession_number": "0001193125-26-027207",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.4545754825367647,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": 0.016368127272150923,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001193125-26-027207",
+        "filed": "2026-01-28",
+        "report_date": "2025-12-31",
+        "primary_document": "msft-20251231.htm",
+        "sha256": "383fbc3a1bc3340a625fd05599c36462c5fe642d288202995692cc90507c189c"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001193125-25-256321",
+        "filed": "2025-10-29",
+        "report_date": "2025-09-30",
+        "primary_document": "msft-20250930.htm",
+        "sha256": "c0b0599c8fe5cfd5f06da76108b87ac12a93cc0088ccc00536280c1f60a5566e"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0000950170-25-100235",
+        "filed": "2025-07-30",
+        "report_date": "2025-06-30",
+        "primary_document": "msft-20250630.htm",
+        "sha256": "15d2ebb941500e84aeadd2654143ac3d0fbb10a65d8387391727ec4ae36fcd42"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 790
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:2503-3695",
+      "excerpt": "ry 22, 2026 Common Stock, $ 0.00000625 par value per share 7,425,629,076 shares MICROSOFT CORPORATION FORM 10-Q For the Quarter Ended December 31, 2025 INDEX Page PART I. FINANCIAL INFORMATION Item 1. Financial Statements a) Income Statements for the Three and Six Months Ended December 31, 2025 and 2024 3 b) Comprehensive Income Statements for the Three and Six Months Ended December 31, 2025 and 2024 4 c) Balance Sheets as of December 31, 2025 and June 30, 2025 5 d) Cash Flows Statements for the Three and Six Months Ended December 31, 2025 and 2024 6 e) Stockholders’ Equity Statements for the Three and Six Months Ended December 31, 2025 and 2024 7 f) Notes to Financial Statements 8 g) Report of Independent Registered Public Accounting Firm 29 Item 2. Management’s Discussion and Analysis of Financial Condition and Results of Operations 30 Item 3. Quantitative and Qualitative Disclosures About Market Risk 46 Item 4. Controls and Procedures 46 PART II. OTHER INFORMATION Item 1. Legal Proceedings 47 Item 1A. Risk Factors 47 Item 2. Unregistered Sales of Equity Securities and Use of Proceeds 62 Item 5. Other Information 63 Item 6. Exhibits 64 SIGNATURE 65 2 PART I Item 1 PART I.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:95970-97165",
+      "excerpt": "her margin businesses. • Operating expenses increased $369 million or 5% driven by impairment charges in our Gaming business and research and development investments in compute capacity and AI talent. OPERATING EXPENSES Research and Development (In millions, except percentages) Three Months Ended December 31, Percentage Change Six Months Ended December 31, Percentage Change 2025 2024 2025 2024 Research and development $ 8,504 $ 7,917 7% $ 16,650 $ 15,461 8% As a percent of revenue 10% 11% (1)ppt 10% 11% (1)ppt Research and development expenses include payroll, employee benefits, stock-based compensation expense, and other headcount-related expenses associated with product development. Research and development expenses also include technology development costs, including AI training and other infrastructure costs, third-party development and programming costs, and the amortization of purchased software code and services content. Three Months Ended December 31, 2025 Compared with Three Months Ended December 31, 2024 Research and development expenses increased $587 million or 7% driven by investments in compute capacity and AI talent and impairment charges in our Gaming business.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:81846-82970",
+      "excerpt": "losses from investments in OpenAI. Refer to the Non-GAAP Financial Measures section below for a reconciliation of our financial results reported in accordance with GAAP to non-GAAP financial results. Three Months Ended December 31, 2025 Compared with Three Months Ended December 31, 2024 Revenue increased $11.6 billion or 17% driven by Intelligent Cloud and Productivity and Business Processes, offset in part by More Personal Computing. Intelligent Cloud revenue increased driven by Azure. Productivity and Business Processes revenue increased driven by Microsoft 365 Commercial cloud. More Personal Computing revenue decreased driven by Gaming, offset in part by Search and news advertising as well as Windows OEM. Cost of revenue increased $4.2 billion or 19% driven by growth in Microsoft Cloud. Gross margin increased $7.5 billion or 16% with growth across each of our segments. • Gross margin percentage decreased slightly driven by continued investments in AI infrastructure and growing AI product usage, offset in part by efficiency gains across the Microsoft Cloud and sales mix shift to higher margin businesses.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:91394-92555",
+      "excerpt": "her margin businesses. • Operating expenses increased $236 million or 6% driven by impairment charges in our Gaming business and research and development investments in compute capacity and AI talent. Six Months Ended December 31, 2025 Compared with Six Months Ended December 31, 2024 Productivity and Business Processes Revenue increased $9.4 billion or 16%. • Microsoft 365 Commercial products and cloud services revenue increased $6.9 billion or 17%. Microsoft 365 Commercial cloud revenue grew 17% with growth in revenue per user driven by Microsoft 365 E5 and Microsoft 365 Copilot, and continued Microsoft 365 Commercial seat growth. Microsoft 365 Commercial products revenue grew 15% driven by Windows Commercial on-premises components of Microsoft 365 suite sales, as well as an increase in Office 2024 transactional purchasing. • Microsoft 365 Consumer products and cloud services revenue increased $961 million or 27%. Microsoft 365 Consumer cloud revenue grew 27% driven by growth in revenue per user and continued growth in Microsoft 365 Consumer subscribers. • LinkedIn revenue increased $917 million or 10% driven by growth in Marketing Solutions.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:53726-54776",
+      "excerpt": "the program approved on September 14, 2021, has no expiration date, and may be terminated at any time. As of December 31, 2025, $ 47.4 billion remained of this $ 60.0 billion share repurchase program. We repurchased the following shares of common stock under the share repurchase programs: (In millions) Shares Amount Shares Amount Fiscal Year 2026 2025 First Quarter 8 $ 3,955 7 $ 2,800 Second Quarter 12 5,964 8 3,500 Total 20 $ 9,919 15 $ 6,300 All repurchases were made using cash resources. Shares repurchased during fiscal year 2026 were under the share repurchase program approved on September 16, 2024. Shares repurchased during fiscal year 2025 were under the share repurchase program approved on September 14, 2021. The above table excludes shares repurchased to settle employee tax withholding related to the vesting of stock awards of $ 1.5 billion and $ 3.1 billion for the three and six months ended December 31, 2025, respectively, and $ 1.5 billion and $ 2.8 billion for the three and six months ended December 31, 2024, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:83610-84631",
+      "excerpt": "t year net income and diluted EPS were positively impacted by net gains from investments in OpenAI, which resulted in an increase in net income and diluted EPS of $7.6 billion and $1.02, respectively. Prior year net income and diluted EPS were negatively impacted by net losses from investments in OpenAI, which resulted in a decrease in net income and diluted EPS of $939 million and $0.12, respectively. Six Months Ended December 31, 2025 Compared with Six Months Ended December 31, 2024 Revenue increased $23.7 billion or 18% with growth across each of our segments. Intelligent Cloud revenue increased driven by Azure. Productivity and Business Processes revenue increased driven by Microsoft 365 Commercial cloud. More Personal Computing revenue increased driven by Search and news advertising and Windows OEM, offset in part by Gaming and Devices. Cost of revenue increased $8.1 billion or 19% driven by growth in Microsoft Cloud. Gross margin increased $15.6 billion or 17% with growth across each of our segments.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": "2025-10-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/0001193125-26-027207-index.htm",
+      "locator": "OperatingIncome 2025-10-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        38275000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": "2025-10-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/0001193125-26-027207-index.htm",
+      "locator": "Revenue 2025-10-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        81273000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": "2024-10-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/0001193125-26-027207-index.htm",
+      "locator": "OperatingIncome 2024-10-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        31653000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": "2024-10-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/0001193125-26-027207-index.htm",
+      "locator": "Revenue 2024-10-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        69632000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "MSFT",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "OperatingMargin level quarter @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        0.47094360980891564,
+        0.4545754825367647,
+        0.016368127272150923
+      ],
+      "unit": "ratio",
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:61774-62974",
+      "excerpt": "d fines, information technology, human resources, finance, excise taxes, field selling, shared facilities services, customer service and support, and severance incurred as part of a corporate program. Each allocation is measured differently based on the specific facts and circumstances of the costs being allocated and is generally based on relative gross margin or relative headcount. Segment revenue, cost of revenue, operating expenses, and operating income were as follows during the periods presented: (In millions) Three Months Ended December 31, Six Months Ended December 31, 2025 2024 2025 2024 Productivity and Business Processes Revenue $ 34,116 $ 29,437 $ 67,136 $ 57,754 Cost of revenue 6,110 5,569 11,831 10,863 Operating expenses 7,407 6,983 14,299 13,490 Operating income $ 20,599 $ 16,885 $ 41,006 $ 33,401 Intelligent Cloud Revenue $ 32,907 $ 25,544 $ 63,804 $ 49,636 Cost of revenue 13,566 9,405 25,880 18,019 Operating expenses 5,468 5,288 10,660 10,263 Operating income $ 13,873 $ 10,851 $ 27,264 $ 21,354 More Personal Computing Revenue $ 14,250 $ 14,651 $ 28,006 $ 27,827 Cost of revenue 6,302 6,825 12,310 13,016 Operating expenses 4,145 3,909 7,730 7,361 Operating income $ 3",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:62774-63904",
+      "excerpt": "$ 10,851 $ 27,264 $ 21,354 More Personal Computing Revenue $ 14,250 $ 14,651 $ 28,006 $ 27,827 Cost of revenue 6,302 6,825 12,310 13,016 Operating expenses 4,145 3,909 7,730 7,361 Operating income $ 3,803 $ 3,917 $ 7,966 $ 7,450 Total Revenue $ 81,273 $ 69,632 $ 158,946 $ 135,217 Cost of revenue 25,978 21,799 50,021 41,898 Operating expenses 17,020 16,180 32,689 31,114 Operating income $ 38,275 $ 31,653 $ 76,236 $ 62,205 No sales to an individual customer or country other than the United States accounted for more than 10% of revenue for the three or six months ended December 31, 2025 or 2024. Revenue, classified by the major geographic areas in which our customers were located, was as follows: (In millions) Three Months Ended December 31, Six Months Ended December 31, 2025 2024 2025 2024 United States (a) $ 41,410 $ 35,537 $ 81,487 $ 69,450 Other countries 39,863 34,095 77,459 65,767 Total $ 81,273 $ 69,632 $ 158,946 $ 135,217 (a) Includes billings to OEMs and certain multinational organizations because of the nature of these businesses and the impracticability of determining the geographic source of the revenue.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:80893-82046",
+      "excerpt": "advertising revenue (ex TAC) growth Revenue from search and news advertising excluding traffic acquisition costs (“TAC”) paid to Bing Ads network publishers and news partners SUMMARY RESULTS OF OPERATIONS (In millions, except percentages and per share amounts) Three Months Ended December 31, Percentage Change Six Months Ended December 31, Percentage Change 2025 2024 2025 2024 Revenue $ 81,273 $ 69,632 17% $ 158,946 $ 135,217 18% Gross margin 55,295 47,833 16% 108,925 93,319 17% Operating income 38,275 31,653 21% 76,236 62,205 23% Net income 38,458 24,108 60% 66,205 48,775 36% Diluted earnings per share 5.16 3.23 60% 8.87 6.53 36% Adjusted net income (non-GAAP) 30,875 25,047 23% 61,708 50,237 23% Adjusted diluted earnings per share (non-GAAP) 4.14 3.35 24% 8.27 6.73 23% 33 PART I Item 2 Adjusted net income and adjusted diluted earnings per share (“EPS”) are non-GAAP financial measures. These non-GAAP financial measures exclude net gains and losses from investments in OpenAI. Refer to the Non-GAAP Financial Measures section below for a reconciliation of our financial results reported in accordance with GAAP to non-GAAP financial results.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:96965-97982",
+      "excerpt": "ree Months Ended December 31, 2024 Research and development expenses increased $587 million or 7% driven by investments in compute capacity and AI talent and impairment charges in our Gaming business. Six Months Ended December 31, 2025 Compared with Six Months Ended December 31, 2024 Research and development expenses increased $1.2 billion or 8% driven by investments in compute capacity and AI talent and impairment charges in our Gaming business. 38 PART I Item 2 Sales and Marketing (In millions, except percentages) Three Months Ended December 31, Percentage Change Six Months Ended December 31, Percentage Change 2025 2024 2025 2024 Sales and marketing $ 6,584 $ 6,440 2% $ 12,301 $ 12,157 1% As a percent of revenue 8% 9% (1)ppt 8% 9% (1)ppt Sales and marketing expenses include payroll, employee benefits, stock-based compensation expense, and other headcount-related expenses associated with sales and marketing personnel, and the costs of advertising, promotions, trade shows, seminars, and other programs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:82770-83810",
+      "excerpt": "ightly driven by continued investments in AI infrastructure and growing AI product usage, offset in part by efficiency gains across the Microsoft Cloud and sales mix shift to higher margin businesses. • Microsoft Cloud gross margin percentage decreased to 67% driven by continued investments in AI infrastructure and growing AI product usage, offset in part by efficiency gains in Azure and Microsoft 365 Commercial cloud. Operating expenses increased $840 million or 5% driven by research and development investments in compute capacity and AI talent, as well as impairment charges in our Gaming business. Operating income increased $6.6 billion or 21% driven by growth in Productivity and Business Processes and Intelligent Cloud. Revenue, gross margin, and operating income each included a favorable foreign currency impact of 2%. Current year net income and diluted EPS were positively impacted by net gains from investments in OpenAI, which resulted in an increase in net income and diluted EPS of $7.6 billion and $1.02, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:84431-85487",
+      "excerpt": "t in part by Gaming and Devices. Cost of revenue increased $8.1 billion or 19% driven by growth in Microsoft Cloud. Gross margin increased $15.6 billion or 17% with growth across each of our segments. • Gross margin percentage decreased slightly driven by continued investments in AI infrastructure and growing AI product usage, offset in part by efficiency gains across the Microsoft Cloud and sales mix shift to higher margin businesses. • Microsoft Cloud gross margin percentage decreased to 67% driven by continued investments in AI infrastructure and growing AI product usage, offset in part by efficiency gains in Azure and Microsoft 365 Commercial cloud. Operating expenses increased $1.6 billion or 5% driven by research and development investments in compute capacity and AI talent, as well as impairment charges in our Gaming business. Operating income increased $14.0 billion or 23% with growth across each of our segments. Revenue, gross margin, and operating income included a favorable foreign currency impact of 2%, 2%, and 3%, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:98782-99982",
+      "excerpt": "ed as part of a corporate program, and other headcount-related expenses associated with finance, legal, facilities, certain human resources and other administrative personnel, certain taxes, and legal and other administrative fees. Three Months Ended December 31, 2025 Compared with Three Months Ended December 31, 2024 General and administrative expenses increased $109 million or 6% driven by higher legal expenses. Six Months Ended December 31, 2025 Compared with Six Months Ended December 31, 2024 General and administrative expenses increased $242 million or 7% driven by higher legal expenses. OTHER INCOME (EXPENSE), NET The components of other income (expense), net were as follows: (In millions) Three Months Ended December 31, Six Months Ended December 31, 2025 2024 2025 2024 Interest and dividends income $ 840 $ 600 $ 1,816 $ 1,281 Interest expense (736 ) (594 ) (1,434 ) (1,176 ) Net recognized gains (losses) on investments 339 (860 ) (233 ) (397 ) Net gains (losses) on derivatives 37 (116 ) 1,616 (454 ) Net gains (losses) on foreign currency remeasurements (50 ) (153 ) (72 ) 23 Other, net 9,541 (1,165 ) 4,618 (1,848 ) Total $ 9,971 $ (2,288 ) $ 6,311 $ (2,571 ) 39 PART I Item 2 W",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:86716-87849",
+      "excerpt": "ng expenses 4,145 3,909 6% 7,730 7,361 5% Operating income $ 3,803 $ 3,917 (3)% $ 7,966 $ 7,450 7% Total Revenue $ 81,273 $ 69,632 17% $ 158,946 $ 135,217 18% Cost of revenue 25,978 21,799 19% 50,021 41,898 19% Operating expenses 17,020 16,180 5% 32,689 31,114 5% Operating income $ 38,275 $ 31,653 21% $ 76,236 $ 62,205 23% Reportable Segments Three Months Ended December 31, 2025 Compared with Three Months Ended December 31, 2024 Productivity and Business Processes Revenue increased $4.7 billion or 16%. • Microsoft 365 Commercial products and cloud services revenue increased $3.4 billion or 16%. Microsoft 365 Commercial cloud revenue grew 17% with growth in revenue per user driven by Microsoft 365 E5 and Microsoft 365 Copilot. Microsoft 365 Commercial seats grew 6% driven by small and medium businesses and frontline worker offerings. Microsoft 365 Commercial products revenue grew 13% driven by Windows Commercial on-premises components of Microsoft 365 suite sales, as well as an increase in Office 2024 transactional purchasing. • Microsoft 365 Consumer products and cloud services revenue increased $484 million or 27%.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E19"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "MSFT",
+      "source": "SEC EDGAR",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:97782-98982",
+      "excerpt": "ock-based compensation expense, and other headcount-related expenses associated with sales and marketing personnel, and the costs of advertising, promotions, trade shows, seminars, and other programs. Three Months Ended December 31, 2025 Compared with Three Months Ended December 31, 2024 Sales and marketing expenses increased $144 million or 2% driven by higher advertising expenses. Six Months Ended December 31, 2025 Compared with Six Months Ended December 31, 2024 Sales and marketing expenses increased $144 million or 1% driven by higher advertising expenses. General and Administrative (In millions, except percentages) Three Months Ended December 31, Percentage Change Six Months Ended December 31, Percentage Change 2025 2024 2025 2024 General and administrative $ 1,932 $ 1,823 6% $ 3,738 $ 3,496 7% As a percent of revenue 2% 3% (1)ppt 2% 3% (1)ppt General and administrative expenses include payroll, employee benefits, stock-based compensation expense, employee severance expense incurred as part of a corporate program, and other headcount-related expenses associated with finance, legal, facilities, certain human resources and other administrative personnel, certain taxes, and legal",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E20"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E7",
+      "quote": "Operating income $ 38,275 $ 31,653",
+      "valid": true,
+      "issues": [],
+      "kind": "xbrl_fact",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/0001193125-26-027207-index.htm",
+      "locator": "OperatingIncome 2025-10-01..2025-12-31"
+    },
+    {
+      "evidence_id": "E8",
+      "quote": "Revenue $ 81,273 $ 69,632",
+      "valid": true,
+      "issues": [],
+      "kind": "xbrl_fact",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/0001193125-26-027207-index.htm",
+      "locator": "Revenue 2025-10-01..2025-12-31"
+    },
+    {
+      "evidence_id": "E13",
+      "quote": "Three Months Ended December 31, 2025 2024 Revenue $ 81,273 $ 69,632 Cost of revenue 25,978 21,799 Operating expenses 17,020 16,180 Operating income $ 38,275 $ 31,653",
+      "valid": false,
+      "issues": [
+        "QUOTE_NOT_IN_PASSAGE"
+      ],
+      "kind": "filing_passage",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+      "locator": "10-Q 0001193125-26-027207:62774-63904"
+    },
+    {
+      "evidence_id": "E11",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001193125-26-027207",
+      "form": "10-Q",
+      "filed": "2026-01-28",
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "OperatingMargin level quarter @ 2025-12-31"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 31322,
+    "output": 4468
+  },
+  "latency_ms": 50565,
+  "estimated_cost_usd": 0.160986,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_ALL_TRUE",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "analyze_claim",
+        "status": "ok",
+        "duration_ms": 30,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "assertions": 2,
+        "computations": 0,
+        "period_source": "text_date"
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 6,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 1,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "evidence_review",
+        "status": "ok",
+        "duration_ms": 30033,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "findings": 13,
+        "deciding": 2,
+        "downgraded": 8
+      },
+      {
+        "node": "reconcile_v2",
+        "status": "ok",
+        "duration_ms": 20485,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_ALL_TRUE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 27,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "analyze_claim",
+      "generate_hypotheses",
+      "counter_investigation",
+      "evidence_review",
+      "reconcile_v2",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-a3v2-0.1"
+  },
+  "a3v2_version": "a3v2-0.2.1-dev"
+}

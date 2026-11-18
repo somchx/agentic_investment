@@ -1,0 +1,627 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:SR_self_reflection:GOLD-GOOGL-04:d565e997",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "SR_self_reflection",
+  "approach_kind": "self_reflection",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": true,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "SR_self_reflection",
+    "kind": "self_reflection",
+    "description": "A2 + self-critique and revision, no new retrieval"
+  },
+  "config_hash": "166d47be253b74e9",
+  "claim": {
+    "claim_id": "GOLD-GOOGL-04",
+    "company": "GOOGL",
+    "claim": "Alphabet's long-term debt was higher as of September 30, 2026 than at December 31, 2025.",
+    "as_of_date": "2026-11-01",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q3"
+  },
+  "initial_label": "INSUFFICIENT_EVIDENCE",
+  "final_label": "INSUFFICIENT_EVIDENCE",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "LongTermDebt",
+            "measure": "level",
+            "period_basis": "instant",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Alphabet's long-term debt was higher as of September 30, 2026 than at December 31, 2025. This requires comparing the long-term debt balances at these two dates.\n\nWhile the evidence provides extensive qualitative information about debt issuances during 2026 (E1 and E2 describe $45.0 billion of US dollar-denominated notes and $35.8 billion of foreign currency-denominated notes issued during 2026), none of the evidence passages provide the actual long-term debt balance figures as of either December 31, 2025 or September 30, 2026.\n\nEvidence E3 mentions long-term debt in the context of hedging relationships and shows carrying amounts related to hedged items, but does not provide total long-term debt balances. Evidence E4 discusses lease liabilities but not long-term debt. Evidence E5 is just a table of contents. Evidence E6 discusses credit facilities and property/equipment but not long-term debt balances.\n\nThe fact that substantial debt was issued during 2026 suggests long-term debt likely increased, but without the actual balance sheet figures for long-term debt at both dates, I cannot definitively verify the claim. The evidence is insufficient to support or contradict the specific numeric comparison being made.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "LongTermDebt",
+            "measure": "level",
+            "period_basis": "instant",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "THRESHOLD_MISSING"
+          ],
+          "computed": {
+            "period_end": "2026-09-30",
+            "basis": "instant",
+            "level": 125102000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "LongTermDebt",
+                "period_start": null,
+                "period_end": "2026-09-30",
+                "value": 125102000000.0,
+                "filed": "2026-10-29",
+                "form": "10-Q",
+                "accession_number": "0001652044-26-000084",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 21607000000.0,
+            "prior_period_end": "2025-09-30",
+            "yoy_change": 4.789882908316749,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "self_critique",
+      "weaknesses": [
+        {
+          "weakness_id": "1",
+          "critique": "The numeric_checks output reveals that the system actually found long-term debt figures: $125.102 billion as of September 30, 2026 and $21.607 billion as of September 30, 2025 (prior year). However, the claim compares September 30, 2026 to December 31, 2025 (not September 30, 2025). The computed data shows a comparison to the wrong baseline period. I should look more carefully at whether evidence passages E7, E8, E9 (referenced in numeric_checks but not provided in the original evidence list) contain the December 31, 2025 figure, or whether the system is comparing to the wrong period. If the December 31, 2025 figure exists in the evidence, my verdict of INSUFFICIENT_EVIDENCE would be wrong."
+        },
+        {
+          "weakness_id": "2",
+          "critique": "The numeric_checks indicate that long-term debt data was found with evidence_ids E7, E8, E9, which were not included in the evidence passages provided to me (E1-E6). This suggests there may be additional evidence containing the actual balance sheet figures that I did not review. If those passages contain both the December 31, 2025 and September 30, 2026 long-term debt balances, and show that September 30, 2026 was indeed higher, then the claim should be SUPPORTED rather than INSUFFICIENT_EVIDENCE."
+        },
+        {
+          "weakness_id": "3",
+          "critique": "Even with the evidence provided (E1-E6), I may have missed relevant information. Evidence E1 and E2 describe substantial debt issuances totaling approximately $80.8 billion during 2026 ($45.0B USD + $35.8B foreign currency). If the starting long-term debt at December 31, 2025 was relatively low and these issuances were not offset by significant repayments, this would strongly support the claim. I should have considered whether the qualitative evidence about issuances, combined with any balance sheet data that might be embedded in the evidence passages, could verify the claim."
+        }
+      ]
+    },
+    {
+      "stage": "revision",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+      "assessments": [
+        {
+          "item_id": "1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "b26dab6cccd2fbfec60c250942af1342e9ac3b9d664254889c420ea79ecd9919",
+      "source": "cache",
+      "input_tokens": 4177,
+      "output_tokens": 514,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "LongTermDebt",
+            "measure": "level",
+            "period_basis": "instant",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": null,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Alphabet's long-term debt was higher as of September 30, 2026 than at December 31, 2025. This requires comparing the long-term debt balances at these two dates.\n\nWhile the evidence provides extensive qualitative information about debt issuances during 2026 (E1 and E2 describe $45.0 billion of US dollar-denominated notes and $35.8 billion of foreign currency-denominated notes issued during 2026), none of the evidence passages provide the actual long-term debt balance figures as of either December 31, 2025 or September 30, 2026.\n\nEvidence E3 mentions long-term debt in the context of hedging relationships and shows carrying amounts related to hedged items, but does not provide total long-term debt balances. Evidence E4 discusses lease liabilities but not long-term debt. Evidence E5 is just a table of contents. Evidence E6 discusses credit facilities and property/equipment but not long-term debt balances.\n\nThe fact that substantial debt was issued during 2026 suggests long-term debt likely increased, but without the actual balance sheet figures for long-term debt at both dates, I cannot definitively verify the claim. The evidence is insufficient to support or contradict the specific numeric comparison being made.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "self_critique",
+      "tool": "submit_self_critique",
+      "request_key": "d5c881f0db0c1692e0deba2c33720c8453cb52934515329e2593cd4d4590e56a",
+      "source": "live",
+      "input_tokens": 4915,
+      "output_tokens": 544,
+      "stop_reason": "tool_use",
+      "latency_ms": 12512,
+      "output": {
+        "weaknesses": [
+          {
+            "weakness_id": "1",
+            "critique": "The numeric_checks output reveals that the system actually found long-term debt figures: $125.102 billion as of September 30, 2026 and $21.607 billion as of September 30, 2025 (prior year). However, the claim compares September 30, 2026 to December 31, 2025 (not September 30, 2025). The computed data shows a comparison to the wrong baseline period. I should look more carefully at whether evidence passages E7, E8, E9 (referenced in numeric_checks but not provided in the original evidence list) contain the December 31, 2025 figure, or whether the system is comparing to the wrong period. If the December 31, 2025 figure exists in the evidence, my verdict of INSUFFICIENT_EVIDENCE would be wrong."
+          },
+          {
+            "weakness_id": "2",
+            "critique": "The numeric_checks indicate that long-term debt data was found with evidence_ids E7, E8, E9, which were not included in the evidence passages provided to me (E1-E6). This suggests there may be additional evidence containing the actual balance sheet figures that I did not review. If those passages contain both the December 31, 2025 and September 30, 2026 long-term debt balances, and show that September 30, 2026 was indeed higher, then the claim should be SUPPORTED rather than INSUFFICIENT_EVIDENCE."
+          },
+          {
+            "weakness_id": "3",
+            "critique": "Even with the evidence provided (E1-E6), I may have missed relevant information. Evidence E1 and E2 describe substantial debt issuances totaling approximately $80.8 billion during 2026 ($45.0B USD + $35.8B foreign currency). If the starting long-term debt at December 31, 2025 was relatively low and these issuances were not offset by significant repayments, this would strongly support the claim. I should have considered whether the qualitative evidence about issuances, combined with any balance sheet data that might be embedded in the evidence passages, could verify the claim."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "revision",
+      "tool": "submit_revision",
+      "request_key": "ad6e22a9204547d4ef9f6a52f30e792d9b7149c7ca75b8d47403e321554d7c88",
+      "source": "live",
+      "input_tokens": 6368,
+      "output_tokens": 650,
+      "stop_reason": "tool_use",
+      "latency_ms": 11311,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "INSUFFICIENT_EVIDENCE",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "After reviewing the critique, I maintain my initial verdict of INSUFFICIENT_EVIDENCE.\n\nRegarding weakness 1 and 2: The numeric_checks reference evidence IDs E7, E8, and E9, but these passages were NOT provided in the evidence supplied to me (only E1-E6 were provided). Per the rules, I can only use evidence passages supplied in this conversation. I cannot rely on or cite evidence that was not provided to me. Therefore, I have NO_RELEVANT_EVIDENCE to assess these weaknesses.\n\nRegarding weakness 3: I re-examined evidence E1 and E2 carefully. While they describe substantial debt issuances during 2026 (E1: \"During 2026, we issued $ 45.0 billion of US dollar-denominated senior unsecured notes and $ 35.8 billion of foreign currency-denominated senior unsecured notes\"), these passages do not contain the actual long-term debt balance figures as of December 31, 2025 or September 30, 2026. Knowing that debt was issued does not allow me to calculate the ending balances without knowing the starting balance and any repayments or other adjustments.\n\nNone of the evidence passages E1-E6 contain the specific long-term debt balance figures needed to verify the claim. While the numeric_checks suggest such data exists somewhere, it is not in the evidence supplied to me in this conversation. Therefore, INSUFFICIENT_EVIDENCE remains the correct verdict.",
+        "change_reason": "No change. The evidence passages provided (E1-E6) do not contain the long-term debt balance figures as of December 31, 2025 or September 30, 2026 needed to verify the claim. The numeric_checks reference evidence E7-E9 which were not supplied to me."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Alphabet's long-term debt was higher as of September 30, 2026 than at December 31, 2025. 2026 Q3",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "LongTermDebt",
+            "measure": "level",
+            "period_basis": "instant",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": null,
+            "stated_value": null
+          },
+          "status": "UNVERIFIABLE",
+          "issues": [
+            "THRESHOLD_MISSING"
+          ],
+          "computed": {
+            "period_end": "2026-09-30",
+            "basis": "instant",
+            "level": 125102000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "LongTermDebt",
+                "period_start": null,
+                "period_end": "2026-09-30",
+                "value": 125102000000.0,
+                "filed": "2026-10-29",
+                "form": "10-Q",
+                "accession_number": "0001652044-26-000084",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 21607000000.0,
+            "prior_period_end": "2025-09-30",
+            "yoy_change": 4.789882908316749,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001652044-26-000084",
+        "filed": "2026-10-29",
+        "report_date": "2026-09-30",
+        "primary_document": "goog-20260930.htm",
+        "sha256": "05e101ee90c126065e67822feabb1b40a91fa17cfab83bc1ac0721ff553b9fea"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001652044-26-000071",
+        "filed": "2026-07-23",
+        "report_date": "2026-06-30",
+        "primary_document": "goog-20260630.htm",
+        "sha256": "a5f7079d2449fac80bcddd812d494e364f113589f62cf944b426d51fa0ddac10"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001652044-26-000018",
+        "filed": "2026-02-05",
+        "report_date": "2025-12-31",
+        "primary_document": "goog-20251231.htm",
+        "sha256": "6cd47e03a34cdd6847ddeb6d90546a706fac3266e99359e0f1f4a00286497e46"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 878
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000084",
+      "form": "10-Q",
+      "filed": "2026-10-29",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "locator": "10-Q 0001652044-26-000084:70656-71665",
+      "excerpt": "rm Debt We have a commercial paper program of up to $ 25.0 billion, which is used for general corporate purposes. We had no commercial paper outstanding as of December 31, 2025 and September 30, 2026. Our short-term debt balance also includes the current portion of certain long-term debt. Long-Term Debt During 2026, we issued $ 45.0 billion of US dollar-denominated senior unsecured notes and $ 35.8 billion of foreign currency-denominated senior unsecured notes for general corporate purposes. In the third quarter of 2026, we issued senior unsecured notes consisting of: $ 23.8 billion US dollar-denominated fixed-rate notes and $ 1.3 billion US dollar-denominated floating-rate notes with a weighted-average coupon rate of 5.55 % and a weighted-average maturity of 15 years; and A$ 3.3 billion Australian dollar-denominated fixed-rate notes and A$ 2.3 billion Australian dollar-denominated floating-rate notes with a weighted-average coupon rate of 5.82 % and a weighted-average maturity of eight years .",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000071",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+      "locator": "10-Q 0001652044-26-000071:66516-67441",
+      "excerpt": "general corporate purposes. We had no commercial paper outstanding as of December 31, 2025 and June 30, 2026 . Our short-term debt balance also includes the current portion of certain long-term debt. Long-Term Debt During 2026, we issued $ 20.0 billion of US dollar-denominated fixed-rate senior unsecured notes and $ 31.8 billion of foreign currency-denominated fixed-rate senior unsecured notes for general corporate purposes. In the first quarter of 2026, we issued fixed-rate senior unsecured notes consisting of: $ 20.0 billion US dollar-denominated notes with a weighted-average coupon rate of 4.80 % and a weighted-average maturity of 15 years; £ 5.5 billion Sterling-denominated notes with a weighted-average coupon rate of 5.31 % and a weighted-average maturity of 31 years; and CHF 3.1 billion Swiss Franc-denominated notes with a weighted-average coupon rate of 1.06 % and a weighted-average maturity of 10 years.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000084",
+      "form": "10-Q",
+      "filed": "2026-10-29",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "locator": "10-Q 0001652044-26-000084:59024-60224",
+      "excerpt": "$ 1,305 $ 1,636 (1) Derivative assets are recorded as other current and non-current assets. (2) Derivative liabilities are recorded as accrued expenses and other liabilities, current and non-current. The amounts recorded on the Consolidated Balance Sheets related to cumulative basis adjustments for fair value hedges were as follows (in millions): As of December 31, 2025 As of September 30, 2026 Balance Sheets Line Item of the Hedged Item Long-term debt Carrying amount of the hedged item assets/(liabilities) $ 0 $ ( 6,688 ) Cumulative amount of fair value hedging adjustment included in the carrying amount assets/(liabilities) $ 0 $ 257 The gains (losses) on derivatives and non-derivative financial instruments in cash flow hedging and net investment hedging relationships recognized in other comprehensiv e income are summarized below (in millions): 21 Three Months Ended Nine Months Ended September 30, September 30, 2025 2026 2025 2026 Cash flow hedging relationship: Foreign exchange derivatives Amount included in the assessment of effectiveness $ 278 $ ( 60 ) $ ( 1,111 ) $ 496 Amount excluded from the assessment of effectiveness 128 6 ( 41 ) 74 Interest rate derivatives Amount includ",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000084",
+      "form": "10-Q",
+      "filed": "2026-10-29",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "locator": "10-Q 0001652044-26-000084:65352-66552",
+      "excerpt": "r 30, 2026. We do not recognize right of use assets or lease liabilities on leases with a term of 12 months or less. Short term lease costs are recognized on a straight-line basis over the lease term. Supplemental information related to leases was as follows (in millions): As of December 31, 2025 As of September 30, 2026 Weighted-average remaining lease term: Operating leases 7.6 years 8.5 years Finance leases 8.3 years 7.9 years Weighted-average discount rate: Operating leases 3.6 % 4.0 % Finance leases 3.1 % 4.0 % 24 As of December 31, 2025 As of September 30, 2026 Operating leases: Operating lease assets $ 15,221 $ 20,273 Accrued expenses and other liabilities $ 3,209 $ 3,693 Operating lease liabilities 12,744 16,815 Total operating lease liabilities $ 15,954 $ 20,508 Finance leases: Property and equipment, at cost $ 6,822 $ 10,619 Accumulated depreciation ( 2,025 ) ( 2,914 ) Property and equipment, net $ 4,797 $ 7,705 Accrued expenses and other liabilities $ 441 $ 1,053 Other long-term liabilities 2,059 2,652 Total finance lease liabilities $ 2,500 $ 3,705 Three Months Ended Nine Months Ended September 30, September 30, 2025 2026 2025 2026 Cash payments for lease liabilities: O",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000084",
+      "form": "10-Q",
+      "filed": "2026-10-29",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "locator": "10-Q 0001652044-26-000084:4989-5970",
+      "excerpt": "tock outstanding. 1 Table of Contents Alphabet Inc. Alphabet Inc. Form 10-Q For the Quarterly Period Ended September 30, 2026 TABLE OF CONTENTS Page No. Note About Forward-Looking Statements 3 PART I. FINANCIAL INFORMATION Item 1 Financial Statements 4 Consolidated Balance Sheets - December 31, 2025 and September 30, 2026 4 Consolidated Statements of Income - Three and Nine Months Ended September 30 , 2025 and 2026 5 Consolidated Statements of Comprehensive Income - Three and Nine Months Ended September 30 , 2025 and 2026 6 Consolidated Statements of Stockholders' Equity - Three and Nine Months Ended September 30 , 2025 and 2026 7 Consolidated Statements of Cash Flows - Nine Months Ended September 30 , 2025 and 2026 9 Notes to Consolidated Financial Statements 10 Item 2 Management’s Discussion and Analysis of Financial Condition and Results of Operations 44 Item 3 Quantitative and Qualitative Disclosures About Market Risk 59 Item 4 Controls and Procedures 59 PART II.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000084",
+      "form": "10-Q",
+      "filed": "2026-10-29",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "locator": "10-Q 0001652044-26-000084:75279-76407",
+      "excerpt": "s, of which $ 4.0 billion expires in April 2027 and $ 6.0 billion expires in April 2030. No amounts were outstanding under the credit facilities as of December 31, 2025 and September 30, 2026. Note 7. Supplemental Financial Statement Information Accounts Receivable The allowance for credit losses on accounts receivable was $ 924 million an d $ 1.2 billion as of December 31, 2025 and September 30, 2026, respectively. Property and Equipment, Net Property and equipment, net, co nsisted of the following (in millions): As of December 31, 2025 As of September 30, 2026 Technical infrastructure (1) $ 203,679 $ 282,842 Office space 48,348 51,101 Corporate and other assets 14,463 7,157 Property and equipment, in service 266,490 341,100 Less: accumulated depreciation ( 98,485 ) ( 113,543 ) Add: assets not yet in service 78,592 145,270 Property and equipment, net $ 246,597 $ 372,827 (1) As of December 31, 2025 and September 30, 2026, approximately 60 % of technical infrastructure assets were comprised of servers and network equipment. The remaining balance was comprised of data center land and buildings and related assets.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-26-000084",
+      "form": "10-Q",
+      "filed": "2026-10-29",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/0001652044-26-000084-index.htm",
+      "locator": "LongTermDebt ..2026-09-30",
+      "excerpt": null,
+      "values": [
+        125102000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "GOOGL",
+      "source": "SEC EDGAR",
+      "accession_number": "0001652044-25-000091",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/0001652044-25-000091-index.htm",
+      "locator": "LongTermDebt ..2025-09-30",
+      "excerpt": null,
+      "values": [
+        21607000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "GOOGL",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001652044-26-000084",
+      "form": "10-Q",
+      "filed": "2026-10-29",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": null,
+      "locator": "LongTermDebt level instant @ 2026-09-30",
+      "excerpt": null,
+      "values": [
+        125102000000.0,
+        21607000000.0,
+        4.789882908316749
+      ],
+      "unit": "USD",
+      "evidence_id": "E9"
+    }
+  ],
+  "citations": [],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 15460,
+    "output": 1708
+  },
+  "latency_ms": 23841,
+  "estimated_cost_usd": 0.072,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "self_reflection",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_PARTIALLY_UNVERIFIABLE",
+        "checks": [
+          "UNVERIFIABLE"
+        ]
+      },
+      {
+        "node": "self_critique",
+        "status": "ok",
+        "duration_ms": 12516,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "weaknesses": 3
+      },
+      {
+        "node": "revise",
+        "status": "ok",
+        "duration_ms": 11318,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "model_final_label": "INSUFFICIENT_EVIDENCE"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_PARTIALLY_UNVERIFIABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 8,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "self_critique",
+      "revise",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

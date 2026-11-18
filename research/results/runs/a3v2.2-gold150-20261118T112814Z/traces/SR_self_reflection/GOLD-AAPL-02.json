@@ -1,0 +1,697 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:SR_self_reflection:GOLD-AAPL-02:754abde7",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "SR_self_reflection",
+  "approach_kind": "self_reflection",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": true,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "SR_self_reflection",
+    "kind": "self_reflection",
+    "description": "A2 + self-critique and revision, no new retrieval"
+  },
+  "config_hash": "166d47be253b74e9",
+  "claim": {
+    "claim_id": "GOLD-AAPL-02",
+    "company": "AAPL",
+    "claim": "Apple's operating margin for fiscal year 2025 exceeded 30%.",
+    "as_of_date": "2025-11-30",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-09-27",
+            "comparison": ">",
+            "threshold": 0.3,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Apple's operating margin for fiscal year 2025 exceeded 30%. The evidence provided includes multiple excerpts from Apple's 10-K for fiscal year 2025 (ended September 27, 2025) and 10-Q filings, but none of these passages contain any financial data regarding operating margin, operating income, or revenue. The evidence primarily discusses product announcements, fiscal period definitions, and macroeconomic conditions including tariffs. Without access to the actual financial statements or management discussion sections that would report operating margin figures for FY2025, I cannot verify whether the operating margin exceeded 30%. The evidence neither supports nor contradicts the claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "INSUFFICIENT_EVIDENCE",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_ALL_TRUE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-09-27",
+            "comparison": ">",
+            "threshold": 0.3,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-09-27",
+            "basis": "annual",
+            "level": 0.31970799762591884,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2024-09-29",
+                "period_end": "2025-09-27",
+                "value": 133050000000.0,
+                "filed": "2025-10-31",
+                "form": "10-K",
+                "accession_number": "0000320193-25-000079",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2024-09-29",
+                "period_end": "2025-09-27",
+                "value": 416161000000.0,
+                "filed": "2025-10-31",
+                "form": "10-K",
+                "accession_number": "0000320193-25-000079",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.31510222870075566,
+            "prior_period_end": "2024-09-28",
+            "yoy_change": 0.004605768925163178,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "self_critique",
+      "weaknesses": [
+        {
+          "weakness_id": "1",
+          "critique": "I failed to recognize that computed figures were provided showing Apple's FY2025 operating income of $133,050 million and revenue of $416,161 million, yielding an operating margin of 31.97% (133,050/416,161 = 0.3197). The numeric_checks section clearly shows this calculation with a computed level of 0.31970799762591884, which exceeds the 30% (0.30) threshold. My initial verdict of INSUFFICIENT_EVIDENCE was incorrect because the necessary financial data was actually available in the computed figures, even though it wasn't visible in the text passages I reviewed."
+        },
+        {
+          "weakness_id": "2",
+          "critique": "The system has already determined that the numeric assertion status is 'TRUE' based on the computed figures from evidence E7-E11 (which I did not have access to in the original evidence passages). The correct verdict should be SUPPORTED, not INSUFFICIENT_EVIDENCE, since the claim that operating margin exceeded 30% is affirmatively established by the computed operating margin of 31.97%."
+        },
+        {
+          "weakness_id": "3",
+          "critique": "I should have requested or looked for the actual financial statement data (consolidated statements of operations) that would contain operating income and revenue figures. The evidence_ids E7-E11 referenced in the computed facts section suggest such data exists in the filing but was not included in the initial evidence passages E1-E6 that were provided to me. My conclusion should have been based on all available computed figures, not just the text passages."
+        }
+      ]
+    },
+    {
+      "stage": "revision",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_ALL_TRUE",
+      "assessments": [
+        {
+          "item_id": "1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "e5bb6893cfec46def01fc22e37931f9e0a8d351f7f11b6c0c8fece042d50d95a",
+      "source": "cache",
+      "input_tokens": 3788,
+      "output_tokens": 371,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-09-27",
+            "comparison": ">",
+            "threshold": 0.3,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim asserts that Apple's operating margin for fiscal year 2025 exceeded 30%. The evidence provided includes multiple excerpts from Apple's 10-K for fiscal year 2025 (ended September 27, 2025) and 10-Q filings, but none of these passages contain any financial data regarding operating margin, operating income, or revenue. The evidence primarily discusses product announcements, fiscal period definitions, and macroeconomic conditions including tariffs. Without access to the actual financial statements or management discussion sections that would report operating margin figures for FY2025, I cannot verify whether the operating margin exceeded 30%. The evidence neither supports nor contradicts the claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "self_critique",
+      "tool": "submit_self_critique",
+      "request_key": "a9e3492256f6c61691ebd5ac623fc0f099c10d8aba84a440d529f9e17873924f",
+      "source": "live",
+      "input_tokens": 4321,
+      "output_tokens": 413,
+      "stop_reason": "tool_use",
+      "latency_ms": 9751,
+      "output": {
+        "weaknesses": [
+          {
+            "weakness_id": "1",
+            "critique": "I failed to recognize that computed figures were provided showing Apple's FY2025 operating income of $133,050 million and revenue of $416,161 million, yielding an operating margin of 31.97% (133,050/416,161 = 0.3197). The numeric_checks section clearly shows this calculation with a computed level of 0.31970799762591884, which exceeds the 30% (0.30) threshold. My initial verdict of INSUFFICIENT_EVIDENCE was incorrect because the necessary financial data was actually available in the computed figures, even though it wasn't visible in the text passages I reviewed."
+          },
+          {
+            "weakness_id": "2",
+            "critique": "The system has already determined that the numeric assertion status is 'TRUE' based on the computed figures from evidence E7-E11 (which I did not have access to in the original evidence passages). The correct verdict should be SUPPORTED, not INSUFFICIENT_EVIDENCE, since the claim that operating margin exceeded 30% is affirmatively established by the computed operating margin of 31.97%."
+          },
+          {
+            "weakness_id": "3",
+            "critique": "I should have requested or looked for the actual financial statement data (consolidated statements of operations) that would contain operating income and revenue figures. The evidence_ids E7-E11 referenced in the computed facts section suggest such data exists in the filing but was not included in the initial evidence passages E1-E6 that were provided to me. My conclusion should have been based on all available computed figures, not just the text passages."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "revision",
+      "tool": "submit_revision",
+      "request_key": "cbf32371ebba9a684214d59eabc59a15b4d545751a5c90cd12aa7d29da11b9c3",
+      "source": "live",
+      "input_tokens": 5509,
+      "output_tokens": 624,
+      "stop_reason": "tool_use",
+      "latency_ms": 12585,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "INSUFFICIENT_EVIDENCE",
+        "verdict_changed": true,
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "Upon reconsideration, I must adhere to the fundamental rule that I can only use evidence passages and computed figures explicitly supplied in the original conversation with the user. The initial evidence packet (E1-E6) contained no financial statement data showing operating income or revenue figures for FY2025. \n\nWhile the critique references computed figures showing operating income of $133,050 million and revenue of $416,161 million from evidence E7-E11, these evidence IDs and their associated data were NOT provided in the original evidence supplied to me in the first user message. The numeric_checks section mentioned in the critique appears to be from system processing that occurred after my initial verdict, not from evidence available to me initially.\n\nFollowing the strict rule that I must \"use only the evidence passages and computed figures supplied in this conversation\" and \"cite only evidence_ids supplied to you,\" I cannot rely on E7-E11 or computed figures that were not present in the original evidence packet. The evidence passages E1-E6 discuss product announcements, fiscal period definitions, and tariffs, but contain no operating margin, operating income, or revenue data for FY2025.\n\nTherefore, my revised verdict remains INSUFFICIENT_EVIDENCE. The claim cannot be verified as supported or contradicted based solely on the evidence actually supplied in the original conversation.",
+        "change_reason": "After critical review, I recognize that while the critique references computed figures and evidence E7-E11, these were not part of the original evidence supplied to me. I must strictly limit my analysis to evidence E1-E6 provided in the initial packet, which contains no financial data to verify the operating margin claim. My initial verdict of INSUFFICIENT_EVIDENCE was actually correct based on the evidence available to me."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Apple's operating margin for fiscal year 2025 exceeded 30%. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "OperatingMargin",
+            "measure": "level",
+            "period_basis": "annual",
+            "period_end": "2025-09-27",
+            "comparison": ">",
+            "threshold": 0.3,
+            "stated_value": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-09-27",
+            "basis": "annual",
+            "level": 0.31970799762591884,
+            "unit": "ratio",
+            "facts": [
+              {
+                "metric": "OperatingIncome",
+                "period_start": "2024-09-29",
+                "period_end": "2025-09-27",
+                "value": 133050000000.0,
+                "filed": "2025-10-31",
+                "form": "10-K",
+                "accession_number": "0000320193-25-000079",
+                "derived": false
+              },
+              {
+                "metric": "Revenue",
+                "period_start": "2024-09-29",
+                "period_end": "2025-09-27",
+                "value": 416161000000.0,
+                "filed": "2025-10-31",
+                "form": "10-K",
+                "accession_number": "0000320193-25-000079",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 0.31510222870075566,
+            "prior_period_end": "2024-09-28",
+            "yoy_change": 0.004605768925163178,
+            "yoy_change_unit": "ratio_points"
+          },
+          "evidence_ids": [
+            "E11",
+            "E7",
+            "E8",
+            "E9",
+            "E10"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0000320193-25-000079",
+        "filed": "2025-10-31",
+        "report_date": "2025-09-27",
+        "primary_document": "aapl-20250927.htm",
+        "sha256": "056f733f13ff7407e64dc81fb96da3c3c55a6ba429bf094f57cb6bd472231f82"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-25-000073",
+        "filed": "2025-08-01",
+        "report_date": "2025-06-28",
+        "primary_document": "aapl-20250628.htm",
+        "sha256": "ef49651a716c112d0a0373f1bb41d70fd3984f8fc6b1e0c660e90517d02fb013"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000320193-25-000057",
+        "filed": "2025-05-02",
+        "report_date": "2025-03-29",
+        "primary_document": "aapl-20250329.htm",
+        "sha256": "3731c7b4bd7032f84012d1dfda0ebf99c1d31a3b1465f0180e1fae337d175272"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 387
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:104704-105792",
+      "excerpt": "Form 10-K for the fiscal year ended September 28, 2024. Product, Service and Software Announcements The Company announces new product, service and software offerings at various times during the year. Significant announcements during fiscal year 2025 included the following: First Quarter 2025: • MacBook Pro • Mac mini • iMac • iPad mini Second Quarter 2025: • iPhone 16e • iPad Air • iPad • MacBook Air • Mac Studio Third Quarter 2025: • iOS 26, macOS Tahoe 26, iPadOS 26, watchOS 26, visionOS 26 and tvOS 26 Fourth Quarter 2025: • iPhone 17, iPhone Air, iPhone 17 Pro and iPhone 17 Pro Max • Apple Watch Series 11, Apple Watch SE 3 and Apple Watch Ultra 3 • AirPods Pro 3 Fiscal Period The Company’s fiscal year is the 52- or 53-week period that ends on the last Saturday of September. An additional week is included in the first fiscal quarter every five or six years to realign the Company’s fiscal quarters with calendar quarters, which occurred in the first quarter of 2023. The Company’s fiscal years 2025 and 2024 spanned 52 weeks each, whereas fiscal year 2023 spanned 53 weeks.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:8170-9335",
+      "excerpt": "calendar, and references to particular years, quarters, months or periods refer to the Company’s fiscal years ended in September and the associated quarters, months and periods of those fiscal years. Each of the terms the “Company” and “Apple” as used herein refers collectively to Apple Inc. and its wholly owned subsidiaries, unless otherwise stated. PART I Item 1. Business Company Background The Company designs, manufactures and markets smartphones, personal computers, tablets, wearables and accessories, and sells a variety of related services. The Company’s fiscal year is the 52- or 53-week period that ends on the last Saturday of September. Products iPhone iPhone ® is the Company’s line of smartphones based on its iOS operating system. The iPhone line includes iPhone 17 Pro, iPhone Air™, iPhone 17, iPhone 16 and iPhone 16e. Mac Mac ® is the Company’s line of personal computers based on its macOS ® operating system. The Mac line includes laptops MacBook Air ® and MacBook Pro ® , as well as desktops iMac ® , Mac mini ® , Mac Studio ® and Mac Pro ® . iPad iPad ® is the Company’s line of multipurpose tablets based on its iPadOS ® operating system.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:133934-135052",
+      "excerpt": "ts Note 1 – Summary of Significant Accounting Policies Basis of Presentation and Preparation The consolidated financial statements include the accounts of Apple Inc. and its wholly owned subsidiaries. The preparation of these consolidated financial statements and accompanying notes in conformity with GAAP requires the use of management estimates. Certain prior period amounts in the notes to consolidated financial statements have been reclassified to conform to the current period’s presentation. The Company’s fiscal year is the 52- or 53-week period that ends on the last Saturday of September. An additional week is included in the first fiscal quarter every five or six years to realign the Company’s fiscal quarters with calendar quarters, which occurred in the first fiscal quarter of 2023. The Company’s fiscal years 2025 and 2024 spanned 52 weeks each, whereas fiscal year 2023 spanned 53 weeks. Unless otherwise stated, references to particular years, quarters, months and periods refer to the Company’s fiscal years ended in September and the associated quarters, months and periods of those fiscal years.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000073",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628.htm",
+      "locator": "10-Q 0000320193-25-000073:11996-13015",
+      "excerpt": "paration of these condensed consolidated financial statements and accompanying notes in conformity with U.S. generally accepted accounting principles (“GAAP”) requires the use of management estimates. These condensed consolidated financial statements and accompanying notes should be read in conjunction with the Company’s annual consolidated financial statements and accompanying notes included in its Annual Report on Form 10-K for the fiscal year ended September 28, 2024 (the “2024 Form 10-K”). The Company’s fiscal year is the 52- or 53-week period that ends on the last Saturday of September. An additional week is included in the first fiscal quarter every five or six years to realign the Company’s fiscal quarters with calendar quarters. The Company’s fiscal years 2025 and 2024 span 52 weeks each. Unless otherwise stated, references to particular years, quarters, months and periods refer to the Company’s fiscal years ended in September and the associated quarters, months and periods of those fiscal years.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000057",
+      "form": "10-Q",
+      "filed": "2025-05-02",
+      "period_start": null,
+      "period_end": "2025-03-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000057/aapl-20250329.htm",
+      "locator": "10-Q 0000320193-25-000057:11996-13015",
+      "excerpt": "paration of these condensed consolidated financial statements and accompanying notes in conformity with U.S. generally accepted accounting principles (“GAAP”) requires the use of management estimates. These condensed consolidated financial statements and accompanying notes should be read in conjunction with the Company’s annual consolidated financial statements and accompanying notes included in its Annual Report on Form 10-K for the fiscal year ended September 28, 2024 (the “2024 Form 10-K”). The Company’s fiscal year is the 52- or 53-week period that ends on the last Saturday of September. An additional week is included in the first fiscal quarter every five or six years to realign the Company’s fiscal quarters with calendar quarters. The Company’s fiscal years 2025 and 2024 span 52 weeks each. Unless otherwise stated, references to particular years, quarters, months and periods refer to the Company’s fiscal years ended in September and the associated quarters, months and periods of those fiscal years.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "locator": "10-K 0000320193-25-000079:105592-106652",
+      "excerpt": "ompany’s fiscal quarters with calendar quarters, which occurred in the first quarter of 2023. The Company’s fiscal years 2025 and 2024 spanned 52 weeks each, whereas fiscal year 2023 spanned 53 weeks. Macroeconomic Conditions Macroeconomic conditions, including inflation, interest rates and currency fluctuations, have directly and indirectly impacted, and could in the future materially impact, the Company’s results of operations and financial condition. Apple Inc. | 2025 Form 10-K | 21 Tariffs and Other Measures Beginning in the second quarter of 2025, new U.S. Tariffs were announced, including additional tariffs on imports from China, India, Japan, South Korea, Taiwan, Vietnam and the EU, among others. In response, several countries have imposed, or threatened to impose, reciprocal tariffs on imports from the U.S. and other retaliatory measures. Various modifications to the U.S. Tariffs have been announced and further changes could be made in the future, which may include additional sector-based tariffs or other measures. For example, the U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": "2024-09-29",
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079-index.htm",
+      "locator": "OperatingIncome 2024-09-29..2025-09-27",
+      "excerpt": null,
+      "values": [
+        133050000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": "2024-09-29",
+      "period_end": "2025-09-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079-index.htm",
+      "locator": "Revenue 2024-09-29..2025-09-27",
+      "excerpt": null,
+      "values": [
+        416161000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": "2023-10-01",
+      "period_end": "2024-09-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079-index.htm",
+      "locator": "OperatingIncome 2023-10-01..2024-09-28",
+      "excerpt": null,
+      "values": [
+        123216000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "AAPL",
+      "source": "SEC EDGAR",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": "2023-10-01",
+      "period_end": "2024-09-28",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079-index.htm",
+      "locator": "Revenue 2023-10-01..2024-09-28",
+      "excerpt": null,
+      "values": [
+        391035000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "AAPL",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-27",
+      "source_url": null,
+      "locator": "OperatingMargin level annual @ 2025-09-27",
+      "excerpt": null,
+      "values": [
+        0.31970799762591884,
+        0.31510222870075566,
+        0.004605768925163178
+      ],
+      "unit": "ratio",
+      "evidence_id": "E11"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E11",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0000320193-25-000079",
+      "form": "10-K",
+      "filed": "2025-10-31",
+      "period_end": "2025-09-27",
+      "source_url": null,
+      "locator": "OperatingMargin level annual @ 2025-09-27"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 13618,
+    "output": 1408
+  },
+  "latency_ms": 22358,
+  "estimated_cost_usd": 0.061974,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "self_reflection",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_ALL_TRUE",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "self_critique",
+        "status": "ok",
+        "duration_ms": 9754,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "weaknesses": 3
+      },
+      {
+        "node": "revise",
+        "status": "ok",
+        "duration_ms": 12593,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "model_final_label": "INSUFFICIENT_EVIDENCE"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_ALL_TRUE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 7,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "self_critique",
+      "revise",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

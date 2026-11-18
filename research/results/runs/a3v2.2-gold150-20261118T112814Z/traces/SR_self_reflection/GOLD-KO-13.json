@@ -1,0 +1,632 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:SR_self_reflection:GOLD-KO-13:6a03f290",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "SR_self_reflection",
+  "approach_kind": "self_reflection",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": true,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "SR_self_reflection",
+    "kind": "self_reflection",
+    "description": "A2 + self-critique and revision, no new retrieval"
+  },
+  "config_hash": "166d47be253b74e9",
+  "claim": {
+    "claim_id": "GOLD-KO-13",
+    "company": "KO",
+    "claim": "Coca-Cola's tax litigation with the IRS, as disclosed as of July 3, 2026, does not pose a material risk to its financial position.",
+    "as_of_date": "2026-08-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q2"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "the Company would likely be subject to significant additional liabilities for subsequent years, which could have a material adverse impact on the Company's financial position, results of operations and cash flows"
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "Management believes that, except as disclosed in \"U.S. Federal Income Tax Dispute\" below, the total liabilities of the Company that may arise as a result of currently pending legal proceedings will not have a material adverse effect on the Company taken as a whole"
+          }
+        ],
+        "reasoning_summary": "The claim asserts that Coca-Cola's tax litigation with the IRS does not pose a material risk to its financial position as of July 3, 2026. However, the evidence directly contradicts this assertion. \n\nEvidence E1, from the July 3, 2026 10-Q filing, explicitly states that if the IRS positions are upheld, \"the Company would likely be subject to significant additional liabilities for subsequent years, which could have a material adverse impact on the Company's financial position, results of operations and cash flows.\" This is a direct statement that the tax litigation could have a material adverse impact on the company's financial position.\n\nAdditionally, Evidence E5 shows that management specifically carved out the U.S. Federal Income Tax Dispute from its general statement about legal proceedings not having a material adverse effect, stating \"Management believes that, except as disclosed in 'U.S. Federal Income Tax Dispute' below, the total liabilities of the Company that may arise as a result of currently pending legal proceedings will not have a material adverse effect on the Company taken as a whole.\" This exception explicitly indicates that the IRS tax dispute is considered to potentially have a material adverse effect, unlike other legal proceedings.\n\nThe evidence shows potential aggregate remaining incremental tax and interest liability of approximately $14 billion for tax years 2010-2025, plus the $6.0 billion already paid that might not be refunded. This contradicts the claim that the litigation does not pose a material risk to Coca-Cola's financial position.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "self_critique",
+      "weaknesses": [
+        {
+          "weakness_id": "W1",
+          "critique": "The evidence statements describe what 'could' or 'would likely' happen if the IRS positions are upheld, but they are explicitly conditional. E1 states 'it is possible that all, or some portion of, the adjustments proposed by the IRS and sustained by the Tax Court could ultimately be upheld' and only 'In that event' would there be a material adverse impact. The company also states it 'strongly disagrees' and expects to 'ultimately prevail in this litigation upon appeal.' The claim might be interpreted as reflecting management's view that, given their expectation of prevailing, the net risk is not material - though this interpretation would be weak given the explicit carve-out in E5."
+        },
+        {
+          "weakness_id": "W2",
+          "critique": "The evidence shows the company has a tax reserve of only $520 million as of the reporting dates (E3, E4), which is vastly smaller than the potential $14 billion liability mentioned. This relatively small reserve might suggest that management's probability assessment is that an adverse outcome is not likely, which could support an argument that the risk is not material when probability-weighted. However, this interpretation conflicts with the explicit carve-out statement in E5 that management does believe this specific matter could have a material adverse effect."
+        },
+        {
+          "weakness_id": "W3",
+          "critique": "The claim states the litigation 'does not pose a material risk' which could be interpreted as an absolute statement about the existence of risk itself, versus the probability-weighted expected impact. The evidence clearly establishes that IF the company loses, there would be a material impact. However, whether a contingent risk with uncertain probability 'poses a material risk' could be debated. That said, E5's explicit exception for this tax dispute from the general statement about legal proceedings strongly suggests management does view this as posing a material risk, making the CONTRADICTED label appropriate."
+        }
+      ]
+    },
+    {
+      "stage": "revision",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "W1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E5",
+              "quote": "Management believes that, except as disclosed in \"U.S. Federal Income Tax Dispute\" below, the total liabilities of the Company that may arise as a result of currently pending legal proceedings will not have a material adverse effect on the Company taken as a whole",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-050503",
+              "form": "10-Q",
+              "filed": "2026-07-29",
+              "period_end": "2026-07-03",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+              "locator": "10-Q 0001628280-26-050503:182000-183190"
+            },
+            {
+              "evidence_id": "E1",
+              "quote": "it is possible that all, or some portion of, the adjustments proposed by the IRS and sustained by the Tax Court could ultimately be upheld. In that event, the Company would not receive a refund of the applicable portion or all of the $6.0 billion it paid in response to the IRS invoices issued in September 2024",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-050503",
+              "form": "10-Q",
+              "filed": "2026-07-29",
+              "period_end": "2026-07-03",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+              "locator": "10-Q 0001628280-26-050503:169308-170398"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E5",
+              "quote": "Management believes that, except as disclosed in \"U.S. Federal Income Tax Dispute\" below, the total liabilities of the Company that may arise as a result of currently pending legal proceedings will not have a material adverse effect on the Company taken as a whole",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-050503",
+              "form": "10-Q",
+              "filed": "2026-07-29",
+              "period_end": "2026-07-03",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+              "locator": "10-Q 0001628280-26-050503:182000-183190"
+            },
+            {
+              "evidence_id": "E1",
+              "quote": "the Company would likely be subject to significant additional liabilities for subsequent years, which could have a material adverse impact on the Company's financial position, results of operations and cash flows",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-050503",
+              "form": "10-Q",
+              "filed": "2026-07-29",
+              "period_end": "2026-07-03",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+              "locator": "10-Q 0001628280-26-050503:169308-170398"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E5",
+              "quote": "Management believes that, except as disclosed in \"U.S. Federal Income Tax Dispute\" below, the total liabilities of the Company that may arise as a result of currently pending legal proceedings will not have a material adverse effect on the Company taken as a whole",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-050503",
+              "form": "10-Q",
+              "filed": "2026-07-29",
+              "period_end": "2026-07-03",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+              "locator": "10-Q 0001628280-26-050503:182000-183190"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "e7948f306a0b4d478f4a9bc0234d0ce38ad0766d6b4dc868c62dff3d8644b966",
+      "source": "cache",
+      "input_tokens": 3738,
+      "output_tokens": 611,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "the Company would likely be subject to significant additional liabilities for subsequent years, which could have a material adverse impact on the Company's financial position, results of operations and cash flows"
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "Management believes that, except as disclosed in \"U.S. Federal Income Tax Dispute\" below, the total liabilities of the Company that may arise as a result of currently pending legal proceedings will not have a material adverse effect on the Company taken as a whole"
+          }
+        ],
+        "reasoning_summary": "The claim asserts that Coca-Cola's tax litigation with the IRS does not pose a material risk to its financial position as of July 3, 2026. However, the evidence directly contradicts this assertion. \n\nEvidence E1, from the July 3, 2026 10-Q filing, explicitly states that if the IRS positions are upheld, \"the Company would likely be subject to significant additional liabilities for subsequent years, which could have a material adverse impact on the Company's financial position, results of operations and cash flows.\" This is a direct statement that the tax litigation could have a material adverse impact on the company's financial position.\n\nAdditionally, Evidence E5 shows that management specifically carved out the U.S. Federal Income Tax Dispute from its general statement about legal proceedings not having a material adverse effect, stating \"Management believes that, except as disclosed in 'U.S. Federal Income Tax Dispute' below, the total liabilities of the Company that may arise as a result of currently pending legal proceedings will not have a material adverse effect on the Company taken as a whole.\" This exception explicitly indicates that the IRS tax dispute is considered to potentially have a material adverse effect, unlike other legal proceedings.\n\nThe evidence shows potential aggregate remaining incremental tax and interest liability of approximately $14 billion for tax years 2010-2025, plus the $6.0 billion already paid that might not be refunded. This contradicts the claim that the litigation does not pose a material risk to Coca-Cola's financial position.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "self_critique",
+      "tool": "submit_self_critique",
+      "request_key": "1b77e5c5d368afff84098f4943f12ba4c47c6c14519e56102b31f4a386b81062",
+      "source": "live",
+      "input_tokens": 4436,
+      "output_tokens": 484,
+      "stop_reason": "tool_use",
+      "latency_ms": 12189,
+      "output": {
+        "weaknesses": [
+          {
+            "weakness_id": "W1",
+            "critique": "The evidence statements describe what 'could' or 'would likely' happen if the IRS positions are upheld, but they are explicitly conditional. E1 states 'it is possible that all, or some portion of, the adjustments proposed by the IRS and sustained by the Tax Court could ultimately be upheld' and only 'In that event' would there be a material adverse impact. The company also states it 'strongly disagrees' and expects to 'ultimately prevail in this litigation upon appeal.' The claim might be interpreted as reflecting management's view that, given their expectation of prevailing, the net risk is not material - though this interpretation would be weak given the explicit carve-out in E5."
+          },
+          {
+            "weakness_id": "W2",
+            "critique": "The evidence shows the company has a tax reserve of only $520 million as of the reporting dates (E3, E4), which is vastly smaller than the potential $14 billion liability mentioned. This relatively small reserve might suggest that management's probability assessment is that an adverse outcome is not likely, which could support an argument that the risk is not material when probability-weighted. However, this interpretation conflicts with the explicit carve-out statement in E5 that management does believe this specific matter could have a material adverse effect."
+          },
+          {
+            "weakness_id": "W3",
+            "critique": "The claim states the litigation 'does not pose a material risk' which could be interpreted as an absolute statement about the existence of risk itself, versus the probability-weighted expected impact. The evidence clearly establishes that IF the company loses, there would be a material impact. However, whether a contingent risk with uncertain probability 'poses a material risk' could be debated. That said, E5's explicit exception for this tax dispute from the general statement about legal proceedings strongly suggests management does view this as posing a material risk, making the CONTRADICTED label appropriate."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "revision",
+      "tool": "submit_revision",
+      "request_key": "8062a5f66eca8e60d52df3661f1ed44747931dff3f35484deb1faa07acffd9ef",
+      "source": "live",
+      "input_tokens": 5768,
+      "output_tokens": 1205,
+      "stop_reason": "tool_use",
+      "latency_ms": 17717,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "W1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E5",
+                "quote": "Management believes that, except as disclosed in \"U.S. Federal Income Tax Dispute\" below, the total liabilities of the Company that may arise as a result of currently pending legal proceedings will not have a material adverse effect on the Company taken as a whole"
+              },
+              {
+                "evidence_id": "E1",
+                "quote": "it is possible that all, or some portion of, the adjustments proposed by the IRS and sustained by the Tax Court could ultimately be upheld. In that event, the Company would not receive a refund of the applicable portion or all of the $6.0 billion it paid in response to the IRS invoices issued in September 2024"
+              }
+            ]
+          },
+          {
+            "item_id": "W2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E5",
+                "quote": "Management believes that, except as disclosed in \"U.S. Federal Income Tax Dispute\" below, the total liabilities of the Company that may arise as a result of currently pending legal proceedings will not have a material adverse effect on the Company taken as a whole"
+              },
+              {
+                "evidence_id": "E1",
+                "quote": "the Company would likely be subject to significant additional liabilities for subsequent years, which could have a material adverse impact on the Company's financial position, results of operations and cash flows"
+              }
+            ]
+          },
+          {
+            "item_id": "W3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E5",
+                "quote": "Management believes that, except as disclosed in \"U.S. Federal Income Tax Dispute\" below, the total liabilities of the Company that may arise as a result of currently pending legal proceedings will not have a material adverse effect on the Company taken as a whole"
+              }
+            ]
+          }
+        ],
+        "label": "CONTRADICTED",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E5",
+            "quote": "Management believes that, except as disclosed in \"U.S. Federal Income Tax Dispute\" below, the total liabilities of the Company that may arise as a result of currently pending legal proceedings will not have a material adverse effect on the Company taken as a whole"
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "the Company would likely be subject to significant additional liabilities for subsequent years, which could have a material adverse impact on the Company's financial position, results of operations and cash flows"
+          },
+          {
+            "evidence_id": "E4",
+            "quote": "the Company would likely be subject to significant additional liabilities for subsequent years, which could have a material adverse impact on the Company's financial position, results of operations and cash flows"
+          }
+        ],
+        "reasoning_summary": "After reconsidering the weaknesses, the CONTRADICTED verdict remains appropriate. \n\nW1 suggested the conditional language might support the claim, but E5 explicitly refutes this by carving out the IRS tax dispute as an exception to management's general statement that legal proceedings won't have a material adverse effect. This carve-out is dispositive - management is explicitly stating that unlike other legal matters, this tax dispute could have a material adverse effect.\n\nW2 suggested the small tax reserve relative to potential liability might indicate low probability and thus immaterial risk, but this is refuted by the same E5 carve-out. Management's explicit exception for this matter demonstrates they view it as posing material risk regardless of the reserve amount. The reserve reflects probability-weighted accounting treatment, not management's assessment of whether the risk itself is material.\n\nW3 raised whether 'poses a material risk' could be interpreted differently than 'will have a material impact,' but E5 resolves this by showing management explicitly treats this litigation differently from other legal proceedings precisely because it could have a material adverse effect. The phrase 'could have a material adverse impact' in E1 and E4 directly addresses the risk posed by the litigation.\n\nThe claim states the litigation 'does not pose a material risk' but the evidence shows management explicitly carved this matter out as one that could have a material adverse effect on the company's financial position. This is a direct contradiction.",
+        "change_reason": "No change. All three weaknesses are refuted by the evidence, particularly E5's explicit carve-out statement which demonstrates management views this tax litigation as posing a material risk to the company's financial position, directly contradicting the claim."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Coca-Cola's tax litigation with the IRS, as disclosed as of July 3, 2026, does not pose a material risk to its financial position. 2026 Q2",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-050503",
+        "filed": "2026-07-29",
+        "report_date": "2026-07-03",
+        "primary_document": "ko-20260703.htm",
+        "sha256": "912506ad356ed21407d4e52d2ff672acdf7d8bca6af7e9ef0f38ce8941081c07"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-028802",
+        "filed": "2026-04-30",
+        "report_date": "2026-04-03",
+        "primary_document": "ko-20260403.htm",
+        "sha256": "50aefabe2fc5388e6b17c140389af345f5af895b2ade81f82eb72028463f73ac"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-010047",
+        "filed": "2026-02-20",
+        "report_date": "2025-12-31",
+        "primary_document": "ko-20251231.htm",
+        "sha256": "7c344724ffd25824080de9272cf711543400cfcbbafb06b787fc482fa3d1a5e2"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1124
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050503",
+      "form": "10-Q",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-07-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+      "locator": "10-Q 0001628280-26-050503:169308-170398",
+      "excerpt": "t we will ultimately prevail in this litigation upon appeal, it is possible that all, or some portion of, the adjustments proposed by the IRS and sustained by the Tax Court could ultimately be upheld. In that event, the Company would not receive a refund of the applicable portion or all of the $6.0 billion it paid in response to the IRS invoices issued in September 2024 and the related accrued interest receivable of $514 million as of July 3, 2026. Additionally, the Company would likely be subject to significant additional liabilities for subsequent years, which could have a material adverse impact on the Company’s financial position, results of operations and cash flows. The Company estimates that the potential aggregate remaining incremental tax and interest liability for the tax years 2010 through 2025 could be approximately $14 billion as of December 31, 2025. Additional income tax and interest on any unpaid potential liabilities for the 2010 through 2025 tax years would continue to accrue until the time any such potential liability, or portion thereof, were to be paid.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050503",
+      "form": "10-Q",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-07-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+      "locator": "10-Q 0001628280-26-050503:13450-14564",
+      "excerpt": "im financial information and with the instructions to Form 10-Q and Rule 10-01 of Regulation S-X. They do not include all information and notes required by U.S. GAAP for complete financial statements. However, except as disclosed herein, there has been no material change in the information disclosed in the Notes to Consolidated Financial Statements included in the Annual Report on Form 10-K of The Coca-Cola Company for the year ended December 31, 2025. Certain other amounts in the prior year’s consolidated financial statements and notes have been revised to conform to the current year presentation. When used in these notes, the terms “The Coca-Cola Company,” “Company,” “we,” “us” and “our” mean The Coca-Cola Company and all entities included in our consolidated financial statements. In the opinion of management, all adjustments (including normal recurring accruals) considered necessary for a fair presentation have been included. Operating results for the three and six months ended July 3, 2026 are not necessarily indicative of the results that may be expected for the year ending December 31, 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-028802",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_start": null,
+      "period_end": "2026-04-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026028802/ko-20260403.htm",
+      "locator": "10-Q 0001628280-26-028802:57905-58846",
+      "excerpt": "of April 3, 2026. However, based on the required probability analysis and the accrual of interest through the current reporting period, we updated our tax reserve as of April 3, 2026 to $ 520 million. While the Company strongly disagrees with the IRS’ positions and the portions of the Opinions affirming such positions, it is possible that some portion or all of the adjustments proposed by the IRS and sustained by the Tax Court could ultimately be upheld. In that event, the Company would not receive a refund of the applicable portion or all of the $ 6.0 billion it paid in response to the IRS invoices issued in September 2024 and the related accrued interest receivable of $ 457 million as of April 3, 2026. Additionally, the Company would likely be subject to significant additional liabilities for subsequent years, which could have a material adverse impact on the Company’s financial position, results of operations and cash flows.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-028802",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_start": null,
+      "period_end": "2026-04-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026028802/ko-20260403.htm",
+      "locator": "10-Q 0001628280-26-028802:156660-157602",
+      "excerpt": "of April 3, 2026. However, based on the required probability analysis and the accrual of interest through the current reporting period, we updated our tax reserve as of April 3, 2026 to $520 million. While the Company strongly disagrees with the IRS’ positions and the portions of the Opinions affirming such positions, it is possible that some portion or all of the adjustments proposed by the IRS and sustained by the Tax Court could ultimately be upheld. In that event, the Company would not receive a refund of the applicable portion or all of the $6.0 billion it paid in 39 response to the IRS invoices issued in September 2024 and the related accrued interest receivable of $457 million as of April 3, 2026. Additionally, the Company would likely be subject to significant additional liabilities for subsequent years, which could have a material adverse impact on the Company’s financial position, results of operations and cash flows.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050503",
+      "form": "10-Q",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-07-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+      "locator": "10-Q 0001628280-26-050503:182000-183190",
+      "excerpt": "inancial reporting during the quarter ended July 3, 2026 that have materially affected, or are reasonably likely to materially affect, the Company’s internal control over financial reporting. Part II. Other Information Item 1. Legal Proceedings Information regarding reportable legal proceedings is contained in Part I, “Item 3. Legal Proceedings” in our Annual Report on Form 10-K for the year ended December 31, 2025, as updated in Part II, “Item 1. Legal Proceedings” in our Quarterly Report on Form 10-Q for the quarter ended April 3, 2026. The following updates and restates the description of the previously reported U.S. Federal Income Tax Dispute matter and provides updates to a previously reported environmental matter. Management believes that, except as disclosed in “U.S. Federal Income Tax Dispute” below, the total liabilities of the Company that may arise as a result of currently pending legal proceedings will not have a material adverse effect on the Company taken as a whole. U.S. Federal Income Tax Dispute On September 17, 2015, the Company received a Notice from the IRS seeking approximately $3.3 billion of additional federal income tax for years 2007 through 2009.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-050503",
+      "form": "10-Q",
+      "filed": "2026-07-29",
+      "period_start": null,
+      "period_end": "2026-07-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+      "locator": "10-Q 0001628280-26-050503:61930-62999",
+      "excerpt": "of the applicable portion or all of the $ 6.0 billion it paid in response to the IRS invoices issued in September 2024 and the related accrued interest receivable of $ 514 million as of July 3, 2026. Additionally, the Company would likely be subject to significant additional liabilities for subsequent years, which could have a material adverse impact on the Company’s financial position, results of operations and cash flows. The Company calculated the potential impact of applying the Tax Court Methodology to reallocate income from foreign licensees potentially covered within the scope of the Opinions for the 2010 through 2025 tax years, assuming such methodology were to be ultimately upheld by the courts, and the IRS were to decide to apply that methodology to subsequent years, with consent of the federal courts. This impact would include taxes and interest accrued through December 31, 2025. The calculations incorporated the estimated impact of correlative adjustments to the previously accrued transition tax payable under the 2017 Tax Cuts and Jobs Act.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E5",
+      "quote": "Management believes that, except as disclosed in \"U.S. Federal Income Tax Dispute\" below, the total liabilities of the Company that may arise as a result of currently pending legal proceedings will not have a material adverse effect on the Company taken as a whole",
+      "valid": false,
+      "issues": [
+        "QUOTE_NOT_IN_PASSAGE"
+      ],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-050503",
+      "form": "10-Q",
+      "filed": "2026-07-29",
+      "period_end": "2026-07-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+      "locator": "10-Q 0001628280-26-050503:182000-183190"
+    },
+    {
+      "evidence_id": "E1",
+      "quote": "the Company would likely be subject to significant additional liabilities for subsequent years, which could have a material adverse impact on the Company's financial position, results of operations and cash flows",
+      "valid": false,
+      "issues": [
+        "QUOTE_NOT_IN_PASSAGE"
+      ],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-050503",
+      "form": "10-Q",
+      "filed": "2026-07-29",
+      "period_end": "2026-07-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026050503/ko-20260703.htm",
+      "locator": "10-Q 0001628280-26-050503:169308-170398"
+    },
+    {
+      "evidence_id": "E4",
+      "quote": "the Company would likely be subject to significant additional liabilities for subsequent years, which could have a material adverse impact on the Company's financial position, results of operations and cash flows",
+      "valid": false,
+      "issues": [
+        "QUOTE_NOT_IN_PASSAGE"
+      ],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-028802",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_end": "2026-04-03",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026028802/ko-20260403.htm",
+      "locator": "10-Q 0001628280-26-028802:156660-157602"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 13942,
+    "output": 2300
+  },
+  "latency_ms": 29929,
+  "estimated_cost_usd": 0.076326,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "self_reflection",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "self_critique",
+        "status": "ok",
+        "duration_ms": 12193,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "weaknesses": 3
+      },
+      {
+        "node": "revise",
+        "status": "ok",
+        "duration_ms": 17726,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "model_final_label": "CONTRADICTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 10,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "self_critique",
+      "revise",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

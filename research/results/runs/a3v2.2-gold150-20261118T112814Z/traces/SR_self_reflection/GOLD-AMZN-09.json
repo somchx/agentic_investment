@@ -1,0 +1,603 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:SR_self_reflection:GOLD-AMZN-09:c1324c18",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "SR_self_reflection",
+  "approach_kind": "self_reflection",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": true,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "SR_self_reflection",
+    "kind": "self_reflection",
+    "description": "A2 + self-critique and revision, no new retrieval"
+  },
+  "config_hash": "166d47be253b74e9",
+  "claim": {
+    "claim_id": "GOLD-AMZN-09",
+    "company": "AMZN",
+    "claim": "The increase in Amazon's International segment operating income in 2025 was driven primarily by lower fulfillment costs.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "The increase in International operating income in 2025, compared to the prior year, is primarily due to increased unit sales and increased advertising sales"
+          }
+        ],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "The increase in International operating income in 2025, compared to the prior year, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs."
+          }
+        ],
+        "reasoning_summary": "The claim states that the increase in Amazon's International segment operating income in 2025 was driven primarily by lower fulfillment costs. However, evidence E2 from the 10-K filing for FY2025 (period ending 2025-12-31, filed 2026-02-06) explicitly contradicts this. The filing states that the increase in International operating income in 2025 was \"primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs.\" This indicates that fulfillment costs actually INCREASED (not decreased) in 2025, and the primary drivers were increased unit sales and advertising sales, not lower fulfillment costs. The claim is therefore contradicted by the evidence.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "self_critique",
+      "weaknesses": [
+        {
+          "weakness_id": "1",
+          "critique": "The verdict correctly identifies that fulfillment costs increased rather than decreased, but should consider whether the claim could be interpreted as 'lower fulfillment costs relative to revenue growth' or 'lower fulfillment cost per unit' rather than absolute fulfillment costs. However, E2 states fulfillment costs 'partially offset' the increase, which clearly indicates they were a headwind not a tailwind, so the contradiction stands regardless of this interpretation."
+        },
+        {
+          "weakness_id": "2",
+          "critique": "The verdict relies on a single evidence source (E2) for the full year 2025. However, E1, E3, and E6 provide consistent information for Q2 2025, Q3 2025, and the nine-month periods, all stating that International operating income increases were 'partially offset by increased fulfillment and shipping costs.' This consistency across multiple quarters strengthens rather than weakens the contradiction finding."
+        },
+        {
+          "weakness_id": "3",
+          "critique": "The verdict should verify that 'International segment' in the claim refers to the same segment discussed in the evidence. E2 clearly discusses 'International operating income' as a distinct segment alongside North America and AWS, confirming this is the correct segment. The period (2025 vs prior year) also matches the claim's reference to 2025, so there is no ambiguity in the comparison period."
+        }
+      ]
+    },
+    {
+      "stage": "revision",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "1",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E2",
+              "quote": "partially offset by increased fulfillment and shipping costs",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-26-000004",
+              "form": "10-K",
+              "filed": "2026-02-06",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+              "locator": "10-K 0001018724-26-000004:122248-123428"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "2",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "The increase in International operating income for the nine months ended September 30, 2025, compared to the comparable prior year period, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-25-000123",
+              "form": "10-Q",
+              "filed": "2025-10-31",
+              "period_end": "2025-09-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/amzn-20250930.htm",
+              "locator": "10-Q 0001018724-25-000123:99822-100753"
+            },
+            {
+              "evidence_id": "E3",
+              "quote": "The increase in International operating income in Q2 2025 and for the six months ended June 30, 2025, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs.",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-25-000086",
+              "form": "10-Q",
+              "filed": "2025-08-01",
+              "period_end": "2025-06-30",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+              "locator": "10-Q 0001018724-25-000086:93311-94507"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "3",
+          "declared": "CHALLENGE_REFUTED",
+          "assessment": "CHALLENGE_REFUTED",
+          "evidence": [
+            {
+              "evidence_id": "E2",
+              "quote": "The increase in International operating income in 2025, compared to the prior year",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001018724-26-000004",
+              "form": "10-K",
+              "filed": "2026-02-06",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+              "locator": "10-K 0001018724-26-000004:122248-123428"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "645278aec8cfb4900fd27bd5a2f54f0df1bfacfe06065822c03cdb83959d4cbd",
+      "source": "cache",
+      "input_tokens": 3561,
+      "output_tokens": 425,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "The increase in International operating income in 2025, compared to the prior year, is primarily due to increased unit sales and increased advertising sales"
+          }
+        ],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "The increase in International operating income in 2025, compared to the prior year, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs."
+          }
+        ],
+        "reasoning_summary": "The claim states that the increase in Amazon's International segment operating income in 2025 was driven primarily by lower fulfillment costs. However, evidence E2 from the 10-K filing for FY2025 (period ending 2025-12-31, filed 2026-02-06) explicitly contradicts this. The filing states that the increase in International operating income in 2025 was \"primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs.\" This indicates that fulfillment costs actually INCREASED (not decreased) in 2025, and the primary drivers were increased unit sales and advertising sales, not lower fulfillment costs. The claim is therefore contradicted by the evidence.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "self_critique",
+      "tool": "submit_self_critique",
+      "request_key": "eda3cbb09fa5613a3bde83a662a358f2211128eefd2c78b5c10785fb66ea2aa4",
+      "source": "live",
+      "input_tokens": 3875,
+      "output_tokens": 373,
+      "stop_reason": "tool_use",
+      "latency_ms": 9586,
+      "output": {
+        "weaknesses": [
+          {
+            "weakness_id": "1",
+            "critique": "The verdict correctly identifies that fulfillment costs increased rather than decreased, but should consider whether the claim could be interpreted as 'lower fulfillment costs relative to revenue growth' or 'lower fulfillment cost per unit' rather than absolute fulfillment costs. However, E2 states fulfillment costs 'partially offset' the increase, which clearly indicates they were a headwind not a tailwind, so the contradiction stands regardless of this interpretation."
+          },
+          {
+            "weakness_id": "2",
+            "critique": "The verdict relies on a single evidence source (E2) for the full year 2025. However, E1, E3, and E6 provide consistent information for Q2 2025, Q3 2025, and the nine-month periods, all stating that International operating income increases were 'partially offset by increased fulfillment and shipping costs.' This consistency across multiple quarters strengthens rather than weakens the contradiction finding."
+          },
+          {
+            "weakness_id": "3",
+            "critique": "The verdict should verify that 'International segment' in the claim refers to the same segment discussed in the evidence. E2 clearly discusses 'International operating income' as a distinct segment alongside North America and AWS, confirming this is the correct segment. The period (2025 vs prior year) also matches the claim's reference to 2025, so there is no ambiguity in the comparison period."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "revision",
+      "tool": "submit_revision",
+      "request_key": "3a94638e975fd5fd085c1f994a2809e19c9e6f77ec4429ab4184da54bf9fc0f7",
+      "source": "live",
+      "input_tokens": 4985,
+      "output_tokens": 1013,
+      "stop_reason": "tool_use",
+      "latency_ms": 15172,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "1",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E2",
+                "quote": "partially offset by increased fulfillment and shipping costs"
+              }
+            ]
+          },
+          {
+            "item_id": "2",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E1",
+                "quote": "The increase in International operating income for the nine months ended September 30, 2025, compared to the comparable prior year period, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs."
+              },
+              {
+                "evidence_id": "E3",
+                "quote": "The increase in International operating income in Q2 2025 and for the six months ended June 30, 2025, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs."
+              }
+            ]
+          },
+          {
+            "item_id": "3",
+            "assessment": "CHALLENGE_REFUTED",
+            "evidence": [
+              {
+                "evidence_id": "E2",
+                "quote": "The increase in International operating income in 2025, compared to the prior year"
+              }
+            ]
+          }
+        ],
+        "label": "CONTRADICTED",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "The increase in International operating income in 2025, compared to the prior year, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs."
+          },
+          {
+            "evidence_id": "E1",
+            "quote": "The increase in International operating income for the nine months ended September 30, 2025, compared to the comparable prior year period, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs."
+          },
+          {
+            "evidence_id": "E3",
+            "quote": "The increase in International operating income in Q2 2025 and for the six months ended June 30, 2025, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs."
+          }
+        ],
+        "reasoning_summary": "After reviewing the critique, the CONTRADICTED verdict remains correct and is actually strengthened. All three potential weaknesses were refuted:\n\nWeakness 1: Even if interpreted as relative fulfillment costs, E2's language that increased fulfillment costs \"partially offset\" the operating income increase clearly indicates fulfillment costs were a negative factor (headwind), not a positive driver. The claim states lower fulfillment costs were the PRIMARY driver, which is directly contradicted.\n\nWeakness 2: Rather than weakening the verdict, E1 and E3 provide additional corroborating evidence across multiple quarters (Q2, six months, and nine months of 2025) that all consistently state the same drivers: increased unit sales and advertising sales as primary drivers, with increased fulfillment costs as an offsetting factor.\n\nWeakness 3: The evidence clearly refers to the International segment and the 2025 period, matching the claim exactly.\n\nThe claim is contradicted on two material points: (1) fulfillment costs increased, not decreased, and (2) the primary drivers were increased unit sales and advertising sales, not fulfillment cost changes. The evidence is consistent and unambiguous across multiple reporting periods.",
+        "change_reason": "No change to verdict. The critique process confirmed the initial CONTRADICTED verdict was correct and identified additional supporting evidence (E1 and E3) that further corroborates the contradiction across multiple quarters of 2025."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "The increase in Amazon's International segment operating income in 2025 was driven primarily by lower fulfillment costs. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001018724-26-000004",
+        "filed": "2026-02-06",
+        "report_date": "2025-12-31",
+        "primary_document": "amzn-20251231.htm",
+        "sha256": "3702599045ec83f3faca3186c42b62247d1ec0e3bdf47c7f8acc7305b858f139"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001018724-25-000123",
+        "filed": "2025-10-31",
+        "report_date": "2025-09-30",
+        "primary_document": "amzn-20250930.htm",
+        "sha256": "e47779b6d5dcd4239bb9e92b7756092f499d6a14c4feaf247bdd4f0fb365402f"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001018724-25-000086",
+        "filed": "2025-08-01",
+        "report_date": "2025-06-30",
+        "primary_document": "amzn-20250630.htm",
+        "sha256": "ded0385afc1d6ab0789742696fc7370f1fe8e673514e845c4c5f6dd5f4378eac"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 734
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000123",
+      "form": "10-Q",
+      "filed": "2025-10-31",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/amzn-20250930.htm",
+      "locator": "10-Q 0001018724-25-000123:99822-100753",
+      "excerpt": "the comparable prior year period, is primarily due to increased shipping and fulfillment costs, inclusive of severance costs, partially offset by increased unit sales and increased advertising sales. The increase in International operating income for the nine months ended September 30, 2025, compared to the comparable prior year period, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs. Changes in foreign exchange rates positively impacted operating income by $302 million for Q3 2025, and by $584 million for nine months ended September 30, 2025. The increase in AWS operating income in Q3 2025, compared to the comparable prior year period, is primarily due to increased sales, partially offset by spending on technology infrastructure that was primarily driven by additional investments to support AWS business growth and severance costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:122248-123428",
+      "excerpt": "3 2025 related to the settlement of a lawsuit with the FTC and $2.7 billion, of which $1.8 billion was recorded in Q3 2025, of estimated severance costs primarily related to planned role eliminations. We believe that operating income is a more meaningful measure than gross profit and gross margin due to the diversity of our product categories and services. For more information on the operating expenses that impact segment operating income, see “Operating Expenses” and the descriptions of operating expense line item changes on pages 25 to 27, and “Note 10 — Segment Information” on page 67. The increase in North America operating income in 2025, compared to the prior year, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment, technology and infrastructure, shipping, and other operating costs. Changes in foreign exchange rates negatively impacted operating income by $204 million in 2025. The increase in International operating income in 2025, compared to the prior year, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:93311-94507",
+      "excerpt": "me increased from $14.7 billion in Q2 2024 to $19.2 billion in Q2 2025, and increased from $30.0 billion for the six months ended June 30, 2024 to $37.6 billion for the six months ended June 30, 2025. We believe that operating income is a more meaningful measure than gross profit and gross margin due to the diversity of our product categories and services. For more information on the operating expenses that impact segment operating income, see “Operating Expenses” and the descriptions of operating expense line item changes on pages 26 to 28, and “Note 8 — Segment Information” on page 18. The increase in North America operating income in Q2 2025 and for the six months ended June 30, 2025, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment, technology and infrastructure, and shipping costs. The increase in International operating income in Q2 2025 and for the six months ended June 30, 2025, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:85336-85992",
+      "excerpt": "s, and achieving better operating efficiencies. We believe that offering low prices to our customers is fundamental to our future success, and one way we offer lower prices is through shipping offers. Costs to operate our AWS segment are primarily classified as “Technology and infrastructure” as we leverage a shared infrastructure that supports both our internal technology requirements and external sales to AWS customers. Fulfillment Fulfillment costs primarily consist of those costs incurred in operating and staffing our North America and International fulfillment centers, physical stores, and customer service centers and payment processing costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:115065-116117",
+      "excerpt": "cost of shipping to continue to increase to the extent our customers accept and use our shipping offers at an increasing rate, we use more expensive shipping methods, and we offer additional services. We seek to mitigate costs of shipping over time in part through achieving higher sales volumes, optimizing our fulfillment network, negotiating better terms with our suppliers, and achieving better operating efficiencies. We believe that offering low prices to our customers is fundamental to our future success, and one way we offer lower prices is through shipping offers. Costs to operate our AWS segment are primarily classified as “Technology and infrastructure” as we leverage a shared infrastructure that supports both our internal technology requirements and external sales to AWS customers. 25 Table of Contents Fulfillment Fulfillment costs primarily consist of those costs incurred in operating and staffing our North America and International fulfillment centers, physical stores, and customer service centers and payment processing costs.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:94307-95472",
+      "excerpt": "ed June 30, 2025, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs. Changes in foreign exchange rates positively impacted operating income by $338 million for Q2 2025, and by $282 million for six months ended June 30, 2025. The increase in AWS operating income in Q2 2025, compared to the comparable prior year period, is primarily due to increased sales, partially offset by spending on technology infrastructure that was primarily driven by additional investments to support AWS business growth. The increase in AWS operating income for the six months ended June 30, 2025, compared to the comparable prior year period, is primarily due to increased sales and decreased payroll and related expenses, partially offset by spending on technology infrastructure that was primarily driven by additional investments to support AWS business growth. Changes in foreign exchange rates negatively impacted operating income by $139 million for Q2 2025, but did not significantly impact operating income for the six months ended June 30, 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E2",
+      "quote": "The increase in International operating income in 2025, compared to the prior year, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001018724-26-000004",
+      "form": "10-K",
+      "filed": "2026-02-06",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "locator": "10-K 0001018724-26-000004:122248-123428"
+    },
+    {
+      "evidence_id": "E1",
+      "quote": "The increase in International operating income for the nine months ended September 30, 2025, compared to the comparable prior year period, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001018724-25-000123",
+      "form": "10-Q",
+      "filed": "2025-10-31",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/amzn-20250930.htm",
+      "locator": "10-Q 0001018724-25-000123:99822-100753"
+    },
+    {
+      "evidence_id": "E3",
+      "quote": "The increase in International operating income in Q2 2025 and for the six months ended June 30, 2025, compared to the comparable prior year periods, is primarily due to increased unit sales and increased advertising sales, partially offset by increased fulfillment and shipping costs.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001018724-25-000086",
+      "form": "10-Q",
+      "filed": "2025-08-01",
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000086/amzn-20250630.htm",
+      "locator": "10-Q 0001018724-25-000086:93311-94507"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 12421,
+    "output": 1811
+  },
+  "latency_ms": 24775,
+  "estimated_cost_usd": 0.064428,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "self_reflection",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "self_critique",
+        "status": "ok",
+        "duration_ms": 9590,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "weaknesses": 3
+      },
+      {
+        "node": "revise",
+        "status": "ok",
+        "duration_ms": 15178,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "model_final_label": "CONTRADICTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 9,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "self_critique",
+      "revise",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

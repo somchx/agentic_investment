@@ -1,0 +1,344 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:A2_rag_numeric:GOLD-AMZN-13:843aae26",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A2_rag_numeric",
+  "approach_kind": "financial_verification",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "A2_rag_numeric",
+    "kind": "financial_verification",
+    "description": "A2 baseline: RAG + deterministic numeric verification"
+  },
+  "config_hash": "d5298a61c0ae91f8",
+  "claim": {
+    "claim_id": "GOLD-AMZN-13",
+    "company": "AMZN",
+    "claim": "Amazon's operating income in the quarter ended March 31, 2026 benefited from one-time items that overstate its underlying profitability.",
+    "as_of_date": "2026-05-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q1"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Other operating expense (income), net was $308 million and $447 million for Q1 2025 and Q1 2026, and was primarily related to charges associated with damaged data centers in the Middle East in Q1 2026, asset impairments, and the amortization of intangible assets."
+          }
+        ],
+        "reasoning_summary": "The claim asserts that Amazon's operating income in Q1 2026 benefited from one-time items that overstate its underlying profitability. This is a qualitative/interpretive claim about whether one-time items inflated operating income.\n\nThe evidence contradicts this claim. E1 shows that \"Other operating expense (income), net\" was $447 million in Q1 2026, primarily related to charges for damaged data centers in the Middle East, asset impairments, and amortization. These are expenses (not income), and they reduced operating income rather than inflating it. The damaged data center charges appear to be one-time items, but they had a negative impact on operating income.\n\nWhile E4 mentions net gains of $15.6 billion from Anthropic investments in Q1 2026, these gains flow through \"Other comprehensive income\" (as stated in E4's context about reclassification adjustments), not operating income. Operating income is calculated before these investment gains.\n\nTherefore, the one-time items identified in the filing (damaged data center charges) actually understated rather than overstated operating income in Q1 2026, directly contradicting the claim.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "ea3be243621ef0441607af4f3b796d4264948a95ab89d322ea359735f281c0a4",
+      "source": "cache",
+      "input_tokens": 4074,
+      "output_tokens": 497,
+      "stop_reason": "tool_use",
+      "latency_ms": 2,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Other operating expense (income), net was $308 million and $447 million for Q1 2025 and Q1 2026, and was primarily related to charges associated with damaged data centers in the Middle East in Q1 2026, asset impairments, and the amortization of intangible assets."
+          }
+        ],
+        "reasoning_summary": "The claim asserts that Amazon's operating income in Q1 2026 benefited from one-time items that overstate its underlying profitability. This is a qualitative/interpretive claim about whether one-time items inflated operating income.\n\nThe evidence contradicts this claim. E1 shows that \"Other operating expense (income), net\" was $447 million in Q1 2026, primarily related to charges for damaged data centers in the Middle East, asset impairments, and amortization. These are expenses (not income), and they reduced operating income rather than inflating it. The damaged data center charges appear to be one-time items, but they had a negative impact on operating income.\n\nWhile E4 mentions net gains of $15.6 billion from Anthropic investments in Q1 2026, these gains flow through \"Other comprehensive income\" (as stated in E4's context about reclassification adjustments), not operating income. Operating income is calculated before these investment gains.\n\nTherefore, the one-time items identified in the filing (damaged data center charges) actually understated rather than overstated operating income in Q1 2026, directly contradicting the claim.",
+        "confidence": "high"
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Amazon's operating income in the quarter ended March 31, 2026 benefited from one-time items that overstate its underlying profitability. 2026 Q1",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001018724-26-000014",
+        "filed": "2026-04-30",
+        "report_date": "2026-03-31",
+        "primary_document": "amzn-20260331.htm",
+        "sha256": "fdcb726db7a47a1633250208e5ecc712eac8d65b68fac76e01772478e5197958"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001018724-26-000004",
+        "filed": "2026-02-06",
+        "report_date": "2025-12-31",
+        "primary_document": "amzn-20251231.htm",
+        "sha256": "3702599045ec83f3faca3186c42b62247d1ec0e3bdf47c7f8acc7305b858f139"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001018724-25-000123",
+        "filed": "2025-10-31",
+        "report_date": "2025-09-30",
+        "primary_document": "amzn-20250930.htm",
+        "sha256": "e47779b6d5dcd4239bb9e92b7756092f499d6a14c4feaf247bdd4f0fb365402f"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 741
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000014",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/amzn-20260331.htm",
+      "locator": "10-Q 0001018724-26-000014:96938-98065",
+      "excerpt": "ship benefits and other shipping offers are not included in sales and marketing expense, we view these offers as effective worldwide marketing tools, and intend to continue offering them indefinitely. General and Administrative General and administrative costs in Q1 2026 did not significantly change compared to the comparable prior year period. Other Operating Expense (Income), Net Other operating expense (income), net was $308 million and $447 million for Q1 2025 and Q1 2026, and was primarily related to charges associated with damaged data centers in the Middle East in Q1 2026, asset impairments, and the amortization of intangible assets. Operating Income Operating income by segment is as follows (in millions): Three Months Ended March 31, 2025 2026 Operating Income North America $ 5,841 $ 8,267 International 1,017 1,424 AWS 11,547 14,161 Consolidated $ 18,405 $ 23,852 Operating income increased from $18.4 billion in Q1 2025 to $23.9 billion in Q1 2026. We believe that operating income is a more meaningful measure than gross profit and gross margin due to the diversity of our product categories and services.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000014",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/amzn-20260331.htm",
+      "locator": "10-Q 0001018724-26-000014:78006-79087",
+      "excerpt": ", were $123.0 billion and $143.1 billion as of December 31, 2025 and March 31, 2026. Amounts held in foreign currencies were $29.7 billion and $22.1 billion as of December 31, 2025 and March 31, 2026. Our foreign currency balances include British Pounds, Canadian Dollars, Euros, Indian Rupees, and Japanese Yen. Cash provided by (used in) operating activities was $17.0 billion and $26.0 billion for Q1 2025 and Q1 2026. Our operating cash flows result primarily from cash received from our consumer, seller, developer, enterprise, and content creator customers, and advertisers, offset by cash payments we make for products and services, employee compensation, payment processing and related transaction costs, operating leases, and interest payments. Cash received from our customers and other activities generally corresponds to our net sales. The increase in operating cash flow for the trailing twelve months ended March 31, 2026, compared to the comparable prior year period, was due to an increase in net income, excluding non-cash expenses, and changes in working capital.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000014",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/amzn-20260331.htm",
+      "locator": "10-Q 0001018724-26-000014:58322-59413",
+      "excerpt": "ted by the U.S. federal research and development credit. Our income tax provision for the three months ended March 31, 2025 was $ 4.6 billion, which included $ 559 million of net discrete tax expense. Our income tax provision for the three months ended March 31, 2026 was $ 9.6 billion, which included $ 4.1 billion of net discrete tax expense primarily attributable to the net gains from our investments in Anthropic. On February 18, 2026, the IRS issued Notice 2026-7 (the “2026 Notice”), which included guidance on the U.S. tax treatment of previously capitalized domestic research and development costs. We expect the 2026 Notice, which applied retroactively to 2025, to result in a significant decrease of 2024 and 2025 cash taxes paid. Cash paid for income taxes, net of refunds was $ 877 million and $ 1.3 billion in Q1 2025 and Q1 2026. As of December 31, 2025 and March 31, 2026, income tax contingencies were approximately $ 6.6 billion and $ 6.7 billion. Changes in tax laws, regulations, administrative practices, principles, and interpretations may impact our tax contingencies.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000014",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/amzn-20260331.htm",
+      "locator": "10-Q 0001018724-26-000014:100504-101581",
+      "excerpt": "cation adjustment for the gain on available-for-sale debt securities from the portion of our convertible notes investments in Anthropic that were converted to nonvoting preferred stock during Q1 2025. The net gain of $15.6 billion in Q1 2026 is primarily from an upward adjustment for observable changes in price relating to our nonvoting preferred stock in 31 Table of Contents Anthropic and the reclassification adjustment for the gains on available-for-sale debt securities from the portions of our convertible notes investments in Anthropic that were converted to nonvoting preferred stock during Q1 2026. Income Taxes Our income tax provision for the three months ended March 31, 2025 was $4.6 billion, which included $559 million of net discrete tax expense. Our income tax provision for the three months ended March 31, 2026 was $9.6 billion, which included $4.1 billion of net discrete tax expense primarily attributable to the net gains from our investments in Anthropic. See Item 1 of Part I, “Financial Statements — Note 7 — Income Taxes” for additional information.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000014",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/amzn-20260331.htm",
+      "locator": "10-Q 0001018724-26-000014:176949-178148",
+      "excerpt": "mazon.com, Inc., pursuant to 18 U.S.C. Section 1350. 32.2 Certification of Brian T. Olsavsky, Senior Vice President and Chief Financial Officer of Amazon.com, Inc., pursuant to 18 U.S.C. Section 1350. 101 The following financial statements from the Company’s Quarterly Report on Form 10-Q for the quarter ended March 31, 2026, formatted in Inline XBRL: (i) Consolidated Statements of Cash Flows, (ii) Consolidated Statements of Operations, (iii) Consolidated Statements of Comprehensive Income, (iv) Consolidated Balance Sheets, and (v) Notes to Consolidated Financial Statements, tagged as blocks of text and including detailed tags. 104 The cover page from the Company’s Quarterly Report on Form 10-Q for the quarter ended March 31, 2026, formatted in Inline XBRL (included as Exhibit 101). __________________ * Certain confidential portions of this exhibit (indicated therein by asterisks) have been omitted pursuant to Securities and Exchange Commission rules. 49 Table of Contents SIGNATURES Pursuant to the requirements of the Securities Exchange Act of 1934, the Registrant has duly caused this report to be signed on its behalf by the undersigned, thereunto duly authorized. AMAZON.COM, INC.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "AMZN",
+      "source": "SEC EDGAR",
+      "accession_number": "0001018724-26-000014",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_start": null,
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/amzn-20260331.htm",
+      "locator": "10-Q 0001018724-26-000014:68007-69161",
+      "excerpt": "t, operating leases, inventory, accounts receivable, and digital video and music content. (2) AWS segment assets primarily consist of property and equipment, accounts receivable, and operating leases. 23 Table of Contents Property and equipment, net by segment is as follows (in millions): December 31, 2025 March 31, 2026 North America $ 122,043 $ 129,241 International 30,632 30,899 AWS 190,055 223,056 Corporate 14,295 14,262 Consolidated $ 357,025 $ 397,458 Total net additions to property and equipment include technology infrastructure assets and the effect of non-cash activity such as property and equipment acquired but not yet paid. Total net additions to property and equipment are as follows (in millions): Three Months Ended March 31, 2025 2026 North America (1) $ 5,096 $ 11,126 International (1) 1,506 1,727 AWS (2) 20,464 41,516 Corporate 383 388 Consolidated $ 27,449 $ 54,757 ___________________ (1) Includes property and equipment added under finance leases of $ 54 million and $ 237 million in Q1 2025 and Q1 2026. (2) Includes property and equipment added under finance leases of $ 0 million and $ 1.3 billion in Q1 2025 and Q1 2026.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E1",
+      "quote": "Other operating expense (income), net was $308 million and $447 million for Q1 2025 and Q1 2026, and was primarily related to charges associated with damaged data centers in the Middle East in Q1 2026, asset impairments, and the amortization of intangible assets.",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001018724-26-000014",
+      "form": "10-Q",
+      "filed": "2026-04-30",
+      "period_end": "2026-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/amzn-20260331.htm",
+      "locator": "10-Q 0001018724-26-000014:96938-98065"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 4074,
+    "output": 497
+  },
+  "latency_ms": 4,
+  "estimated_cost_usd": 0.019677,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "financial_verification",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

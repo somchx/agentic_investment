@@ -1,0 +1,1960 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:A3v2_1_1_RG:GOLD-TSLA-05:a7d17304",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3v2_1_1_RG",
+  "approach_kind": "contradiction_aware_v2",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "review": {
+      "enabled": true,
+      "max_output_tokens": 4096,
+      "passage_chars": 1200,
+      "allow_partial_period": false
+    },
+    "guard": {
+      "enabled": true
+    },
+    "analyzer": {
+      "name": "default"
+    },
+    "decidability": {
+      "name": "not_assessed"
+    },
+    "periods": {
+      "enabled": true,
+      "version": "1.1"
+    },
+    "name": "A3v2_1_1_RG",
+    "kind": "contradiction_aware_v2",
+    "description": "A3v2_1_1_R + deterministic reconciliation guard (cache-only replay of A3v2_1_1_R)",
+    "versions": {
+      "a3v2": "a3v2-0.2.1-dev",
+      "review_prompts": "a3v2-review-prompts-0.3",
+      "guard": "a3v2-guard-0.1",
+      "graph": "langgraph-claims-a3v2-0.1",
+      "periods": "a3v2-periods-1.1"
+    },
+    "replay_of": "A3v2_1_1_R"
+  },
+  "config_hash": "84aba6df744a9382",
+  "claim": {
+    "claim_id": "GOLD-TSLA-05",
+    "company": "TSLA",
+    "claim": "Tesla's net income attributable to common stockholders for the quarter ended September 30, 2026 was higher than in the same quarter a year earlier.",
+    "as_of_date": "2026-11-01",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "2026 Q3"
+  },
+  "initial_label": "CONTRADICTED",
+  "final_label": "CONTRADICTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "NetIncome",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 1373000000,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Net income attributable to common stockholders $ 787 $ 1,373"
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "During the three and nine months ended September 30, 2026, our net income attributable to common stockholders was $787 million and $2.38 billion, respectively, representing decreases of $586 million and $576 million, respectively, compared to the same periods in the prior year."
+          }
+        ],
+        "reasoning_summary": "The claim states that Tesla's net income attributable to common stockholders for Q3 2026 was higher than Q3 2025. However, the evidence clearly contradicts this. Evidence E1 shows that net income attributable to common stockholders for the three months ended September 30, 2026 was $787 million compared to $1,373 million for the same period in 2025. Evidence E2 explicitly states this represents a decrease of $586 million compared to the prior year period. Therefore, Q3 2026 net income ($787 million) was lower, not higher, than Q3 2025 ($1,373 million).",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "CONTRADICTED",
+      "rule": "NUMERIC_FALSE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "NetIncome",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 1373000000,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-09-30",
+            "basis": "quarter",
+            "level": 787000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "NetIncome",
+                "period_start": "2026-07-01",
+                "period_end": "2026-09-30",
+                "value": 787000000.0,
+                "filed": "2026-10-22",
+                "form": "10-Q",
+                "accession_number": "0001628280-26-066775",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 1373000000.0,
+            "prior_period_end": "2025-09-30",
+            "yoy_change": -0.42680262199563,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "analyze_claim",
+      "analysis": {
+        "assertions": [
+          {
+            "assertion_id": "A0",
+            "text": "Tesla's net income attributable to common stockholders for the quarter ended September 30, 2026 was higher than in the same quarter a year earlier.",
+            "type": "claim",
+            "period_end": "2026-09-30",
+            "comparison_end": "2025-09-30",
+            "period_start": "2026-07-01",
+            "period_months": 3,
+            "period_kind": "duration"
+          },
+          {
+            "assertion_id": "N1",
+            "type": "numeric",
+            "numeric": {
+              "metric": "NetIncome",
+              "measure": "level",
+              "period_basis": "quarter",
+              "period_end": "2026-09-30",
+              "comparison": ">",
+              "threshold": 1373000000,
+              "stated_value": null
+            },
+            "text": "NetIncome level > 1373000000",
+            "period_end": "2026-09-30",
+            "comparison_end": "2025-09-30",
+            "period_start": "2026-07-01",
+            "period_months": 3,
+            "period_kind": "duration"
+          }
+        ],
+        "computations": [],
+        "claim_period": {
+          "version": "a3v2-periods-1.1",
+          "kind": "duration",
+          "start": "2026-07-01",
+          "end": "2026-09-30",
+          "months": 3,
+          "label": "3M ended 2026-09-30",
+          "fiscal_year": 2026,
+          "source": "text_date",
+          "comparison": {
+            "start": "2025-07-01",
+            "end": "2025-09-30"
+          },
+          "notes": [],
+          "period_end": "2026-09-30",
+          "comparison_end": "2025-09-30",
+          "basis": "quarter",
+          "orientation": "historical",
+          "years": [
+            2025,
+            2026
+          ]
+        },
+        "analyzer": "default-whole-claim-0.1",
+        "decidability": [
+          {
+            "assertion_id": "A0",
+            "status": "NOT_ASSESSED",
+            "reason": "decidability check not implemented yet"
+          },
+          {
+            "assertion_id": "N1",
+            "status": "NOT_ASSESSED",
+            "reason": "decidability check not implemented yet"
+          }
+        ]
+      },
+      "computations": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Could there be a restatement or correction of the Q3 2025 net income figure that would make it lower than the $1,373 million reported?",
+          "search_query": "restatement correction prior period adjustment Q3 2025 net income attributable common stockholders",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Could there be non-GAAP adjustments or alternative presentations of net income that show Q3 2026 as higher than Q3 2025?",
+          "search_query": "non-GAAP adjusted net income excluding items Q3 2026 2025 reconciliation",
+          "numeric_check": null
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Could the $787 million figure for Q3 2026 be preliminary or subject to revision that would increase it above $1,373 million?",
+          "search_query": "preliminary estimates subject to revision Q3 2026 net income September 30 2026",
+          "numeric_check": null
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "restatement correction prior period adjustment Q3 2025 net income attributable common stockholders",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "non-GAAP adjusted net income excluding items Q3 2026 2025 reconciliation",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "preliminary estimates subject to revision Q3 2026 net income September 30 2026",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "evidence_review",
+      "version": "a3v2-review-prompts-0.1",
+      "claim_period": {
+        "version": "a3v2-periods-1.1",
+        "kind": "duration",
+        "start": "2026-07-01",
+        "end": "2026-09-30",
+        "months": 3,
+        "label": "3M ended 2026-09-30",
+        "fiscal_year": 2026,
+        "source": "text_date",
+        "comparison": {
+          "start": "2025-07-01",
+          "end": "2025-09-30"
+        },
+        "notes": [],
+        "period_end": "2026-09-30",
+        "comparison_end": "2025-09-30",
+        "basis": "quarter",
+        "orientation": "historical",
+        "years": [
+          2025,
+          2026
+        ]
+      },
+      "assertions": [
+        {
+          "assertion_id": "A0",
+          "text": "Tesla's net income attributable to common stockholders for the quarter ended September 30, 2026 was higher than in the same quarter a year earlier.",
+          "type": "claim",
+          "period_end": "2026-09-30",
+          "comparison_end": "2025-09-30",
+          "period_start": "2026-07-01",
+          "period_months": 3,
+          "period_kind": "duration"
+        },
+        {
+          "assertion_id": "N1",
+          "type": "numeric",
+          "numeric": {
+            "metric": "NetIncome",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 1373000000,
+            "stated_value": null
+          },
+          "text": "NetIncome level > 1373000000",
+          "period_end": "2026-09-30",
+          "comparison_end": "2025-09-30",
+          "period_start": "2026-07-01",
+          "period_months": 3,
+          "period_kind": "duration"
+        }
+      ],
+      "reviewed_evidence_ids": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "E9",
+        "E7",
+        "E8",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "findings": [
+        {
+          "finding_id": "R1",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E1"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended September 30, 2026 2025 Net income attributable to common stockholders $ 787 $ 1,373",
+          "justification": "E1 shows net income attributable to common stockholders for the three months ended September 30, 2026 was $787 million compared to $1,373 million for the three months ended September 30, 2025. This is a decrease, not an increase, contradicting the assertion that Q3 2026 was higher than Q3 2025. The period_status is UNKNOWN because the passage states several durations, but the key_quote explicitly identifies the three-month periods matching the claim's comparison.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "checks": [
+            {
+              "evidence_id": "E1",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025,
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R2",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E2"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "During the three and nine months ended September 30, 2026, our net income attributable to common stockholders was $787 million and $2.38 billion, respectively, representing decreases of $586 million and $576 million, respectively, compared to the same periods in the prior year.",
+          "justification": "E2 explicitly states that net income attributable to common stockholders for the three months ended September 30, 2026 was $787 million, representing a decrease of $586 million compared to the same period in the prior year. This directly contradicts the assertion that Q3 2026 was higher than Q3 2025.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": "PERIOD_MISMATCH",
+          "checks": [
+            {
+              "evidence_id": "E2",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "DURATION_DIFFERS:9M_vs_3M",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-09-30",
+                  "months": [
+                    9
+                  ],
+                  "markers": [
+                    "YTD9"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R3",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E7",
+            "E8"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "787000000.0 vs 1373000000.0",
+          "justification": "E7 and E8 are XBRL facts with EXACT_MATCH period status showing net income for Q3 2026 was $787 million compared to $1,373 million for Q3 2025. This is a decrease of $586 million, contradicting the assertion that Q3 2026 was higher.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2026-07-01",
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "comparison",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-07-01",
+                  "end": "2025-09-30",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R4",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E9"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "787000000.0, 1373000000.0, -0.42680262199563",
+          "justification": "E9 is a derived metric with COMPATIBLE_AFTER_VERIFIED_DERIVATION status showing net income for Q3 2026 was $787 million vs $1,373 million for Q3 2025, with a negative change of -42.68%. This contradicts the assertion that Q3 2026 was higher than Q3 2025.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E9",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2026-07-01",
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "NetIncome"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R5",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E3"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "OTHER",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended June 30, 2026 2025 Net income attributable to common stockholders $ 1,114 $ 1,172",
+          "justification": "E3 shows net income for Q2 2026 and Q2 2025, not Q3. The period_status is MISMATCH because it covers a different quarter. This does not decide the claim about Q3 2026 vs Q3 2025.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E3",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "PERIOD_MISMATCH",
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-06-30",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025,
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R6",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E4"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "OTHER",
+          "definition_mismatch": false,
+          "key_quote": "During the three and six months ended June 30, 2026, our net income attributable to common stockholders was $1.11 billion and $1.59 billion, respectively",
+          "justification": "E4 discusses net income for Q2 2026 and the first half of 2026, not Q3 2026. The period_status is MISMATCH. This does not decide the claim about Q3 2026 vs Q3 2025.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E4",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-06-30",
+                  "months": [
+                    6
+                  ],
+                  "markers": [
+                    "YTD6"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R7",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E6"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "OTHER",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended September 30, Nine Months Ended September 30, 2026 2025 2026 2025 Net income $ 804 $ 1,389 $ 2,423 $ 2,999",
+          "justification": "E6 shows total net income (not net income attributable to common stockholders) for Q3 2026 of $804 million vs $1,389 million for Q3 2025. While this shows a decrease, the claim specifically refers to net income attributable to common stockholders, which is a different measure. This is related but does not directly decide the specific measure in the claim.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E6",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-09-30",
+                  "months": [
+                    3,
+                    9
+                  ],
+                  "markers": [
+                    "YTD9",
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025,
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R8",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E1"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended September 30, 2026 2025 Net income attributable to common stockholders $ 787 $ 1,373",
+          "justification": "E1 shows net income attributable to common stockholders for Q3 2026 was $787 million, which equals $787,000,000. This is less than $1,373,000,000, contradicting the assertion that NetIncome level > 1373000000.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "checks": [
+            {
+              "evidence_id": "E1",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025,
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R9",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E7"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "787000000.0",
+          "justification": "E7 is an XBRL fact with EXACT_MATCH period status showing net income for Q3 2026 was $787,000,000. This is less than $1,373,000,000, contradicting the assertion.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2026-07-01",
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R10",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E9"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "CONTRADICTS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "787000000.0",
+          "justification": "E9 is a derived metric with COMPATIBLE_AFTER_VERIFIED_DERIVATION status showing net income for Q3 2026 was $787,000,000. This is less than $1,373,000,000, contradicting the assertion.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E9",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2026-07-01",
+                  "end": "2026-09-30",
+                  "months": [
+                    3
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "NetIncome"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R11",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E2"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "During the three and nine months ended September 30, 2026, our net income attributable to common stockholders was $787 million",
+          "justification": "E2 states that net income attributable to common stockholders for the three months ended September 30, 2026 was $787 million ($787,000,000). This is less than $1,373,000,000, contradicting the assertion.",
+          "validation_status": "PERIOD_MISMATCH",
+          "downgraded_reason": "PERIOD_MISMATCH",
+          "checks": [
+            {
+              "evidence_id": "E2",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "VERIFIED",
+              "issues": [
+                "PERIOD_MISMATCH"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "DURATION_DIFFERS:9M_vs_3M",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2026-09-30",
+                  "months": [
+                    9
+                  ],
+                  "markers": [
+                    "YTD9"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2026
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        }
+      ],
+      "dropped_findings": [],
+      "llm_called": true,
+      "period_derivations": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "CONTRADICTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_FALSE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation_guard",
+      "version": "a3v2-guard-0.1",
+      "initial_label": "CONTRADICTED",
+      "proposed_label": "CONTRADICTED",
+      "final_label": "CONTRADICTED",
+      "outcome": "NO_CHANGE",
+      "reason_code": "NO_CHANGE",
+      "excluded_citations": [],
+      "deciding_findings": [],
+      "initial_basis": [],
+      "rule_trace": [
+        "NO_CHANGE: NO_CHANGE"
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "1ed61f1a79d21b96ddbeb36b72a9304b1f52fc4621c9fb56f7f1772c273962df",
+      "source": "cache",
+      "input_tokens": 3890,
+      "output_tokens": 501,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "NetIncome",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 1373000000,
+            "stated_value": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "Net income attributable to common stockholders $ 787 $ 1,373"
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "During the three and nine months ended September 30, 2026, our net income attributable to common stockholders was $787 million and $2.38 billion, respectively, representing decreases of $586 million and $576 million, respectively, compared to the same periods in the prior year."
+          }
+        ],
+        "reasoning_summary": "The claim states that Tesla's net income attributable to common stockholders for Q3 2026 was higher than Q3 2025. However, the evidence clearly contradicts this. Evidence E1 shows that net income attributable to common stockholders for the three months ended September 30, 2026 was $787 million compared to $1,373 million for the same period in 2025. Evidence E2 explicitly states this represents a decrease of $586 million compared to the prior year period. Therefore, Q3 2026 net income ($787 million) was lower, not higher, than Q3 2025 ($1,373 million).",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "bd10c36d80f9314ffd3ca19b1ce3c403463eb17fb2529004bad498fc002dae73",
+      "source": "cache",
+      "input_tokens": 5003,
+      "output_tokens": 319,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Could there be a restatement or correction of the Q3 2025 net income figure that would make it lower than the $1,373 million reported?",
+            "search_query": "restatement correction prior period adjustment Q3 2025 net income attributable common stockholders",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Could there be non-GAAP adjustments or alternative presentations of net income that show Q3 2026 as higher than Q3 2025?",
+            "search_query": "non-GAAP adjusted net income excluding items Q3 2026 2025 reconciliation",
+            "numeric_check": null
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Could the $787 million figure for Q3 2026 be preliminary or subject to revision that would increase it above $1,373 million?",
+            "search_query": "preliminary estimates subject to revision Q3 2026 net income September 30 2026",
+            "numeric_check": null
+          }
+        ]
+      }
+    },
+    {
+      "stage": "evidence_review",
+      "tool": "submit_evidence_review",
+      "request_key": "f47180da5bf116e3fb37a38fc64c2c1376d0bf72407ba4bcb29d205a57dbd8cc",
+      "source": "cache",
+      "input_tokens": 7993,
+      "output_tokens": 1983,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "findings": [
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E1"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Three Months Ended September 30, 2026 2025 Net income attributable to common stockholders $ 787 $ 1,373",
+            "justification": "E1 shows net income attributable to common stockholders for the three months ended September 30, 2026 was $787 million compared to $1,373 million for the three months ended September 30, 2025. This is a decrease, not an increase, contradicting the assertion that Q3 2026 was higher than Q3 2025. The period_status is UNKNOWN because the passage states several durations, but the key_quote explicitly identifies the three-month periods matching the claim's comparison."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E2"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "During the three and nine months ended September 30, 2026, our net income attributable to common stockholders was $787 million and $2.38 billion, respectively, representing decreases of $586 million and $576 million, respectively, compared to the same periods in the prior year.",
+            "justification": "E2 explicitly states that net income attributable to common stockholders for the three months ended September 30, 2026 was $787 million, representing a decrease of $586 million compared to the same period in the prior year. This directly contradicts the assertion that Q3 2026 was higher than Q3 2025."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E7",
+              "E8"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "787000000.0 vs 1373000000.0",
+            "justification": "E7 and E8 are XBRL facts with EXACT_MATCH period status showing net income for Q3 2026 was $787 million compared to $1,373 million for Q3 2025. This is a decrease of $586 million, contradicting the assertion that Q3 2026 was higher."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E9"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "787000000.0, 1373000000.0, -0.42680262199563",
+            "justification": "E9 is a derived metric with COMPATIBLE_AFTER_VERIFIED_DERIVATION status showing net income for Q3 2026 was $787 million vs $1,373 million for Q3 2025, with a negative change of -42.68%. This contradicts the assertion that Q3 2026 was higher than Q3 2025."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E3"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "OTHER",
+            "key_quote": "Three Months Ended June 30, 2026 2025 Net income attributable to common stockholders $ 1,114 $ 1,172",
+            "justification": "E3 shows net income for Q2 2026 and Q2 2025, not Q3. The period_status is MISMATCH because it covers a different quarter. This does not decide the claim about Q3 2026 vs Q3 2025."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E4"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "OTHER",
+            "key_quote": "During the three and six months ended June 30, 2026, our net income attributable to common stockholders was $1.11 billion and $1.59 billion, respectively",
+            "justification": "E4 discusses net income for Q2 2026 and the first half of 2026, not Q3 2026. The period_status is MISMATCH. This does not decide the claim about Q3 2026 vs Q3 2025."
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E6"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "OTHER",
+            "key_quote": "Three Months Ended September 30, Nine Months Ended September 30, 2026 2025 2026 2025 Net income $ 804 $ 1,389 $ 2,423 $ 2,999",
+            "justification": "E6 shows total net income (not net income attributable to common stockholders) for Q3 2026 of $804 million vs $1,389 million for Q3 2025. While this shows a decrease, the claim specifically refers to net income attributable to common stockholders, which is a different measure. This is related but does not directly decide the specific measure in the claim."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E1"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Three Months Ended September 30, 2026 2025 Net income attributable to common stockholders $ 787 $ 1,373",
+            "justification": "E1 shows net income attributable to common stockholders for Q3 2026 was $787 million, which equals $787,000,000. This is less than $1,373,000,000, contradicting the assertion that NetIncome level > 1373000000."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E7"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "787000000.0",
+            "justification": "E7 is an XBRL fact with EXACT_MATCH period status showing net income for Q3 2026 was $787,000,000. This is less than $1,373,000,000, contradicting the assertion."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E9"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "787000000.0",
+            "justification": "E9 is a derived metric with COMPATIBLE_AFTER_VERIFIED_DERIVATION status showing net income for Q3 2026 was $787,000,000. This is less than $1,373,000,000, contradicting the assertion."
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E2"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "During the three and nine months ended September 30, 2026, our net income attributable to common stockholders was $787 million",
+            "justification": "E2 states that net income attributable to common stockholders for the three months ended September 30, 2026 was $787 million ($787,000,000). This is less than $1,373,000,000, contradicting the assertion."
+          }
+        ]
+      },
+      "isolated_conversation": true,
+      "prompt_version": "a3v2-review-prompts-0.3"
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "0db928788349f8718cd085ee571d1a19d974fa4d7d700dbd7784d81713235f33",
+      "source": "cache",
+      "input_tokens": 11161,
+      "output_tokens": 721,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          }
+        ],
+        "label": "CONTRADICTED",
+        "verdict_changed": false,
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E7",
+            "quote": "NetIncomeAttributableToCommonStockholders Q3 2026: $787,000,000"
+          },
+          {
+            "evidence_id": "E8",
+            "quote": "NetIncomeAttributableToCommonStockholders Q3 2025: $1,373,000,000"
+          },
+          {
+            "evidence_id": "E9",
+            "quote": "Q3 2026 net income $787 million vs Q3 2025 $1,373 million, YoY change -42.68%"
+          }
+        ],
+        "reasoning_summary": "The claim states that Tesla's net income attributable to common stockholders for Q3 2026 was higher than Q3 2025. The evidence clearly contradicts this claim.\n\nEvidence E7 and E8 are XBRL facts with EXACT_MATCH period compatibility showing Q3 2026 net income attributable to common stockholders was $787 million compared to $1,373 million in Q3 2025. Evidence E9 is a derived metric with COMPATIBLE_AFTER_VERIFIED_DERIVATION status confirming the same figures and showing a year-over-year decline of 42.68%.\n\nAll three challenge hypotheses were investigated:\nH1 (restatement): No evidence found of any restatement or correction to the Q3 2025 figures.\nH2 (non-GAAP adjustments): No evidence found of alternative presentations showing Q3 2026 higher than Q3 2025.\nH3 (preliminary figures): No evidence found suggesting the Q3 2026 figure is preliminary or subject to revision.\n\nThe evidence review confirms that E7, E8, and E9 are VALID evidence with appropriate period compatibility (EXACT_MATCH or COMPATIBLE_AFTER_VERIFIED_DERIVATION) and HISTORICAL_FACT statement time. These evidence items CONTRADICT the claim.\n\nThe verdict remains CONTRADICTED because the evidence definitively shows Q3 2026 net income ($787 million) was lower, not higher, than Q3 2025 ($1,373 million).",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Tesla's net income attributable to common stockholders for the quarter ended September 30, 2026 was higher than in the same quarter a year earlier. 2026 Q3",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "restatement correction prior period adjustment Q3 2025 net income attributable common stockholders",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "non-GAAP adjusted net income excluding items Q3 2026 2025 reconciliation",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "preliminary estimates subject to revision Q3 2026 net income September 30 2026",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "NetIncome",
+            "measure": "level",
+            "period_basis": "quarter",
+            "period_end": "2026-09-30",
+            "comparison": ">",
+            "threshold": 1373000000,
+            "stated_value": null
+          },
+          "status": "FALSE",
+          "issues": [],
+          "computed": {
+            "period_end": "2026-09-30",
+            "basis": "quarter",
+            "level": 787000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "NetIncome",
+                "period_start": "2026-07-01",
+                "period_end": "2026-09-30",
+                "value": 787000000.0,
+                "filed": "2026-10-22",
+                "form": "10-Q",
+                "accession_number": "0001628280-26-066775",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 1373000000.0,
+            "prior_period_end": "2025-09-30",
+            "yoy_change": -0.42680262199563,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-066775",
+        "filed": "2026-10-22",
+        "report_date": "2026-09-30",
+        "primary_document": "tsla-20260930.htm",
+        "sha256": "e037800784513ee9661f438d365e3b01b908ed1d892c4ca27ed43a18a678e60f"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-26-049270",
+        "filed": "2026-07-23",
+        "report_date": "2026-06-30",
+        "primary_document": "tsla-20260630.htm",
+        "sha256": "d73ba014ab80bb4e7b180ed03f9d8466465fd90bb783306ebea031b466399dac"
+      },
+      {
+        "form": "10-K/A",
+        "accession_number": "0001104659-26-053166",
+        "filed": "2026-04-30",
+        "report_date": "2025-12-31",
+        "primary_document": "tm2611837d1_10ka.htm",
+        "sha256": "5e3060d44a986e45b9ddee1e40e56b241fd5353d3990bccd3b1ebff25267cbc9"
+      },
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-003952",
+        "filed": "2026-01-29",
+        "report_date": "2025-12-31",
+        "primary_document": "tsla-20251231.htm",
+        "sha256": "442a79e7a2099ddb16af0bdb92a78873cbdcd683613875724e17115f012cbce5"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 923
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066775",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026066775/tsla-20260930.htm",
+      "locator": "10-Q 0001628280-26-066775:27217-28186",
+      "excerpt": "any, that are taken into account in the relevant period. Each quarter, we update our estimate of the annual effective tax rate, and if our estimated tax rate changes, we make a cumulative adjustment. Net Income per Share of Common Stock Attributable to Common Stockholders The following table presents the reconciliation of net income attributable to common stockholders to net income used in computing basic and diluted net income per share of common stock (in millions): Three Months Ended September 30, Nine Months Ended September 30, 2026 2025 2026 2025 Net income attributable to common stockholders $ 787 $ 1,373 $ 2,378 $ 2,954 Less: Buy-outs of noncontrolling interest — — ( 2 ) — Net income used in computing basic and diluted net income per share of common stock $ 787 $ 1,373 $ 2,380 $ 2,954 12 Table of Contents Restricted stock awards will be excluded from the computation of diluted weighted average shares until the shares have been deemed to be earned.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066775",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026066775/tsla-20260930.htm",
+      "locator": "10-Q 0001628280-26-066775:90565-91646",
+      "excerpt": "s through the third quarter. We are focused on ramping the production, increasing the market penetration of our energy storage products and developing our solar manufacturing and battery technologies. During the three and nine months ended September 30, 2026, we recognized total revenues of $28.05 billion and $78.67 billion, respectively, representing a decrease of $49 million and an increase of $8.74 billion, respectively, compared to the same periods in the prior year. During the three and nine months ended September 30, 2026, our net income attributable to common stockholders was $787 million and $2.38 billion, respectively, representing decreases of $586 million and $576 million, respectively, compared to the same periods in the prior year. We continue to ramp production and build and optimize our manufacturing capacity, expand our operations while focusing on further cost reductions and operational efficiencies, including through vertical integration of our battery and semiconductor supply chains, to enable increased deliveries and deployments of our products.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:26739-27705",
+      "excerpt": "any, that are taken into account in the relevant period. Each quarter, we update our estimate of the annual effective tax rate, and if our estimated tax rate changes, we make a cumulative adjustment. Net Income per Share of Common Stock Attributable to Common Stockholders The following table presents the reconciliation of net income attributable to common stockholders to net income used in computing basic and diluted net income per share of common stock (in millions): Three Months Ended June 30, Six Months Ended June 30, 2026 2025 2026 2025 Net income attributable to common stockholders $ 1,114 $ 1,172 $ 1,591 $ 1,581 Less: Buy-outs of noncontrolling interest ( 2 ) — ( 2 ) — Net income used in computing basic and diluted net income per share of common stock $ 1,116 $ 1,172 $ 1,593 $ 1,581 12 Table of Contents Restricted stock awards will be excluded from the computation of diluted weighted average shares until the shares have been deemed to be earned.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:83573-84643",
+      "excerpt": "through the second quarter. We are focused on ramping the production, increasing the market penetration of our energy storage products and developing our solar manufacturing and battery technologies. During the three and six months ended June 30, 2026, we recognized total revenues of $28.24 billion and $50.62 billion, respectively, representing increases of $5.74 billion and $8.79 billion, respectively, compared to the same periods in the prior year. During the three and six months ended June 30, 2026, our net income attributable to common stockholders was $1.11 billion and $1.59 billion, respectively, representing a decrease of $58 million and an increase of $10 million, respectively, compared to the same periods in the prior year. We continue to ramp production and build and optimize our manufacturing capacity, expand our operations while focusing on further cost reductions and operational efficiencies, including through vertical integration of our battery and semiconductor supply chains, to enable increased deliveries and deployments of our products.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066775",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026066775/tsla-20260930.htm",
+      "locator": "10-Q 0001628280-26-066775:27986-29186",
+      "excerpt": "tock $ 787 $ 1,373 $ 2,380 $ 2,954 12 Table of Contents Restricted stock awards will be excluded from the computation of diluted weighted average shares until the shares have been deemed to be earned. The following table presents the reconciliation of basic to diluted weighted average shares used in computing net income per share of common stock attributable to common stockholders (in millions): Three Months Ended September 30, Nine Months Ended September 30, 2026 2025 2026 2025 Weighted average shares used in computing net income per share of common stock, basic 3,240 3,227 3,237 3,223 Add: Stock-based awards 301 299 302 300 Weighted average shares used in computing net income per share of common stock, diluted 3,541 3,526 3,539 3,523 The following table presents the potentially dilutive shares that were excluded from the computation of diluted net income per share of common stock attributable to common stockholders, because their effect was anti-dilutive (in millions): Three Months Ended September 30, Nine Months Ended September 30, 2026 2025 2026 2025 Stock-based awards 17 5 11 13 Restricted Cash Our total cash and cash equivalents and restricted cash, as presented in the consol",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066775",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026066775/tsla-20260930.htm",
+      "locator": "10-Q 0001628280-26-066775:9426-10427",
+      "excerpt": "re of common stock Basic 3,240 3,227 3,237 3,223 Diluted 3,541 3,526 3,539 3,523 The accompanying notes are an integral part of these consolidated financial statements. 5 Table of Contents Tesla, Inc. Consolidated Statements of Comprehensive Income (in millions) (unaudited) Three Months Ended September 30, Nine Months Ended September 30, 2026 2025 2026 2025 Net income $ 804 $ 1,389 $ 2,423 $ 2,999 Other comprehensive income: Foreign currency translation adjustment 97 46 158 882 Unrealized net (loss) gain on short-term investments, net of tax ( 9 ) 3 ( 30 ) ( 5 ) Total other comprehensive income 88 49 128 877 Comprehensive income 892 1,438 2,551 3,876 Less: Comprehensive income attributable to noncontrolling interests and redeemable noncontrolling interests in subsidiaries 17 16 45 45 Comprehensive income attributable to common stockholders $ 875 $ 1,422 $ 2,506 $ 3,831 The accompanying notes are an integral part of these consolidated financial statements. 6 Table of Contents Tesla, Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066775",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": "2026-07-01",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026066775/0001628280-26-066775-index.htm",
+      "locator": "NetIncome 2026-07-01..2026-09-30",
+      "excerpt": null,
+      "values": [
+        787000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066775",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": "2025-07-01",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026066775/0001628280-26-066775-index.htm",
+      "locator": "NetIncome 2025-07-01..2025-09-30",
+      "excerpt": null,
+      "values": [
+        1373000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "TSLA",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001628280-26-066775",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": null,
+      "locator": "NetIncome level quarter @ 2026-09-30",
+      "excerpt": null,
+      "values": [
+        787000000.0,
+        1373000000.0,
+        -0.42680262199563
+      ],
+      "unit": "USD",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:263570-264666",
+      "excerpt": "e is presented as temporary equity in the mezzanine section of the consolidated balance sheets since these third parties have the right to redeem their interests in the funds for cash or other assets. Net Income per Share of Common Stock Attributable to Common Stockholders Basic net income per share of common stock attributable to common stockholders is calculated by dividing net income attributable to common stockholders by the weighted-average shares of common stock outstanding for the period. Potentially dilutive shares, which are based on the weighted-average shares of common stock underlying outstanding stock-based awards, warrants and convertible senior notes using the treasury stock method or the if-converted method, as applicable, are included when calculating diluted net income per share of common stock attributable to common stockholders when their effect is dilutive. Equity awards classified as RSAs are treated as issued shares when granted and approved; however, these shares are not included in the computation of basic weighted average shares outstanding until vested.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:221549-222524",
+      "excerpt": "computing net income per share of common stock Basic 3,225 3,197 3,174 Diluted 3,528 3,498 3,485 The accompanying notes are an integral part of these consolidated financial statements. 50 Tesla, Inc. Consolidated Statements of Comprehensive Income (in millions) Year Ended December 31, 2025 2024 2023 Net income $ 3,855 $ 7,153 $ 14,974 Other comprehensive income (loss): Foreign currency translation adjustment 1,038 ( 539 ) 198 Unrealized net (loss) gain on investments, net of tax ( 7 ) 12 16 Net loss realized and included in net income — — 4 Total other comprehensive income (loss): 1,031 ( 527 ) 218 Comprehensive income 4,886 6,626 15,192 Less: Comprehensive income (loss) attributable to noncontrolling interests and redeemable noncontrolling interests in subsidiaries 61 62 ( 23 ) Comprehensive income attributable to common stockholders $ 4,825 $ 6,564 $ 15,215 The accompanying notes are an integral part of these consolidated financial statements. 51 Tesla, Inc.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003952",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm",
+      "locator": "10-K 0001628280-26-003952:264466-265273",
+      "excerpt": "y awards classified as RSAs are treated as issued shares when granted and approved; however, these shares are not included in the computation of basic weighted average shares outstanding until vested. 61 The following table presents the reconciliation of net income attributable to common stockholders to net income used in computing basic and diluted net income per share of common stock (in millions): Year Ended December 31, 2025 2024 2023 Net income attributable to common stockholders $ 3,794 $ 7,091 $ 14,997 Less: Buy-outs of noncontrolling interests — ( 39 ) ( 2 ) Net income used in computing basic and diluted net income per share of common stock $ 3,794 $ 7,130 $ 14,999 RSAs will be excluded from the computation of diluted weighted average shares until the shares have been deemed to be earned.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:27505-28705",
+      "excerpt": "ck $ 1,116 $ 1,172 $ 1,593 $ 1,581 12 Table of Contents Restricted stock awards will be excluded from the computation of diluted weighted average shares until the shares have been deemed to be earned. The following table presents the reconciliation of basic to diluted weighted average shares used in computing net income per share of common stock attributable to common stockholders (in millions): Three Months Ended June 30, Six Months Ended June 30, 2026 2025 2026 2025 Weighted average shares used in computing net income per share of common stock, basic 3,237 3,223 3,235 3,220 Add: Stock-based awards 303 296 303 300 Weighted average shares used in computing net income per share of common stock, diluted 3,540 3,519 3,538 3,520 The following table presents the potentially dilutive shares that were excluded from the computation of diluted net income per share of common stock attributable to common stockholders, because their effect was anti-dilutive (in millions): Three Months Ended June 30, Six Months Ended June 30, 2026 2025 2026 2025 Stock-based awards 12 15 9 14 Restricted Cash Our total cash and cash equivalents and restricted cash, as presented in the consolidated statements of c",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-049270",
+      "form": "10-Q",
+      "filed": "2026-07-23",
+      "period_start": null,
+      "period_end": "2026-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026049270/tsla-20260630.htm",
+      "locator": "10-Q 0001628280-26-049270:116670-117687",
+      "excerpt": "is increase was primarily due to favorable changes in net operating assets and liabilities of $3.01 billion and an increase in net income excluding non-cash expenses, gains and losses of $933 million. Cash Flows from Investing Activities Net cash flows from investing activities and their variability across each period related primarily to capital expenditures, which were $8.28 billion and $3.89 billion for the six months ended June 30, 2026 and 2025, respectively, mainly for global AI and operational infrastructure and factory expansion, as well as machinery and equipment as we expand and enhance our product roadmap. We also purchased $660 million and $709 million of short-term investments, net of proceeds from maturities and sales, for the six months ended June 30, 2026 and 2025, respectively. Additionally, we invested $2.00 billion in SpaceX common stock during the six months ended June 30, 2026. Refer to Note 13, Related Party Transactions, for additional information regarding the equity investment.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066775",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026066775/tsla-20260930.htm",
+      "locator": "10-Q 0001628280-26-066775:125773-126699",
+      "excerpt": ".S. government securities and other investments, investing in autonomy, further vertically integrating our supply chain, expanding our product roadmap and providing financing options to our customers. 38 Table of Contents Summary of Cash Flows Nine Months Ended September 30, (Dollars in millions) 2026 2025 Net cash provided by operating activities $ 14,897 $ 10,934 Net cash used in investing activities $ (14,928) $ (8,950) Net cash provided by financing activities $ 1,536 $ 429 Cash Flows from Operating Activities Net cash provided by operating activities increased by $3.96 billion to $14.90 billion during the nine months ended September 30, 2026 from $10.93 billion during the nine months ended September 30, 2025. This increase was primarily due to favorable changes in net operating assets and liabilities of $3.51 billion and an increase in net income excluding non-cash expenses, gains and losses of $451 million.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066775",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026066775/tsla-20260930.htm",
+      "locator": "10-Q 0001628280-26-066775:117733-118728",
+      "excerpt": "the three months ended September 30, 2026 and increased $70 million, or 6%, in the nine months ended September 30, 2026 as compared to the three and nine months ended September 30, 2025, respectively. The increases were primarily due to higher interest earned on our cash and cash equivalents and short-term investments due to an increase in our average portfolio balance, partially offset by a lower average interest rate. Other Income, Net Three Months Ended September 30, Change Nine Months Ended September 30, Change (Dollars in millions) 2026 2025 $ % 2026 2025 $ % Other (expense) income, net $ (117) $ (28) $ (89) 318 % $ (62) $ 173 $ (235) Not meaningful Other (expense) income, net, changed unfavorably by $89 million in the three months ended September 30, 2026 as compared to the three months ended September 30, 2025. Other (expense) income, net, changed unfavorably by $235 million in the nine months ended September 30, 2026 as compared to the nine months ended September 30, 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066775",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026066775/tsla-20260930.htm",
+      "locator": "10-Q 0001628280-26-066775:126499-127605",
+      "excerpt": "is increase was primarily due to favorable changes in net operating assets and liabilities of $3.51 billion and an increase in net income excluding non-cash expenses, gains and losses of $451 million. Cash Flows from Investing Activities Net cash flows from investing activities and their variability across each period related primarily to capital expenditures, which were $13.01 billion and $6.13 billion for the nine months ended September 30, 2026 and 2025, respectively, mainly for global SI and operational infrastructure and factory expansion, as well as machinery and equipment as we expand and enhance our product roadmap. We also had net proceeds from maturities of short-term investments of $95 million for the nine months ended September 30, 2026, compared to net purchases of short-term investments of $2.82 billion for the nine months ended September 30, 2025, respectively. Additionally, we invested $2.00 billion in SpaceX common stock during the nine months ended September 30, 2026. Refer to Note 13, Related Party Transactions, for additional information regarding the equity investment.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "TSLA",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-066775",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_start": null,
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026066775/tsla-20260930.htm",
+      "locator": "10-Q 0001628280-26-066775:24760-25732",
+      "excerpt": "6, total transaction price allocated to performance obligations that were unsatisfied or partially unsatisfied for contracts with an original expected length of more than one year was $ 10.73 billion. Of this amount, we expect to recognize $ 4.80 billion in the next 12 months and the rest over the remaining performance obligation period. Changes in government and economic incentives or tariffs may impact the transaction price or our ability to execute these existing contracts. We have financing receivables on our consolidated balance sheets related to loans we provide for financing our energy products. As of September 30, 2026 and December 31, 2025, we had current net financing receivables of $ 42 million and $ 38 million, respectively, in Accounts receivable, net, and $ 675 million and $ 731 million, respectively, in Other non-current assets for the long-term portion. Income Taxes We are subject to income taxes in the U.S. and in many foreign jurisdictions.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E7",
+      "quote": "NetIncomeAttributableToCommonStockholders Q3 2026: $787,000,000",
+      "valid": true,
+      "issues": [],
+      "kind": "xbrl_fact",
+      "accession_number": "0001628280-26-066775",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_end": "2026-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026066775/0001628280-26-066775-index.htm",
+      "locator": "NetIncome 2026-07-01..2026-09-30"
+    },
+    {
+      "evidence_id": "E8",
+      "quote": "NetIncomeAttributableToCommonStockholders Q3 2025: $1,373,000,000",
+      "valid": true,
+      "issues": [],
+      "kind": "xbrl_fact",
+      "accession_number": "0001628280-26-066775",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026066775/0001628280-26-066775-index.htm",
+      "locator": "NetIncome 2025-07-01..2025-09-30"
+    },
+    {
+      "evidence_id": "E9",
+      "quote": "Q3 2026 net income $787 million vs Q3 2025 $1,373 million, YoY change -42.68%",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001628280-26-066775",
+      "form": "10-Q",
+      "filed": "2026-10-22",
+      "period_end": "2026-09-30",
+      "source_url": null,
+      "locator": "NetIncome level quarter @ 2026-09-30"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 28047,
+    "output": 3524
+  },
+  "latency_ms": 12,
+  "estimated_cost_usd": 0.137001,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 4
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_FALSE",
+        "checks": [
+          "FALSE"
+        ]
+      },
+      {
+        "node": "analyze_claim",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "assertions": 2,
+        "computations": 0,
+        "period_source": "text_date"
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "evidence_review",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "findings": 11,
+        "deciding": 4,
+        "downgraded": 4
+      },
+      {
+        "node": "reconcile_v2",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "CONTRADICTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_FALSE"
+      },
+      {
+        "node": "reconciliation_guard",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "outcome": "NO_CHANGE",
+        "reason": "NO_CHANGE",
+        "label": "CONTRADICTED"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "label": "CONTRADICTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "analyze_claim",
+      "generate_hypotheses",
+      "counter_investigation",
+      "evidence_review",
+      "reconcile_v2",
+      "apply_guards",
+      "reconciliation_guard",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-a3v2-0.1"
+  },
+  "a3v2_version": "a3v2-0.2.1-dev"
+}

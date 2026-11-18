@@ -64,3 +64,13 @@
 - วิเคราะห์ความครบของ log (ยังไม่ได้เทียบกับ Gold) และตรวจ hash ซ้ำ: `11_gold150_incident_recovery_analysis.md`
 - เพิ่ม `scripts/backup_artifacts.sh` (สำรองไป `~/ReasonCheck-backups`) และ `scripts/secret_scan.sh`
   - ทั้งสองไฟล์ไม่อยู่ใน code bundle จึงไม่กระทบ hash ที่ล็อกไว้
+
+## 2026-11-18: Official rerun ตาม amendment 1 (ทางเลือก A)
+- **Run:** `a3v2.2-gold150-20261118T112814Z` เริ่ม 11:28 UTC จบประมาณ 14:20 UTC รันจาก `~/Desktop/Invesment-a3v2`
+- **อนุมัติ:** "I approve up to 1500 paid Claude API calls costing at most $30.00" ledger `a3v2.2-gold150-rerun` เพดาน $30
+- **สถานะ:** complete 900/900 (6 arm × 150), ERROR 0, cache miss 0, prediction ซ้ำ 0, `SHA256SUMS` ตรวจผ่าน
+- **NO_FINAL_VERDICT:** R 3, RG 3, A3v2_2e 3 (SR 0)
+- **การเรียก LLM:** live 749 ครั้ง, cache hit 1,349, retry 0, failed 0
+- **ค่าใช้จ่ายจริงตาม ledger: $23.24** (reserve 749 / settle 749 ครบทุกรายการ ไม่มี reservation ค้าง)
+- **Backup:** สำรองไป `~/ReasonCheck-backups` ทุก 2 นาทีตลอดการรัน หยุด loop หลังสำรองรอบสุดท้าย
+- commit ผล run, cache, ledger และ log ก่อนเทียบกับ label ของ Gold

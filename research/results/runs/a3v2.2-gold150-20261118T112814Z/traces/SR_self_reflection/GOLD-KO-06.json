@@ -1,0 +1,537 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:SR_self_reflection:GOLD-KO-06:544e49bd",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "SR_self_reflection",
+  "approach_kind": "self_reflection",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": false,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": true,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "name": "SR_self_reflection",
+    "kind": "self_reflection",
+    "description": "A2 + self-critique and revision, no new retrieval"
+  },
+  "config_hash": "166d47be253b74e9",
+  "claim": {
+    "claim_id": "GOLD-KO-06",
+    "company": "KO",
+    "claim": "Coca-Cola's net operating revenue growth in 2025 was driven primarily by favorable pricing initiatives rather than higher concentrate sales volume.",
+    "as_of_date": "2026-03-15",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "INSUFFICIENT_EVIDENCE",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "The increase in operating income was primarily driven by favorable pricing initiatives, partially offset by a decrease in concentrate sales volume of 1%"
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "The increase in operating income was primarily driven by an increase in concentrate sales volume of 4% and favorable pricing initiatives"
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "The decrease in operating income was primarily driven by a decrease in concentrate sales volume of 1%, increased marketing spending and an unfavorable foreign currency exchange rate impact of 21%, partially offset by favorable pricing initiatives"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Coca-Cola's net operating revenue growth in 2025 was driven primarily by favorable pricing initiatives rather than higher concentrate sales volume. This is an interpretive claim about the drivers of revenue growth.\n\nEvidence from the 2025 10-K (E1, E5) covering the full year 2025 consistently shows that across multiple operating segments, favorable pricing initiatives were a primary driver of performance, while concentrate sales volume was either flat, decreased, or had minimal growth:\n\n- North America (E1): Operating income increase \"primarily driven by favorable pricing initiatives, partially offset by a decrease in concentrate sales volume of 1%\"\n- Latin America (E5): Operating income decrease \"primarily driven by a decrease in concentrate sales volume of 1%... partially offset by favorable pricing initiatives\"\n- EMEA (E5): Operating income increase \"primarily driven by an increase in concentrate sales volume of 4% and favorable pricing initiatives\"\n\nThe pattern across segments shows that pricing initiatives were consistently mentioned as a primary driver, while concentrate sales volume was generally weak (down 1% in North America and Latin America, up only 4% in EMEA). This supports the claim that pricing rather than volume was the primary driver of revenue growth in 2025.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "SUPPORTED",
+      "label": "SUPPORTED",
+      "rule": "NOT_APPLICABLE",
+      "checks": []
+    },
+    {
+      "stage": "self_critique",
+      "weaknesses": [
+        {
+          "weakness_id": "W1",
+          "critique": "The claim is about 'net operating revenue growth' but the evidence cited (E1, E5) discusses 'operating income' drivers, not revenue drivers. Operating income is revenue minus costs, so the drivers of operating income may differ from the drivers of revenue. Pricing initiatives and volume changes affect both revenue and operating income, but the evidence does not directly address what drove revenue growth specifically. The filing may discuss revenue drivers separately from operating income drivers, but such evidence was not provided or cited."
+        },
+        {
+          "weakness_id": "W2",
+          "critique": "The evidence does not establish that net operating revenue actually grew in 2025. The claim assumes revenue growth occurred, but the evidence only discusses operating income changes by segment. Some segments had operating income increases (North America, EMEA) while others had decreases (Latin America, Asia Pacific per E1). Without evidence of actual consolidated net operating revenue figures or growth rates for 2025 vs 2024, we cannot confirm the premise that revenue grew at all."
+        },
+        {
+          "weakness_id": "W3",
+          "critique": "The evidence is segment-level and shows mixed results. In EMEA (E5), the operating income increase was 'primarily driven by an increase in concentrate sales volume of 4% and favorable pricing initiatives' - suggesting volume and pricing were both primary drivers, not pricing alone. The claim makes a company-wide assertion about what 'primarily' drove revenue growth, but the evidence shows different segments had different primary drivers. Without consolidated company-level commentary on revenue drivers, the segment-level evidence may not support a blanket company-wide claim."
+        }
+      ]
+    },
+    {
+      "stage": "revision",
+      "label": "INSUFFICIENT_EVIDENCE",
+      "guard_reverted": null,
+      "numeric_rule": "NOT_APPLICABLE",
+      "assessments": [
+        {
+          "item_id": "W1",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "The increase in operating income was primarily driven by favorable pricing initiatives",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-010047",
+              "form": "10-K",
+              "filed": "2026-02-20",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+              "locator": "10-K 0001628280-26-010047:265125-266206"
+            },
+            {
+              "evidence_id": "E5",
+              "quote": "The increase in operating income was primarily driven by an increase in concentrate sales volume of 4% and favorable pricing initiatives",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-010047",
+              "form": "10-K",
+              "filed": "2026-02-20",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+              "locator": "10-K 0001628280-26-010047:264208-265325"
+            }
+          ],
+          "flag": null
+        },
+        {
+          "item_id": "W2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "W3",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "CHALLENGE_SUPPORTED",
+          "evidence": [
+            {
+              "evidence_id": "E5",
+              "quote": "The increase in operating income was primarily driven by an increase in concentrate sales volume of 4% and favorable pricing initiatives",
+              "valid": true,
+              "issues": [],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-010047",
+              "form": "10-K",
+              "filed": "2026-02-20",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+              "locator": "10-K 0001628280-26-010047:264208-265325"
+            }
+          ],
+          "flag": null
+        }
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "7fa2e45a0e12dd8039cf5e552304a5fbc74013f31ddaac8f67f05abc1c0f6c9b",
+      "source": "cache",
+      "input_tokens": 3788,
+      "output_tokens": 579,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "SUPPORTED",
+        "claim_type": "interpretive",
+        "numeric_assertions": [],
+        "supporting_evidence": [
+          {
+            "evidence_id": "E1",
+            "quote": "The increase in operating income was primarily driven by favorable pricing initiatives, partially offset by a decrease in concentrate sales volume of 1%"
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "The increase in operating income was primarily driven by an increase in concentrate sales volume of 4% and favorable pricing initiatives"
+          },
+          {
+            "evidence_id": "E5",
+            "quote": "The decrease in operating income was primarily driven by a decrease in concentrate sales volume of 1%, increased marketing spending and an unfavorable foreign currency exchange rate impact of 21%, partially offset by favorable pricing initiatives"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Coca-Cola's net operating revenue growth in 2025 was driven primarily by favorable pricing initiatives rather than higher concentrate sales volume. This is an interpretive claim about the drivers of revenue growth.\n\nEvidence from the 2025 10-K (E1, E5) covering the full year 2025 consistently shows that across multiple operating segments, favorable pricing initiatives were a primary driver of performance, while concentrate sales volume was either flat, decreased, or had minimal growth:\n\n- North America (E1): Operating income increase \"primarily driven by favorable pricing initiatives, partially offset by a decrease in concentrate sales volume of 1%\"\n- Latin America (E5): Operating income decrease \"primarily driven by a decrease in concentrate sales volume of 1%... partially offset by favorable pricing initiatives\"\n- EMEA (E5): Operating income increase \"primarily driven by an increase in concentrate sales volume of 4% and favorable pricing initiatives\"\n\nThe pattern across segments shows that pricing initiatives were consistently mentioned as a primary driver, while concentrate sales volume was generally weak (down 1% in North America and Latin America, up only 4% in EMEA). This supports the claim that pricing rather than volume was the primary driver of revenue growth in 2025.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "self_critique",
+      "tool": "submit_self_critique",
+      "request_key": "93790740fe55c17c7bb39875b6ee2b788046d2b6e58ed533cb9631195fef43d7",
+      "source": "live",
+      "input_tokens": 4402,
+      "output_tokens": 416,
+      "stop_reason": "tool_use",
+      "latency_ms": 10577,
+      "output": {
+        "weaknesses": [
+          {
+            "weakness_id": "W1",
+            "critique": "The claim is about 'net operating revenue growth' but the evidence cited (E1, E5) discusses 'operating income' drivers, not revenue drivers. Operating income is revenue minus costs, so the drivers of operating income may differ from the drivers of revenue. Pricing initiatives and volume changes affect both revenue and operating income, but the evidence does not directly address what drove revenue growth specifically. The filing may discuss revenue drivers separately from operating income drivers, but such evidence was not provided or cited."
+          },
+          {
+            "weakness_id": "W2",
+            "critique": "The evidence does not establish that net operating revenue actually grew in 2025. The claim assumes revenue growth occurred, but the evidence only discusses operating income changes by segment. Some segments had operating income increases (North America, EMEA) while others had decreases (Latin America, Asia Pacific per E1). Without evidence of actual consolidated net operating revenue figures or growth rates for 2025 vs 2024, we cannot confirm the premise that revenue grew at all."
+          },
+          {
+            "weakness_id": "W3",
+            "critique": "The evidence is segment-level and shows mixed results. In EMEA (E5), the operating income increase was 'primarily driven by an increase in concentrate sales volume of 4% and favorable pricing initiatives' - suggesting volume and pricing were both primary drivers, not pricing alone. The claim makes a company-wide assertion about what 'primarily' drove revenue growth, but the evidence shows different segments had different primary drivers. Without consolidated company-level commentary on revenue drivers, the segment-level evidence may not support a blanket company-wide claim."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "revision",
+      "tool": "submit_revision",
+      "request_key": "6c9df039f1aa85f87a1e3e09a9ff621a4a1ec758b1f320003a9bf8e0ad34ef60",
+      "source": "live",
+      "input_tokens": 5597,
+      "output_tokens": 722,
+      "stop_reason": "tool_use",
+      "latency_ms": 11637,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "W1",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E1",
+                "quote": "The increase in operating income was primarily driven by favorable pricing initiatives"
+              },
+              {
+                "evidence_id": "E5",
+                "quote": "The increase in operating income was primarily driven by an increase in concentrate sales volume of 4% and favorable pricing initiatives"
+              }
+            ]
+          },
+          {
+            "item_id": "W2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "W3",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E5",
+                "quote": "The increase in operating income was primarily driven by an increase in concentrate sales volume of 4% and favorable pricing initiatives"
+              }
+            ]
+          }
+        ],
+        "label": "INSUFFICIENT_EVIDENCE",
+        "verdict_changed": true,
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "reasoning_summary": "Upon reconsideration, the initial verdict must be changed to INSUFFICIENT_EVIDENCE for the following reasons:\n\nW1 (CHALLENGE_SUPPORTED): The claim specifically addresses \"net operating revenue growth\" drivers, but all the evidence provided (E1, E5, E2, E3, E4, E6) discusses \"operating income\" drivers, not revenue drivers. Operating income is a profit metric (revenue minus costs), and its drivers can differ materially from revenue drivers. The evidence consistently states things like \"The increase in operating income was primarily driven by...\" but never addresses what drove revenue growth specifically.\n\nW2 (NO_RELEVANT_EVIDENCE): The evidence does not provide consolidated net operating revenue figures or growth rates for 2025 vs 2024. Without this, we cannot confirm the premise that net operating revenue actually grew in 2025, which is fundamental to the claim.\n\nW3 (CHALLENGE_SUPPORTED): The evidence shows mixed drivers across segments. In EMEA (E5), both \"concentrate sales volume of 4% and favorable pricing initiatives\" are listed as primary drivers together, not pricing alone. The claim makes a company-wide assertion, but segment-level evidence shows different segments had different primary drivers, and no consolidated company-level commentary on revenue drivers is provided.\n\nThe evidence discusses operating income drivers at the segment level, but does not address the specific claim about what drove consolidated net operating revenue growth in 2025.",
+        "change_reason": "The initial verdict incorrectly relied on operating income driver commentary as a proxy for net operating revenue drivers. These are different metrics, and the evidence does not directly address revenue growth or its drivers at the consolidated company level."
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Coca-Cola's net operating revenue growth in 2025 was driven primarily by favorable pricing initiatives rather than higher concentrate sales volume. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-010047",
+        "filed": "2026-02-20",
+        "report_date": "2025-12-31",
+        "primary_document": "ko-20251231.htm",
+        "sha256": "7c344724ffd25824080de9272cf711543400cfcbbafb06b787fc482fa3d1a5e2"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-046054",
+        "filed": "2025-10-23",
+        "report_date": "2025-09-26",
+        "primary_document": "ko-20250926.htm",
+        "sha256": "2612cabb65b38975b2aba02ec4592e6ae4f7d7caf14dbe6a1b7ac733462aacde"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0000021344-25-000061",
+        "filed": "2025-07-24",
+        "report_date": "2025-06-27",
+        "primary_document": "ko-20250627.htm",
+        "sha256": "3f67156032d834d87f984e719635dacabd06c34c9b8e6d6082f67b95c7ac40fd"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1187
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:265125-266206",
+      "excerpt": "iatives, lower commodity costs and lower other operating charges. Operating income for North America for the years ended December 31, 2025 and 2024 was $5,070 million and $4,556 million, respectively. The increase in operating income was primarily driven by favorable pricing initiatives, partially offset by a decrease in concentrate sales volume of 1%, higher commodity costs, increased marketing spending, higher other operating charges and an unfavorable foreign currency exchange rate impact of 1%. Asia Pacific’s operating income for the years ended December 31, 2025 and 2024 was $2,042 million and $2,156 million, respectively. The decrease in operating income was primarily driven by higher commodity costs, higher other operating charges, an unfavorable foreign currency exchange rate impact of 8% and the impact of structural changes, partially offset by concentrate sales volume growth of 1% and favorable pricing initiatives and mix. Bottling Investments’ operating income for the years ended December 31, 2025 and 2024 was $426 million and $496 million, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:159415-160558",
+      "excerpt": "ncentrate sales volume of 2% and favorable pricing initiatives, partially offset by higher commodity costs, increased marketing spending and an unfavorable foreign currency exchange rate impact of 5%. Latin America reported operating income of $2,758 million and $2,803 million for the nine months ended September 26, 2025 and September 27, 2024, respectively. The decrease in operating income was primarily driven by a decrease in concentrate sales volume of 2% and an unfavorable foreign currency exchange rate impact of 23%, partially offset by favorable pricing initiatives, lower commodity costs, lower marketing spending due to timing and lower other operating charges. Operating income for North America for the nine months ended September 26, 2025 and September 27, 2024 was $4,643 million and $3,329 million, respectively. The increase in operating income was primarily driven by favorable pricing initiatives and lower other operating charges due to the impairment of our BodyArmor trademark in the prior year, partially offset by a decrease in concentrate sales volume of 2%, higher commodity costs and increased marketing spending.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-046054",
+      "form": "10-Q",
+      "filed": "2025-10-23",
+      "period_start": null,
+      "period_end": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828025046054/ko-20250926.htm",
+      "locator": "10-Q 0001628280-25-046054:155747-156891",
+      "excerpt": "costs, increased marketing spending due to timing, and an unfavorable foreign currency exchange rate impact of 16%, partially offset by favorable pricing initiatives and lower other operating charges. Operating income for North America for the three months ended September 26, 2025 and September 27, 2024 was $1,681 million and $1,456 million, respectively. The increase in operating income was primarily driven by favorable pricing initiatives, partially offset by a decrease in concentrate sales volume of 2% and higher commodity costs. Asia Pacific’s operating income for the three months ended September 26, 2025 and September 27, 2024 was $521 million and $462 million, respectively. The increase in operating income was primarily driven by favorable pricing initiatives and mix as well as a favorable foreign currency exchange rate impact of 11%, partially offset by a decrease in concentrate sales volume of 1%, higher commodity costs and increased marketing spending due to timing. Bottling Investments’ operating income for the three months ended September 26, 2025 and September 27, 2024 was $57 million and $43 million, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0000021344-25-000061",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134425000061/ko-20250627.htm",
+      "locator": "10-Q 0000021344-25-000061:153665-154854",
+      "excerpt": "odity costs and lower marketing spending due to timing. Operating income for North America for the six months ended June 27, 2025 and June 28, 2024 was $2,962 million and $1,873 million, respectively. The increase in operating income was primarily driven by favorable pricing initiatives and lower other operating charges due to the impairment of our BodyArmor trademark in the prior year, partially offset by a decrease in concentrate sales volume of 2%, higher commodity costs, increased marketing spending and an unfavorable foreign currency exchange rate impact of 1%. Refer to Note 16 of Notes to Consolidated Financial Statements for additional information on the impairment of our BodyArmor trademark. Asia Pacific’s operating income for the six months ended June 27, 2025 and June 28, 2024 was $1,271 million and $1,303 million, respectively. The decrease in operating income was primarily driven by the impact of structural changes, higher commodity costs, higher operating expenses and an unfavorable foreign currency exchange rate impact of 10%, partially offset by concentrate sales volume growth of 1%, favorable pricing initiatives and lower marketing spending due to timing.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-010047",
+      "form": "10-K",
+      "filed": "2026-02-20",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
+      "locator": "10-K 0001628280-26-010047:264208-265325",
+      "excerpt": "al Position — Foreign Exchange” below. The Company’s EMEA operating segment reported operating income of $4,298 million and $4,255 million for the years ended December 31, 2025 and 2024, respectively. The increase in operating income was primarily driven by an increase in concentrate sales volume of 4% and favorable pricing initiatives, partially offset by higher commodity costs, increased marketing spending, higher operating expenses, an unfavorable foreign currency exchange rate impact of 5% and the impact of divestiture activity. Latin America reported operating income of $3,742 million and $3,792 million for the years ended December 31, 2025 and 2024, respectively. The decrease in operating income was primarily driven by a decrease in concentrate sales volume of 1%, increased marketing spending and an unfavorable foreign currency exchange rate impact of 21%, partially offset by favorable pricing initiatives, lower commodity costs and lower other operating charges. Operating income for North America for the years ended December 31, 2025 and 2024 was $5,070 million and $4,556 million, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "KO",
+      "source": "SEC EDGAR",
+      "accession_number": "0000021344-25-000061",
+      "form": "10-Q",
+      "filed": "2025-07-24",
+      "period_start": null,
+      "period_end": "2025-06-27",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134425000061/ko-20250627.htm",
+      "locator": "10-Q 0000021344-25-000061:152780-153865",
+      "excerpt": "e” below. 42 The Europe, Middle East and Africa operating segment reported operating income of $2,390 million and $2,362 million for the six months ended June 27, 2025 and June 28, 2024, respectively. The increase in operating income was primarily driven by an increase in concentrate sales volume of 2% and favorable pricing initiatives, partially offset by higher commodity costs, increased marketing spending and an unfavorable foreign currency exchange rate impact of 6%. Latin America reported operating income of $1,861 million and $1,866 million for the six months ended June 27, 2025 and June 28, 2024, respectively. The decrease in operating income was primarily driven by a decrease in concentrate sales volume of 2%, higher other operating charges and an unfavorable foreign currency exchange rate impact of 26%, partially offset by favorable pricing initiatives, lower commodity costs and lower marketing spending due to timing. Operating income for North America for the six months ended June 27, 2025 and June 28, 2024 was $2,962 million and $1,873 million, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    }
+  ],
+  "citations": [],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 13787,
+    "output": 1717
+  },
+  "latency_ms": 22243,
+  "estimated_cost_usd": 0.067116,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "self_reflection",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "SUPPORTED",
+        "claim_type": "interpretive"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NOT_APPLICABLE",
+        "checks": []
+      },
+      {
+        "node": "self_critique",
+        "status": "ok",
+        "duration_ms": 10590,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "weaknesses": 3
+      },
+      {
+        "node": "revise",
+        "status": "ok",
+        "duration_ms": 11646,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "model_final_label": "INSUFFICIENT_EVIDENCE"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "guard_reverted": null,
+        "numeric_rule": "NOT_APPLICABLE"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 14,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 1,
+        "label": "INSUFFICIENT_EVIDENCE",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "self_critique",
+      "revise",
+      "apply_guards",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-1.0"
+  }
+}

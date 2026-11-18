@@ -1,0 +1,2004 @@
+{
+  "trace_id": "a3v2.2-gold150-20261118T112814Z:A3v2_1_1_RG:GOLD-META-05:100be1c2",
+  "engine_version": "rc-research-1.0",
+  "prompt_version": "claim-prompts-1.0",
+  "numeric_version": "numeric-1.0",
+  "reconcile_version": "numeric-reconcile-1.0",
+  "approach": "A3v2_1_1_RG",
+  "approach_kind": "contradiction_aware_v2",
+  "config": {
+    "llm": {
+      "model": "claude-sonnet-4-5-20250929",
+      "temperature": 0,
+      "max_output_tokens": 1500
+    },
+    "retrieval": {
+      "top_k": 6,
+      "chunk_chars": 1200,
+      "chunk_overlap": 200,
+      "max_filings_per_form": {
+        "10-K": 1,
+        "10-Q": 2,
+        "8-K": 2
+      },
+      "passage_chars_in_prompt": 1200
+    },
+    "numeric": {
+      "enabled": true,
+      "max_assertions": 6,
+      "override_final_label": true
+    },
+    "contradiction": {
+      "enabled": true,
+      "max_hypotheses": 3,
+      "top_k_per_query": 3,
+      "counter_retrieval": true,
+      "counter_numeric_checks": true
+    },
+    "reflection": {
+      "enabled": false,
+      "max_items": 3
+    },
+    "budget": {
+      "max_llm_calls_per_claim": 6,
+      "max_input_tokens_per_claim": 80000,
+      "max_retrieval_queries_per_claim": 4
+    },
+    "review": {
+      "enabled": true,
+      "max_output_tokens": 4096,
+      "passage_chars": 1200,
+      "allow_partial_period": false
+    },
+    "guard": {
+      "enabled": true
+    },
+    "analyzer": {
+      "name": "default"
+    },
+    "decidability": {
+      "name": "not_assessed"
+    },
+    "periods": {
+      "enabled": true,
+      "version": "1.1"
+    },
+    "name": "A3v2_1_1_RG",
+    "kind": "contradiction_aware_v2",
+    "description": "A3v2_1_1_R + deterministic reconciliation guard (cache-only replay of A3v2_1_1_R)",
+    "versions": {
+      "a3v2": "a3v2-0.2.1-dev",
+      "review_prompts": "a3v2-review-prompts-0.3",
+      "guard": "a3v2-guard-0.1",
+      "graph": "langgraph-claims-a3v2-0.1",
+      "periods": "a3v2-periods-1.1"
+    },
+    "replay_of": "A3v2_1_1_R"
+  },
+  "config_hash": "84aba6df744a9382",
+  "claim": {
+    "claim_id": "GOLD-META-05",
+    "company": "META",
+    "claim": "Meta's net income for fiscal year 2025 decreased compared with fiscal year 2024.",
+    "as_of_date": "2026-02-28",
+    "allowed_sources": [
+      "SEC_10K",
+      "SEC_10Q"
+    ],
+    "reporting_period": "FY2025"
+  },
+  "initial_label": "SUPPORTED",
+  "final_label": "SUPPORTED",
+  "stages": [
+    {
+      "stage": "initial",
+      "retrieved": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "verdict": {
+        "label": "CONTRADICTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "NetIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "stated_value": null,
+            "threshold": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Year Ended December 31, 2025 2024 2023 Revenue $ 200,966 $ 164,501 $ 134,902... Net income $ 60,458 $ 62,360 $ 39,098"
+          }
+        ],
+        "reasoning_summary": "The claim states that Meta's net income for fiscal year 2025 decreased compared with fiscal year 2024. However, evidence E2 from Meta's 10-K filing for the year ended December 31, 2025 shows the consolidated statements of income data. According to this evidence, net income for fiscal year 2025 was $60,458 million while net income for fiscal year 2024 was $62,360 million. While this does show a decrease of $1,902 million (from $62,360 million to $60,458 million), representing approximately a 3% decline, the claim is actually SUPPORTED by the evidence when I re-examine it. The net income did decrease from FY2024 to FY2025. I need to reconsider my verdict - the evidence actually supports the claim that net income decreased.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "numeric_verification",
+      "rule_version": "numeric-reconcile-1.0",
+      "llm_label": "CONTRADICTED",
+      "label": "SUPPORTED",
+      "rule": "NUMERIC_ALL_TRUE",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "NetIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "stated_value": null,
+            "threshold": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 60458000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "NetIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 60458000000.0,
+                "filed": "2026-01-29",
+                "form": "10-K",
+                "accession_number": "0001628280-26-003942",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 62360000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": -0.030500320718409236,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "analyze_claim",
+      "analysis": {
+        "assertions": [
+          {
+            "assertion_id": "A0",
+            "text": "Meta's net income for fiscal year 2025 decreased compared with fiscal year 2024.",
+            "type": "claim",
+            "period_end": "2025-12-31",
+            "comparison_end": "2024-12-31",
+            "period_start": "2025-01-01",
+            "period_months": 12,
+            "period_kind": "duration"
+          },
+          {
+            "assertion_id": "N1",
+            "type": "numeric",
+            "numeric": {
+              "metric": "NetIncome",
+              "measure": "yoy_growth",
+              "period_basis": "annual",
+              "period_end": "2025-12-31",
+              "comparison": "decrease",
+              "stated_value": null,
+              "threshold": null
+            },
+            "text": "NetIncome yoy_growth decrease None",
+            "period_end": "2025-12-31",
+            "comparison_end": "2024-12-31",
+            "period_start": "2025-01-01",
+            "period_months": 12,
+            "period_kind": "duration"
+          }
+        ],
+        "computations": [],
+        "claim_period": {
+          "version": "a3v2-periods-1.1",
+          "kind": "duration",
+          "start": "2025-01-01",
+          "end": "2025-12-31",
+          "months": 12,
+          "label": "FY2025",
+          "fiscal_year": 2025,
+          "source": "text_fiscal",
+          "comparison": {
+            "start": "2024-01-01",
+            "end": "2024-12-31"
+          },
+          "notes": [],
+          "period_end": "2025-12-31",
+          "comparison_end": "2024-12-31",
+          "basis": "annual",
+          "orientation": "historical",
+          "years": [
+            2024,
+            2025
+          ]
+        },
+        "analyzer": "default-whole-claim-0.1",
+        "decidability": [
+          {
+            "assertion_id": "A0",
+            "status": "NOT_ASSESSED",
+            "reason": "decidability check not implemented yet"
+          },
+          {
+            "assertion_id": "N1",
+            "status": "NOT_ASSESSED",
+            "reason": "decidability check not implemented yet"
+          }
+        ]
+      },
+      "computations": []
+    },
+    {
+      "stage": "contradiction_investigation",
+      "enabled": true,
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "challenge": "Were there any restatements, adjustments, or corrections to the fiscal year 2024 or 2025 net income figures that would change the comparison?",
+          "search_query": "restatement adjustment correction net income 2024 2025 prior period"
+        },
+        {
+          "hypothesis_id": "H2",
+          "challenge": "Did any one-time charges, impairments, restructuring costs, or extraordinary items in fiscal year 2025 cause the net income decrease, which might affect the interpretation of the claim?",
+          "search_query": "one-time charges impairment restructuring extraordinary items special charges 2025"
+        },
+        {
+          "hypothesis_id": "H3",
+          "challenge": "Was there a significant change in the provision for income taxes or effective tax rate between 2024 and 2025 that primarily drove the net income decrease?",
+          "search_query": "provision for income taxes effective tax rate 2024 2025 annual year ended"
+        }
+      ],
+      "queries": [
+        {
+          "hypothesis_id": "H1",
+          "query": "restatement adjustment correction net income 2024 2025 prior period",
+          "results": [
+            "E10",
+            "E11",
+            "E12"
+          ]
+        },
+        {
+          "hypothesis_id": "H2",
+          "query": "one-time charges impairment restructuring extraordinary items special charges 2025",
+          "results": [
+            "E13",
+            "E14",
+            "E15"
+          ]
+        },
+        {
+          "hypothesis_id": "H3",
+          "query": "provision for income taxes effective tax rate 2024 2025 annual year ended",
+          "results": [
+            "E16",
+            "E17",
+            "E18"
+          ]
+        }
+      ],
+      "counter_evidence_ids": [
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "counter_numeric": []
+    },
+    {
+      "stage": "evidence_review",
+      "version": "a3v2-review-prompts-0.1",
+      "claim_period": {
+        "version": "a3v2-periods-1.1",
+        "kind": "duration",
+        "start": "2025-01-01",
+        "end": "2025-12-31",
+        "months": 12,
+        "label": "FY2025",
+        "fiscal_year": 2025,
+        "source": "text_fiscal",
+        "comparison": {
+          "start": "2024-01-01",
+          "end": "2024-12-31"
+        },
+        "notes": [],
+        "period_end": "2025-12-31",
+        "comparison_end": "2024-12-31",
+        "basis": "annual",
+        "orientation": "historical",
+        "years": [
+          2024,
+          2025
+        ]
+      },
+      "assertions": [
+        {
+          "assertion_id": "A0",
+          "text": "Meta's net income for fiscal year 2025 decreased compared with fiscal year 2024.",
+          "type": "claim",
+          "period_end": "2025-12-31",
+          "comparison_end": "2024-12-31",
+          "period_start": "2025-01-01",
+          "period_months": 12,
+          "period_kind": "duration"
+        },
+        {
+          "assertion_id": "N1",
+          "type": "numeric",
+          "numeric": {
+            "metric": "NetIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "stated_value": null,
+            "threshold": null
+          },
+          "text": "NetIncome yoy_growth decrease None",
+          "period_end": "2025-12-31",
+          "comparison_end": "2024-12-31",
+          "period_start": "2025-01-01",
+          "period_months": 12,
+          "period_kind": "duration"
+        }
+      ],
+      "reviewed_evidence_ids": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "E9",
+        "E7",
+        "E8",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18"
+      ],
+      "findings": [
+        {
+          "finding_id": "R1",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E2"
+          ],
+          "declared_relation": "CONTRADICTS",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Year Ended December 31, 2025 2024 2023 Revenue $ 200,966 $ 164,501 $ 134,902... Net income $ 60,458 $ 62,360 $ 39,098",
+          "justification": "The consolidated statements of income for the year ended December 31, 2025 show net income of $60,458 million compared to $62,360 million for the year ended December 31, 2024. This represents a decrease of $1,902 million, contradicting the claim that net income decreased. Wait, this actually ENTAILS the claim - net income DID decrease from $62,360M to $60,458M. Let me reconsider.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "checks": [
+            {
+              "evidence_id": "E2",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "markers": [
+                    "FISCAL_YEAR"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-K",
+                  "quote_years": [
+                    2023,
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R2",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E7",
+            "E8"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "NetIncome 2025-01-01..2025-12-31: 60458000000.0; NetIncome 2024-01-01..2024-12-31: 62360000000.0",
+          "justification": "The XBRL facts show net income for fiscal year 2025 (2025-01-01 to 2025-12-31) was $60.458 billion and for fiscal year 2024 (2024-01-01 to 2024-12-31) was $62.360 billion. This is a decrease of $1.902 billion, directly confirming that net income decreased from FY2024 to FY2025.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-01-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "comparison",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2024-01-01",
+                  "end": "2024-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R3",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E9"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "NetIncome yoy_growth annual @ 2025-12-31: [60458000000.0, 62360000000.0, -0.030500320718409236]",
+          "justification": "The derived metric shows net income year-over-year growth of -0.0305 (approximately -3.05%), calculated from net income of $60.458 billion in 2025 versus $62.360 billion in 2024. The negative growth rate confirms that net income decreased from fiscal year 2024 to fiscal year 2025.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E9",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-01-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "NetIncome"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R4",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E10"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "Year Ended December 31, 2025 2024 2023 Net income $ 60,458 $ 62,360 $ 39,098",
+          "justification": "The consolidated statements of comprehensive income for the year ended December 31, 2025 and 2024 show net income of $60,458 million and $62,360 million respectively. This confirms net income decreased by $1,902 million from fiscal year 2024 to fiscal year 2025.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E10",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "markers": [
+                    "FISCAL_YEAR"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-K",
+                  "quote_years": [
+                    2023,
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R5",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E7",
+            "E8"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "NetIncome 2025-01-01..2025-12-31: 60458000000.0; NetIncome 2024-01-01..2024-12-31: 62360000000.0",
+          "justification": "The XBRL facts show net income for fiscal year 2025 was $60.458 billion and for fiscal year 2024 was $62.360 billion. This represents a year-over-year decrease in net income, confirming the numeric assertion of a decrease.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E7",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-01-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            },
+            {
+              "evidence_id": "E8",
+              "exists": true,
+              "kind": "xbrl_fact",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "comparison",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2024-01-01",
+                  "end": "2024-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "xbrl"
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH",
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT",
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R6",
+          "assertion_id": "N1",
+          "evidence_ids": [
+            "E9"
+          ],
+          "declared_relation": "ENTAILS",
+          "relation": "ENTAILS",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CHANGE",
+          "definition_mismatch": false,
+          "key_quote": "NetIncome yoy_growth annual @ 2025-12-31: [60458000000.0, 62360000000.0, -0.030500320718409236]",
+          "justification": "The derived metric directly calculates net income year-over-year growth as -0.0305 (negative 3.05%), which arithmetically confirms a decrease in net income from fiscal year 2024 to fiscal year 2025.",
+          "validation_status": "VALID",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E9",
+              "exists": true,
+              "kind": "derived_metric",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+              "quote_status": "VERIFIED",
+              "issues": [],
+              "period_compatibility": {
+                "status": "COMPATIBLE_AFTER_VERIFIED_DERIVATION",
+                "role": "current",
+                "reason": "SAME_WINDOW",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": "2025-01-01",
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "source": "numeric_derivation",
+                  "provenance": [
+                    "NetIncome"
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "COMPATIBLE_AFTER_VERIFIED_DERIVATION"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R7",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E5"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Year Ended December 31, 2025 2024 2023... Cash provided by operating activities during 2025 mostly consisted of $60.46 billion net income",
+          "justification": "This passage mentions net income of $60.46 billion for 2025 in the context of cash flows, which is consistent with the level of net income in 2025, but does not provide the 2024 comparison figure needed to establish the change.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E5",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "EXACT_MATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "EXACT_MATCH",
+                "role": "current",
+                "reason": "SAME_END_AND_DURATION",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    12
+                  ],
+                  "markers": [
+                    "FISCAL_YEAR"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-K",
+                  "quote_years": [
+                    2023,
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "EXACT_MATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R8",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E1"
+          ],
+          "declared_relation": "IRRELEVANT",
+          "relation": "IRRELEVANT",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "OTHER",
+          "definition_mismatch": false,
+          "key_quote": "three months ended June 30, 2025... six months ended June 30, 2025",
+          "justification": "This evidence discusses revenue changes for Q2 and H1 2025, not net income for the full fiscal year 2025 compared to fiscal year 2024. The period is a mismatch (quarterly/semi-annual vs annual).",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E1",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "PERIOD_MISMATCH",
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-06-30",
+                  "months": [
+                    3,
+                    6
+                  ],
+                  "markers": [
+                    "YTD6",
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R9",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E11"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended June 30, Six Months Ended June 30, 2025 2024... Net income $ 18,337 $ 13,465 $ 34,981 $ 25,834",
+          "justification": "This shows net income for Q2 and H1 periods of 2025 and 2024, not the full fiscal year. The periods are mismatched (quarterly/semi-annual vs annual), so this does not decide the claim about full fiscal year 2025 vs 2024.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E11",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "PERIOD_MISMATCH",
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-06-30",
+                  "months": [
+                    3,
+                    6
+                  ],
+                  "markers": [
+                    "YTD6",
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R10",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E12"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "LEVEL",
+          "definition_mismatch": false,
+          "key_quote": "Three Months Ended September 30, Nine Months Ended September 30, 2025 2024... Net income $ 2,709 $ 15,688 $ 37,690 $ 41,522",
+          "justification": "This shows net income for Q3 and nine months ended September 30 for 2025 and 2024. The periods are mismatched (quarterly/nine-month vs annual fiscal year), so this does not decide the claim about full fiscal year 2025 vs 2024.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E12",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "PERIOD_MISMATCH",
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "OTHER_PERIOD_END",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-09-30",
+                  "months": [
+                    3,
+                    9
+                  ],
+                  "markers": [
+                    "YTD9",
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-Q",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        },
+        {
+          "finding_id": "R11",
+          "assertion_id": "A0",
+          "evidence_ids": [
+            "E18"
+          ],
+          "declared_relation": "RELATED_NOT_DECIDING",
+          "relation": "RELATED_NOT_DECIDING",
+          "evidence_type": "OBSERVED_RESULT",
+          "addresses": "CAUSE",
+          "definition_mismatch": false,
+          "key_quote": "third quarter of 2025, of which $14.03 billion was a valuation allowance... Our provision for income taxes in 2025 increased $17.17 billion or 207% compared to 2024",
+          "justification": "This discusses the provision for income taxes and a Q3 2025 charge related to OBBBA tax legislation. While tax provision affects net income, this passage discusses a component and cause rather than stating the overall net income change for the full fiscal year.",
+          "validation_status": "KEY_QUOTE_NOT_IN_EVIDENCE",
+          "downgraded_reason": null,
+          "checks": [
+            {
+              "evidence_id": "E18",
+              "exists": true,
+              "kind": "filing_passage",
+              "company_ok": true,
+              "filed_by_cutoff": true,
+              "period_status": "MISMATCH",
+              "quote_status": "NOT_IN_PASSAGE",
+              "issues": [
+                "PERIOD_MISMATCH",
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "period_compatibility": {
+                "status": "MISMATCH",
+                "role": null,
+                "reason": "DURATION_DIFFERS:3M_vs_12M",
+                "evidence_period": {
+                  "kind": "duration",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "months": [
+                    3
+                  ],
+                  "markers": [
+                    "QUARTER"
+                  ],
+                  "source": "quote_marker",
+                  "form": "10-K",
+                  "quote_years": [
+                    2024,
+                    2025
+                  ]
+                },
+                "temporal": "HISTORICAL_FACT"
+              }
+            }
+          ],
+          "period_compatibility": [
+            "MISMATCH"
+          ],
+          "statement_time": [
+            "HISTORICAL_FACT"
+          ]
+        }
+      ],
+      "dropped_findings": [],
+      "llm_called": true,
+      "period_derivations": []
+    },
+    {
+      "stage": "reconciliation",
+      "label": "SUPPORTED",
+      "guard_reverted": null,
+      "numeric_rule": "NUMERIC_ALL_TRUE",
+      "assessments": [
+        {
+          "item_id": "H1",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H2",
+          "declared": "NO_RELEVANT_EVIDENCE",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [],
+          "flag": null
+        },
+        {
+          "item_id": "H3",
+          "declared": "CHALLENGE_SUPPORTED",
+          "assessment": "NO_RELEVANT_EVIDENCE",
+          "evidence": [
+            {
+              "evidence_id": "E18",
+              "quote": "we recorded a $15.93 billion charge in the third quarter of 2025, of which $14.03 billion was a valuation allowance against our U.S. federal deferred tax assets as of the enactment date of OBBBA... Our provision for income taxes in 2025 increased $17.17 billion or 207% compared to 2024, primarily due to an increase in the effective tax rate.",
+              "valid": false,
+              "issues": [
+                "QUOTE_NOT_IN_PASSAGE"
+              ],
+              "kind": "filing_passage",
+              "accession_number": "0001628280-26-003942",
+              "form": "10-K",
+              "filed": "2026-01-29",
+              "period_end": "2025-12-31",
+              "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+              "locator": "10-K 0001628280-26-003942:335212-336282"
+            }
+          ],
+          "flag": "CHALLENGE_WITHOUT_VALID_EVIDENCE"
+        }
+      ]
+    },
+    {
+      "stage": "reconciliation_guard",
+      "version": "a3v2-guard-0.1",
+      "initial_label": "SUPPORTED",
+      "proposed_label": "SUPPORTED",
+      "final_label": "SUPPORTED",
+      "outcome": "NO_CHANGE",
+      "reason_code": "NO_CHANGE",
+      "excluded_citations": [
+        {
+          "evidence_id": "E2",
+          "quote": "Year Ended December 31, 2025 2024 2023 Revenue $ 200,966 $ 164,501 $ 134,902... Net income $ 60,458 $ 62,360 $ 39,098",
+          "issues": [
+            "QUOTE_NOT_IN_PASSAGE"
+          ],
+          "period_status": "EXACT_MATCH"
+        }
+      ],
+      "deciding_findings": [],
+      "initial_basis": [],
+      "rule_trace": [
+        "excluded 1 citation(s): E2(QUOTE_NOT_IN_PASSAGE)",
+        "NO_CHANGE: NO_CHANGE"
+      ]
+    }
+  ],
+  "llm_calls": [
+    {
+      "stage": "initial",
+      "tool": "submit_verdict",
+      "request_key": "15b159c6cd80ad587b99815536aea59bee4ca78e470e681df4e376d8deecdef9",
+      "source": "cache",
+      "input_tokens": 4056,
+      "output_tokens": 491,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "label": "CONTRADICTED",
+        "claim_type": "numeric",
+        "numeric_assertions": [
+          {
+            "metric": "NetIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "stated_value": null,
+            "threshold": null
+          }
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Year Ended December 31, 2025 2024 2023 Revenue $ 200,966 $ 164,501 $ 134,902... Net income $ 60,458 $ 62,360 $ 39,098"
+          }
+        ],
+        "reasoning_summary": "The claim states that Meta's net income for fiscal year 2025 decreased compared with fiscal year 2024. However, evidence E2 from Meta's 10-K filing for the year ended December 31, 2025 shows the consolidated statements of income data. According to this evidence, net income for fiscal year 2025 was $60,458 million while net income for fiscal year 2024 was $62,360 million. While this does show a decrease of $1,902 million (from $62,360 million to $60,458 million), representing approximately a 3% decline, the claim is actually SUPPORTED by the evidence when I re-examine it. The net income did decrease from FY2024 to FY2025. I need to reconsider my verdict - the evidence actually supports the claim that net income decreased.",
+        "confidence": "high"
+      }
+    },
+    {
+      "stage": "contradiction_plan",
+      "tool": "submit_contradiction_plan",
+      "request_key": "e82876fd57d3f28fd8608579ffd674174eb374c4a4f7fdb8a182b426352cd5de",
+      "source": "cache",
+      "input_tokens": 5169,
+      "output_tokens": 291,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "challenge": "Were there any restatements, adjustments, or corrections to the fiscal year 2024 or 2025 net income figures that would change the comparison?",
+            "search_query": "restatement adjustment correction net income 2024 2025 prior period"
+          },
+          {
+            "hypothesis_id": "H2",
+            "challenge": "Did any one-time charges, impairments, restructuring costs, or extraordinary items in fiscal year 2025 cause the net income decrease, which might affect the interpretation of the claim?",
+            "search_query": "one-time charges impairment restructuring extraordinary items special charges 2025"
+          },
+          {
+            "hypothesis_id": "H3",
+            "challenge": "Was there a significant change in the provision for income taxes or effective tax rate between 2024 and 2025 that primarily drove the net income decrease?",
+            "search_query": "provision for income taxes effective tax rate 2024 2025 annual year ended"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "evidence_review",
+      "tool": "submit_evidence_review",
+      "request_key": "dad66bea8df733af52e298d9d7303095d1a8d7903d2df6871cfab7ebe4ee0b8f",
+      "source": "cache",
+      "input_tokens": 8344,
+      "output_tokens": 2253,
+      "stop_reason": "tool_use",
+      "latency_ms": 0,
+      "output": {
+        "findings": [
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E2"
+            ],
+            "relation": "CONTRADICTS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Year Ended December 31, 2025 2024 2023 Revenue $ 200,966 $ 164,501 $ 134,902... Net income $ 60,458 $ 62,360 $ 39,098",
+            "justification": "The consolidated statements of income for the year ended December 31, 2025 show net income of $60,458 million compared to $62,360 million for the year ended December 31, 2024. This represents a decrease of $1,902 million, contradicting the claim that net income decreased. Wait, this actually ENTAILS the claim - net income DID decrease from $62,360M to $60,458M. Let me reconsider.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E7",
+              "E8"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "NetIncome 2025-01-01..2025-12-31: 60458000000.0; NetIncome 2024-01-01..2024-12-31: 62360000000.0",
+            "justification": "The XBRL facts show net income for fiscal year 2025 (2025-01-01 to 2025-12-31) was $60.458 billion and for fiscal year 2024 (2024-01-01 to 2024-12-31) was $62.360 billion. This is a decrease of $1.902 billion, directly confirming that net income decreased from FY2024 to FY2025.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E9"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "NetIncome yoy_growth annual @ 2025-12-31: [60458000000.0, 62360000000.0, -0.030500320718409236]",
+            "justification": "The derived metric shows net income year-over-year growth of -0.0305 (approximately -3.05%), calculated from net income of $60.458 billion in 2025 versus $62.360 billion in 2024. The negative growth rate confirms that net income decreased from fiscal year 2024 to fiscal year 2025.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E10"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "Year Ended December 31, 2025 2024 2023 Net income $ 60,458 $ 62,360 $ 39,098",
+            "justification": "The consolidated statements of comprehensive income for the year ended December 31, 2025 and 2024 show net income of $60,458 million and $62,360 million respectively. This confirms net income decreased by $1,902 million from fiscal year 2024 to fiscal year 2025.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E7",
+              "E8"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "NetIncome 2025-01-01..2025-12-31: 60458000000.0; NetIncome 2024-01-01..2024-12-31: 62360000000.0",
+            "justification": "The XBRL facts show net income for fiscal year 2025 was $60.458 billion and for fiscal year 2024 was $62.360 billion. This represents a year-over-year decrease in net income, confirming the numeric assertion of a decrease.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "N1",
+            "evidence_ids": [
+              "E9"
+            ],
+            "relation": "ENTAILS",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CHANGE",
+            "key_quote": "NetIncome yoy_growth annual @ 2025-12-31: [60458000000.0, 62360000000.0, -0.030500320718409236]",
+            "justification": "The derived metric directly calculates net income year-over-year growth as -0.0305 (negative 3.05%), which arithmetically confirms a decrease in net income from fiscal year 2024 to fiscal year 2025.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E5"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Year Ended December 31, 2025 2024 2023... Cash provided by operating activities during 2025 mostly consisted of $60.46 billion net income",
+            "justification": "This passage mentions net income of $60.46 billion for 2025 in the context of cash flows, which is consistent with the level of net income in 2025, but does not provide the 2024 comparison figure needed to establish the change.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E1"
+            ],
+            "relation": "IRRELEVANT",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "OTHER",
+            "key_quote": "three months ended June 30, 2025... six months ended June 30, 2025",
+            "justification": "This evidence discusses revenue changes for Q2 and H1 2025, not net income for the full fiscal year 2025 compared to fiscal year 2024. The period is a mismatch (quarterly/semi-annual vs annual).",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E11"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Three Months Ended June 30, Six Months Ended June 30, 2025 2024... Net income $ 18,337 $ 13,465 $ 34,981 $ 25,834",
+            "justification": "This shows net income for Q2 and H1 periods of 2025 and 2024, not the full fiscal year. The periods are mismatched (quarterly/semi-annual vs annual), so this does not decide the claim about full fiscal year 2025 vs 2024.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E12"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "LEVEL",
+            "key_quote": "Three Months Ended September 30, Nine Months Ended September 30, 2025 2024... Net income $ 2,709 $ 15,688 $ 37,690 $ 41,522",
+            "justification": "This shows net income for Q3 and nine months ended September 30 for 2025 and 2024. The periods are mismatched (quarterly/nine-month vs annual fiscal year), so this does not decide the claim about full fiscal year 2025 vs 2024.",
+            "definition_mismatch": false
+          },
+          {
+            "assertion_id": "A0",
+            "evidence_ids": [
+              "E18"
+            ],
+            "relation": "RELATED_NOT_DECIDING",
+            "evidence_type": "OBSERVED_RESULT",
+            "addresses": "CAUSE",
+            "key_quote": "third quarter of 2025, of which $14.03 billion was a valuation allowance... Our provision for income taxes in 2025 increased $17.17 billion or 207% compared to 2024",
+            "justification": "This discusses the provision for income taxes and a Q3 2025 charge related to OBBBA tax legislation. While tax provision affects net income, this passage discusses a component and cause rather than stating the overall net income change for the full fiscal year.",
+            "definition_mismatch": false
+          }
+        ]
+      },
+      "isolated_conversation": true,
+      "prompt_version": "a3v2-review-prompts-0.3"
+    },
+    {
+      "stage": "reconciliation",
+      "tool": "submit_reconciliation",
+      "request_key": "cb4810c22fdb1b68fc713420d8a6368f3e7e183c780cbac774db2375f2df2d2e",
+      "source": "cache",
+      "input_tokens": 11476,
+      "output_tokens": 922,
+      "stop_reason": "tool_use",
+      "latency_ms": 1,
+      "output": {
+        "assessments": [
+          {
+            "item_id": "H1",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H2",
+            "assessment": "NO_RELEVANT_EVIDENCE",
+            "evidence": []
+          },
+          {
+            "item_id": "H3",
+            "assessment": "CHALLENGE_SUPPORTED",
+            "evidence": [
+              {
+                "evidence_id": "E18",
+                "quote": "we recorded a $15.93 billion charge in the third quarter of 2025, of which $14.03 billion was a valuation allowance against our U.S. federal deferred tax assets as of the enactment date of OBBBA... Our provision for income taxes in 2025 increased $17.17 billion or 207% compared to 2024, primarily due to an increase in the effective tax rate."
+              }
+            ]
+          }
+        ],
+        "label": "SUPPORTED",
+        "verdict_changed": false,
+        "supporting_evidence": [
+          {
+            "evidence_id": "E2",
+            "quote": "Year Ended December 31, 2025 2024 2023 Revenue $ 200,966 $ 164,501 $ 134,902... Net income $ 60,458 $ 62,360 $ 39,098"
+          },
+          {
+            "evidence_id": "E10",
+            "quote": "Year Ended December 31, 2025 2024 2023 Net income $ 60,458 $ 62,360 $ 39,098"
+          }
+        ],
+        "contradicting_evidence": [],
+        "reasoning_summary": "The claim states that Meta's net income for fiscal year 2025 decreased compared with fiscal year 2024. Evidence E2 and E10 from Meta's 10-K filing for the year ended December 31, 2025 clearly show that net income was $60,458 million in FY2025 compared to $62,360 million in FY2024, representing a decrease of $1,902 million (approximately 3.05%). The numeric check confirms this decrease with a yoy_change of -0.0305. The evidence review confirms that E2, E7, E8, E9, and E10 all ENTAIL the claim with EXACT_MATCH or COMPATIBLE_AFTER_VERIFIED_DERIVATION period compatibility.\n\nChallenge H1 (restatements): No evidence of restatements or corrections to the net income figures was found in the retrieved passages.\n\nChallenge H2 (one-time charges): While E14 and E15 mention potential charges related to impairments and other items as forward-looking risk factors, no specific evidence was found documenting one-time charges that would materially affect the interpretation of the net income decrease claim itself.\n\nChallenge H3 (tax changes): Evidence E18 confirms that there was indeed a significant tax-related impact in 2025. Meta recorded a $15.93 billion charge in Q3 2025 related to OBBBA tax legislation, and the provision for income taxes increased $17.17 billion (207%) compared to 2024. However, this challenge does not refute the claim - it merely explains a driver of the decrease. The claim simply states that net income decreased, without specifying any cause, so the presence of tax-related drivers does not contradict the factual assertion that net income decreased.\n\nThe verdict remains SUPPORTED because the evidence definitively establishes that net income decreased from FY2024 to FY2025, which is exactly what the claim asserts.",
+        "change_reason": ""
+      }
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "retrieve_passages",
+      "purpose": "initial",
+      "query": "Meta's net income for fiscal year 2025 decreased compared with fiscal year 2024. FY2025",
+      "top_k": 6,
+      "exclude_shown": false,
+      "results": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H1",
+      "query": "restatement adjustment correction net income 2024 2025 prior period",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H2",
+      "query": "one-time charges impairment restructuring extraordinary items special charges 2025",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E13",
+        "E14",
+        "E15"
+      ]
+    },
+    {
+      "tool": "retrieve_passages",
+      "purpose": "counter:H3",
+      "query": "provision for income taxes effective tax rate 2024 2025 annual year ended",
+      "top_k": 3,
+      "exclude_shown": true,
+      "results": [
+        "E16",
+        "E17",
+        "E18"
+      ]
+    },
+    {
+      "tool": "verify_numbers",
+      "purpose": "claim_assertions",
+      "checks": [
+        {
+          "assertion": {
+            "metric": "NetIncome",
+            "measure": "yoy_growth",
+            "period_basis": "annual",
+            "period_end": "2025-12-31",
+            "comparison": "decrease",
+            "stated_value": null,
+            "threshold": null
+          },
+          "status": "TRUE",
+          "issues": [],
+          "computed": {
+            "period_end": "2025-12-31",
+            "basis": "annual",
+            "level": 60458000000.0,
+            "unit": "USD",
+            "facts": [
+              {
+                "metric": "NetIncome",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "value": 60458000000.0,
+                "filed": "2026-01-29",
+                "form": "10-K",
+                "accession_number": "0001628280-26-003942",
+                "derived": false
+              }
+            ],
+            "conflicting_versions": 0,
+            "prior_level": 62360000000.0,
+            "prior_period_end": "2024-12-31",
+            "yoy_change": -0.030500320718409236,
+            "yoy_change_unit": "ratio"
+          },
+          "evidence_ids": [
+            "E9",
+            "E7",
+            "E8"
+          ]
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "filings": [
+      {
+        "form": "10-K",
+        "accession_number": "0001628280-26-003942",
+        "filed": "2026-01-29",
+        "report_date": "2025-12-31",
+        "primary_document": "meta-20251231.htm",
+        "sha256": "f78fe1cbc2a5c786cbb67362e22a79c19ae606f5cdbae9faed231f210a574053"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-047240",
+        "filed": "2025-10-30",
+        "report_date": "2025-09-30",
+        "primary_document": "meta-20250930.htm",
+        "sha256": "a9afbed5ca916a6647308ab21a45cbc69e7a4c5be27b8a7221fab4270ce6a657"
+      },
+      {
+        "form": "10-Q",
+        "accession_number": "0001628280-25-036791",
+        "filed": "2025-07-31",
+        "report_date": "2025-06-30",
+        "primary_document": "meta-20250630.htm",
+        "sha256": "d763f402798f3ddf0bce1056b43624d241e2eb5a95854ca1c114911979dcee01"
+      }
+    ],
+    "unavailable": [],
+    "passages_indexed": 1460
+  },
+  "evidence": [
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:113713-114659",
+      "excerpt": "ed $194 million, or 50%, and $324 million, or 42%, respectively, compared to the same periods in 2024. The increases were mostly driven by paid messaging from WhatsApp and Meta Verified subscriptions. Reality Labs RL revenue in the three months ended June 30, 2025 increased $17 million, or 5%, compared to the same period in 2024, driven by an increase in sales of Ray-Ban Meta AI glasses, partially offset by a net decrease in Meta Quest sales. RL revenue in the six months ended June 30, 2025 decreased $11 million, or 1%, compared to the same period in 2024. Foreign Exchange Impact on Revenue Changes in foreign exchange rates had an unfavorable impact on our revenue in the three and six months ended June 30, 2025 compared to the same periods in 2024. To calculate revenue on a constant currency basis, we translated revenue using the prior year's monthly exchange rates for our settlement or billing currencies other than the U.S. dollar.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E1"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:323827-325027",
+      "excerpt": "sional services. 71 Table of Contents Results of Operations In this section, we discuss the results of our operations for the year ended December 31, 2025 compared to the year ended December 31, 2024. For a discussion of the year ended December 31, 2024 compared to the year ended December 31, 2023, please refer to Part II, Item 7, \"Management's Discussion and Analysis of Financial Condition and Results of Operations\" in our Annual Report on Form 10-K for the year ended December 31, 2024. The following table sets forth our consolidated statements of income data (in millions): Year Ended December 31, 2025 2024 2023 Revenue $ 200,966 $ 164,501 $ 134,902 Costs and expenses: Cost of revenue 36,175 30,161 25,959 Research and development 57,372 43,873 38,483 Marketing and sales 11,991 11,347 12,301 General and administrative 12,152 9,740 11,408 Total costs and expenses 117,690 95,121 88,151 Income from operations 83,276 69,380 46,751 Interest and other income, net 2,656 1,283 677 Income before provision for income taxes 85,932 70,663 47,428 Provision for income taxes 25,474 8,303 8,330 Net income $ 60,458 $ 62,360 $ 39,098 The following table sets forth our consolidated statements of inco",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E2"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:333393-334474",
+      "excerpt": "ormation in the notes to the consolidated financial statements included in Part II, Item 8, \"Financial Statements and Supplementary Data\" of this Annual Report on Form 10-K for additional information. 75 Table of Contents Interest and other income, net Year Ended December 31, 2025 2024 2023 2025 vs 2024 % change 2024 vs 2023 % change (in millions, except percentages) Interest income $ 2,123 $ 2,517 $ 1,639 (16) % 54 % Interest expense (1,165) (715) (446) (63) % (60) % Foreign currency exchange gains (losses), net 352 (690) (366) 151 % (89) % Other income (expense), net 1,346 171 (150) NM 214 % Total interest and other income, net $ 2,656 $ 1,283 $ 677 107 % 90 % ____________________________________ NM - not meaningful Interest and other income, net in 2025 increased $1.37 billion, or 107% compared to 2024, due to an increase in other income (expense), net, related to the unrealized gains on our marketable and non-marketable equity investments. Foreign currency exchange gains, net from foreign currency transactions and remeasurement also contributed to the increase.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E3"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:122304-123397",
+      "excerpt": "x months ended June 30, 2025 increased $556 million, or 34%, and $480 million, or 14%, respectively, compared to the same periods in 2024, due to increases in income before provision for income taxes. In the six months ended June 30, 2025, the increase was partially offset by a decrease in the effective tax rate. Our effective tax rate was flat in the three months ended June 30, 2025 compared to the same period in 2024. Our effective tax rate decreased in the six months ended June 30, 2025 compared to the same period in 2024, a majority of which was due to excess tax benefits recognized from share-based compensation. Effective Tax Rate Items . Our effective tax rate in the future will depend upon the proportion between the following items and income before provision for income taxes: U.S. tax benefits from foreign-derived intangible income, tax effects from share-based compensation, research tax credit, tax effects from capital losses not expected to be utilized, settlement of tax contingency items, tax effects of changes in our business, and the effects of changes in tax law.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E4"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:339390-340510",
+      "excerpt": "dividend equivalents; $18.40 billion of taxes paid related to net share settlement of employee restricted stock unit (RSU) awards; and $18.33 billion of purchases of non-marketable equity investments. The following table presents our cash flows (in millions): Year Ended December 31, 2025 2024 2023 Net cash provided by operating activities $ 115,800 $ 91,328 $ 71,113 Net cash used in investing activities $ (102,003) $ (47,150) $ (24,495) Net cash used in financing activities $ (20,370) $ (40,781) $ (19,500) Cash Provided by Operating Activities Cash provided by operating activities during 2025 mostly consisted of $60.46 billion net income adjusted for certain non-cash items, such as $20.43 billion of share-based compensation expense, $18.74 billion of deferred income taxes, and $18.62 billion of depreciation and amortization expense. The increase in cash flows from operating activities during 2025 compared to 2024, was primarily due to an increase in cash collections from our customers driven by the increase in revenue and lower cash paid for income taxes, partially offset by higher operational spending.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E5"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:121333-122504",
+      "excerpt": "n currency exchange gains (losses), net increased in the three and six months ended June 30, 2025, compared to the same periods in 2024, as a result of foreign currency transactions and remeasurement. The decreases in other income (expense), net in the three and six months ended June 30, 2025, compared to the same periods in 2024, were driven by unrealized losses on our marketable equity securities. See Note 4 — Financial Instruments in the notes to the condensed consolidated financial statements included in Part I, Item 1, of this Quarterly Report on Form 10-Q for additional information regarding unrealized losses on our marketable equity securities. Provision for income taxes Three Months Ended June 30, Six Months Ended June 30, 2025 2024 % change 2025 2024 % change (in millions, except percentages) Provision for income taxes $ 2,197 $ 1,641 34 % $ 3,935 $ 3,455 14 % Effective tax rate 11 % 11 % 10 % 12 % Our provision for income taxes in the three and six months ended June 30, 2025 increased $556 million, or 34%, and $480 million, or 14%, respectively, compared to the same periods in 2024, due to increases in income before provision for income taxes.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E6"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/0001628280-26-003942-index.htm",
+      "locator": "NetIncome 2025-01-01..2025-12-31",
+      "excerpt": null,
+      "values": [
+        60458000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E7"
+    },
+    {
+      "kind": "xbrl_fact",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/0001628280-26-003942-index.htm",
+      "locator": "NetIncome 2024-01-01..2024-12-31",
+      "excerpt": null,
+      "values": [
+        62360000000.0
+      ],
+      "unit": "USD",
+      "evidence_id": "E8"
+    },
+    {
+      "kind": "derived_metric",
+      "ticker": "META",
+      "source": "research numeric verifier over SEC XBRL facts",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "NetIncome yoy_growth annual @ 2025-12-31",
+      "excerpt": null,
+      "values": [
+        60458000000.0,
+        62360000000.0,
+        -0.030500320718409236
+      ],
+      "unit": "ratio",
+      "evidence_id": "E9"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:372291-372999",
+      "excerpt": "rage shares used to compute earnings per share: Basic 2,521 2,534 2,574 Diluted 2,574 2,614 2,629 See Accompanying Notes to Consolidated Financial Statements. 89 Table of Contents META PLATFORMS, INC. CONSOLIDATED STATEMENTS OF COMPREHENSIVE INCOME (In millions) Year Ended December 31, 2025 2024 2023 Net income $ 60,458 $ 62,360 $ 39,098 Other comprehensive income (loss): Change in foreign currency translation adjustment, net of tax 2,693 ( 1,413 ) 618 Change in unrealized gain (loss) on available-for-sale investments and other, net of tax 675 471 757 Comprehensive income $ 63,826 $ 61,418 $ 40,473 See Accompanying Notes to Consolidated Financial Statements. 90 Table of Contents META PLATFORMS, INC.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E10"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:18507-19531",
+      "excerpt": "ision for income taxes 2,197 1,641 3,935 3,455 Net income $ 18,337 $ 13,465 $ 34,981 $ 25,834 Earnings per share: Basic $ 7.28 $ 5.31 $ 13.87 $ 10.17 Diluted $ 7.14 $ 5.16 $ 13.56 $ 9.86 Weighted-average shares used to compute earnings per share: Basic 2,518 2,534 2,522 2,540 Diluted 2,570 2,610 2,580 2,619 See Accompanying Notes to Condensed Consolidated Financial Statements. 7 Table of Contents META PLATFORMS, INC. CONDENSED CONSOLIDATED STATEMENTS OF COMPREHENSIVE INCOME (In millions) (Unaudited) Three Months Ended June 30, Six Months Ended June 30, 2025 2024 2025 2024 Net income $ 18,337 $ 13,465 $ 34,981 $ 25,834 Other comprehensive income (loss): Change in foreign currency translation adjustment, net of tax 1,866 ( 149 ) 2,760 ( 694 ) Change in unrealized gain (loss) on available-for-sale investments and other, net of tax 228 109 566 154 Comprehensive income $ 20,431 $ 13,425 $ 38,307 $ 25,294 See Accompanying Notes to Condensed Consolidated Financial Statements. 8 Table of Contents META PLATFORMS, INC.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E11"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+      "locator": "10-Q 0001628280-25-047240:18545-19609",
+      "excerpt": "xes 21,663 17,822 60,578 47,111 Provision for income taxes 18,954 2,134 22,888 5,589 Net income $ 2,709 $ 15,688 $ 37,690 $ 41,522 Earnings per share: Basic $ 1.08 $ 6.20 $ 14.96 $ 16.37 Diluted $ 1.05 $ 6.03 $ 14.62 $ 15.88 Weighted-average shares used to compute earnings per share: Basic 2,517 2,529 2,520 2,536 Diluted 2,572 2,600 2,578 2,615 See Accompanying Notes to Condensed Consolidated Financial Statements. 7 Table of Contents META PLATFORMS, INC. CONDENSED CONSOLIDATED STATEMENTS OF COMPREHENSIVE INCOME (In millions) (Unaudited) Three Months Ended September 30, Nine Months Ended September 30, 2025 2024 2025 2024 Net income $ 2,709 $ 15,688 $ 37,690 $ 41,522 Other comprehensive income (loss): Change in foreign currency translation adjustment, net of tax ( 162 ) 937 2,598 243 Change in unrealized gain (loss) on available-for-sale investments and other, net of tax 92 566 658 720 Comprehensive income $ 2,639 $ 17,191 $ 40,946 $ 42,485 See Accompanying Notes to Condensed Consolidated Financial Statements. 8 Table of Contents META PLATFORMS, INC.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E12"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+      "locator": "10-Q 0001628280-25-047240:133263-134459",
+      "excerpt": "es in the three and nine months ended September 30, 2025 increased $16.82 billion and $17.30 billion, respectively, compared to the same periods in 2024, mostly due to increases in effective tax rate. 46 Table of Contents Our effective tax rate increased in the three and nine months ended September 30, 2025 compared to the same periods in 2024, mostly due to the implementation of OBBBA, as described above. Effective Tax Rate Items . Our effective tax rate in the future will depend upon the proportion between the following items and income before provision for income taxes: the effects of changes in tax law, changes in valuation allowance due to the effects of CAMT, U.S. tax benefits from foreign-derived intangible income, tax effects from share-based compensation, research tax credit, tax effects from capital losses not expected to be utilized, settlement of tax contingency items, and tax effects of changes in our business. A number of countries have enacted legislation to implement the Organization for Economic Cooperation and Development’s 15% global minimum tax regime. We do not expect these changes to have a material impact on our consolidated financial statements for 2025.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E13"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:103931-105131",
+      "excerpt": "es, as well as capital expenditures, that we will incur to grow and expand our business and to remain competitive, including costs related to our data centers and technical infrastructure as well as other costs relating to our AI initiatives; • costs related to our privacy, safety, security, and content and advertising review and enforcement efforts, including as a result of implementing changes to our practices, whether voluntarily, in connection with laws, regulations, regulatory actions, or decisions or recommendations from the independent Oversight Board, or otherwise; • costs and expenses related to the development, manufacturing, and delivery of our consumer hardware products; • our ability to maintain gross margins and operating margins; • costs related to acquisitions or other strategic transactions, including costs associated with amortization and additional investments to develop acquired technologies; • charges associated with impairment or abandonment of any assets on our balance sheet, including as a result of changes to our real property lease arrangements and data center and infrastructure assets; • our ability to obtain equipment, components, and labor for our data",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E14"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+      "locator": "10-Q 0001628280-25-047240:245980-247180",
+      "excerpt": "es, as well as capital expenditures, that we will incur to grow and expand our business and to remain competitive, including costs related to our data centers and technical infrastructure as well as other costs relating to our AI initiatives; • costs related to our privacy, safety, security, and content and advertising review and enforcement efforts, including as a result of implementing changes to our practices, whether voluntarily, in connection with laws, regulations, regulatory actions, or decisions or recommendations from the independent Oversight Board, or otherwise; • costs and expenses related to the development, manufacturing, and delivery of our consumer hardware products; • our ability to maintain gross margins and operating margins; • costs related to acquisitions or other strategic transactions, including costs associated with amortization and additional investments to develop acquired technologies; • charges associated with impairment or abandonment of any assets on our balance sheet, including as a result of changes to our real property lease arrangements and data center and infrastructure assets; • our ability to obtain equipment, components, and labor for our data",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E15"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-036791",
+      "form": "10-Q",
+      "filed": "2025-07-31",
+      "period_start": null,
+      "period_end": "2025-06-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036791/meta-20250630.htm",
+      "locator": "10-Q 0001628280-25-036791:78039-79202",
+      "excerpt": "$ 3.27 billion during the six months ended June 30, 2025 and 2024, respectively. As of June 30, 2025, there was $ 46.75 billion of unrecognized share-based compensation expense related to RSU awards. This unrecognized compensation expense is expected to be recognized over a weighted-average period of approximately three years based on vesting under the award service conditions. 25 Table of Contents Note 10. Income Taxes Our tax provision for interim periods is determined using an estimated annual effective tax rate, adjusted for discrete items arising in that quarter, including excess tax benefits or shortfall tax expenses from share-based compensation and changes in unrecognized tax benefits. In each quarter, we update the estimated annual effective tax rate and make a year-to-date adjustment to the provision. The estimated annual effective tax rate is subject to significant volatility due to several factors, including our ability to accurately predict the proportion of our income (loss) before provision for income taxes in multiple jurisdictions, the U.S. tax benefits from foreign derived intangible income, and the effects of tax law changes.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E16"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-25-047240",
+      "form": "10-Q",
+      "filed": "2025-10-30",
+      "period_start": null,
+      "period_end": "2025-09-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047240/meta-20250930.htm",
+      "locator": "10-Q 0001628280-25-047240:83584-84675",
+      "excerpt": "ognized compensation expense is expected to be recognized over a weighted-average period of approximately three years based on vesting under the award service conditions. 28 Table of Contents Note 11. Income Taxes Our tax provision for interim periods is determined using an estimated annual effective tax rate, adjusted for discrete items arising in that quarter, including excess tax benefits or shortfall tax expenses from share-based compensation and changes in unrecognized tax benefits. In each quarter, we update the estimated annual effective tax rate and make a year-to-date adjustment to the provision. The estimated annual effective tax rate is subject to significant volatility due to several factors, including our ability to accurately predict the proportion of our income (loss) before provision for income taxes in multiple jurisdictions, the effects of tax law changes, and the U.S. tax benefits from foreign derived intangible income. Our gross unrecognized tax benefits were $ 16.98 billion and $ 15.13 billion as of September 30, 2025 and December 31, 2024, respectively.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E17"
+    },
+    {
+      "kind": "filing_passage",
+      "ticker": "META",
+      "source": "SEC EDGAR",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_start": null,
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:335212-336282",
+      "excerpt": "d by the 15% Corporate Alternative Minimum Tax (CAMT). As a result, we recorded a $15.93 billion charge in the third quarter of 2025, of which $14.03 billion was a valuation allowance against our U.S. federal deferred tax assets as of the enactment date of OBBBA, and the remaining was mostly related to the reduction of the benefit of the foreign-derived intangible income deduction. In determining the valuation allowance, our accounting policy incorporates the expected impact of future years’ CAMT in assessing the realizability of our deferred tax assets . Our provision for income taxes in 2025 increased $17.17 billion or 207% compared to 2024, primarily due to an increase in the effective tax rate. Our effective tax rate in 2025 increased compared to 2024, mostly due to the effects of OBBBA. Effective Tax Rate Items. Our effective tax rate in the future will depend upon the proportion between the following items and income before provision for income taxes: the effects of changes in tax law, changes in valuation allowance due to the effects of CAMT, U.S.",
+      "values": [],
+      "unit": null,
+      "evidence_id": "E18"
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "E10",
+      "quote": "Year Ended December 31, 2025 2024 2023 Net income $ 60,458 $ 62,360 $ 39,098",
+      "valid": true,
+      "issues": [],
+      "kind": "filing_passage",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_end": "2025-12-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+      "locator": "10-K 0001628280-26-003942:372291-372999"
+    },
+    {
+      "evidence_id": "E9",
+      "quote": "",
+      "valid": true,
+      "issues": [],
+      "kind": "derived_metric",
+      "accession_number": "0001628280-26-003942",
+      "form": "10-K",
+      "filed": "2026-01-29",
+      "period_end": "2025-12-31",
+      "source_url": null,
+      "locator": "NetIncome yoy_growth annual @ 2025-12-31"
+    }
+  ],
+  "stop_reason": "COMPLETED",
+  "error": null,
+  "token_usage": {
+    "input": 29045,
+    "output": 3957
+  },
+  "latency_ms": 15,
+  "estimated_cost_usd": 0.14649,
+  "graph": {
+    "framework": "langgraph",
+    "kind": "contradiction_aware",
+    "execution_trace": [
+      {
+        "node": "retrieve_evidence",
+        "status": "ok",
+        "duration_ms": 2,
+        "llm_calls_so_far": 0,
+        "retrieval_queries_so_far": 1,
+        "passages": 6,
+        "eligible_filings": 3
+      },
+      {
+        "node": "initial_verdict",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "label": "CONTRADICTED",
+        "claim_type": "numeric"
+      },
+      {
+        "node": "numeric_verification",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "rule": "NUMERIC_ALL_TRUE",
+        "checks": [
+          "TRUE"
+        ]
+      },
+      {
+        "node": "analyze_claim",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 1,
+        "retrieval_queries_so_far": 1,
+        "assertions": 2,
+        "computations": 0,
+        "period_source": "text_fiscal"
+      },
+      {
+        "node": "generate_hypotheses",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 1,
+        "hypotheses": 3
+      },
+      {
+        "node": "counter_investigation",
+        "status": "ok",
+        "duration_ms": 6,
+        "llm_calls_so_far": 2,
+        "retrieval_queries_so_far": 4,
+        "queries": 3,
+        "passages_found": 9,
+        "numeric_checks": 0,
+        "no_counterevidence_found": false
+      },
+      {
+        "node": "evidence_review",
+        "status": "ok",
+        "duration_ms": 3,
+        "llm_calls_so_far": 3,
+        "retrieval_queries_so_far": 4,
+        "findings": 11,
+        "deciding": 5,
+        "downgraded": 1
+      },
+      {
+        "node": "reconcile_v2",
+        "status": "ok",
+        "duration_ms": 1,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "model_final_label": "SUPPORTED"
+      },
+      {
+        "node": "apply_guards",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "guard_reverted": null,
+        "numeric_rule": "NUMERIC_ALL_TRUE"
+      },
+      {
+        "node": "reconciliation_guard",
+        "status": "ok",
+        "duration_ms": 0,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "outcome": "NO_CHANGE",
+        "reason": "NO_CHANGE",
+        "label": "SUPPORTED"
+      },
+      {
+        "node": "finalize",
+        "status": "ok",
+        "duration_ms": 4,
+        "llm_calls_so_far": 4,
+        "retrieval_queries_so_far": 4,
+        "label": "SUPPORTED",
+        "stop_reason": "COMPLETED"
+      }
+    ],
+    "nodes_visited": [
+      "retrieve_evidence",
+      "initial_verdict",
+      "numeric_verification",
+      "analyze_claim",
+      "generate_hypotheses",
+      "counter_investigation",
+      "evidence_review",
+      "reconcile_v2",
+      "apply_guards",
+      "reconciliation_guard",
+      "finalize"
+    ],
+    "failed_stage": null,
+    "graph_version": "langgraph-claims-a3v2-0.1"
+  },
+  "a3v2_version": "a3v2-0.2.1-dev"
+}
