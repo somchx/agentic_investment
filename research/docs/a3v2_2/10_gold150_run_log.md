@@ -74,3 +74,10 @@
 - **ค่าใช้จ่ายจริงตาม ledger: $23.24** (reserve 749 / settle 749 ครบทุกรายการ ไม่มี reservation ค้าง)
 - **Backup:** สำรองไป `~/ReasonCheck-backups` ทุก 2 นาทีตลอดการรัน หยุด loop หลังสำรองรอบสุดท้าย
 - commit ผล run, cache, ledger และ log ก่อนเทียบกับ label ของ Gold
+
+## 2026-11-18: ประเมินผลตาม prereg (ครั้งเดียว)
+- `scripts/a3v2_gold_evaluate.py --run a3v2.2-gold150-20261118T112814Z` (evaluator `bb11cde0…`) ไม่ใช้ `--errors-as-wrong` เพราะไม่มี ERROR
+- ผล: `results/gold150/a3v2.2-gold150-20261118T112814Z/evaluation.json` sha256 `e6422ff9f658c947…` ตั้งเป็น read-only
+- **Primary (A3v2_2e vs A2):** 98/150 (65.3%) vs 103/150 (68.7%), McNemar exact p = 0.424, Holm p = 1.0 → ไม่ผ่าน AC1
+- AC1–AC4 ไม่ผ่าน, AC5–AC6 ผ่าน, AC7 (run ครบและ integrity ผ่าน) ผ่าน
+- **ผลนี้ freeze แล้ว ไม่ปรับ A3 ตามผล Gold และไม่ประเมินซ้ำ**
