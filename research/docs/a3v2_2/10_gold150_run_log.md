@@ -55,3 +55,12 @@
     - dev-v0.2: 288/288 pair ตรงกับ cache เดิม ได้ A2 53, R 48, RG 51, A3v2_2e 64 เท่าเดิม
     - Gold A1/A2: 300/300 pair ตรงกับ cache และ label ตรงกับ v1 ทุกข้อ (หลังดาวน์โหลดไฟล์ GOOGL ใหม่ เพราะสำเนาเก่าใน checkout หลักไม่ตรง)
 - **ต่อไป:** ทุก run ต้องเขียนผลไว้นอก Kilo worktree pool และสำรอง ledger และ cache เป็นระยะ
+
+## 2026-11-18: กู้คืนรอบที่ 2 (ไม่เสียเงิน)
+- สร้าง dev run 5 ตัวกลับมาแบบ offline ด้วย `scripts/restore_dev_runs.py`
+  - คำตอบตรงกับของเดิม 216/216
+  - ผล A2 53 / A3v2_2e 64 เท่าเดิม
+  - tests ผ่าน 308/308
+- วิเคราะห์ความครบของ log (ยังไม่ได้เทียบกับ Gold) และตรวจ hash ซ้ำ: `11_gold150_incident_recovery_analysis.md`
+- เพิ่ม `scripts/backup_artifacts.sh` (สำรองไป `~/ReasonCheck-backups`) และ `scripts/secret_scan.sh`
+  - ทั้งสองไฟล์ไม่อยู่ใน code bundle จึงไม่กระทบ hash ที่ล็อกไว้
