@@ -121,7 +121,7 @@
 - number overlap ของ A3 สูงกว่า A1/A2 (85–89% เทียบ 72–77%) สอดคล้องกับที่ A3 ค้นหลักฐานเพิ่ม แต่เป็นตัวชี้วัดแบบหยาบ และ**ไม่ได้ทำให้ accuracy ดีขึ้น**
 - proxy เหล่านี้ไม่ตอบคำถามว่า "หลักฐานรองรับความหมายของคำตอบหรือไม่" ซึ่งต้องใช้ส่วน B
 
-### 3.2 ส่วน B: Human Blind Review Workbook (รอผู้ตรวจ)
+### 3.2 ส่วน B: Blind Review Workbook
 
 | รายการ | รายละเอียด |
 |---|---|
@@ -133,7 +133,7 @@
 | สิ่งที่ซ่อน | ชื่อ arm และเฉลย (ตรวจแล้วไม่มีข้อความรั่วในไฟล์ผู้ตรวจ) |
 | ช่องกรอก (สีเหลือง) | judgment (dropdown: SUPPORTED_BY_EVIDENCE / PARTIALLY_SUPPORTED / NOT_SUPPORTED / UNABLE_TO_ASSESS), reviewer_reason, reviewer_citation |
 | ภาระงาน | ราว 2–3 นาทีต่อแถว (≈ 3–5 ชั่วโมง) |
-| สถานะ | **ยังไม่มีการตรวจ** ไม่มี judgment ใดถูกกรอกแทนผู้ตรวจ; `score` ปฏิเสธการคำนวณจนกว่าจะกรอกครบ |
+| สถานะ | **ตรวจครบ 100 แถวแล้ว (2026-11-19)** ผลอยู่ในหัวข้อ 3.3 |
 | Manifest | `sample_manifest.json` (seed, claim ที่สุ่ม, ลำดับแถว, sha256 ของ input/output) |
 
 **การคำนวณหลังตรวจเสร็จ** (`posthoc_review_workbook.py score`), แยกตาม arm:
@@ -142,6 +142,44 @@
 - **EGC lenient** = คำตอบถูกเฉลย **และ** (SUPPORTED หรือ PARTIALLY) / แถวที่ตรวจได้
 - **ข้อจำกัด:** 25 แถวไม่มี citation (ส่วนใหญ่เป็นคำตอบ INSUFFICIENT) ผู้ตรวจต้องตัดสินจากเหตุผลและเอกสารที่ระบบใช้ได้; ผู้ตรวจคนเดียว (ไม่มี inter-rater agreement); 50 claims ให้ CI กว้าง
 
+### 3.3 ผล Evidence-Grounded Correctness (POST-HOC EXPLORATORY / HUMAN-ASSESSED, researcher self-reported)
+
+**ที่มาของ judgment:** ผู้วิจัย (rev_som) ตรวจเองทั้ง 100 แถวแบบไม่เห็นชื่อระบบและเฉลย ไม่มี AI ช่วยตัดสิน (ผู้วิจัยแจ้งและยืนยันซ้ำ 2026-11-19; เป็นการแจ้งเอง ไม่มีหลักฐานอิสระยืนยัน)
+- ไฟล์ที่กรอกแล้ว: `datasets/workbooks/evidence_review_blind.xlsx` (sha256 `8b976e10e4387026…`)
+- metadata ของไฟล์ระบุ creator = openpyxl และไม่มี lastModifiedBy; บันทึกครั้งสุดท้าย 2026-11-19 03:20 UTC (≈ 31 นาทีหลังสร้าง workbook) ข้อมูลนี้บันทึกไว้ตามข้อเท็จจริง
+
+**การตรวจความถูกต้องของไฟล์ที่กรอก**
+- review_id ครบ 100 แถวตรงกับไฟล์ต้นฉบับ, judgment ครบและเป็นค่าที่กำหนดทุกแถว
+- คอลัมน์ข้อมูลของระบบไม่ถูกแก้ (ต่างเพียงช่องลิงก์ว่าง 26 ช่องที่ถูกบันทึกเป็นข้อความว่าง)
+- ความสม่ำเสมอ: 24 claims ที่สองระบบให้คำตอบและหลักฐานเหมือนกันทุกตัวอักษร ได้ judgment เดียวกันทั้ง 24 ข้อ
+
+**ผล** (`posthoc_review_workbook.py score --review datasets/workbooks/evidence_review_blind.xlsx` → `results/posthoc_20261119/human_review/egc_result.json`)
+
+**ตัวหารของ EGC คือเฉพาะแถวที่ประเมินได้** (ตัด UNABLE_TO_ASSESS ออก) ไม่ใช่ทั้ง 50 แถวของแต่ละระบบ
+
+| | A2 | A3v2_2e |
+|---|---:|---:|
+| แถวทั้งหมด | 50 | 50 |
+| UNABLE_TO_ASSESS (แยกรายงาน) | 13 | 12 |
+| แถวที่ตรวจได้ | 37 | 38 |
+| judgment: SUPPORTED / PARTIAL / NOT | 23 / 10 / 4 | 25 / 8 / 5 |
+| คำตอบถูกเฉลย (ในแถวที่ตรวจได้) | 24 (64.9%) | 26 (68.4%) |
+| **EGC strict** (ถูกเฉลย + SUPPORTED_BY_EVIDENCE) | **22 (59.5%)** | **23 (60.5%)** |
+| EGC lenient (ถูกเฉลย + SUPPORTED หรือ PARTIAL) | 24 (64.9%) | 26 (68.4%) |
+
+**การตีความ**
+- สองระบบใกล้กันมาก (ต่างกัน 1 ข้อใน EGC strict) ในข้อที่ตอบถูก หลักฐานรองรับครบเกือบทุกข้อ (A2 22/24, A3v2_2e 23/26)
+- การค้นหลักฐานเพิ่มของ A3 ไม่ได้ทำให้หลักฐานของคำตอบที่ถูกดีขึ้นอย่างชัดเจน สอดคล้องกับผลหลัก
+- ทุกแถวที่ judgment เป็น NOT_SUPPORTED (9 แถว) เป็นคำตอบที่ผิดเฉลยด้วย
+- มี 3 แถวที่ผู้ตรวจเห็นว่าหลักฐานรองรับคำตอบของระบบครบ แต่คำตอบผิดเฉลย (ผู้ตรวจกับเฉลยเห็นต่างกัน)
+
+**ข้อจำกัดเพิ่มเติม**
+- **UNABLE_TO_ASSESS 25 แถว (A2 13, A3v2_2e 12) คือแถวที่ระบบตอบ INSUFFICIENT_EVIDENCE โดยไม่อ้าง citation ทั้งหมด** ผู้ตรวจไม่มีหลักฐานของระบบให้ประเมิน จึงไม่ได้ตัดสินแถวเหล่านี้
+    - แถวเหล่านี้ถูกตัดออกจากตัวหาร EGC จึงสะท้อนคุณภาพหลักฐานของคำตอบเด็ดขาด (และคำตอบ INSUFFICIENT ที่มี citation 5 แถว) เท่านั้น **ไม่ได้ประเมินความถูกต้องของการงดตอบ**
+    - ถ้านับแถว UNABLE เป็น "ไม่มีหลักฐานรองรับ" และใช้ทั้ง 50 แถวเป็นตัวหาร EGC strict จะเป็น A2 22/50 (44%) และ A3v2_2e 23/50 (46%) ข้อสรุปเชิงเปรียบเทียบไม่เปลี่ยน (ตัวเลขนี้มาจากจำนวนเดิม ไม่ได้ตัดสินใหม่)
+- ผู้ตรวจคือผู้วิจัยเอง ซึ่งเคยทบทวนและอนุมัติเฉลย Gold ทั้ง 150 ข้อ จึงไม่ใช่ผู้ตรวจอิสระ แม้จะไม่เห็นชื่อระบบและเฉลยในไฟล์
+- ผู้ตรวจคนเดียว ไม่มี inter-rater agreement; n = 37–38 แถวต่อระบบ จึงไม่ทดสอบสถิติ
+
 ---
 
 ## 4. ข้อจำกัดรวม
@@ -149,7 +187,7 @@
 2. Citation validity ตรวจรูปแบบ ไม่ตรวจความหมาย; RG / A3v2_2e ตัด citation บางส่วนก่อนตรวจ
 3. Rule baseline ครอบคลุมเฉพาะ claim ตัวเลขระดับบริษัทที่ถ้อยคำตรงกับ template; ผู้เขียนกฎเคยเห็น claim บางข้อของ Gold
 4. Proxy ของหลักฐานเป็นเงื่อนไขจำเป็นแต่ไม่เพียงพอ; same filing ใกล้เพดานจนไม่มีความหมาย
-5. EGC จากคนยังไม่มีผล จนกว่าผู้ตรวจจะกรอก workbook
+5. EGC (HUMAN-ASSESSED, researcher self-reported) ใช้ตัวหารเฉพาะแถวที่ประเมินได้; 25 แถวที่เป็น INSUFFICIENT ไม่มี citation ถูกตัดออก; ผู้ตรวจคนเดียวซึ่งเป็นผู้วิจัยเอง
 
 ## 5. ประโยคที่ใช้ในเล่มได้ (ร่าง)
 - "การวิเคราะห์เพิ่มเติมเชิงพรรณนาหลังประเมินผล (post-hoc) พบว่าทุกระบบมีอัตราการตอบเด็ดขาดโดยไม่มีการอ้างอิงที่ผ่านการตรวจต่ำ (1.0–4.9%) ความผิดพลาดส่วนใหญ่จึงมาจากการตีความหลักฐาน ไม่ใช่การขาดหลักฐาน"
@@ -160,14 +198,17 @@
 ```
 research/.venv/bin/python research/scripts/posthoc_citation_evidence.py
 research/.venv/bin/python research/scripts/posthoc_rule_baseline.py score --split gold      # predictions ล็อกแล้ว ห้าม run gold ซ้ำ
-research/.venv/bin/python research/scripts/posthoc_review_workbook.py score                # หลังผู้ตรวจกรอกครบ
+research/.venv/bin/python research/scripts/posthoc_review_workbook.py score --review research/datasets/workbooks/evidence_review_blind.xlsx
 ```
 
 | ไฟล์ | sha256 (16 ตัวแรก) |
 |---|---|
 | `scripts/posthoc_citation_evidence.py` | `1fc76c68ed94534c` |
 | `scripts/posthoc_rule_baseline.py` (= LOCK) | `13ed066b1ccbf1c1` |
-| `scripts/posthoc_review_workbook.py` | `3425dea543629c6d` |
+| `scripts/posthoc_review_workbook.py` (ตอนสร้าง workbook; ตรงกับ `sample_manifest.json`) | `3425dea543629c6d` |
+| `scripts/posthoc_review_workbook.py` (เพิ่มตัวเลือก `--review` ให้ `score`; `build` ไม่เปลี่ยน) | `aeb7a724f9d8ec82` |
+| `datasets/workbooks/evidence_review_blind.xlsx` (กรอกแล้ว) | `8b976e10e4387026` |
+| `human_review/egc_result.json` (เพิ่มฟิลด์ provenance / status หลังคำนวณ ตัวเลขไม่เปลี่ยน) | `079910ae9d6eaa19` |
 | `citation_evidence/citation_evidence.json` | `d654b8b07579811c` |
 | `rule_baseline/predictions_gold.jsonl` | `cd9d40dada4acfcc` |
 | `rule_baseline/score_gold.json` | `5a65d5a4975fdaed` |

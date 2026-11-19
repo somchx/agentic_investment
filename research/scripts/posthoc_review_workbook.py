@@ -7,7 +7,7 @@ build:  stratified random sample of 50 Gold claims (seed 20261119; 16 numerical,
 score:  reads the filled reviewer workbook + mapping; refuses to report EGC while judgments are missing.
 
     research/.venv/bin/python research/scripts/posthoc_review_workbook.py build
-    research/.venv/bin/python research/scripts/posthoc_review_workbook.py score
+    research/.venv/bin/python research/scripts/posthoc_review_workbook.py score [--review <filled workbook>]
 """
 import argparse
 import hashlib
@@ -152,15 +152,15 @@ def build() -> None:
               open(os.path.join(OUT, "sample_manifest.json"), "w"), indent=1)
 
 
-def score() -> dict:
-    rv = load_workbook(REVIEW, data_only=True)["review"]
+def score(review: str = REVIEW) -> dict:
+    rv = load_workbook(review, data_only=True)["review"]
     hdr = [c.value for c in rv[1]]
     J = {r[0]: (r[hdr.index("judgment")] or "").strip() for r in rv.iter_rows(min_row=2, values_only=True) if r[0]}
     mp = load_workbook(MAPPING, data_only=True)["mapping"]
     M = {r[0]: r for r in mp.iter_rows(min_row=2, values_only=True)}
     bad = {k: v for k, v in J.items() if v and v not in JUDGMENTS}
     missing = [k for k, v in J.items() if not v]
-    res = {"status": "POST-HOC EXPLORATORY", "rows": len(J), "judged": len(J) - len(missing), "missing": len(missing),
+    res = {"status": "POST-HOC EXPLORATORY", "review_file": os.path.relpath(review, RESEARCH_ROOT), "review_sha256": sha(review), "rows": len(J), "judged": len(J) - len(missing), "missing": len(missing),
            "invalid_values": bad}
     if missing or bad:
         res["note"] = "review incomplete: EGC is not computed"
@@ -183,9 +183,10 @@ def score() -> dict:
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("cmd", choices=("build", "score"))
+    ap.add_argument("--review", default=REVIEW, help="filled reviewer workbook (default: the as-built path)")
     a = ap.parse_args()
     if a.cmd == "build":
         build()
         print("wrote", os.path.relpath(OUT, RESEARCH_ROOT))
     else:
-        print(json.dumps(score(), indent=1, ensure_ascii=False))
+        print(json.dumps(score(os.path.abspath(a.review)), indent=1, ensure_ascii=False))

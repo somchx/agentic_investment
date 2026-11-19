@@ -17,6 +17,7 @@
 - sha256 ของสคริปต์ตอนรัน (`run_gold.json`) ตรงกับใน LOCK (`13ed066b…`)
 
 ## Human review
-- `human_review/evidence_review_blind.xlsx` สำหรับผู้ตรวจ ไม่มีชื่อ arm และเฉลย; judgment ทั้งหมดยังว่าง
+- `human_review/evidence_review_blind.xlsx` คือไฟล์ตามที่สร้าง (judgment ว่าง) ไม่มีชื่อ arm และเฉลย
+- ไฟล์ที่กรอกครบแล้ว: `datasets/workbooks/evidence_review_blind.xlsx` (ผู้วิจัยตรวจเอง, researcher self-reported)
 - **ไฟล์ mapping (`mapping_DO_NOT_OPEN_BEFORE_REVIEW.xlsx`) ไม่ได้ commit และห้ามส่งพร้อมไฟล์ผู้ตรวจ** สร้างซ้ำได้จาก seed 20261119 ด้วย `posthoc_review_workbook.py build`; sha256 อยู่ใน `sample_manifest.json`
-- EGC ยังไม่คำนวณจนกว่าผู้ตรวจจะกรอกครบ
+- ผล EGC: `human_review/egc_result.json` — **POST-HOC EXPLORATORY / HUMAN-ASSESSED (researcher self-reported)** ตัวหารเฉพาะแถวที่ประเมินได้; 25 แถว UNABLE_TO_ASSESS (คำตอบ INSUFFICIENT ที่ไม่มี citation) รายงานแยก
