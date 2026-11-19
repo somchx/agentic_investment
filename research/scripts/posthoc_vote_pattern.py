@@ -20,8 +20,9 @@ from engine.reference import REFERENCE_PATH, load_reference  # noqa: E402
 from engine.stats import mcnemar  # noqa: E402
 
 PRED = os.path.join(RESEARCH_ROOT, "results", "runs", "a3v2.2-gold150-20261118T112814Z", "predictions.jsonl")
+V1_PRED = os.path.join(RESEARCH_ROOT, "results", "runs", "claimverif-main-v1-20261110T104207Z", "predictions.jsonl")  # same as the evaluator's V1_RUN
 OUT = os.path.join(RESEARCH_ROOT, "results", "posthoc_20261119", "vote_pattern")
-ARMS = ["A1_conventional_rag", "A2_rag_numeric", "SR_self_reflection", "A3v2_1_1_R", "A3v2_1_1_RG", "A3v2_2e"]
+ARMS = ["A1_conventional_rag", "A2_rag_numeric", "SR_self_reflection", "V1:A3_contradiction_aware", "A3v2_1_1_R", "A3v2_1_1_RG", "A3v2_2e"]
 A2, A3 = "A2_rag_numeric", "A3v2_2e"
 GROUPS = ["unanimous", "majority_2_1", "three_way_split"]
 
@@ -59,6 +60,9 @@ def main() -> dict:
     for r in map(json.loads, open(PRED)):
         if r["approach"] in ARMS:
             P.setdefault(r["approach"], {})[r["claim_id"]] = r["predicted_label"]
+    for r in map(json.loads, open(V1_PRED)):
+        if r["approach"] == "A3_contradiction_aware" and r["claim_id"] in meta:
+            P.setdefault("V1:A3_contradiction_aware", {})[r["claim_id"]] = r["predicted_label"]
     assert all(set(P[a]) == set(meta) for a in ARMS)
     ok = {a: {c: P[a][c] == meta[c]["gold"] for c in meta} for a in ARMS}
 
@@ -90,7 +94,7 @@ def main() -> dict:
                                           "discordant": [{"claim_id": c, "category": meta[c]["category"], "votes": " | ".join(meta[c]["votes"]),
                                                           "gold": meta[c]["gold"], "A2": P[A2][c], "A3v2_2e": P[A3][c]}
                                                          for c in ids if ok[A2][c] != ok[A3][c]]}
-    res["inputs_sha256"] = {os.path.relpath(p, RESEARCH_ROOT): sha(p) for p in (PRED, REFERENCE_PATH)}
+    res["inputs_sha256"] = {os.path.relpath(p, RESEARCH_ROOT): sha(p) for p in (PRED, V1_PRED, REFERENCE_PATH)}
     res["script_sha256"] = sha(__file__)
     json.dump(res, open(os.path.join(OUT, "vote_pattern_summary.json"), "w"), indent=1, ensure_ascii=False)
     return res
